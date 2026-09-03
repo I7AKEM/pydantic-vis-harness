@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pydantic AI · CSV profiling</title>
+    <!-- Pydantic's published chat UI, pinned because the upload control uses its composer. -->
+    <link rel="icon" href="https://cdn.jsdelivr.net/npm/@pydantic/ai-chat-ui@2.1.0/dist/favicon.svg" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@pydantic/ai-chat-ui@2.1.0/dist/assets/index-B3O1eTMb.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@pydantic/ai-chat-ui@2.1.0/dist/assets/index-BN5f5YQq.js"></script>
+    <script defer src="/datasets/chat-upload.js"></script>
+    <style>
+      .csv-upload { display: flex; align-items: center; gap: 12px; padding: 8px 12px; font-size: 13px; }
+      .csv-upload button { flex-shrink: 0; padding: 7px 11px; border: 1px solid var(--border); border-radius: 7px; background: var(--background); color: var(--foreground); cursor: pointer; }
+      .csv-upload button:hover { background: var(--accent); }
+      .csv-upload button:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+      .csv-upload button:disabled { opacity: .5; cursor: wait; }
+      .csv-upload [role="status"] { color: var(--muted-foreground); overflow-wrap: anywhere; }
+      .csv-upload [role="alert"] { color: var(--destructive); overflow-wrap: anywhere; }
+      .group\/user-message a[href^="/datasets/"] { color: currentColor; font-weight: 600; text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

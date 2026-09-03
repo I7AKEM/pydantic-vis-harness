@@ -160,25 +160,42 @@ def test_wkt_stays_in_storage_and_old_profiles_are_recomputed(store):
         with store.connect() as connection:
             assert connection.execute(f'SELECT WKT FROM "{source.dataset_id}"').fetchone()[0] == geometry
         legacy = result.model_copy(update={
-            "schema_version": "1.0",
+            "schema_version": "1.1",
             "deterministic": result.deterministic.model_copy(update={
                 "sample_rows": [{"region": "Riyadh", "WKT": geometry}],
             }),
         })
         store.save_profile(legacy)
         refreshed = asyncio.run(profile_csv(ctx, source.dataset_id))
-    assert refreshed.schema_version == "1.1"
+    assert refreshed.schema_version == "1.2"
     assert "MULTIPOLYGON" not in refreshed.model_dump_json()
 
 
-def test_upload_page_and_json_profile(store):
+def test_any_oversized_text_column_is_excluded_from_model_inputs(store):
+    large_value = "x" * 300
+    source = store.save_upload("generic.csv", f"id,description\n1,{large_value}\n".encode())
+    ctx = tool_context(store)
+    with ctx.deps.semantic_profiler.override(model=TestModel(custom_output_args=semantic_output(source.headers))):
+        with capture_run_messages() as messages:
+            result = asyncio.run(profile_csv(ctx, source.dataset_id))
+    column = result.deterministic.columns[1]
+    assert column.maximum_value_bytes == 300
+    assert column.values_omitted
+    assert large_value not in str(messages)
+    assert large_value not in result.model_dump_json()
+
+
+def test_chat_upload_api_and_json_profile(store):
     app = Starlette()
     add_upload_routes(app, store)
     with TestClient(app) as client:
-        assert client.get("/datasets/upload").status_code == 200
+        assert client.get("/datasets/upload").status_code == 405
         uploaded = client.post("/datasets/upload", files={"file": ("sales.csv", SALES, "text/csv")})
-        assert uploaded.status_code == 200
-        dataset_id = re.search(r"ds_[0-9a-f]{32}", uploaded.text).group()
+        assert uploaded.status_code == 201
+        dataset_id = uploaded.json()["dataset_id"]
+        assert re.fullmatch(r"ds_[0-9a-f]{32}", dataset_id)
+        assert uploaded.json()["filename"] == "sales.csv"
+        assert "Upload CSV" in client.get("/datasets/chat-upload.js").text
         url = f"/datasets/{dataset_id}/profile"
         assert client.get(url).status_code == 404
         ctx = tool_context(store)

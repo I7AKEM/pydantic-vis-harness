@@ -23,6 +23,7 @@ from profile_models import (
 
 SAMPLE_ROWS = 5
 VALUE_CHARACTERS = 120
+MAX_MODEL_VALUE_BYTES = 256
 OMIT_VALUE_COLUMNS = {"wkt"}
 NUMERIC_TYPES = ("TINYINT", "SMALLINT", "INTEGER", "BIGINT", "HUGEINT", "UTINYINT",
                  "USMALLINT", "UINTEGER", "UBIGINT", "UHUGEINT", "FLOAT", "DOUBLE", "DECIMAL")
@@ -52,8 +53,9 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
         unique_rows = connection.execute(f"SELECT count(*) FROM (SELECT DISTINCT * FROM {table})").fetchone()[0]
         for index, (name, physical_type, *_rest) in enumerate(schema):
             column = quote_identifier(name)
-            null_count, distinct_count = connection.execute(
-                f"SELECT count(*) - count({column}), count(DISTINCT {column}) FROM {table}"
+            null_count, distinct_count, maximum_value_bytes = connection.execute(
+                f"SELECT count(*) - count({column}), count(DISTINCT {column}), "
+                f"coalesce(max(octet_length(encode(CAST({column} AS VARCHAR)))), 0) FROM {table}"
             ).fetchone()
             stats = ColumnStatistics(
                 name=name,
@@ -62,12 +64,21 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
                 null_count=null_count,
                 null_percentage=100 * null_count / row_count if row_count else 0,
                 distinct_count=distinct_count,
-                values_omitted=name.casefold() in OMIT_VALUE_COLUMNS,
+                maximum_value_bytes=maximum_value_bytes,
+                values_omitted=(
+                    maximum_value_bytes > MAX_MODEL_VALUE_BYTES
+                    or name.casefold() in OMIT_VALUE_COLUMNS
+                ),
             )
             if row_count and null_count == row_count:
                 warnings.append(f"{name}: all values are null.")
             elif distinct_count == 1:
                 warnings.append(f"{name}: only one distinct non-null value.")
+
+            # Decide from the entire column, before retrieving any values for a model.
+            if stats.values_omitted:
+                columns.append(stats)
+                continue
 
             if physical_type.startswith(NUMERIC_TYPES):
                 values = connection.execute(
@@ -91,7 +102,7 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
                     f"SELECT min({column}), max({column}) FROM {table}"
                 ).fetchone()
                 stats.earliest, stats.latest = preview(earliest), preview(latest)
-            elif not stats.values_omitted:
+            else:
                 common = connection.execute(
                     f"SELECT {column}, count(*) AS frequency FROM {table} "
                     f"WHERE {column} IS NOT NULL GROUP BY {column} "
@@ -100,7 +111,7 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
                 stats.common_values = [ValueCount(value=preview(value), count=count) for value, count in common]
             columns.append(stats)
 
-        # WKT stays in DuckDB. Neither the child nor the parent receives its values.
+        # Oversized columns stay in DuckDB; neither agent receives their values.
         sample_names = [c.name for c in columns if not c.values_omitted]
         sample = []
         if sample_names:
@@ -118,7 +129,8 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
         sample_description=(
             f"Statistics cover every imported row. Sample: first {SAMPLE_ROWS} rows in import order; "
             f"sample and common-value text is capped at {VALUE_CHARACTERS} characters. "
-            "WKT values are excluded from samples and common values; only their type and counts are included. "
+            f"Columns containing any value over {MAX_MODEL_VALUE_BYTES} UTF-8 bytes, and WKT columns, "
+            "are excluded entirely from samples and common values; only metadata and counts are included. "
             "Numeric aggregates use finite double-precision values and population standard deviation. "
             "CSV settings: UTF-8, comma delimiter, header row, full-file type inference, empty fields as null."
         ),

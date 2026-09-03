@@ -5,7 +5,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, FiniteFloat
 
-PROFILE_VERSION = "1.1"
+PROFILE_VERSION = "1.2"
 
 
 class UploadedDataset(BaseModel):
@@ -40,6 +40,7 @@ class ColumnStatistics(BaseModel):
     null_count: int
     null_percentage: float
     distinct_count: int
+    maximum_value_bytes: int = 0
     values_omitted: bool = False
     common_values: list[ValueCount] = Field(default_factory=list)
     numeric: NumericStatistics | None = None

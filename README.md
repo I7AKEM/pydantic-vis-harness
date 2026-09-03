@@ -28,6 +28,10 @@ uv run uvicorn main:app --host 127.0.0.1 --port 7932 --reload
 
 Open the browser at http://127.0.0.1:7932.
 
+The app continues to use `Agent.to_web()`. Its `html_source` setting loads a
+pinned release of Pydantic's chat UI with the local CSV control added to the
+composer, following the [Pydantic Web Chat UI documentation](https://pydantic.dev/docs/ai/guides/web/#custom-html-source).
+
 In PyCharm, use **Run → Edit Configurations → + → Python**:
 
 - Interpreter: the project's `.venv` (Python 3.12).
@@ -39,12 +43,12 @@ Click **Run**. The app loads `.env` automatically.
 
 ## Profile a CSV
 
-1. Open http://127.0.0.1:7932/datasets/upload and upload your CSV.
-2. Copy the message shown on the upload page into the chat.
+1. Click **Upload CSV** in the chat and choose your file.
+2. The chat sends the file reference automatically.
 3. The agent calls `profile_csv` and summarizes the result. Follow its JSON link
    to view the complete structured profile.
 
-The upload page receives the file; the one agent tool imports it into DuckDB,
+The chat upload control stores the file locally; the one agent tool imports it into DuckDB,
 computes statistics, calls the semantic profiler, and saves the combined
 `DatasetProfile`. Completed profiles are reused. If semantic profiling fails,
 statistics are saved as a partial profile; asking again retries the semantic stage.
@@ -57,14 +61,15 @@ are retained. Empty fields are interpreted as null.
 Statistics cover every imported row: row and duplicate counts, missing and distinct
 values, numeric aggregates, date ranges, and common categorical values. Numeric
 aggregates use double precision, finite values, and population standard deviation.
-The semantic model receives these statistics and the first five rows; sample and
-common-value text is capped at 120 characters per value. Meaning, units, and
+The semantic model receives these statistics and the first five rows. Sample and
+common-value text is capped at 120 characters per value, and any column containing
+a value over 256 UTF-8 bytes is excluded from both. Meaning, units, and
 confidence are interpretations and may need your confirmation.
 
-WKT geometry values stay in DuckDB and are excluded entirely from both sample rows
-and common values sent to either agent. The profile includes only the WKT column's
-name, type, and counts, with `values_omitted: true`. Older cached profiles are
-recomputed when the profile format changes.
+Oversized values, including WKT geometry, stay in DuckDB and are excluded entirely
+from both agents' inputs. Their profile entries contain metadata and counts with
+`values_omitted: true`. WKT columns are always excluded, even when their current
+values are short. Older cached profiles are recomputed when the profile format changes.
 
 Uploaded CSVs live in `data/uploads/`; tables, metadata, and profile JSON live in
 `data/datasets.duckdb`. This is a local, single-user app. Files are selected by
@@ -79,7 +84,9 @@ dataset. The data survives server restarts and is ignored by Git.
 | `profile_models.py` | Validated profile schemas |
 | `dataset_store.py` | CSV validation, local files, and DuckDB storage |
 | `profiler.py` | The profiling tool, fixed queries, and semantic agent |
-| `uploads.py` | Upload form and saved profile JSON endpoint |
+| `chat.html` | Pydantic's documented custom HTML source |
+| `chat_upload.js` | CSV control inside Pydantic's chat composer |
+| `uploads.py` | Upload API and saved profile JSON endpoint |
 
 Run the tests without model API calls:
 

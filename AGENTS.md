@@ -9,9 +9,9 @@ The minimal chat foundation is complete. The current scope is CSV upload and pro
   calls one semantic profiler agent, combines the results in Python, and saves the profile.
 - Use typed dependencies, Pydantic output models, and normal agent delegation.
 - Pass the parent run's usage to the semantic agent. Never let LLM output replace measured statistics.
-- Keep WKT values out of both agents' prompts; include only column metadata and counts.
+- Keep values from every oversized column out of both agents' prompts; include only metadata and counts. Always exclude WKT values.
 - Keep uploaded files and DuckDB data in the ignored data/ directory.
-- A small Starlette upload page may sit alongside the built-in chat. No React application.
+- Put CSV upload in the built-in chat by using its documented custom HTML source. No separate upload page or React application.
 - Preserve the existing CodeMode, Advisor, and TemporalDurability capabilities.
 - Temporal support remains installed and attached; no workflow or worker exists yet.
 - Do not add chart rendering, a planner, additional agents, Docker, or a generic orchestration layer.

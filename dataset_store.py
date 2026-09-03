@@ -52,6 +52,8 @@ class DatasetStore:
             raise ValueError("The CSV file is empty.")
         if len(content) > self.max_upload_bytes:
             raise ValueError("The CSV exceeds the upload size limit.")
+        # Geometry, JSON, and other large cells are stored locally, not sent to a model.
+        csv.field_size_limit(self.max_upload_bytes)
         try:
             reader = csv.reader(io.StringIO(content.decode("utf-8-sig"), newline=""), strict=True)
             headers = next(reader)
