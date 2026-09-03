@@ -1,11 +1,18 @@
 [project]
 name = "pydantic-vis-harness"
 version = "0.1.0"
-description = "Minimal Pydantic AI Web Chat agent using OpenRouter"
+description = "Pydantic AI chat with CSV profiling through DuckDB and OpenRouter"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "duckdb>=1.5.5",
     "pydantic-ai-harness[code-mode]>=0.28.1",
     "pydantic-ai-slim[openrouter,temporal,web]>=2.38.0",
     "python-dotenv>=1.2.3",
+    "python-multipart>=0.0.32",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
 ]
