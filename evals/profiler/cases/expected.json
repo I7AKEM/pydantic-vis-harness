@@ -22,7 +22,10 @@
         "continuous"
       ]
     },
-    "failed_checks": []
+    "failed_checks": [],
+    "units": {
+      "amount": "USD"
+    }
   },
   "quarterly": {
     "roles": {
@@ -39,7 +42,8 @@
         "discrete"
       ]
     },
-    "failed_checks": []
+    "failed_checks": [],
+    "units": {}
   },
   "survey": {
     "roles": {
@@ -56,7 +60,8 @@
         "discrete"
       ]
     },
-    "failed_checks": []
+    "failed_checks": [],
+    "units": {}
   },
   "citizens": {
     "roles": {
@@ -77,7 +82,8 @@
         "discrete"
       ]
     },
-    "failed_checks": []
+    "failed_checks": [],
+    "units": {}
   },
   "stores": {
     "roles": {
@@ -94,7 +100,8 @@
         "geographic"
       ]
     },
-    "failed_checks": []
+    "failed_checks": [],
+    "units": {}
   },
   "districts_wkt": {
     "roles": {
@@ -111,7 +118,8 @@
         "geographic"
       ]
     },
-    "failed_checks": []
+    "failed_checks": [],
+    "units": {}
   },
   "conflict_units": {
     "roles": {
@@ -125,7 +133,8 @@
     },
     "failed_checks": [
       "brief_unit_fits_numeric_column"
-    ]
+    ],
+    "units": {}
   },
   "conflict_codes": {
     "roles": {
@@ -139,7 +148,8 @@
     },
     "failed_checks": [
       "brief_codes_present_in_data"
-    ]
+    ],
+    "units": {}
   },
   "monthly": {
     "roles": {
@@ -155,7 +165,8 @@
         "discrete"
       ]
     },
-    "failed_checks": []
+    "failed_checks": [],
+    "units": {}
   },
   "wide": {
     "roles": {
@@ -170,7 +181,8 @@
         "discrete"
       ]
     },
-    "failed_checks": []
+    "failed_checks": [],
+    "units": {}
   },
   "arabic": {
     "roles": {
@@ -190,7 +202,8 @@
         "time"
       ]
     },
-    "failed_checks": []
+    "failed_checks": [],
+    "units": {}
   },
   "ids": {
     "roles": {
@@ -209,6 +222,7 @@
         "nominal"
       ]
     },
-    "failed_checks": []
+    "failed_checks": [],
+    "units": {}
   }
 }

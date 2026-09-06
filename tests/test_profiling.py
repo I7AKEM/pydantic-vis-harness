@@ -1,7 +1,7 @@
 import asyncio
 
 import pytest
-from pydantic_ai import ToolFailed, capture_run_messages
+from pydantic_ai import capture_run_messages
 from pydantic_ai.messages import ModelResponse, ToolCallPart
 from pydantic_ai.models.function import FunctionModel
 from pydantic_ai.models.test import TestModel
@@ -9,7 +9,7 @@ from pydantic_ai.usage import RunUsage
 
 from dataset_store import DatasetStore
 from measurements import compute_statistics
-from profile_models import DataBrief, DatasetProfile
+from profile_models import DataBrief
 from profiler import create_profiler, profile_dataset
 
 SALES = (
@@ -216,3 +216,20 @@ def test_any_oversized_text_column_is_excluded_from_model_inputs(store, profiler
     assert result.deterministic.columns[1].values_omitted
     assert large_value not in str(messages)
     assert large_value not in result.model_dump_json()
+
+
+def test_concurrent_callers_share_one_profiling_run(store, profiler):
+    source = store.save_upload("sales.csv", SALES)
+    usage = RunUsage()
+
+    async def both():
+        return await asyncio.gather(
+            profile_dataset(store, profiler, source.dataset_id, usage=usage),
+            profile_dataset(store, profiler, source.dataset_id, usage=usage),
+        )
+
+    with profiler.override(model=quiet(source.headers)):
+        first, second = asyncio.run(both())
+    assert first == second
+    assert usage.requests == 1
+    assert store.get_profile(source.dataset_id) == first

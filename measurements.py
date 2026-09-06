@@ -133,7 +133,7 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
                 ).fetchall()
                 stats.common_values = [ValueCount(value=preview(value), count=count) for value, count in common]
                 if is_text:
-                    _text_labels(connection, table, column, stats, distinct_count)
+                    _text_labels(connection, table, column, stats, distinct_count, row_count - null_count)
             columns.append(stats)
 
         # Oversized columns stay in DuckDB; neither agent receives their values.
@@ -197,14 +197,14 @@ def _numeric_labels(connection, table, column, name, stats, row_count, null_coun
         stats.measurement_levels.append("geographic")
 
 
-def _text_labels(connection, table, column, stats, distinct_count) -> None:
+def _text_labels(connection, table, column, stats, distinct_count, non_null) -> None:
     if distinct_count == 2:
         (values,) = connection.execute(
             f"SELECT list(DISTINCT lower(trim({column}))) FROM {table} WHERE {column} IS NOT NULL"
         ).fetchone()
         if set(values) in BOOLEAN_PAIRS:
             stats.boolean_vocabulary = sorted(values)
-    if 2 <= distinct_count <= MAX_ORDINAL_DISTINCT:
+    if 2 <= distinct_count <= MAX_ORDINAL_DISTINCT and distinct_count < non_null:
         non_matching, templates = connection.execute(
             f"SELECT count(*) FILTER (WHERE NOT regexp_matches({column}, ?)), "
             f"count(DISTINCT regexp_replace({column}, ?, '#', 'g')) FROM {table} WHERE {column} IS NOT NULL",
@@ -215,7 +215,7 @@ def _text_labels(connection, table, column, stats, distinct_count) -> None:
                 f"SELECT regexp_replace(min({column}), ?, '#', 'g') FROM {table}", [DIGITS_SQL_PATTERN]
             ).fetchone()[0]
             stats.measurement_levels.append("ordinal")
-    if 1 <= distinct_count <= MAX_CODE_DISTINCT:
+    if 1 <= distinct_count <= MAX_CODE_DISTINCT and distinct_count < non_null:
         (longest,) = connection.execute(f"SELECT max(length({column})) FROM {table}").fetchone()
         if longest is not None and longest <= MAX_CODE_LENGTH:
             stats.codes = [

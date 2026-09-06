@@ -27,6 +27,8 @@ from profile_review import failed_checks, run_checks
 log = logging.getLogger("profiler")
 SEMANTIC_TIMEOUT_SECONDS = 90
 MAX_LISTED_DATASETS = 20
+# Concurrent callers without an explicit brief share the dataset task.
+_in_flight: dict[str, asyncio.Task[DatasetProfile]] = {}
 
 PROFILER_INSTRUCTIONS = """
 You interpret dataset measurements. You never compute them.
@@ -96,6 +98,30 @@ def create_profiler(model: str) -> Agent[ProfilerInput, SemanticProfile]:
 
 
 async def profile_dataset(
+    store: DatasetStore,
+    profiler: Agent[ProfilerInput, SemanticProfile],
+    dataset_id: str,
+    brief: DataBrief | None = None,
+    usage: RunUsage | None = None,
+) -> DatasetProfile:
+    """Measure, interpret, review, and save. Concurrent callers for one dataset share a single run.
+
+    Raises DatasetNotFound, ValueError, or duckdb.Error.
+    """
+    running = _in_flight.get(dataset_id)
+    if brief is None and running is not None:
+        return await running
+    task = asyncio.create_task(_profile_dataset(store, profiler, dataset_id, brief, usage))
+    if brief is None:
+        _in_flight[dataset_id] = task
+    try:
+        return await task
+    finally:
+        if _in_flight.get(dataset_id) is task:
+            del _in_flight[dataset_id]
+
+
+async def _profile_dataset(
     store: DatasetStore,
     profiler: Agent[ProfilerInput, SemanticProfile],
     dataset_id: str,

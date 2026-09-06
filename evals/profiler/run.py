@@ -2,7 +2,7 @@
 
     uv run python -m evals.profiler.run
 
-Scores: role accuracy per case, whether every expected failed check was flagged, and cost.
+Scores: role and unit accuracy per case, whether every expected failed check was flagged, and cost.
 """
 
 import asyncio
@@ -35,8 +35,22 @@ class RoleAccuracy(Evaluator[dict, DatasetProfile, dict]):
 
 
 @dataclass
+class UnitAccuracy(Evaluator[dict, DatasetProfile, dict]):
+    def evaluate(self, ctx: EvaluatorContext[dict, DatasetProfile, dict]) -> float:
+        wanted = ctx.expected_output.get("units", {})
+        if not wanted:
+            return 1.0
+        if ctx.output.semantic is None:
+            return 0.0
+        got = {c.name: (c.unit or "").strip().casefold() for c in ctx.output.semantic.columns}
+        return sum(got.get(name) == unit.casefold() for name, unit in wanted.items()) / len(wanted)
+
+
+@dataclass
 class ExpectedChecksFlagged(Evaluator[dict, DatasetProfile, dict]):
     def evaluate(self, ctx: EvaluatorContext[dict, DatasetProfile, dict]) -> bool:
+        if ctx.output.semantic is None:
+            return False
         flagged = {c.check for c in failed_checks(ctx.output.review)}
         return set(ctx.expected_output["failed_checks"]) <= flagged
 
@@ -56,7 +70,7 @@ def load_cases() -> list[Case]:
 
 
 def build_dataset() -> Dataset:
-    return Dataset(name="profiler-phase-1", cases=load_cases(), evaluators=[RoleAccuracy(), ExpectedChecksFlagged()])
+    return Dataset(name="profiler-phase-1", cases=load_cases(), evaluators=[RoleAccuracy(), ExpectedChecksFlagged(), UnitAccuracy()])
 
 
 def main() -> None:

@@ -10,6 +10,7 @@ CASES = {
                "1004,North,2026-01-05,45.25\n1005,South,2026-01-05,310\n1006,West,2026-01-06,99\n"
                "1007,East,2026-01-07,150\n1008,North,2026-01-08,60\n",
         "brief": {"raw_question": "Sales by region", "units": {"amount": "USD"}},
+        "units": {"amount": "USD"},
         "roles": {"order_id": "identifier", "region": "category", "order_date": "time", "amount": "measure"},
         "levels": {"order_id": ["interval", "discrete"], "region": ["nominal"], "order_date": ["time"],
                    "amount": ["interval", "continuous"]},
@@ -104,7 +105,8 @@ def write_cases(directory: Path) -> dict:
         (directory / f"{name}.csv").write_text(case["csv"], encoding="utf-8")
         if "brief" in case:
             (directory / f"{name}.brief.json").write_text(json.dumps(case["brief"], ensure_ascii=False), encoding="utf-8")
-        expected[name] = {"roles": case["roles"], "levels": case["levels"], "failed_checks": case["failed_checks"]}
+        expected[name] = {"roles": case["roles"], "levels": case["levels"], "failed_checks": case["failed_checks"],
+                          "units": case.get("units", {})}
     (directory / "expected.json").write_text(json.dumps(expected, ensure_ascii=False, indent=2), encoding="utf-8")
     return expected
 

@@ -39,7 +39,7 @@ def run_checks(statistics: DeterministicProfile, semantic: SemanticProfile,
             ))
         if column.role == "measure":
             checks.append(_check(
-                column.name, "measure_is_numeric", "error", stats.numeric is not None,
+                column.name, "measure_is_numeric", "error", stats.numeric is not None or stats.values_omitted,
                 f"{column.name}: role is measure but the column has no numeric statistics.",
             ))
         if column.unit is not None and column.role != "measure":

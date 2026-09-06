@@ -87,3 +87,9 @@ def test_brief_conflicts_are_warnings_not_errors():
 def test_semantic_column_not_in_dataset_is_an_error():
     result = run_checks(statistics(stat("a")), semantic(b=("text", None, None)))
     assert names(failed_checks(result, "error")) == ["column_exists"]
+
+
+def test_omitted_measure_is_not_penalized():
+    stats = statistics(stat("shape_area", "DOUBLE", values_omitted=True))
+    result = run_checks(stats, semantic(shape_area=("measure", None, None)))
+    assert failed_checks(result) == []

@@ -24,7 +24,7 @@ def test_dates_are_time(store):
 
 
 def test_ordinal_pattern_from_prefix_and_number(store):
-    content = b"quarter,week,label\nQ1,Week 1,alpha\nQ2,Week 2,beta\nQ3,Week 10,gamma\nQ4,Week 11,delta\n"
+    content = b"quarter,week,label\nQ1,Week 1,alpha\nQ2,Week 2,beta\nQ3,Week 10,gamma\nQ4,Week 11,delta\nQ1,Week 1,alpha\nQ2,Week 2,beta\n"
     columns = profile_of(store, "o.csv", content)
     assert columns["quarter"].measurement_levels == ["nominal", "ordinal"]
     assert columns["quarter"].ordinal_pattern == "Q#"
@@ -87,3 +87,11 @@ def test_geometry_named_numeric_column_is_omitted_without_statistics(store):
     assert columns["shape_area"].measurement_levels == ["interval"]
     assert columns["shape_area"].geographic_role is None
     assert not columns["district"].values_omitted
+
+
+def test_unique_values_are_neither_ordinal_nor_codes(store):
+    columns = profile_of(store, "u.csv", b"order_id,code\no1,A\no2,B\no3,C\n")
+    assert columns["order_id"].ordinal_pattern is None
+    assert columns["order_id"].codes is None
+    assert columns["order_id"].measurement_levels == ["nominal"]
+    assert columns["code"].codes is None

@@ -25,6 +25,8 @@ def test_generated_cases_match_their_deterministic_expectations(store, tmp_path)
         ])
         found = sorted(c.check for c in failed_checks(run_checks(statistics, semantic, brief)))
         assert found == sorted(case["failed_checks"]), (name, found)
+        assert isinstance(case["units"], dict)
+    assert expected["sales"]["units"] == {"amount": "USD"}
     assert json.loads((tmp_path / "expected.json").read_text()) == expected
 
 
@@ -34,4 +36,5 @@ def test_runner_builds_its_dataset_without_a_model():
     dataset = build_dataset()
     assert dataset.name == "profiler-phase-1"
     assert len(dataset.cases) == 12
+    assert len(dataset.evaluators) == 3
     assert {case.name for case in dataset.cases} >= {"sales", "conflict_units", "conflict_codes", "arabic"}
