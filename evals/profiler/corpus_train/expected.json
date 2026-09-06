@@ -1,0 +1,1273 @@
+{
+ "vizcsv-010c162b92ef3206": {
+  "roles": {
+   "year": "ordinal",
+   "new_jobs_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-03384a96e9fe5870": {
+  "roles": {
+   "airport": "geography",
+   "destination": "category",
+   "flight_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-070773160d055614": {
+  "roles": {
+   "wealth_level": "ordinal",
+   "avg_children": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-09050180d3961b03": {
+  "roles": {
+   "percentage": "unknown",
+   "domestic_workers_count": "measure",
+   "total_filipino_residents_count": "measure",
+   "snapshot_date": "time"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-098b9b3fe9f8ba83": {
+  "roles": {
+   "city_size_category": "ordinal",
+   "city_count": "measure",
+   "total_population": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-0f7f30f49b7f8d2f": {
+  "roles": {
+   "exit_year": "ordinal",
+   "citizens_who_exited": "measure",
+   "citizens_with_exports_within_6months": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-0fb4349d19499ce0": {
+  "roles": {
+   "year": "ordinal",
+   "bahrain_visitors": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-10ae7bdd9b85270a": {
+  "roles": {
+   "nationality": "category",
+   "count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-11d58745a95a7a08": {
+  "roles": {
+   "saudi_female_suppliers": "measure",
+   "total_saudi_suppliers": "measure",
+   "percentage_female": "unknown"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-1269941b51a0685b": {
+  "roles": {
+   "gender": "category",
+   "nationality": "category",
+   "exact_age": "measure",
+   "person_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-1280f463ac63c0bc": {
+  "roles": {
+   "violator_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-1310bafd7e3e8788": {
+  "roles": {
+   "wealth_level": "ordinal",
+   "average_household_size": "measure",
+   "household_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-1706fb33ef7fd300": {
+  "roles": {
+   "grad_year": "ordinal",
+   "foreign_grad_count": "measure",
+   "growth_rate_percent": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-170fa6c241a5b3e8": {
+  "roles": {
+   "region": "geography",
+   "avg_household_size": "measure",
+   "national_avg": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-181c9d23bd80cf9c": {
+  "roles": {
+   "saudis_first_gosi_2022": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-1adcf9de6971a077": {
+  "roles": {
+   "married_count": "measure",
+   "total_count": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-1d9cda665cf60239": {
+  "roles": {
+   "pk_id": "identifier",
+   "app_name": "category",
+   "status": "category",
+   "order_number": "identifier",
+   "price": "measure",
+   "order_date": "unknown",
+   "order_category_name_en": "category",
+   "order_category_name_ar": "category",
+   "create_request_time": "unknown",
+   "acceptance_time": "unknown",
+   "assign_driver_request_time": "unknown",
+   "delivery_time": "unknown",
+   "store_name": "text",
+   "authority_name_en": "category",
+   "authority_name_ar": "category",
+   "customer_region": "geography",
+   "customer_city": "geography",
+   "customer_district": "geography",
+   "store_region": "geography",
+   "store_city": "geography",
+   "store_district": "geography",
+   "store_latitude": "geography",
+   "store_longitude": "geography",
+   "customer_latitude": "geography",
+   "customer_longitude": "geography",
+   "path_time": "measure",
+   "path_distance_in_meter": "measure",
+   "path_wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-1ddfa1a4c0823358": {
+  "roles": {
+   "region": "geography",
+   "richpercentage": "measure",
+   "wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-1e2bacf0dff5563b": {
+  "roles": {
+   "wealth_level": "ordinal",
+   "total_count": "measure",
+   "postgrad_count": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-1ea76a97e400d852": {
+  "roles": {
+   "year": "ordinal",
+   "month": "ordinal",
+   "visitor_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-244e80ce1f6ea1e6": {
+  "roles": {
+   "city": "geography",
+   "violation_type_description": "category",
+   "violation_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-2480250f05e53a13": {
+  "roles": {
+   "region_name": "geography",
+   "population_count": "measure",
+   "active_jobs_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-262c92a13f5178a0": {
+  "roles": {
+   "year": "ordinal",
+   "avg_under_25": "measure",
+   "avg_over_25": "measure",
+   "drivers_under_25": "measure",
+   "drivers_over_25": "measure",
+   "violations_under_25": "measure",
+   "violations_over_25": "measure",
+   "pct_difference": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-2bc0cfa90c65f142": {
+  "roles": {
+   "city": "geography",
+   "wealthy_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-2da836322feb0a01": {
+  "roles": {
+   "wealth_level": "ordinal",
+   "percentage": "measure",
+   "cumulative_pct": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-3283a737bb04b7d2": {
+  "roles": {
+   "job_title": "category",
+   "graduate_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-3360bb636fce068c": {
+  "roles": {
+   "year": "ordinal",
+   "active_employees": "measure",
+   "prev_year_count": "measure",
+   "growth_rate_pct": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-34c1bd07e9e8dda4": {
+  "roles": {
+   "university_name": "category",
+   "avg_days_to_graduate": "measure",
+   "graduate_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-39471b0e4a5d3fc5": {
+  "roles": {
+   "profession_group": "category",
+   "total_violations": "measure",
+   "unique_violators": "measure",
+   "avg_violations_per_person": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-39d623d403ef86e5": {
+  "roles": {
+   "person_type": "category",
+   "entry_mode_value": "category",
+   "trip_count": "measure",
+   "unique_persons": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-3b62e4047e2cb455": {
+  "roles": {
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-3c9b38b7a1e11816": {
+  "roles": {
+   "total_salaries_2023": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-41cce225b5d818d2": {
+  "roles": {
+   "qualification": "category",
+   "male_salary": "measure",
+   "female_salary": "measure",
+   "wage_gap": "measure",
+   "wage_gap_percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-442a491c20867c73": {
+  "roles": {
+   "age_group": "ordinal",
+   "population_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-442c49334e0784cf": {
+  "roles": {
+   "grad_year": "ordinal",
+   "graduate_count": "measure",
+   "prev_year_count": "measure",
+   "growth_rate": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-44cfda42866aa5ae": {
+  "roles": {
+   "total_poor_population": "measure",
+   "higher_education_count": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-468b4112af9ead1d": {
+  "roles": {
+   "violation_year": "ordinal",
+   "drivers_under_25": "measure",
+   "drivers_over_25": "measure",
+   "violations_under_25": "measure",
+   "violations_over_25": "measure",
+   "avg_violations_under_25": "measure",
+   "avg_violations_over_25": "measure",
+   "pct_difference": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-46dad75ae7fa7b62": {
+  "roles": {
+   "total_postgrad": "measure",
+   "same_university_returners": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-4a52f82aca78cd51": {
+  "roles": {
+   "city": "geography",
+   "municipality": "geography",
+   "district": "geography",
+   "population_count": "measure",
+   "wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-4af8ec6ad3258a1c": {
+  "roles": {
+   "violation_year": "ordinal",
+   "avg_violations_under_25": "measure",
+   "avg_violations_over_25": "measure",
+   "percentage_difference": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-4e5e9a7e87bf8dfc": {
+  "roles": {
+   "id": "identifier",
+   "birth_date": "time",
+   "age": "measure",
+   "city": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-4ed9d72a0a3ae246": {
+  "roles": {
+   "region": "geography",
+   "gender": "category",
+   "population": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-4fe57ec912cce198": {
+  "roles": {
+   "violation_year": "ordinal",
+   "average_violations_per_driver": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-51106a33e53ff6f2": {
+  "roles": {
+   "violation_year": "ordinal",
+   "avg_under_25": "measure",
+   "avg_over_25": "measure",
+   "pct_difference": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-513085257f7a3729": {
+  "roles": {
+   "wealth_level": "ordinal",
+   "average_children_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-51d8ee210d07e31f": {
+  "roles": {
+   "الجنسية": "category",
+   "عدد_الأفراد": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-556299306be42578": {
+  "roles": {
+   "gender": "category",
+   "nationality": "category",
+   "person_type": "category",
+   "group_count": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-5a978d632cfd754c": {
+  "roles": {
+   "percentage_female_saudi": "unknown",
+   "total_saudi_suppliers": "measure",
+   "female_saudi_suppliers": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-5ab7c06fb1936175": {
+  "roles": {
+   "year": "ordinal",
+   "month": "ordinal",
+   "tourist_visitors": "measure",
+   "prev_month_visitors": "measure",
+   "growth_rate_percent": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-5b598d47ed1741aa": {
+  "roles": {
+   "population_type": "category",
+   "gender": "category",
+   "age_group": "ordinal",
+   "count": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-5b75d7ceaceab8b6": {
+  "roles": {
+   "grad_year": "ordinal",
+   "bachelor_count": "measure",
+   "prev_year_count": "measure",
+   "yoy_growth_rate_pct": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-5cd71a369b0b665b": {
+  "roles": {
+   "region": "geography",
+   "avg_household_size": "measure",
+   "national_avg_household_size": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-5db4e859a906f4d4": {
+  "roles": {
+   "نوع_الشخص": "category",
+   "الجنس": "category",
+   "العدد": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-5fbab3a001f0b4ba": {
+  "roles": {
+   "region": "geography",
+   "alien_to_saudi_ratio": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-601a174b0df48bb9": {
+  "roles": {
+   "region": "geography",
+   "total_population": "measure",
+   "males": "measure",
+   "females": "measure",
+   "age_0_14": "measure",
+   "age_15_29": "measure",
+   "age_30_44": "measure",
+   "age_45_59": "measure",
+   "age_60_plus": "measure",
+   "wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-6157cbb868c22e86": {
+  "roles": {
+   "nationality": "category",
+   "most_used_port": "geography",
+   "port_entries": "measure",
+   "total_entries": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-615ec665196de860": {
+  "roles": {
+   "person_type": "category",
+   "average_household_size": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-620e192d0fd6f826": {
+  "roles": {
+   "wealth_level": "ordinal",
+   "avg_children": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-64538506631268ea": {
+  "roles": {
+   "university": "category",
+   "avg_normalized_gpa": "measure",
+   "student_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-64934e67357d1530": {
+  "roles": {
+   "violation_year": "ordinal",
+   "avg_over_25": "measure",
+   "avg_under_25": "measure",
+   "percentage_difference": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-649f7c35cff701c0": {
+  "roles": {
+   "wealth_level": "ordinal",
+   "total_females": "measure",
+   "postgrad_females": "measure",
+   "postgrad_percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-6616fb91afa0ee0e": {
+  "roles": {
+   "year_month": "ordinal",
+   "visitor_count": "measure",
+   "growth_rate_pct": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-67b12f8d67a3af40": {
+  "roles": {
+   "birth_year": "ordinal",
+   "employee_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-6c8cc1666963d616": {
+  "roles": {
+   "under_25_avg": "measure",
+   "over_25_avg": "measure",
+   "percentage_difference": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-6caf2233e0af163b": {
+  "roles": {
+   "region": "geography",
+   "female_count": "measure",
+   "male_count": "measure",
+   "total_count": "measure",
+   "female_percentage": "measure",
+   "male_percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-71ad344b7a106528": {
+  "roles": {
+   "app_name": "category",
+   "customer_city": "geography",
+   "store_city": "geography",
+   "price": "measure",
+   "path_wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-723bbc49059afa27": {
+  "roles": {
+   "path_wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-73777b277dd2df9e": {
+  "roles": {
+   "wealth_level": "ordinal",
+   "avg_household_size": "measure",
+   "total_households": "measure",
+   "region": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-755f793be33c1277": {
+  "roles": {
+   "snapshot_date": "time",
+   "total_population": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-76a4f9fe5ba2e6ff": {
+  "roles": {
+   "total_population": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-77f97083ad0e424d": {
+  "roles": {
+   "birth_year": "ordinal",
+   "employee_count": "measure",
+   "average_salary": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-7868c5b435a35937": {
+  "roles": {
+   "wealth_level": "ordinal",
+   "avg_payment_days": "measure",
+   "violation_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-793badd4dede9c25": {
+  "roles": {
+   "violation_year": "ordinal",
+   "under_25_avg": "measure",
+   "over_25_avg": "measure",
+   "percentage_difference": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-7a01599b82a646f2": {
+  "roles": {
+   "average_trips_per_individual": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-7b73e00f5a9acbf7": {
+  "roles": {
+   "graduation_year": "ordinal",
+   "graduate_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-815b36d6b17ae7dc": {
+  "roles": {
+   "region": "geography",
+   "population_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-829ec116c1e0cbe9": {
+  "roles": {
+   "nationality": "category",
+   "entry_port": "geography",
+   "entry_count": "measure",
+   "total_entries": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-82e758150c50d02f": {
+  "roles": {
+   "age_group": "ordinal",
+   "with_higher_education": "measure",
+   "total_population": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-831abf1094773030": {
+  "roles": {
+   "education_group": "category",
+   "population_30_50": "measure",
+   "violators_count": "measure",
+   "total_infringements": "measure",
+   "violation_rate_per_person": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-85eb007f0c79578f": {
+  "roles": {
+   "region": "geography",
+   "snapshot_date": "time",
+   "الإجمالي": "measure",
+   "15-24": "measure",
+   "0-14": "measure",
+   "25-44": "measure",
+   "65+": "measure",
+   "45-64": "measure",
+   "wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-877f2a3730984e4e": {
+  "roles": {
+   "university_name": "category",
+   "graduate_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-87ebf6be710a836a": {
+  "roles": {
+   "nationality": "category",
+   "count_by_nationality": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-89276684e011122e": {
+  "roles": {
+   "unemployed_count": "measure",
+   "employed_count": "measure",
+   "recent_graduates_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-8be738ba6fdc3e77": {
+  "roles": {
+   "region": "geography",
+   "population_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-8d3bcfb667744984": {
+  "roles": {
+   "region": "geography",
+   "population": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-8db62ef1bd716c41": {
+  "roles": {
+   "app_name": "category",
+   "order_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-8f1e125efa0861bc": {
+  "roles": {
+   "person_type": "category",
+   "gender": "category",
+   "count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-8f706ab9f208d7db": {
+  "roles": {
+   "district": "geography",
+   "worker_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-912e8f5602253c6a": {
+  "roles": {
+   "العام": "ordinal",
+   "متوسط المخالفات السنوية للسائقين فوق 25 سنة": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-916384565d074a0d": {
+  "roles": {
+   "major_name": "category",
+   "total_graduates": "measure",
+   "employed_within_6_months": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-924231a95b136a78": {
+  "roles": {
+   "age_group": "category",
+   "count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-92e6d5bee4a72b39": {
+  "roles": {
+   "total_violations": "measure",
+   "unique_violation_events": "measure",
+   "latest_date": "time",
+   "earliest_date": "time"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-931e817b28c5673a": {
+  "roles": {
+   "wealth_level": "ordinal",
+   "cum_pct": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-98fe17bdec87024a": {
+  "roles": {
+   "city": "geography",
+   "population": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-9e75590151f7b7a0": {
+  "roles": {
+   "total_records": "measure",
+   "unique_national_ids": "measure",
+   "unique_business_ids": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-9f9e67d10f479c16": {
+  "roles": {
+   "job_sector": "category",
+   "avg_monthly_income": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-a37ff36a7557e756": {
+  "roles": {
+   "sponsor_region": "geography",
+   "worker_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-a5d4d6844bb2dcde": {
+  "roles": {
+   "region": "geography",
+   "gender": "boolean",
+   "pop_count": "measure",
+   "total_region": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-a6e88d9dbec260c8": {
+  "roles": {
+   "المنطقة": "geography",
+   "متوسط_عدد_أفراد_الأسرة": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-a7761ce7247590cc": {
+  "roles": {
+   "municipality": "geography",
+   "youth_count": "measure",
+   "district_count": "measure",
+   "density": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-a77aa27103725fc6": {
+  "roles": {
+   "region": "geography",
+   "gender": "category",
+   "population_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-a84dff81b391a197": {
+  "roles": {
+   "city": "geography",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-a987ac48cb20a44c": {
+  "roles": {
+   "zone": "geography",
+   "entry_count": "measure",
+   "exit_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-aab5c6c5e728c1c1": {
+  "roles": {
+   "المنطقة": "geography",
+   "متوسط_عدد_أفراد_الأسرة": "measure",
+   "wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-ab1d39cfc5d3cd93": {
+  "roles": {
+   "type": "category",
+   "avg_household_size": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-ac951afc1e53d382": {
+  "roles": {
+   "region": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-ae79cdc7d8e77066": {
+  "roles": {
+   "percentage": "measure",
+   "students_returned_to_same_university": "measure",
+   "total_postgraduates": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-b5d188da970cad0d": {
+  "roles": {
+   "region": "geography",
+   "gender": "category",
+   "population_count": "measure",
+   "total_region_population": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-b73356e90986653f": {
+  "roles": {
+   "name": "identifier"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-b9b02a1b59143a94": {
+  "roles": {
+   "avg_days_discounted": "measure",
+   "avg_days_non_discounted": "measure",
+   "difference": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-bcffc8efeaff54d2": {
+  "roles": {
+   "person_type": "category",
+   "trip_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-be23dbebb3cfc9e9": {
+  "roles": {
+   "year": "ordinal",
+   "month": "ordinal",
+   "visitor_count": "measure",
+   "prev_month_count": "measure",
+   "growth_rate_percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-be5e3246503d4691": {
+  "roles": {
+   "year": "ordinal",
+   "avg_over_25": "measure",
+   "avg_under_25": "measure",
+   "pct_difference": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-bfa0bf80d3dacee0": {
+  "roles": {
+   "year": "ordinal",
+   "month": "ordinal",
+   "tourist_visitors_count": "measure",
+   "prev_month_count": "measure",
+   "growth_rate_percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-bfec427bf3135ffe": {
+  "roles": {
+   "region": "geography",
+   "city": "geography",
+   "district": "geography",
+   "population": "measure",
+   "wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-c0929d6ebea2582e": {
+  "roles": {
+   "region": "geography",
+   "nationality": "category",
+   "population": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-c2315009d8035563": {
+  "roles": {
+   "arrival_count": "measure",
+   "departure_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-c5c53b28e31eb9bf": {
+  "roles": {
+   "path_wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-c61dd08461a844cc": {
+  "roles": {
+   "percentage_over_60": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-c6da0a0187a238a8": {
+  "roles": {
+   "education_group": "category",
+   "total_violations": "measure",
+   "unique_violators": "measure",
+   "population_30_50": "measure",
+   "violations_per_person": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-c8dab63cb92e3358": {
+  "roles": {
+   "airport": "geography",
+   "destination": "category",
+   "flight_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-cd58595da4454e63": {
+  "roles": {
+   "status_description": "category",
+   "total_fine": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-cedfb1135c28e1f0": {
+  "roles": {
+   "sponser_id": "identifier",
+   "resident_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-d1762a777a5d8f28": {
+  "roles": {
+   "job_sector": "category",
+   "avg_monthly_wage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-d44741b0b2807439": {
+  "roles": {
+   "total_employees": "measure",
+   "mismatched_count": "measure",
+   "mismatch_percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-d56055b907ca1490": {
+  "roles": {
+   "job_sector": "category",
+   "avg_monthly_wage": "measure",
+   "median_monthly_wage": "measure",
+   "job_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-d74a4645a10586ad": {
+  "roles": {
+   "count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-d777e3575a0294d3": {
+  "roles": {
+   "region_name": "geography",
+   "population_count": "measure",
+   "active_jobs_count": "measure",
+   "jobs_per_100_people": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-d7fb489a344da23d": {
+  "roles": {
+   "city": "geography",
+   "trip_year": "ordinal",
+   "citizen_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-da15461d94d596f1": {
+  "roles": {
+   "college_classification_name": "category",
+   "college_name": "category",
+   "enrollment_date": "time",
+   "gpa": "measure",
+   "gpa_type": "category",
+   "graduation_date": "time",
+   "id": "identifier",
+   "major_classification_name": "category",
+   "major_classification_parent_name": "category",
+   "major_name": "category",
+   "qualification": "category",
+   "study_type": "category",
+   "university_classification_name": "category",
+   "university_name": "category"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-da3ad013dc90ee17": {
+  "roles": {
+   "region": "geography",
+   "total_pop": "measure",
+   "citizen_pop": "measure",
+   "citizen_percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-db2e8fddc89a6f3a": {
+  "roles": {
+   "age_group": "ordinal",
+   "female_population": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-db5027c1e8dd161d": {
+  "roles": {
+   "year": "ordinal",
+   "total_births": "measure",
+   "resident_births": "measure",
+   "resident_percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-de1abfed1b99352d": {
+  "roles": {
+   "app_name": "category",
+   "total_value": "measure",
+   "order_count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-e07c573241abdb02": {
+  "roles": {
+   "population_count": "measure",
+   "wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-e0a430bc32da8a1c": {
+  "roles": {
+   "nationality": "category",
+   "most_used_port": "geography",
+   "port_entries": "measure",
+   "total_nationality_entries": "measure",
+   "port_percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-e60c2b77a35f6ebc": {
+  "roles": {
+   "nationality": "category",
+   "port": "geography",
+   "port_entries": "measure",
+   "total_for_nationality": "measure",
+   "port_percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-e648e69f48f66161": {
+  "roles": {
+   "record_count": "measure",
+   "wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-e9ff66ca65930ade": {
+  "roles": {
+   "city": "geography",
+   "wealth_level": "ordinal",
+   "qualification": "ordinal",
+   "count": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-ec9b6239518a7b5e": {
+  "roles": {
+   "district": "geography",
+   "population_increase": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-ed752a04bd232146": {
+  "roles": {
+   "نوع_المسافر": "category",
+   "عدد_الرحلات": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-eea1fdbaad35f5ea": {
+  "roles": {
+   "region": "geography",
+   "population_count": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-ef7d788d53af126a": {
+  "roles": {
+   "min_date": "unknown",
+   "max_date": "unknown",
+   "cnt": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-f16244d2756b0e53": {
+  "roles": {
+   "region": "geography",
+   "violation_count": "measure",
+   "wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-f21f1eea05e01308": {
+  "roles": {
+   "profession_group": "category",
+   "total_violators": "measure",
+   "total_violations": "measure",
+   "avg_violations_per_person": "measure",
+   "min_violations": "measure",
+   "max_violations": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-f3f3d604e3d68ab1": {
+  "roles": {
+   "year": "ordinal",
+   "violations_under_25": "measure",
+   "violations_over_25": "measure",
+   "drivers_under_25": "measure",
+   "drivers_over_25": "measure",
+   "avg_violations_under_25": "measure",
+   "avg_violations_over_25": "measure",
+   "pct_difference": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-f91723bce2abb15b": {
+  "roles": {
+   "wealth_level": "ordinal",
+   "cnt": "measure",
+   "mean_cnt": "measure",
+   "sd_cnt": "measure",
+   "z_score": "measure"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-fb27379578e26e40": {
+  "roles": {
+   "city": "geography",
+   "wealth_level": "ordinal",
+   "highest_education": "category",
+   "count": "measure",
+   "edu_rank": "ordinal"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-fc37cbaf9254781a": {
+  "roles": {
+   "المنطقة": "geography",
+   "متوسط_عدد_أفراد_الأسرة": "measure",
+   "المتوسط_الوطني": "measure",
+   "wkt": "geography"
+  },
+  "failed_checks": []
+ },
+ "vizcsv-fec875ba65e1153f": {
+  "roles": {
+   "city": "geography",
+   "gender": "category",
+   "count": "measure",
+   "percentage": "measure"
+  },
+  "failed_checks": []
+ }
+}

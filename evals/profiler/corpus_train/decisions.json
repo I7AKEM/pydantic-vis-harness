@@ -1,0 +1,41 @@
+{
+ "provenance": "Majority vote of Sonnet 4.6, GPT-5.4 mini, and Opus 5 over 521 columns (no ties). One case has two votes for Sonnet and one for Opus because they exceeded the 90 s profiling timeout.",
+ "rules": [
+  "Named ordered levels (Poor to Rich, small to large) are ordinal even without digits.",
+  "Place names, airports, and coordinates are geography; the widened deterministic hint overrides a majority category label.",
+  "An integer year column is ordinal: ordered periods, not a quantity to sum and not a date."
+ ],
+ "overrides": {
+  "place_name_hint": {
+   "vizcsv-03384a96e9fe5870": {
+    "airport": "geography"
+   }
+  },
+  "rules": {
+   "vizcsv-1e2bacf0dff5563b": {
+    "wealth_level": "ordinal"
+   },
+   "vizcsv-620e192d0fd6f826": {
+    "wealth_level": "ordinal"
+   },
+   "vizcsv-73777b277dd2df9e": {
+    "wealth_level": "ordinal"
+   },
+   "vizcsv-931e817b28c5673a": {
+    "wealth_level": "ordinal"
+   },
+   "vizcsv-f91723bce2abb15b": {
+    "wealth_level": "ordinal"
+   },
+   "vizcsv-fb27379578e26e40": {
+    "wealth_level": "ordinal"
+   },
+   "vizcsv-db5027c1e8dd161d": {
+    "year": "ordinal"
+   },
+   "vizcsv-098b9b3fe9f8ba83": {
+    "city_size_category": "ordinal"
+   }
+  }
+ }
+}
