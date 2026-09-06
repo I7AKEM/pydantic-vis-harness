@@ -67,7 +67,7 @@
  "vizcsv-175b070be7ef80ff": {
   "roles": {
    "nationality": "category",
-   "port": "category",
+   "port": "geography",
    "entry_count": "measure",
    "total_entries": "measure",
    "percentage": "measure"
@@ -416,7 +416,7 @@
  "vizcsv-f7cd3fa70e2c379c": {
   "roles": {
    "nationality": "category",
-   "entry_port": "category",
+   "entry_port": "geography",
    "entry_count": "measure",
    "total": "measure",
    "percentage": "measure"
