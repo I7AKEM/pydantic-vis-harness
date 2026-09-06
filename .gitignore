@@ -7,3 +7,5 @@ __pycache__/
 data/
 *.duckdb
 *.duckdb.wal
+.logfire/
+.superpowers/
