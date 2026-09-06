@@ -36,7 +36,8 @@ def test_ordinal_pattern_from_prefix_and_number(store):
 def test_boolean_vocabularies_and_native_booleans(store):
     content = b"satisfied,flag,answer\nyes,true,\xd9\x86\xd8\xb9\xd9\x85\nno,false,\xd9\x84\xd8\xa7\nyes,true,\xd9\x86\xd8\xb9\xd9\x85\n"
     columns = profile_of(store, "b.csv", content)
-    assert columns["satisfied"].boolean_vocabulary == ["no", "yes"]
+    assert columns["satisfied"].physical_type == "BOOLEAN"
+    assert columns["satisfied"].boolean_vocabulary == ["false", "true"]
     assert columns["flag"].physical_type == "BOOLEAN"
     assert columns["flag"].boolean_vocabulary == ["false", "true"]
     assert columns["flag"].measurement_levels == ["nominal"]

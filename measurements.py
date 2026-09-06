@@ -94,19 +94,9 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
             elif physical_type.startswith(TIME_TYPES):
                 stats.measurement_levels = ["time"]
             elif physical_type == "BOOLEAN":
+                # DuckDB normalizes yes/no to BOOLEAN at import.
                 stats.measurement_levels = ["nominal"]
                 stats.boolean_vocabulary = ["false", "true"]
-                if not stats.values_omitted:
-                    # BOOLEAN inference loses the original yes/no spelling; query the source as text.
-                    (values,) = connection.execute(
-                        f"SELECT list(DISTINCT lower(trim({column})) ORDER BY lower(trim({column}))) "
-                        "FROM read_csv(?, header=true, delim=',', all_varchar=true, "
-                        "strict_mode=true, null_padding=false, parallel=false) "
-                        f"WHERE {column} IS NOT NULL",
-                        [str(store.uploads / f"{source.dataset_id}.csv")],
-                    ).fetchone()
-                    if values is not None and set(values) in BOOLEAN_PAIRS:
-                        stats.boolean_vocabulary = values
             else:
                 stats.measurement_levels = ["nominal"]
                 if geometry_name or wkt_count > 0:
