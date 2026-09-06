@@ -19,7 +19,7 @@ from pydantic_evals.evaluators import Evaluator, EvaluatorContext
 from dataset_store import DatasetStore
 from profile_models import DataBrief, DatasetProfile
 from profile_review import failed_checks
-from profiler import create_profiler, profile_dataset
+from profiler import DEFAULT_PROFILER_MODEL, create_profiler, profile_dataset
 
 CASES_DIR = Path(__file__).with_name("cases")
 
@@ -75,7 +75,7 @@ def build_dataset() -> Dataset:
 
 def main() -> None:
     load_dotenv()
-    model = os.getenv("PYDANTIC_AI_PROFILER_MODEL") or os.getenv("PYDANTIC_AI_MODEL", "openrouter:anthropic/claude-sonnet-4.6")
+    model = os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL
     profiler = create_profiler(model)
     workdir = Path(tempfile.mkdtemp(prefix="profiler-evals-"))
     store = DatasetStore(workdir)

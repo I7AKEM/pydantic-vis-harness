@@ -16,9 +16,10 @@ Set `OPENROUTER_API_KEY` in `.env` to your OpenRouter API key. Set
 `PYDANTIC_AI_MODEL` to choose a model; the default is
 `openrouter:anthropic/claude-sonnet-4.6`.
 
-`PYDANTIC_AI_PROFILER_MODEL` optionally selects a different OpenRouter model for
-semantic profiling. When empty, it uses `PYDANTIC_AI_MODEL`. `MAX_UPLOAD_MB`
-defaults to 20. `DATA_DIRECTORY` defaults to the project's `data/` directory.
+`PYDANTIC_AI_PROFILER_MODEL` selects the OpenRouter model for semantic profiling.
+When empty, it uses `openrouter:openai/gpt-5.4-mini`, the fastest model that kept the
+evaluation scores (see `docs/phase-1-lessons.md`); the profiler runs with reasoning
+switched off. `MAX_UPLOAD_MB` defaults to 20. `DATA_DIRECTORY` defaults to the project's `data/` directory.
 
 Run the built-in Web Chat UI:
 

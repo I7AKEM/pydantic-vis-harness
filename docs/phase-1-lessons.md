@@ -10,6 +10,7 @@ Run with `uv run python -m evals.profiler.run` on 2026-09-06 against the twelve 
 | Date | Model | Role accuracy | Unit accuracy | Expected checks flagged | Time per profile |
 |---|---|---|---|---|---|
 | 2026-09-06 | openrouter:anthropic/claude-sonnet-4.6 | 0.958 average (10 cases at 1.00, sales and stores at 0.75) | 1.00 | 12 of 12 | 18 s average, 14 s to 27 s |
+| 2026-09-06 | openrouter:openai/gpt-5.4-mini, reasoning off (new default) | 0.979 average | 1.00 | 12 of 12 | 5.3 s average |
 
 Measurement levels are asserted deterministically by `tests/test_eval_cases.py` and pass without a model.
 Cost per profile was not measured by the runner; add token accounting to the report before the next phase.
@@ -54,3 +55,37 @@ Cost per profile was not measured by the runner; add token accounting to the rep
 - Shield the shared profiling task from a joining caller's cancellation, and credit a joining caller's usage.
 - Lift model-declared brief conflicts into the profile's warnings.
 - CodeMode was removed from the lead after Phase 1: both lead tools were excluded from its sandbox, so `run_code` was a scratchpad costing a model turn. Reintroduce it when the analyst's query tool runs inside the sandbox.
+
+## Profiler model benchmark
+
+Run on 2026-09-06 with a scratch driver over the twelve cases, six at a time, reasoning switched off where the endpoint
+allowed it. Time is seconds per profile. Requests counts model calls for all twelve profiles; the minimum is 24, so
+anything above it is retries or send-backs. Round two routed open-weight models to the highest-throughput host with
+OpenRouter's `:nitro` suffix.
+
+Result: `openai/gpt-5.4-mini` is three times faster than Sonnet 4.6, seven times cheaper, and the only model with every
+role right, so it is the new default. Among open weights, Gemma 4 31b was the fastest of all models at 2.2 s but missed
+more roles; Mistral Small, Qwen 3.8 27b, and GLM 5.3 Flash reached 0.917 to 0.958 but were slower or retried often.
+The gpt-oss models could not produce the structured profile reliably at low reasoning effort. Hosting mattered more
+than weights: the same DeepSeek and GLM models swung from unusable to usable depending on the host.
+
+| Model | Mean s | Max s | Role | Units | Checks | Requests | Notes |
+|---|---|---|---|---|---|---|---|
+| anthropic/claude-sonnet-4.6 | 16.5 | 26.4 | 0.958 | 1.00 | 12 of 12 | 25 |  |
+| anthropic/claude-haiku-4.5 | 7.1 | 8.6 | 0.958 | 1.00 | 12 of 12 | 25 |  |
+| google/gemini-3.8-flash | 10.8 | 21.6 | 0.868 | 1.00 | 12 of 12 | 27 | reasoning could not be switched off |
+| google/gemini-3.5-flash-lite | 5.0 | 7.2 | 0.958 | 1.00 | 12 of 12 | 31 | reasoning could not be switched off |
+| openai/gpt-5.4-mini | 5.5 | 7.0 | 1.000 | 1.00 | 12 of 12 | 24 |  |
+| openai/gpt-5.4-nano | 8.4 | 12.6 | 0.806 | 1.00 | 12 of 12 | 31 |  |
+| deepseek/deepseek-v4-flash | 21.3 | 37.9 | 0.875 | 1.00 | 12 of 12 | 29 |  |
+| qwen/qwen3.8-flash | 22.6 | 40.6 | 0.479 | 1.00 | 6 of 12 | 20 | 6 of 12 profiles failed |
+| z-ai/glm-5.3-flash | 60.6 | 90.2 | 0.604 | 0.92 | 8 of 12 | 17 | reasoning could not be switched off; 4 of 12 profiles failed |
+| mistralai/mistral-small-2603 | 5.5 | 9.2 | 0.917 | 1.00 | 12 of 12 | 30 |  |
+| google/gemma-4-31b-it:nitro | 2.2 | 4.5 | 0.889 | 1.00 | 12 of 12 | 26 | open weights, throughput-routed host |
+| meta-llama/llama-4-maverick:nitro | 12.3 | 19.4 | 0.896 | 1.00 | 12 of 12 | 21 | open weights, throughput-routed host |
+| qwen/qwen3.8-27b:nitro | 8.0 | 10.9 | 0.917 | 1.00 | 12 of 12 | 30 | open weights, throughput-routed host |
+| deepseek/deepseek-v4-flash:nitro | 46.3 | 90.2 | 0.583 | 0.92 | 7 of 12 | 35 | open weights, throughput-routed host; 5 of 12 profiles failed |
+| minimax/minimax-m3:nitro | 9.9 | 16.6 | 0.479 | 1.00 | 6 of 12 | 42 | open weights, throughput-routed host; 6 of 12 profiles failed |
+| openai/gpt-oss-120b:nitro | 1.8 | 2.8 | 0.417 | 0.92 | 5 of 12 | 31 | open weights, throughput-routed host; lowest reasoning effort (off refused); 7 of 12 profiles failed |
+| openai/gpt-oss-20b:nitro | 5.5 | 8.2 | 0.100 | 0.90 | 1 of 10 | 52 | open weights, throughput-routed host; lowest reasoning effort (off refused); 9 of 10 profiles failed; 2 runs raised |
+| z-ai/glm-5.3-flash:nitro | 10.8 | 37.0 | 0.958 | 1.00 | 12 of 12 | 44 | open weights, throughput-routed host; lowest reasoning effort (off refused) |

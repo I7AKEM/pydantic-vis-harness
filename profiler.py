@@ -63,6 +63,10 @@ class ProfilerInput(BaseModel):
         return self.model_dump_json(exclude={"review_attempts"})
 
 
+DEFAULT_PROFILER_MODEL = "openrouter:openai/gpt-5.4-mini"
+"""Fastest model that kept the Phase 1 evaluation scores; see docs/phase-1-lessons.md."""
+
+
 def create_profiler(model: str) -> Agent[ProfilerInput, SemanticProfile]:
     agent = Agent(
         model,
@@ -71,6 +75,7 @@ def create_profiler(model: str) -> Agent[ProfilerInput, SemanticProfile]:
         output_type=SemanticProfile,
         retries={"output": 2},
         instructions=PROFILER_INSTRUCTIONS,
+        model_settings={"thinking": False},  # the profile is interpretation, not reasoning; thinking only adds latency
     )
 
     @agent.tool

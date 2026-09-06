@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 from dataset_store import DatasetStore
 from lead import create_lead
-from profiler import AppDeps, create_profiler, profile_dataset
+from profiler import DEFAULT_PROFILER_MODEL, AppDeps, create_profiler, profile_dataset
 from uploads import add_upload_routes
 
 load_dotenv()
@@ -26,7 +26,7 @@ store = DatasetStore(
     max_upload_bytes=int(os.getenv("MAX_UPLOAD_MB", "20")) * 1024 * 1024,
     database=database,
 )
-profiler = create_profiler(os.getenv("PYDANTIC_AI_PROFILER_MODEL") or model)
+profiler = create_profiler(os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL)
 deps = AppDeps(store=store, profiler=profiler)
 agent = create_lead(model, advisor_model=os.getenv("PYDANTIC_AI_ADVISOR_MODEL", "openrouter:openai/gpt-5.6-sol"))
 
