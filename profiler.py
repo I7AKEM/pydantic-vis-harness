@@ -63,8 +63,8 @@ class ProfilerInput(BaseModel):
         return self.model_dump_json(exclude={"review_attempts"})
 
 
-DEFAULT_PROFILER_MODEL = "openrouter:openai/gpt-5.4-mini"
-"""Fastest model that kept the Phase 1 evaluation scores; see docs/phase-1-lessons.md."""
+DEFAULT_PROFILER_MODEL = "openrouter:google/gemma-4-31b-it:nitro"
+"""Fastest model in the Phase 1 benchmark, routed to the highest-throughput host; see docs/phase-1-lessons.md."""
 
 
 def create_profiler(model: str) -> Agent[ProfilerInput, SemanticProfile]:

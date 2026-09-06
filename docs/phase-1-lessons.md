@@ -10,7 +10,8 @@ Run with `uv run python -m evals.profiler.run` on 2026-09-06 against the twelve 
 | Date | Model | Role accuracy | Unit accuracy | Expected checks flagged | Time per profile |
 |---|---|---|---|---|---|
 | 2026-09-06 | openrouter:anthropic/claude-sonnet-4.6 | 0.958 average (10 cases at 1.00, sales and stores at 0.75) | 1.00 | 12 of 12 | 18 s average, 14 s to 27 s |
-| 2026-09-06 | openrouter:openai/gpt-5.4-mini, reasoning off (new default) | 0.979 average | 1.00 | 12 of 12 | 5.3 s average |
+| 2026-09-06 | openrouter:openai/gpt-5.4-mini, reasoning off | 0.979 average | 1.00 | 12 of 12 | 5.3 s average |
+| 2026-09-06 | openrouter:google/gemma-4-31b-it:nitro, reasoning off (new default, chosen for speed) | 0.889 average (conflict_units 0.50, arabic 0.67, sales and stores 0.75) | 1.00 | 12 of 12 | 3.1 s average |
 
 Measurement levels are asserted deterministically by `tests/test_eval_cases.py` and pass without a model.
 Cost per profile was not measured by the runner; add token accounting to the report before the next phase.
@@ -64,8 +65,8 @@ anything above it is retries or send-backs. Round two routed open-weight models 
 OpenRouter's `:nitro` suffix.
 
 Result: `openai/gpt-5.4-mini` is three times faster than Sonnet 4.6, seven times cheaper, and the only model with every
-role right, so it is the new default. Among open weights, Gemma 4 31b was the fastest of all models at 2.2 s but missed
-more roles; Mistral Small, Qwen 3.8 27b, and GLM 5.3 Flash reached 0.917 to 0.958 but were slower or retried often.
+role right. Among open weights, Gemma 4 31b was the fastest of all models at 2.2 s but missed more roles; it was chosen
+as the default for speed, with GPT-5.4 mini as the accurate alternative; Mistral Small, Qwen 3.8 27b, and GLM 5.3 Flash reached 0.917 to 0.958 but were slower or retried often.
 The gpt-oss models could not produce the structured profile reliably at low reasoning effort. Hosting mattered more
 than weights: the same DeepSeek and GLM models swung from unusable to usable depending on the host.
 
