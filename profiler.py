@@ -127,6 +127,19 @@ async def profile_dataset(
             del _in_flight[dataset_id]
 
 
+async def _run_with_one_retry(profiler, prompt: ProfilerInput, usage: RunUsage | None, dataset_id: str):
+    """A stalled request costs the whole timeout; one retry turns most stalls into a delay, not a partial profile."""
+    for attempt in (1, 2):
+        try:
+            async with asyncio.timeout(SEMANTIC_TIMEOUT_SECONDS):
+                return await profiler.run(prompt.prompt_json(), deps=prompt, usage=usage)
+        except TimeoutError:
+            if attempt == 2:
+                raise
+            log.warning("Semantic profiling of %s timed out after %s s; retrying once", dataset_id, SEMANTIC_TIMEOUT_SECONDS)
+            prompt.review_attempts = 0
+
+
 async def _profile_dataset(
     store: DatasetStore,
     profiler: Agent[ProfilerInput, SemanticProfile],
@@ -155,8 +168,7 @@ async def _profile_dataset(
     warnings: list[str] = []
     prompt = ProfilerInput(statistics=statistics, brief=brief)
     try:
-        async with asyncio.timeout(SEMANTIC_TIMEOUT_SECONDS):
-            result = await profiler.run(prompt.prompt_json(), deps=prompt, usage=usage)
+        result = await _run_with_one_retry(profiler, prompt, usage, dataset_id)
         semantic = result.output
         semantic_model = result.response.model_name
         review = run_checks(statistics, semantic, brief)

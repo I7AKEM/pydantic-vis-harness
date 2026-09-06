@@ -233,3 +233,22 @@ def test_concurrent_callers_share_one_profiling_run(store, profiler):
     assert first == second
     assert usage.requests == 1
     assert store.get_profile(source.dataset_id) == first
+
+
+def test_profiling_retries_once_after_a_timeout(store, profiler, monkeypatch):
+    import profiler as profiler_module
+
+    monkeypatch.setattr(profiler_module, "SEMANTIC_TIMEOUT_SECONDS", 0.2)
+    source = store.save_upload("sales.csv", SALES)
+    calls = []
+
+    async def slow_then_ok(messages, info):
+        calls.append(len(messages))
+        if len(calls) == 1:
+            await asyncio.sleep(1)
+        return ModelResponse(parts=[ToolCallPart(tool_name=info.output_tools[0].name, args=semantic_output(source.headers))])
+
+    with profiler.override(model=FunctionModel(slow_then_ok)):
+        result = run(store, profiler, source.dataset_id)
+    assert result.status == "complete"
+    assert len(calls) == 2
