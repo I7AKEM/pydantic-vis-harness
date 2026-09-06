@@ -6,8 +6,10 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "duckdb>=1.5.5",
+    "logfire>=5.0.0",
     "pydantic-ai-harness[code-mode]>=0.28.1",
-    "pydantic-ai-slim[openrouter,temporal,web]>=2.38.0",
+    "pydantic-ai-slim[cli,openrouter,temporal,web]>=2.38.0",
+    "pydantic-evals>=2.38.0",
     "python-dotenv>=1.2.3",
     "python-multipart>=0.0.32",
 ]
@@ -16,3 +18,7 @@ dependencies = [
 dev = [
     "pytest>=9.1.1",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

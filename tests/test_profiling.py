@@ -2,7 +2,7 @@ import asyncio
 import re
 
 import pytest
-from pydantic_ai import ModelRetry, RunContext, capture_run_messages, models
+from pydantic_ai import ModelRetry, RunContext, capture_run_messages
 from pydantic_ai.models.test import TestModel
 from pydantic_ai.usage import RunUsage
 from starlette.applications import Starlette
@@ -20,16 +20,6 @@ SALES = (
     b"002,West,2026-01-02,20\n"
     b"003,,2026-01-03,\n"
 )
-
-
-@pytest.fixture(autouse=True)
-def no_network_models(monkeypatch):
-    monkeypatch.setattr(models, "ALLOW_MODEL_REQUESTS", False)
-
-
-@pytest.fixture
-def store(tmp_path):
-    return DatasetStore(tmp_path)
 
 
 def semantic_output(names):
