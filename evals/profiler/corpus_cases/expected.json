@@ -22,7 +22,7 @@
  },
  "vizcsv-0fe330ac5ea83793": {
   "roles": {
-   "gpa_group": "category",
+   "gpa_group": "ordinal",
    "wealth_level": "ordinal",
    "graduate_count": "measure"
   },

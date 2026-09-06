@@ -39,7 +39,7 @@
  },
  "provenance": "Roles where Sonnet 4.6 and GPT-5.4 mini agreed were accepted (183 of 195 columns); the 12 disagreements were decided by the rules above. vizcsv-45cb123b948dd498 has GPT-5.4 mini's labels only because Sonnet exceeded the 90 s profiling timeout twice on its 19 columns.",
  "rule_overrides_of_agreed_labels": {
-  "note": "Both label models said category for these place-name columns (airport, entry region, municipality, district names); the place-name rule overrides them. registry_location (traffic office names) stays category because the values name organisational units, not places. port and entry_port hold airport names, so they are geography too.",
+  "note": "Both label models said category for these place-name columns (airport, entry region, municipality, district names); the place-name rule overrides them. registry_location (traffic office names) stays category because the values name organisational units, not places. port and entry_port hold airport names, so they are geography too. gpa_group holds two ordered bands (above 4, below 4), so it is ordinal by the named-levels rule.",
   "columns": {
    "vizcsv-5bced735b4170137": {
     "entry_location_name": "geography"
@@ -58,6 +58,9 @@
    },
    "vizcsv-f7cd3fa70e2c379c": {
     "entry_port": "geography"
+   },
+   "vizcsv-0fe330ac5ea83793": {
+    "gpa_group": "ordinal"
    }
   }
  }
