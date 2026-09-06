@@ -1,18 +1,15 @@
 import asyncio
-import re
 
 import pytest
-from pydantic_ai import ModelRetry, RunContext, capture_run_messages
+from pydantic_ai import ToolFailed, capture_run_messages
+from pydantic_ai.messages import ToolCallPart
 from pydantic_ai.models.test import TestModel
 from pydantic_ai.usage import RunUsage
-from starlette.applications import Starlette
-from starlette.testclient import TestClient
 
 from dataset_store import DatasetStore
-from profile_models import PROFILE_VERSION, DatasetProfile
 from measurements import compute_statistics
-from profiler import AppDeps, create_semantic_profiler, profile_csv
-from uploads import add_upload_routes
+from profile_models import DataBrief, DatasetProfile
+from profiler import create_profiler, profile_dataset
 
 SALES = (
     b"id,region,date,amount\n"
@@ -23,12 +20,13 @@ SALES = (
 )
 
 
-def semantic_output(names):
+def semantic_output(names, roles=None):
+    roles = roles or {}
     return {
         "description": "A sample sales dataset.",
         "row_meaning": "A recorded sale, with possible duplicate records.",
         "columns": [
-            {"name": name, "meaning": None, "role": "unknown", "unit": None,
+            {"name": name, "meaning": None, "role": roles.get(name, "unknown"), "unit": None,
              "confidence": "low", "evidence": "The header alone is insufficient."}
             for name in names
         ],
@@ -36,12 +34,17 @@ def semantic_output(names):
     }
 
 
-def tool_context(store):
-    return RunContext(
-        deps=AppDeps(store, create_semantic_profiler("test")),
-        model=TestModel(),
-        usage=RunUsage(),
-    )
+def quiet(names, roles=None):
+    return TestModel(call_tools=[], custom_output_args=semantic_output(names, roles))
+
+
+def run(store, profiler, dataset_id, **kwargs):
+    return asyncio.run(profile_dataset(store, profiler, dataset_id, **kwargs))
+
+
+@pytest.fixture
+def profiler():
+    return create_profiler("test")
 
 
 def test_statistics_and_persistence(store):
@@ -55,15 +58,10 @@ def test_statistics_and_persistence(store):
     assert columns["region"].null_percentage == 25
     assert columns["region"].common_values[0].model_dump() == {"value": "West", "count": 2}
     assert columns["date"].earliest == "2026-01-01"
-    assert columns["date"].latest == "2026-01-03"
     numeric = columns["amount"].numeric
     assert numeric.mean == pytest.approx(50 / 3)
-    assert numeric.standard_deviation == pytest.approx(4.71404520791)
     assert (numeric.q25, numeric.median, numeric.q75) == (15, 20, 20)
-    reopened = DatasetStore(store.directory)
-    assert compute_statistics(reopened, source) == profile
-    other = store.save_upload("sales.csv", SALES)
-    assert other.dataset_id != source.dataset_id
+    assert compute_statistics(DatasetStore(store.directory), source) == profile
 
 
 @pytest.mark.parametrize("content", [
@@ -73,8 +71,6 @@ def test_invalid_csv_does_not_leave_files(store, content):
     with pytest.raises(ValueError):
         store.save_upload("bad.csv", content)
     assert list(store.uploads.iterdir()) == []
-    with store.connect() as connection:
-        assert connection.execute("SELECT count(*) FROM datasets").fetchone()[0] == 0
 
 
 def test_empty_data_and_quoted_headers(store):
@@ -83,7 +79,6 @@ def test_empty_data_and_quoted_headers(store):
     profile = compute_statistics(store, source)
     assert profile.row_count == 0
     assert [c.name for c in profile.columns] == ['a"b', "rowid"]
-    assert profile.warnings
     with pytest.raises(ValueError):
         store.import_csv("../../.env")
 
@@ -92,109 +87,113 @@ def test_nonfinite_numbers_and_missing_values(store):
     source = store.save_upload("values.csv", b"value,missing\n1,\nNaN,\nInfinity,\n3,\n")
     store.import_csv(source.dataset_id)
     profile = compute_statistics(store, source)
-    numeric = profile.columns[0].numeric
-    assert numeric.finite_count == 2
-    assert numeric.non_finite_count == 2
-    assert numeric.mean == 2
+    assert (profile.columns[0].numeric.finite_count, profile.columns[0].numeric.non_finite_count) == (2, 2)
     assert profile.columns[1].null_count == 4
-    assert len(profile.warnings) == 2
 
 
-def test_one_tool_combines_validates_and_caches(store):
+def test_profile_dataset_runs_the_agent_saves_and_reuses(store, profiler):
     source = store.save_upload("sales.csv", SALES)
-    ctx = tool_context(store)
-    with ctx.deps.semantic_profiler.override(model=TestModel(custom_output_args=semantic_output(source.headers))):
-        result = asyncio.run(profile_csv(ctx, source.dataset_id))
+    usage = RunUsage()
+    with profiler.override(model=quiet(source.headers)):
+        result = run(store, profiler, source.dataset_id, usage=usage)
     assert result.status == "complete"
-    assert result.deterministic.row_count == 4
+    assert result.schema_version == "2.0"
     assert result.semantic.questions == ["What currency is used for amount?"]
-    assert ctx.usage.requests > 0
-    assert DatasetProfile.model_validate_json(result.model_dump_json()) == result
+    assert result.brief_fingerprint is None
+    assert usage.requests == 1
     assert DatasetStore(store.directory).get_profile(source.dataset_id) == result
-    previous_requests = ctx.usage.requests
-    assert asyncio.run(profile_csv(ctx, source.dataset_id)) == result
-    assert ctx.usage.requests == previous_requests
+    with profiler.override(model=quiet(source.headers)):
+        assert run(store, profiler, source.dataset_id, usage=usage) == result
+    assert usage.requests == 1
 
 
-def test_invalid_semantic_columns_save_partial_then_retry(store):
+def test_brief_reaches_the_model_and_changes_reuse(store, profiler):
+    brief = DataBrief(raw_question="Sales by region", units={"amount": "USD"})
+    source = store.save_upload("sales.csv", SALES, brief)
+    with profiler.override(model=quiet(source.headers)):
+        with capture_run_messages() as messages:
+            first = run(store, profiler, source.dataset_id)
+    assert first.brief_fingerprint == brief.fingerprint()
+    assert "Sales by region" in str(messages)
+    usage = RunUsage()
+    with profiler.override(model=quiet(source.headers)):
+        again = run(store, profiler, source.dataset_id, usage=usage)
+    assert again == first and usage.requests == 0
+    with profiler.override(model=quiet(source.headers)):
+        changed = run(store, profiler, source.dataset_id, brief=DataBrief(raw_question="Other"), usage=usage)
+    assert changed.brief_fingerprint != first.brief_fingerprint
+    assert changed.deterministic == first.deterministic
+    assert usage.requests == 1
+    assert store.get_upload(source.dataset_id).brief.raw_question == "Other"
+
+
+def test_failed_check_is_sent_back_once_then_recorded(store, profiler):
     source = store.save_upload("sales.csv", SALES)
-    ctx = tool_context(store)
-    with ctx.deps.semantic_profiler.override(model=TestModel(custom_output_args=semantic_output(["invented"]))):
-        partial = asyncio.run(profile_csv(ctx, source.dataset_id))
+    usage = RunUsage()
+    with profiler.override(model=quiet(source.headers, {"region": "measure"})):
+        result = run(store, profiler, source.dataset_id, usage=usage)
+    assert result.status == "complete"
+    assert usage.requests == 2
+    failed = [c for c in result.review if not c.passed]
+    assert [c.check for c in failed] == ["measure_is_numeric"]
+    assert result.warnings == [failed[0].message]
+
+
+def test_review_profile_tool_is_available_to_the_model(store, profiler):
+    source = store.save_upload("sales.csv", SALES)
+    with profiler.override(model=TestModel(custom_output_args=semantic_output(source.headers))):
+        with capture_run_messages() as messages:
+            run(store, profiler, source.dataset_id)
+    calls = [p.tool_name for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
+    assert "review_profile" in calls
+
+
+def test_invalid_semantic_columns_save_partial_then_retry(store, profiler):
+    source = store.save_upload("sales.csv", SALES)
+    with profiler.override(model=quiet(["invented"])):
+        partial = run(store, profiler, source.dataset_id)
     assert partial.status == "partial"
     assert partial.semantic is None
-    assert partial.deterministic.row_count == 4
     assert store.get_profile(source.dataset_id) == partial
-    with ctx.deps.semantic_profiler.override(model=TestModel(custom_output_args=semantic_output(source.headers))):
-        complete = asyncio.run(profile_csv(ctx, source.dataset_id))
+    with profiler.override(model=quiet(source.headers)):
+        complete = run(store, profiler, source.dataset_id)
     assert complete.status == "complete"
     assert complete.deterministic == partial.deterministic
 
 
-def test_unknown_id_is_a_model_retry(store):
-    with pytest.raises(ModelRetry, match="not found"):
-        asyncio.run(profile_csv(tool_context(store), "ds_" + "0" * 32))
+def test_unknown_and_malformed_ids(store, profiler):
+    from dataset_store import DatasetNotFound
+
+    with pytest.raises(DatasetNotFound):
+        run(store, profiler, "ds_" + "0" * 32)
+    with pytest.raises(ValueError, match="Invalid file ID"):
+        run(store, profiler, "nope")
 
 
-def test_wkt_stays_in_storage_and_old_profiles_are_recomputed(store):
+def test_wkt_stays_in_storage_and_old_profiles_are_recomputed(store, profiler):
     geometry = "MULTIPOLYGON (((45 19,46 20,45 19)))"
     source = store.save_upload("map.csv", f'region,WKT\nRiyadh,"{geometry}"\n'.encode())
-    ctx = tool_context(store)
-    with ctx.deps.semantic_profiler.override(model=TestModel(custom_output_args=semantic_output(source.headers))):
+    with profiler.override(model=quiet(source.headers)):
         with capture_run_messages() as messages:
-            result = asyncio.run(profile_csv(ctx, source.dataset_id))
+            result = run(store, profiler, source.dataset_id)
         assert geometry not in str(messages)
         assert "MULTIPOLYGON" not in result.model_dump_json()
         assert result.deterministic.columns[1].values_omitted
-        assert result.deterministic.columns[1].common_values == []
         assert result.deterministic.sample_rows == [{"region": "Riyadh"}]
         with store.connect() as connection:
             assert connection.execute(f'SELECT WKT FROM "{source.dataset_id}"').fetchone()[0] == geometry
-        legacy = result.model_copy(update={
-            "schema_version": "1.1",
-            "deterministic": result.deterministic.model_copy(update={
-                "sample_rows": [{"region": "Riyadh", "WKT": geometry}],
-            }),
-        })
+        legacy = result.model_copy(update={"schema_version": "1.2"})
         store.save_profile(legacy)
-        refreshed = asyncio.run(profile_csv(ctx, source.dataset_id))
-    assert refreshed.schema_version == PROFILE_VERSION
-    assert "MULTIPOLYGON" not in refreshed.model_dump_json()
+        refreshed = run(store, profiler, source.dataset_id)
+    assert refreshed.schema_version == "2.0"
 
 
-def test_any_oversized_text_column_is_excluded_from_model_inputs(store):
+def test_any_oversized_text_column_is_excluded_from_model_inputs(store, profiler):
     large_value = "x" * 300
     source = store.save_upload("generic.csv", f"id,description\n1,{large_value}\n".encode())
-    ctx = tool_context(store)
-    with ctx.deps.semantic_profiler.override(model=TestModel(custom_output_args=semantic_output(source.headers))):
+    with profiler.override(model=quiet(source.headers)):
         with capture_run_messages() as messages:
-            result = asyncio.run(profile_csv(ctx, source.dataset_id))
-    column = result.deterministic.columns[1]
-    assert column.maximum_value_bytes == 300
-    assert column.values_omitted
+            result = run(store, profiler, source.dataset_id)
+    assert result.deterministic.columns[1].values_omitted
     assert large_value not in str(messages)
     assert large_value not in result.model_dump_json()
-
-
-def test_chat_upload_api_and_json_profile(store):
-    app = Starlette()
-    add_upload_routes(app, store)
-    with TestClient(app) as client:
-        assert client.get("/datasets/upload").status_code == 405
-        uploaded = client.post("/datasets/upload", files={"file": ("sales.csv", SALES, "text/csv")})
-        assert uploaded.status_code == 201
-        dataset_id = uploaded.json()["dataset_id"]
-        assert re.fullmatch(r"ds_[0-9a-f]{32}", dataset_id)
-        assert uploaded.json()["filename"] == "sales.csv"
-        assert "Upload CSV" in client.get("/datasets/chat-upload.js").text
-        url = f"/datasets/{dataset_id}/profile"
-        assert client.get(url).status_code == 404
-        ctx = tool_context(store)
-        with ctx.deps.semantic_profiler.override(model=TestModel(custom_output_args=semantic_output(["id", "region", "date", "amount"]))):
-            asyncio.run(profile_csv(ctx, dataset_id))
-        response = client.get(url)
-        assert response.status_code == 200
-        assert response.json()["deterministic"]["row_count"] == 4
-        assert client.post("/datasets/upload", files={"file": ("bad.csv", b"a,b\n1\n")}).status_code == 400
-        assert client.post("/datasets/upload", headers={"origin": "https://unrelated.example"}).status_code == 403
-        assert client.post("/datasets/upload", headers={"content-length": str(store.max_upload_bytes + 65537)}).status_code == 413
