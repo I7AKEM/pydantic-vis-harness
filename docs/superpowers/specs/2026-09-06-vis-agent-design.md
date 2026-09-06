@@ -132,7 +132,7 @@ The same catalogue file does two jobs. It is rendered into the designer's prompt
 
 ### 6.3 The chart spec
 
-Our contract between the designer and every renderer. It is a small JSON document. Its base is GPT-Vis's chart configuration, because the POC proves models write it reliably, it has a streaming-friendly text form, and a renderer for it already exists in the browser and on a server. On top of that base we add optional fields that GPT-Vis does not have, which any renderer may honor or degrade:
+Our contract between the designer and every renderer. It is text in GPT-Vis syntax, the same indented key-value form AVA emits, because the POC proves models write it reliably, it streams line by line, and a renderer for it already exists in the browser and on a server. The syntax is the only form of the spec that is written, stored, shown, or exchanged. There is no JSON contract. The checker and each renderer parse the syntax internally with one shared parser, exactly as GPT-Vis parses its own syntax, and nothing outside them sees the parsed form. On top of GPT-Vis's vocabulary we add optional keys that GPT-Vis does not have, written in the same style, which any renderer may honor or degrade:
 
 - Chart type and data, in GPT-Vis's shapes: category and value, time and value, x and y, group, series.
 - Title, axis titles, theme, palette. As in GPT-Vis.
@@ -170,7 +170,7 @@ The reviewer must see a picture, so "can this library draw an image on a server"
 
 | Library | Image on a server | License | Verdict |
 |---|---|---|---|
-| GPT-Vis on G2 | Yes, an official server package draws the same JSON to PNG with Node and a native canvas library | Open | **First renderer.** The base spec is its own format, so mapping cost is near zero, and the POC already renders it |
+| GPT-Vis on G2 | Yes, an official server package draws the parsed syntax to PNG with Node and a native canvas library | Open | **First renderer.** The base spec is its own format, so mapping cost is near zero, and the POC already renders it |
 | Vega-Lite | Yes, one Python package, no browser, no JavaScript runtime | Open | **Second renderer.** Proves the spec is neutral and gives a Python-only image path |
 | Plotly | Yes, needs a bundled headless Chrome | Open | Third, for 3D, sankey, candlestick, gauges |
 | MapLibre | Yes, native package or headless browser | Open | Map renderer when a base map is needed |
@@ -401,8 +401,8 @@ Maps with a base map, the insight finder, multiple datasets, dashboards, other f
 
 - Fixed step order in code. Models decide inside steps only.
 - The model writes the query. The database computes the numbers. A data analyst agent owns that step.
-- One syntax for every chart and every map. The model writes only that syntax, in its text form. Code parses it to JSON and validates it. Each renderer translates that JSON into its own library's format. No model ever writes ApexCharts, Vega-Lite, Plotly, or map configuration directly. A renderer that cannot honor a feature reports it before rendering.
-- The chart spec is GPT-Vis's format plus our extensions. GPT-Vis on a server is the first renderer, Vega-Lite the second, Plotly third, MapLibre for maps. Mapbox not used. ApexCharts optional after license review.
+- One syntax for every chart and every map, and the syntax is the output. The model writes only that syntax. It is what gets stored, shown, and handed to renderers. No JSON contract exists. The checker and each renderer parse the syntax internally with one shared parser and translate it into their own library's format. No model ever writes ApexCharts, Vega-Lite, Plotly, or map configuration directly. A renderer that cannot honor a feature reports it before rendering.
+- The syntax is GPT-Vis's syntax plus our extensions written in the same style. GPT-Vis on a server is the first renderer, Vega-Lite the second, Plotly third, MapLibre for maps. Mapbox not used. ApexCharts optional after license review.
 - Data enters the spec by binding result columns to chart roles. Code inserts the rows. The model never retypes values.
 - One chart catalogue file feeds both the designer's prompt and the code checks.
 - Every model output is validated against a schema before it is used. Every chart is checked before render and judged after render.
@@ -429,7 +429,7 @@ Maps with a base map, the insight finder, multiple datasets, dashboards, other f
 | Typed outputs with validation and one retry | Structured output types, output validators, ModelRetry |
 | Failures the model cannot fix | ToolFailed, which does not consume the retry budget |
 | The query the analyst writes | A structured output holding the SQL, validated by code before execution |
-| Chart spec the model must fill | A Pydantic model as the designer's output type, with field descriptions and validators that encode the hard rules |
+| Chart syntax the model must write | Text output with a parsing function, which Pydantic's skill prescribes for structured text that is not JSON. The parser is the shared syntax parser, and validators on the parsed form encode the hard rules and ask for one corrected attempt |
 | Catalogue and rules used by the model | Rulebook instructions loaded on demand, plus recommend_charts and check_spec as tools the model must call |
 | Checkpoints and resume | Durable execution capability already attached, or saved step outputs until it is activated |
 | Web chat, terminal, other agents | The web and terminal entry points on the agent; the agent-to-agent package to be confirmed |
