@@ -7,6 +7,7 @@ from dataset_store import DatasetStore, quote_identifier
 from profile_models import (
     ColumnStatistics,
     DeterministicProfile,
+    GeographicRole,
     NumericStatistics,
     UploadedDataset,
     ValueCount,
@@ -17,7 +18,8 @@ VALUE_CHARACTERS = 120
 MAX_MODEL_VALUE_BYTES = 256
 MAX_DETAILED_COLUMNS = 40  # columns past this get counts and types only, so the prompt stays bounded
 MAX_ORDINAL_DISTINCT = 50
-MAX_LEVEL_DISTINCT = 8
+MAX_LEVEL_DISTINCT = 12
+COORDINATE_TEXT_SHARE = 0.9
 # Ordered scales written in words. A column whose distinct values all sit on one scale is ordinal.
 ORDERED_SCALES = (
     ("very low", "low", "medium", "high", "very high"),
@@ -31,7 +33,16 @@ ORDERED_SCALES = (
     ("ضعيف", "متوسط", "جيد", "جيد جدا", "ممتاز"),
     ("صغير", "متوسط", "كبير"),
     ("فقير", "متوسط", "غني"),
+    ("primary", "elementary", "middle school", "high school", "secondary", "diploma", "associate", "bachelor",
+     "bachelors", "bachelor's", "master", "masters", "master's", "doctorate", "phd"),
+    ("ابتدائي", "متوسط", "ثانوي", "ثانوية", "دبلوم متوسط", "دبلوم", "بكالوريوس", "جامعي", "دبلوم عالي", "ماجستير", "دكتوراه"),
 )
+LOWER_BAND = re.compile(r"^(?:below|under|less than|up to|at most|<=?|أقل من|دون|حتى)\s*(\d+(?:\.\d+)?)$")
+UPPER_BAND = re.compile(
+    r"^(?:(?:above|over|more than|at least|>=?|أعلى من|أكثر من|فوق)\s*(\d+(?:\.\d+)?)|"
+    r"(\d+(?:\.\d+)?)\s*(?:\+|and (?:over|above|more)|or more|فأكثر|وأكثر))$"
+)
+RANGE_BAND = re.compile(r"^(?:من\s*)?(\d+(?:\.\d+)?)\s*(?:-|–|to|إلى|الى)\s*(\d+(?:\.\d+)?)$")
 MAX_CODE_DISTINCT = 12
 MAX_CODE_LENGTH = 3
 INTEGER_TYPES = ("TINYINT", "SMALLINT", "INTEGER", "BIGINT", "HUGEINT",
@@ -45,6 +56,9 @@ LONGITUDE_NAME = re.compile(r"(^|[_\s])(lon|lng|long|longitude)($|[_\s])", re.IG
 PLACE_TOKENS = ("country", "region", "city", "cities", "state", "province", "district", "governorate", "county",
                 "municipality", "location", "port", "airport", "station", "town", "village", "neighborhood", "zone",
                 "address", "منطقة", "مدينة", "محافظة", "بلدية", "حي", "مطار", "منفذ", "ميناء", "قرية", "دولة", "موقع")
+ORDER_TOKENS = ("sequence", "seq", "rank", "ranking", "order", "level", "grade", "rating", "priority", "stage",
+                "tier", "position", "step", "round", "تسلسل", "ترتيب", "مستوى", "درجة", "رتبة", "مرحلة", "أولوية")
+ORDER_NAME = re.compile(r"(^|[_\s])(ال)?(" + "|".join(ORDER_TOKENS) + r")($|[_\s])", re.IGNORECASE)
 MEASURE_TOKENS = ("count", "total", "sum", "avg", "mean", "percentage", "percent", "rate", "ratio", "size", "number",
                   "num", "value", "amount", "share", "category", "mode", "type")
 PLACE_NAME = re.compile(r"(^|[_\s])(ال)?(" + "|".join(PLACE_TOKENS) + r")($|[_\s])", re.IGNORECASE)
@@ -136,6 +150,10 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
                 stats.measurement_levels = ["nominal"]
                 if geometry_name or wkt_count > 0:
                     stats.geographic_role = "wkt"
+                elif LATITUDE_NAME.search(name) or LONGITUDE_NAME.search(name):
+                    stats.geographic_role = _coordinate_text_role(
+                        connection, table, column, name, row_count - null_count, warnings,
+                    )
                 elif PLACE_NAME.search(name) and not MEASURE_NAME.search(name):
                     stats.geographic_role = "place_name"
                 if stats.geographic_role is not None:
@@ -191,6 +209,21 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
     )
 
 
+def _coordinate_text_role(connection, table, column, name, non_null, warnings) -> GeographicRole | None:
+    role = "latitude" if LATITUDE_NAME.search(name) else "longitude"
+    low, high = (-90, 90) if role == "latitude" else (-180, 180)
+    numeric_count, in_range = connection.execute(
+        f"SELECT count(*) FILTER (WHERE TRY_CAST({column} AS DOUBLE) IS NOT NULL), "
+        f"count(*) FILTER (WHERE TRY_CAST({column} AS DOUBLE) BETWEEN {low} AND {high}) "
+        f"FROM {table} WHERE {column} IS NOT NULL"
+    ).fetchone()
+    if numeric_count > 0 and numeric_count >= COORDINATE_TEXT_SHARE * non_null and in_range == numeric_count:
+        if non_null - numeric_count > 0:
+            warnings.append(f"{name}: coordinates stored as text; {non_null - numeric_count} values are not numbers.")
+        return role
+    return None
+
+
 def _numeric_labels(connection, table, column, name, stats, row_count, null_count, warnings) -> None:
     finite_count, *metrics = connection.execute(
         f"SELECT count(*), min(v), max(v), avg(v), stddev_pop(v), "
@@ -222,14 +255,38 @@ def _numeric_labels(connection, table, column, name, stats, row_count, null_coun
             stats.geographic_role = "longitude"
     if stats.geographic_role is not None:
         stats.measurement_levels.append("geographic")
+    if (stats.integer_valued and ORDER_NAME.search(name)
+            and low in (0, 1) and high - low + 1 == stats.distinct_count
+            and 2 <= stats.distinct_count <= MAX_LEVEL_DISTINCT
+            and stats.distinct_count * 2 <= finite_count):
+        stats.ordinal_pattern = " < ".join(str(v) for v in range(int(low), int(high) + 1))
+        stats.measurement_levels.append("ordinal")
 
 
 def _ordered_scale(values) -> list[str] | None:
     present = {value for value in values if value}
     for scale in ORDERED_SCALES:
-        if len(present) >= 2 and present <= set(scale):
+        if len(present) >= 1 and present <= set(scale):
             return [value for value in scale if value in present]
     return None
+
+
+def _ordered_bands(values) -> list[str] | None:
+    """Bands such as "under 18", "18-35", "over 60", or "أقل من 4" / "أعلى من 4" form an ordered scale."""
+    if len(values) < 2:
+        return None
+    bands = []
+    for value in values:
+        if match := LOWER_BAND.fullmatch(value):
+            key = (float(match[1]), 0)
+        elif match := RANGE_BAND.fullmatch(value):
+            key = (float(match[1]), 1)
+        elif match := UPPER_BAND.fullmatch(value):
+            key = (float(match[1] or match[2]), 2)
+        else:
+            return None
+        bands.append((key, value))
+    return [value for key, value in sorted(bands)]
 
 
 def _text_labels(connection, table, column, stats, distinct_count, non_null) -> None:
@@ -250,11 +307,11 @@ def _text_labels(connection, table, column, stats, distinct_count, non_null) -> 
                 f"SELECT regexp_replace(min({column}), ?, '#', 'g') FROM {table}", [DIGITS_SQL_PATTERN]
             ).fetchone()[0]
             stats.measurement_levels.append("ordinal")
-    if stats.ordinal_pattern is None and 2 <= distinct_count <= MAX_LEVEL_DISTINCT and distinct_count < non_null:
+    if stats.ordinal_pattern is None and 1 <= distinct_count <= MAX_LEVEL_DISTINCT:
         (values,) = connection.execute(
             f"SELECT list(DISTINCT lower(trim({column}))) FROM {table} WHERE {column} IS NOT NULL"
         ).fetchone()
-        scale = _ordered_scale(values)
+        scale = _ordered_scale(values) or _ordered_bands(values)
         if scale:
             stats.ordinal_pattern = " < ".join(scale)
             stats.measurement_levels.append("ordinal")

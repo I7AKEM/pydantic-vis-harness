@@ -99,3 +99,14 @@ def test_ordinal_evidence_must_be_used():
     stats = statistics(stat("wealth", measurement_levels=["nominal", "ordinal"], ordinal_pattern="poor < rich"))
     assert "ordinal_evidence_used" in names(failed_checks(run_checks(stats, semantic(wealth=("category", None, {}))), "error"))
     assert "ordinal_evidence_used" not in names(failed_checks(run_checks(stats, semantic(wealth=("ordinal", None, {})))))
+
+
+def test_numeric_ordinal_evidence_rejects_measure():
+    stats = statistics(stat("sequence_number", "BIGINT", numeric=numeric(),
+                            measurement_levels=["interval", "discrete", "ordinal"],
+                            ordinal_pattern="1 < 2 < 3"))
+    result = run_checks(stats, semantic(sequence_number=("measure", None, None)))
+    failed = failed_checks(result)
+    assert names(failed) == ["ordinal_evidence_used"]
+    assert failed[0].severity == "error"
+    assert failed_checks(run_checks(stats, semantic(sequence_number=("ordinal", None, None)))) == []

@@ -140,13 +140,19 @@ def test_failed_check_is_sent_back_once_then_recorded(store, profiler):
     assert result.warnings == [failed[0].message]
 
 
-def test_review_profile_tool_is_available_to_the_model(store, profiler):
+def test_review_profile_is_the_only_output_tool(store, profiler):
     source = store.save_upload("sales.csv", SALES)
-    with profiler.override(model=TestModel(custom_output_args=semantic_output(source.headers))):
-        with capture_run_messages() as messages:
-            run(store, profiler, source.dataset_id)
-    calls = [p.tool_name for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
-    assert "review_profile" in calls
+
+    def drive(messages, info):
+        assert [t.name for t in info.output_tools] == ["review_profile"]
+        assert info.function_tools == []
+        return ModelResponse(parts=[ToolCallPart(tool_name="review_profile", args=semantic_output(source.headers))])
+
+    usage = RunUsage()
+    with profiler.override(model=FunctionModel(drive)):
+        result = run(store, profiler, source.dataset_id, usage=usage)
+    assert result.status == "complete"
+    assert usage.requests == 1
 
 
 def test_structural_retry_does_not_consume_the_check_send_back(store, profiler):
@@ -157,7 +163,7 @@ def test_structural_retry_does_not_consume_the_check_send_back(store, profiler):
         attempts.append(len(messages))
         names = ["invented"] if len(attempts) == 1 else source.headers
         args = semantic_output(names, {"region": "measure"})
-        return ModelResponse(parts=[ToolCallPart(tool_name="final_result", args=args)])
+        return ModelResponse(parts=[ToolCallPart(tool_name=info.output_tools[0].name, args=args)])
 
     usage = RunUsage()
     with profiler.override(model=FunctionModel(drive)):

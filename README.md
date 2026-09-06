@@ -80,10 +80,11 @@ short codes such as `F` and `M`, latitude and longitude by name and range, WKT c
 columns. Python only issues the queries and assigns labels from the results.
 
 The profiler agent interprets those measurements: meaning, role, unit, code meanings, and conflicts
-with the brief. It must call `review_profile` before finishing, and an output validator runs the same
-checks: a time role needs date statistics, an identifier must be near-unique, a measure must be numeric,
-units belong only on measures, code meanings must match the codes in the data. A failed check is sent
-back once. What still fails is recorded in the profile's `review` and `warnings`.
+with the brief. It returns the profile through `review_profile`, its only output tool, which runs the
+code checks: a time role needs date statistics, an identifier must be near-unique, a measure must be
+numeric, units belong only on measures, code meanings must match the codes in the data, ordinal
+evidence must be used. A failed check is sent back once. What still fails is recorded in the profile's
+`review` and `warnings`.
 
 Complete profiles are reused. A new brief re-runs the interpretation only; the measurements are kept.
 Profiles in an older format are recomputed.

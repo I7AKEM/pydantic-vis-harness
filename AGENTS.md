@@ -6,7 +6,8 @@ profiler as the model for every later agent, plus the lead skeleton, the upload 
 - Use Python 3.12, uv, Pydantic AI, OpenRouter, and the built-in Web Chat UI.
 - Keep code small, explicit, and readable. Keep application modules at the project root.
 - Every statistic and every measurement label is a DuckDB query. Python assigns labels from results.
-- The profiler agent interprets. It never computes. It calls review_profile before returning.
+- The profiler agent interprets. It never computes. review_profile is its only output tool: it runs the code
+  checks and sends failed error checks back once.
 - The brief is context, never fact. Conflicts become warnings.
 - Values from oversized, WKT, and geometry-named columns never reach a model.
 - Failures the model cannot fix are ToolFailed. Fixable mistakes are ModelRetry, once.

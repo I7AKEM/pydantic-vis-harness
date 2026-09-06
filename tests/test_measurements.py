@@ -60,6 +60,21 @@ def test_latitude_and_longitude_by_name_and_range(store):
     assert columns["latitude_of_birth"].geographic_role is None
 
 
+def test_coordinates_stored_as_text_with_dirty_values_are_geographic(store):
+    rows = [f"{16 + i},{36 + i},words" for i in range(11)]
+    content = "store_latitude,store_longitude,lat\n" + "\n".join(rows) + "\nRiyadh,unknown,words\n"
+    source = store.save_upload("text_coordinates.csv", content.encode())
+    store.import_csv(source.dataset_id)
+    profile = compute_statistics(store, source)
+    columns = {column.name: column for column in profile.columns}
+    for name, role in (("store_latitude", "latitude"), ("store_longitude", "longitude")):
+        assert columns[name].physical_type == "VARCHAR"
+        assert columns[name].geographic_role == role
+        assert columns[name].measurement_levels == ["nominal", "geographic"]
+        assert f"{name}: coordinates stored as text; 1 values are not numbers." in profile.warnings
+    assert columns["lat"].geographic_role is None
+
+
 def test_place_name_columns_are_flagged(store):
     columns = profile_of(store, "p.csv", b"country,total\nSaudi Arabia,1\nEgypt,2\n")
     assert columns["country"].geographic_role == "place_name"
@@ -145,3 +160,46 @@ def test_ordered_levels_in_words_are_ordinal(store):
     assert columns["size_ar"].ordinal_pattern == "صغير < متوسط < كبير"
     assert columns["label"].ordinal_pattern is None
     assert columns["label"].measurement_levels == ["nominal"]
+
+
+def test_numeric_bands_in_words_are_ordinal(store):
+    rows = [
+        "أعلى من 4,over 60,18-35",
+        "أقل من 4,18-35,Riyadh",
+        "أعلى من 4,under 18,18-35",
+        "أقل من 4,36-60,Riyadh",
+    ] * 2
+    content = "gpa_group,age_group,mixed\n" + "\n".join(rows) + "\n"
+    columns = profile_of(store, "bands.csv", content.encode())
+    assert columns["gpa_group"].ordinal_pattern == "أقل من 4 < أعلى من 4"
+    assert columns["age_group"].ordinal_pattern == "under 18 < 18-35 < 36-60 < over 60"
+    for name in ("gpa_group", "age_group"):
+        assert "ordinal" in columns[name].measurement_levels
+    assert "ordinal" not in columns["mixed"].measurement_levels
+    assert columns["mixed"].ordinal_pattern is None
+
+
+def test_small_integer_sequences_named_like_ranks_are_ordinal(store):
+    rows = [f"{i % 3 + 1},{i % 3 + 1},{i + 1}" for i in range(9)]
+    content = "sequence_number,amount,rank\n" + "\n".join(rows) + "\n"
+    columns = profile_of(store, "sequences.csv", content.encode())
+    assert columns["sequence_number"].measurement_levels == ["interval", "discrete", "ordinal"]
+    assert columns["sequence_number"].ordinal_pattern == "1 < 2 < 3"
+    assert columns["amount"].measurement_levels == ["interval", "discrete"]
+    assert "ordinal" not in columns["rank"].measurement_levels
+
+
+def test_word_scales_need_no_repeats_and_cover_education(store):
+    content = "wealth,qualification\nRich,دكتوراه\nUpper Middle,بكالوريوس\nPoor,دبلوم عالي\n"
+    columns = profile_of(store, "education.csv", content.encode())
+    assert columns["wealth"].ordinal_pattern == "poor < upper middle < rich"
+    assert columns["qualification"].ordinal_pattern == "بكالوريوس < دبلوم عالي < دكتوراه"
+    for name in ("wealth", "qualification"):
+        assert "ordinal" in columns[name].measurement_levels
+
+    columns = profile_of(store, "single_level.csv", b"level\nLower Middle\n")
+    assert columns["level"].ordinal_pattern == "lower middle"
+    assert "ordinal" in columns["level"].measurement_levels
+
+    columns = profile_of(store, "invoices.csv", b"code\nINV-1\nINV-2\nINV-3\n")
+    assert columns["code"].ordinal_pattern is None

@@ -3,7 +3,9 @@
  "rules": [
   "Named ordered levels (Poor to Rich, small to large) are ordinal even without digits.",
   "Place names, airports, and coordinates are geography; the widened deterministic hint overrides a majority category label.",
-  "An integer year column is ordinal: ordered periods, not a quantity to sum and not a date."
+  "An integer year column is ordinal: ordered periods, not a quantity to sum and not a date.",
+  "Age bands such as 20-25 and 51+ are ordinal even when an 'other' bucket sits beside them.",
+  "Education levels (intermediate diploma to doctorate) are named ordered levels, so ordinal."
  ],
  "overrides": {
   "place_name_hint": {
@@ -28,13 +30,23 @@
     "wealth_level": "ordinal"
    },
    "vizcsv-fb27379578e26e40": {
-    "wealth_level": "ordinal"
+    "wealth_level": "ordinal",
+    "highest_education": "ordinal"
    },
    "vizcsv-db5027c1e8dd161d": {
     "year": "ordinal"
    },
    "vizcsv-098b9b3fe9f8ba83": {
     "city_size_category": "ordinal"
+   },
+   "vizcsv-924231a95b136a78": {
+    "age_group": "ordinal"
+   },
+   "vizcsv-41cce225b5d818d2": {
+    "qualification": "ordinal"
+   },
+   "vizcsv-da15461d94d596f1": {
+    "qualification": "ordinal"
    }
   }
  }

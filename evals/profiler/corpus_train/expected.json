@@ -279,7 +279,7 @@
  },
  "vizcsv-41cce225b5d818d2": {
   "roles": {
-   "qualification": "category",
+   "qualification": "ordinal",
    "male_salary": "measure",
    "female_salary": "measure",
    "wage_gap": "measure",
@@ -770,7 +770,7 @@
  },
  "vizcsv-924231a95b136a78": {
   "roles": {
-   "age_group": "category",
+   "age_group": "ordinal",
    "count": "measure"
   },
   "failed_checks": []
@@ -1087,7 +1087,7 @@
    "major_classification_name": "category",
    "major_classification_parent_name": "category",
    "major_name": "category",
-   "qualification": "category",
+   "qualification": "ordinal",
    "study_type": "category",
    "university_classification_name": "category",
    "university_name": "category"
@@ -1246,7 +1246,7 @@
   "roles": {
    "city": "geography",
    "wealth_level": "ordinal",
-   "highest_education": "category",
+   "highest_education": "ordinal",
    "count": "measure",
    "edu_rank": "ordinal"
   },
