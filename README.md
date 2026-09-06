@@ -43,55 +43,76 @@ Click **Run**. The app loads `.env` automatically.
 
 ## Profile a CSV
 
-1. Click **Upload CSV** in the chat and choose your file.
+1. Click **Upload CSV** in the chat and choose your file. Profiling starts in the background
+   as soon as the upload finishes.
 2. The chat sends the file reference automatically.
-3. The agent calls `profile_csv` and summarizes the result. Follow its JSON link
-   to view the complete structured profile.
+3. The lead agent calls `profile_csv`, which returns the saved profile, and summarizes it.
+   Follow its JSON link to view the complete structured profile.
 
-The chat upload control stores the file locally; the one agent tool imports it into DuckDB,
-computes statistics, calls the semantic profiler, and saves the combined
-`DatasetProfile`. Completed profiles are reused. If semantic profiling fails,
-statistics are saved as a partial profile; asking again retries the semantic stage.
+Another program can upload with a brief, the context that travels with the data:
 
-CSV files must be UTF-8, comma-separated, with unique, nonempty headers and up to
-100 columns. Inconsistent row widths and broken quoting are rejected. DuckDB
-infers types from the entire file; the original CSV and original column names
-are retained. Empty fields are interpreted as null.
+```bash
+curl -F file=@sales.csv -F 'brief={"raw_question":"Sales by region","units":{"amount":"USD"}}' \
+  http://127.0.0.1:7932/datasets/upload
+```
 
-Statistics cover every imported row: row and duplicate counts, missing and distinct
-values, numeric aggregates, date ranges, and common categorical values. Numeric
-aggregates use double precision, finite values, and population standard deviation.
-The semantic model receives these statistics and the first five rows. Sample and
-common-value text is capped at 120 characters per value, and any column containing
-a value over 256 UTF-8 bytes is excluded from both. Meaning, units, and
-confidence are interpretations and may need your confirmation.
+The brief is context, never fact. Its hints feed the interpretation; conflicts with the
+measurements become warnings in the profile. `GET /datasets` lists uploads and their profile status.
 
-Oversized values, including WKT geometry, stay in DuckDB and are excluded entirely
-from both agents' inputs. Their profile entries contain metadata and counts with
-`values_omitted: true`. WKT columns are always excluded, even when their current
-values are short. Older cached profiles are recomputed when the profile format changes.
+From the terminal:
 
-Uploaded CSVs live in `data/uploads/`; tables, metadata, and profile JSON live in
-`data/datasets.duckdb`. This is a local, single-user app. Files are selected by
-their explicit IDs, so profiling another upload does not change a shared current
-dataset. The data survives server restarts and is ignored by Git.
+```bash
+uv run python cli.py profile --upload sales.csv --brief brief.json
+uv run python cli.py chat
+```
+
+## How profiling works
+
+Every statistic and every measurement label is a DuckDB query: counts, distinct values, numeric
+aggregates, date ranges, top values, integer-ness, ordinal patterns such as `Q1`, yes/no vocabularies,
+short codes such as `F` and `M`, latitude and longitude by name and range, WKT content, and place-name
+columns. Python only issues the queries and assigns labels from the results.
+
+The profiler agent interprets those measurements: meaning, role, unit, code meanings, and conflicts
+with the brief. It must call `review_profile` before finishing, and an output validator runs the same
+checks: a time role needs date statistics, an identifier must be near-unique, a measure must be numeric,
+units belong only on measures, code meanings must match the codes in the data. A failed check is sent
+back once. What still fails is recorded in the profile's `review` and `warnings`.
+
+Complete profiles are reused. A new brief re-runs the interpretation only; the measurements are kept.
+Profiles in an older format are recomputed.
+
+## Configuration
+
+`DUCKDB_PATH` selects the DuckDB file, default `data/datasets.duckdb`. `PYDANTIC_AI_ADVISOR_MODEL`
+selects the Advisor model; empty disables it. Set `LOGFIRE_TOKEN` to send traces to Logfire;
+without it, tracing stays local.
 
 ## Code
 
 | File | Purpose |
 | --- | --- |
-| `main.py` | Agent, dependencies, tool registration, and web app |
-| `profile_models.py` | Validated profile schemas |
-| `dataset_store.py` | CSV validation, local files, and DuckDB storage |
-| `profiler.py` | The profiling tool, fixed queries, and semantic agent |
-| `chat.html` | Pydantic's documented custom HTML source |
-| `chat_upload.js` | CSV control inside Pydantic's chat composer |
-| `uploads.py` | Upload API and saved profile JSON endpoint |
+| `main.py` | Environment wiring: store, profiler, lead, tracing, web app |
+| `lead.py` | The lead agent and its instructions |
+| `profiler.py` | Profiler agent, `review_profile`, `profile_dataset`, lead tools |
+| `measurements.py` | Every statistic and measurement label, via DuckDB |
+| `profile_review.py` | Code checks of an interpretation |
+| `profile_models.py` | Contracts: brief, statistics, semantics, checks, profile |
+| `dataset_store.py` | Uploads, DuckDB tables, briefs, profiles, listing |
+| `uploads.py` | Upload API, dataset list, profile JSON, background profiling |
+| `cli.py` | Terminal chat and one-shot profiling |
+| `evals/profiler/` | Evaluation set and real-model runner |
 
 Run the tests without model API calls:
 
 ```bash
-uv run python -m pytest
+uv run pytest -q
+```
+
+Run the profiler evaluation set against a real model:
+
+```bash
+uv run python -m evals.profiler.run
 ```
 
 > Temporal support is installed and `TemporalDurability()` is attached. At this stage, Web Chat calls the agent normally, so runs are not yet durable. True durable execution starts when the agent is called inside a Temporal workflow and worker, which is intentionally deferred to the next design phase.
