@@ -1,0 +1,9 @@
+citizen_id,gender,wealthy,income
+c01,F,true,90000
+c02,M,false,42000
+c03,F,false,38000
+c04,M,true,120000
+c05,F,true,95000
+c06,M,false,51000
+c07,F,false,47000
+c08,M,true,130000
