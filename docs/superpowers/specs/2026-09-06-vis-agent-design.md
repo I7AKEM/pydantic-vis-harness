@@ -124,6 +124,31 @@ Why SQL and not the model's own arithmetic: rule 6. The database computes. The s
 
 Revise requests reuse the previous query as the starting point. Requests that need columns the dataset lacks return a question instead of a query.
 
+**What the analyst decides from.** Three inputs, in priority order: the question, raw and enriched, which says what is compared and over what; the brief, which carries the intent, known filters, and code meanings; and the profile, which gives each column's role, unit, measurement level, and the distinct values of small columns. The analyst never sees rows.
+
+**Intent to query shape.** The intent, taken from the question and the brief, picks the pattern.
+
+| Intent | Group by | Filter | Measure |
+|---|---|---|---|
+| Compare across categories | The category the question names | Only what the question states | One aggregate per measure named |
+| Trend over time | A time bucket, the coarsest that leaves three to about a hundred points | Stated period | Aggregate per bucket, chronological |
+| Share or proportion | The category | Stated | Value plus share, denominator written in the column description |
+| Rank or top N | The category, ordered by the measure | Stated | Top N plus "Other" when the rest matters |
+| Distribution | None, or the category when asked | Stated | Raw values of one measure |
+| Relationship | None | Stated | The two measures, sampled if large |
+| Single number | None | Stated | One aggregate, delivered as a stat card |
+
+**Rules that hold in every pattern.**
+
+- Group by exactly what the question compares, nothing more.
+- Filter only on what the question or the brief states. Never add a filter silently. A vague term such as "recent" or "top customers" without a definition is a clarification, not a guess.
+- The aggregation comes from the column's role and unit in the profile. Sum additive quantities. Average rates, prices, and percentages. Count identifiers. Never sum a percentage.
+- Every percentage is computed in the query with an explicit denominator, and the denominator is named in the column description.
+- Codes are relabeled only from the profile's interpretation or the brief, and check_result verifies the mapping.
+- The result is small: about fifty rows for categories, about a thousand for time or scatter. Beyond that, top N with "Other" or a coarser bucket.
+- One read-only statement, the dataset's own table only, a timeout, a row cap.
+- When the columns cannot answer the question, return a question instead of a query.
+
 ### 6.2 The chart catalogue
 
 A list of chart types written as data, not code. Each entry says: the chart's name and aliases, what it is for using a fixed vocabulary such as comparison, trend, distribution, rank, proportion, composition, relation, spatial, and anomaly, what result shape it needs expressed as how many columns of which kind, which fields of the spec it accepts, and a rating: recommended, use with caution, not recommended. Pie is "use with caution" in the catalogue itself.
