@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH BachelorGraduates AS (\n  SELECT \n    TRIM(university_name) AS university_name,\n    id,\n    DATEDIFF(graduation_date, enrollment_date) AS days_to_graduate\n  FROM estishraf_llm_university_graduates_impala\n  WHERE TRIM(qualification) = 'بكالوريوس'\n    AND graduation_date IS NOT NULL\n    AND enrollment_date IS NOT NULL\n    AND DATEDIFF(graduation_date, enrollment_date) BETWEEN 365 AND 3650\n    AND TRIM(university_name) NOT IN ('المؤسسة العامة للتدريب التقني والمهني', 'الكلية التقنية', 'المعهد التقني')\n)\nSELECT \n  university_name,\n  ROUND(AVG(days_to_graduate)) AS avg_days_to_graduate,\n  COUNT(DISTINCT id) AS graduate_count\nFROM BachelorGraduates\nGROUP BY university_name\nHAVING COUNT(DISTINCT id) >= 10\nORDER BY avg_days_to_graduate ASC\nLIMIT 5",
+  "raw_question": "أسرع الجامعات في تخريج طلاب البكالوريوس",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

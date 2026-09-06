@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT d.id, d.birth_date, FLOOR(DATEDIFF(CAST('2026-07-07' AS DATE), d.birth_date) / 365.25) AS age, TRIM(hl.city) AS city FROM estishraf_llm_wealth_index AS w JOIN estishraf_llm_demographics_impala AS d ON w.head_of_household_id = d.id JOIN estishraf_llm_home_location AS hl ON d.id = hl.id WHERE TRIM(w.wealth_level) = 'Rich' AND d.person_status = 'صالح' AND NOT d.birth_date IS NULL AND FLOOR(DATEDIFF(CAST('2026-07-07' AS DATE), d.birth_date) / 365.25) BETWEEN 25 AND 40 AND NOT EXISTS(SELECT 1 FROM estishraf_llm_university_graduates_impala AS edu WHERE edu.id = d.id) AND NOT hl.city IS NULL AND TRIM(hl.city) <> '' AND hl.city <> 'nan' LIMIT 1200",
+  "raw_question": "رتب لي اعلى خمس مدن من حيث عدد الأثرياء بين عمر 25 و 40 سنة الذين لا يملكون شهادات جامعية حسب احد...",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

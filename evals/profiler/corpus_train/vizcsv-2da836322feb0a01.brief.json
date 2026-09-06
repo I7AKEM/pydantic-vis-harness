@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH wealth_percentages AS (\n  SELECT \n    wealth_level,\n    COUNT(*) * 100.0 / SUM(COUNT(*)) OVER () as percentage\n  FROM estishraf_llm_wealth_index\n  GROUP BY wealth_level\n),\ncumulative_calc AS (\n  SELECT \n    wealth_level,\n    percentage,\n    SUM(percentage) OVER (ORDER BY \n      CASE wealth_level \n        WHEN 'Rich' THEN 5\n        WHEN 'Upper Middle' THEN 4\n        WHEN 'Middle' THEN 3\n        WHEN 'Lower Middle' THEN 2\n        WHEN 'Poor' THEN 1\n      END DESC\n    ) as cumulative_pct\n  FROM wealth_percentages\n)\nSELECT wealth_level, ROUND(percentage, 2) as percentage, ROUND(cumulative_pct, 2) as cumulative_pct\nFROM cumulative_calc\nWHERE cumulative_pct > 50\nORDER BY cumulative_pct DESC LIMIT 1200",
+  "raw_question": "قائمة كل مستوى ثروة مع النسبة المئوية التراكمية للأسر عندما تُرتّب من الأغنى إلى الأفقر. أعد فقط ...",
+  "suggested_chart_type": "bar|horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

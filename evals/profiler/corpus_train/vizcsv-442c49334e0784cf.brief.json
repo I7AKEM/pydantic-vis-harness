@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH private_unis AS (SELECT DISTINCT university_name FROM estishraf_llm_university_graduates_impala WHERE university_name IN ('جامعة الفيصل', 'جامعة الأمير سلطان', 'جامعة الأميرة نورة', 'جامعة الملك فهد للبترول والمعادن')), yearly_graduates AS (SELECT YEAR(g.graduation_date) AS grad_year, COUNT(DISTINCT g.id) AS graduate_count FROM estishraf_llm_university_graduates_impala AS g INNER JOIN private_unis AS p ON g.university_name = p.university_name WHERE NOT g.graduation_date IS NULL AND YEAR(g.graduation_date) BETWEEN 2010 AND 2025 GROUP BY YEAR(g.graduation_date)), growth_calc AS (SELECT grad_year, graduate_count, LAG(graduate_count) OVER (ORDER BY grad_year) AS prev_year_count, ROUND((graduate_count - LAG(graduate_count) OVER (ORDER BY grad_year)) * 100.0 / NULLIF(LAG(graduate_count) OVER (ORDER BY grad_year), 0), 2) AS growth_rate FROM yearly_graduates) SELECT grad_year, graduate_count, prev_year_count, growth_rate FROM growth_calc ORDER BY grad_year LIMIT 1200",
+  "raw_question": "نمو خريجي الجامعات الاهلية",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

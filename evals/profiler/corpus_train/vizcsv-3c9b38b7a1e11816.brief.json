@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT SUM(total_wage) AS total_salaries_2023\nFROM estishraf_llm_jobs_info_v3_impala\nWHERE YEAR(job_start_date) <= 2023 AND (YEAR(job_end_date) >= 2023 OR job_end_date IS NULL) LIMIT 10000",
+  "raw_question": "إجمالي الرواتب المصروفة في نظام العمل لعام 2023",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

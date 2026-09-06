@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH avg_by_discount AS (\n  SELECT is_discounted,\n         AVG(DATEDIFF(gdate_paid, gdate_happened)) AS avg_days\n  FROM estishraf_llm_traffic_violation\n  WHERE gdate_happened BETWEEN '2025-01-01' AND '2025-12-31'\n    AND gdate_paid IS NOT NULL\n    AND status_description != 'Cancelled due to the violator death'\n  GROUP BY is_discounted\n)\nSELECT \n  MAX(CASE WHEN is_discounted = TRUE THEN avg_days END) AS avg_days_discounted,\n  MAX(CASE WHEN is_discounted = FALSE THEN avg_days END) AS avg_days_non_discounted,\n  MAX(CASE WHEN is_discounted = FALSE THEN avg_days END) - MAX(CASE WHEN is_discounted = TRUE THEN avg_days END) AS difference\nFROM avg_by_discount\nLIMIT 100",
+  "raw_question": "ما الفرق في متوسط عدد الأيام بين تاريخ تسجيل المخالفة وتاريخ سدادها، بين المخالفات المخفضة وغير ا...",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

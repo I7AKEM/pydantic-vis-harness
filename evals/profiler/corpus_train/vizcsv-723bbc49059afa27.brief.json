@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT path_wkt FROM estishraf_llm_delivery_orders_information WHERE customer_city = 'الرياض' LIMIT 50",
+  "raw_question": "كم سكان المملكة؟",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

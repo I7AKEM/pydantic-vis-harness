@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH jeddah_residents AS (\n    SELECT DISTINCT bc.id, bc.dependent_seq_no\n    FROM estishraf_llm_border_crossings_impala bc\n    JOIN estishraf_llm_home_location hl ON bc.id = hl.id\n    WHERE hl.city = 'جدة'\n),\ninternational_flights AS (\n    SELECT \n        bc.exit_location_name,\n        bc.destination,\n        bc.exit_date\n    FROM estishraf_llm_border_crossings_impala bc\n    JOIN jeddah_residents jr ON bc.id = jr.id AND bc.dependent_seq_no = jr.dependent_seq_no\n    WHERE bc.exit_date >= '2025-01-01' AND bc.exit_date < '2026-01-01'\n      AND bc.exit_location_name IN ('مطار الملك خالد الدولي (الرياض)', 'مطار الملك عبدالعزيز الدولي (جدة)')\n      AND bc.destination IS NOT NULL \n      AND bc.destination != 'nan'\n      AND bc.destination != ''\n),\nranked_destinations AS (\n    SELECT \n        exit_location_name AS airport,\n        destination,\n        COUNT(*) AS flight_count,\n        ROW_NUMBER() OVER (PARTITION BY exit_location_name ORDER BY COUNT(*) DESC) as rank\n    FROM international_flights\n    GROUP BY exit_location_name, destination\n)\nSELECT airport, destination, flight_count\nFROM ranked_destinations\nWHERE rank <= 5\nORDER BY airport, rank LIMIT 20000",
+  "raw_question": "لسكان جدة فقط وخلال سنة (2025) قارن استخدام مطار الملك خالد ومطار الملك عبدالعزيز للسفر الدولي، و...",
+  "suggested_chart_type": "stacked_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

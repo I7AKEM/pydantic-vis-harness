@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH HouseholdMembers AS (SELECT e.head_of_household_id, e.wealth_level, COUNT(d.id) AS member_count FROM estishraf_llm_wealth_index AS e JOIN estishraf_llm_demographics_impala AS d ON e.head_of_household_id = d.head_of_household_id WHERE d.person_status = 'صالح' AND d.death_date IS NULL GROUP BY e.head_of_household_id, e.wealth_level) SELECT wealth_level, AVG(member_count) AS average_household_size, COUNT(*) AS household_count FROM HouseholdMembers GROUP BY wealth_level ORDER BY CASE wealth_level WHEN 'Poor' THEN 1 WHEN 'Lower Middle' THEN 2 WHEN 'Middle' THEN 3 WHEN 'Upper Middle' THEN 4 WHEN 'Rich' THEN 5 END LIMIT 1200",
+  "raw_question": "عطني تقرير ملخص عن السكان",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

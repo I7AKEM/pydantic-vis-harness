@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT \n    YEAR(entry_date) AS year,\n    COUNT(*) AS bahrain_visitors\nFROM estishraf_llm_border_crossings_impala\nWHERE destination = 'البحرين'\n  AND YEAR(entry_date) BETWEEN 2021 AND 2025\nGROUP BY YEAR(entry_date)\nORDER BY year LIMIT 20000",
+  "raw_question": "كم يبلغ مجموع المسافرين الافراد بين عمر 18 و 40 سنة الى دولة البحرين في الخمسة سنوات الماضية (202...",
+  "suggested_chart_type": "line",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

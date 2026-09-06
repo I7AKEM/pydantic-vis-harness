@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT app_name, customer_city, store_city, price, path_wkt FROM estishraf_llm_delivery_orders_information LIMIT 5",
+  "raw_question": "عطني خريطة لمسارات طلبات التوصيل مغ المدينة والسعر و اسم التطبيق واي معلومة مفيدة",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

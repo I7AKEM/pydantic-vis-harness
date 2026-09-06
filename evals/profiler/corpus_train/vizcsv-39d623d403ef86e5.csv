@@ -1,0 +1,20 @@
+person_type,entry_mode_value,trip_count,unique_persons
+,air,2246023,1347130
+resident,air,674942,337434
+visitor,air,674942,337475
+visitor as alien,air,674942,337475
+citizen,air,608180,303976
+,land,150810,90538
+,sea,94004,56429
+citizen,,75134,37448
+visitor,land,44945,22431
+visitor as alien,land,44945,22431
+resident,land,44945,22431
+citizen,land,40386,20244
+resident,sea,27970,13972
+visitor as alien,sea,27970,13972
+visitor,sea,27970,13972
+citizen,sea,25286,12653
+pilgrim,air,3674,2206
+pilgrim,land,234,145
+pilgrim,sea,181,97

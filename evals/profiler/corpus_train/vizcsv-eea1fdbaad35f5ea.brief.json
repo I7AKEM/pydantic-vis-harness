@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH region_population AS (SELECT TRIM(hl.region) AS region, COUNT(DISTINCT hp.id, hp.dependent_seq_no) AS population_count FROM estishraf_llm_historical_population_impala AS hp JOIN estishraf_llm_home_location AS hl ON hp.id = hl.id WHERE hp.is_in_population = TRUE AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND NOT TRIM(hl.region) IS NULL AND TRIM(hl.region) <> '' AND NOT TRIM(hl.region) IN ('المنطقة', 'منطقة �') GROUP BY TRIM(hl.region)), total_population AS (SELECT SUM(population_count) AS total_count FROM region_population) SELECT rp.region, rp.population_count, ROUND(rp.population_count * 100.0 / tp.total_count, 2) AS percentage FROM region_population AS rp CROSS JOIN total_population AS tp ORDER BY rp.population_count DESC LIMIT 1200",
+  "raw_question": "عطني نسبة السكان من كل منطقة",
+  "suggested_chart_type": "bar|horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

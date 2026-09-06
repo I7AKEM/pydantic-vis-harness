@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT MIN(declaration_date) AS min_date, MAX(declaration_date) AS max_date, COUNT(*) AS cnt FROM estishraf_llm_customs LIMIT 1200",
+  "raw_question": "المستوردون من الصين بعد السفر إليها",
+  "suggested_chart_type": "indicator|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

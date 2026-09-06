@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH LatestSnapshot AS (SELECT MAX(snapshot) AS latest_snapshot FROM estishraf_llm_historical_population_impala), FilteredPopulation AS (SELECT hp.id, hp.dependent_seq_no FROM estishraf_llm_historical_population_impala hp WHERE hp.snapshot = (SELECT latest_snapshot FROM LatestSnapshot) AND hp.is_in_population = TRUE), input AS (SELECT TRIM(hl.city) AS city, TRIM(hl.municipality) AS municipality, TRIM(hl.district) AS district, COUNT(DISTINCT fp.id, fp.dependent_seq_no) AS population_count FROM FilteredPopulation fp JOIN estishraf_llm_home_location hl ON fp.id = hl.id WHERE TRIM(hl.region) = 'منطقة الرياض' AND TRIM(hl.city) = 'الرياض' AND hl.district IS NOT NULL AND hl.district != 'خارج حدود الاحياء' AND hl.district != 'بدون اسم' GROUP BY TRIM(hl.city), TRIM(hl.municipality), TRIM(hl.district) ORDER BY population_count DESC) SELECT input.*, poly.wkt FROM input JOIN ESTISHRAF_LLM_KSA_Districts_Polygons poly ON input.district = poly.district AND input.city = poly.city",
+  "raw_question": "ارسم لي خريطة توضح سكان المملكة حسب المناطق",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

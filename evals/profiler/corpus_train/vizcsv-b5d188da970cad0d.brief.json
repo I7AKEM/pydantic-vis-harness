@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "WITH population_data AS (SELECT hl.region, hp.gender, COUNT(DISTINCT hp.id, hp.dependent_seq_no) AS population_count FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id WHERE hp.is_in_population = true AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND hl.region IS NOT NULL AND Trim( hl.region ) != '' GROUP BY hl.region, hp.gender), region_totals AS (SELECT region, SUM(population_count) AS total_region_population FROM population_data GROUP BY region) SELECT pd.region, pd.gender, pd.population_count, rt.total_region_population, ROUND((pd.population_count * 100.0 / rt.total_region_population), 2) AS percentage FROM population_data pd JOIN region_totals rt ON pd.region = rt.region ORDER BY pd.region, pd.gender LIMIT 1200",
+  "raw_question": "عدد سكان المملكة العربية السعودية",
+  "intent": "compare",
+  "suggested_chart_type": "grouped_bar|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

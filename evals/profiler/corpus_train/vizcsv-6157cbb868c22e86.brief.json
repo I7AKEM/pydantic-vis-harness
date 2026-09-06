@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH port_counts AS (SELECT TRIM(bc.nationality) AS nationality, bc.entry_location_name AS port, COUNT(*) AS entry_count FROM estishraf_llm_border_crossings_impala AS bc WHERE TRIM(bc.nationality) IN ('صيني', 'كويتي', 'بريطاني', 'ياباني', 'إيطالي', 'اردني', 'ليبي', 'عماني', 'ألماني', 'بحريني') AND NOT bc.entry_timestamp IS NULL AND NOT bc.entry_location_name IS NULL AND NOT bc.entry_location_name IN ('1902-01-01', '1903-01-01') GROUP BY TRIM(bc.nationality), bc.entry_location_name), total_per_nationality AS (SELECT nationality, SUM(entry_count) AS total_entries FROM port_counts GROUP BY nationality), top_port AS (SELECT pc.nationality, pc.port, pc.entry_count FROM port_counts AS pc WHERE pc.entry_count = (SELECT MAX(entry_count) FROM port_counts AS pc2 WHERE pc2.nationality = pc.nationality)) SELECT tp.nationality, tp.port AS most_used_port, tp.entry_count AS port_entries, tn.total_entries AS total_entries, ROUND((tp.entry_count * 100.0 / tn.total_entries), 2) AS percentage FROM top_port AS tp JOIN total_per_nationality AS tn ON tp.nationality = tn.nationality ORDER BY tn.total_entries DESC LIMIT 1200",
+  "raw_question": "منافذ الدخول الأكثر استخداماً للجنسيات العشر",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

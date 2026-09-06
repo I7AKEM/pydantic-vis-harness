@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "WITH LatestSnapshot AS (SELECT MAX(snapshot) AS latest_snapshot FROM estishraf_llm_historical_population_impala), FilteredPopulation AS (SELECT id FROM estishraf_llm_historical_population_impala WHERE snapshot = (SELECT latest_snapshot FROM LatestSnapshot) AND is_in_population = true) SELECT hl.region, COUNT(DISTINCT fp.id) AS population_count FROM FilteredPopulation fp JOIN estishraf_llm_home_location hl ON fp.id = hl.id WHERE hl.region IN ('منطقة الرياض', 'منطقة مكة المكرمة') GROUP BY hl.region ORDER BY population_count DESC LIMIT 1200",
+  "raw_question": "مقارنة عامة",
+  "intent": "compare",
+  "suggested_chart_type": "bar|horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

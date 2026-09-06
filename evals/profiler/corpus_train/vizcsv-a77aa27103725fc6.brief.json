@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "WITH LatestSnapshot AS (SELECT MAX(snapshot) AS latest_snapshot FROM estishraf_llm_historical_population_impala), FilteredPopulation AS (SELECT hp.id, hp.gender FROM estishraf_llm_historical_population_impala hp WHERE hp.snapshot = (SELECT latest_snapshot FROM LatestSnapshot) AND hp.is_in_population = true) SELECT Trim( hl.region ) AS region, fp.gender, COUNT(fp.id) AS population_count FROM FilteredPopulation fp JOIN estishraf_llm_home_location hl ON fp.id = hl.id WHERE Trim( hl.region ) IS NOT NULL AND hl.region != 'nan' GROUP BY Trim( hl.region ), fp.gender ORDER BY region, gender LIMIT 1200",
+  "raw_question": "مقارنة أعداد السكان حسب الجنس والمناطق",
+  "intent": "compare",
+  "suggested_chart_type": "grouped_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

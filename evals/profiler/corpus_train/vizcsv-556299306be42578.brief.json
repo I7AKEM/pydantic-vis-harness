@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH demographic_groups AS ( SELECT gender, nationality, person_type, COUNT(DISTINCT id, dependent_seq_no) AS group_count FROM estishraf_llm_historical_population_impala WHERE snapshot = '2026-02-01' AND is_in_population = true GROUP BY gender, nationality, person_type ) SELECT gender, nationality, person_type, group_count, ROUND((group_count * 100.0) / SUM(group_count) OVER (), 2) AS percentage FROM demographic_groups ORDER BY nationality, person_type, gender LIMIT 20",
+  "raw_question": "ما هي التركيبة السكانية في المملكة العربية السعودية في الربع الثاني من عام 2022؟",
+  "suggested_chart_type": "stacked_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

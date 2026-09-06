@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT path_wkt FROM estishraf_llm_delivery_orders_information WHERE path_wkt IS NOT NULL LIMIT 100",
+  "raw_question": "عطني خريطة لمسارات طلبات التوصيل من الجدول estishraf_llm_delivery_orders_information",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

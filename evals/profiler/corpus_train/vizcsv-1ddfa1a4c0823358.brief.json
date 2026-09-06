@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH WealthByRegion AS (\n    SELECT \n        hl.region,\n        COUNT(*) AS total_households,\n        COUNT(CASE WHEN wi.wealth_level = 'Rich' THEN 1 END) AS rich_households\n    FROM estishraf_llm_wealth_index wi\n    JOIN estishraf_llm_home_location hl ON wi.head_of_household_id = hl.id\n    WHERE hl.region IS NOT NULL AND hl.region != ''\n    GROUP BY hl.region\n),\nWealthPercentage AS (\n    SELECT \n        region,\n        (rich_households * 100.0 / total_households) AS rich_percentage\n    FROM WealthByRegion\n),\ninput AS (\n    SELECT \n        region AS Region,\n        rich_percentage AS RichPercentage\n    FROM WealthPercentage\n    ORDER BY rich_percentage DESC\n)\nSELECT input.*, poly.wkt FROM input JOIN ESTISHRAF_LLM_KSA_Regions_Polygons poly ON input.Region = poly.region",
+  "raw_question": "أي منطقة لديها أعلى نسبة أثرياء؟ رد كالتالي: \"المنطقة: (الاسم) - النسبة: (الرقم)%\"",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

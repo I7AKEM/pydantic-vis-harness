@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH citizen_trips AS (\n  SELECT \n    id,\n    YEAR(exit_date) as trip_year,\n    COUNT(*) as trips_count\n  FROM estishraf_llm_border_crossings_impala\n  WHERE person_type = 'citizen' \n    AND exit_date IS NOT NULL\n    AND YEAR(exit_date) BETWEEN 2021 AND 2025\n  GROUP BY id, YEAR(exit_date)\n  HAVING COUNT(*) >= 1\n)\n\nSELECT \n  hl.city,\n  ct.trip_year,\n  COUNT(DISTINCT ct.id) as citizen_count\nFROM citizen_trips ct\nJOIN estishraf_llm_home_location hl ON ct.id = hl.id\nWHERE hl.city IS NOT NULL\nGROUP BY hl.city, ct.trip_year\nORDER BY ct.trip_year, citizen_count DESC\nLIMIT 20",
+  "raw_question": "في أي المدن يقطن المواطنون الذين يغادرون المملكة اكثر من ثلاث مرات في كل سنة من الخمسة سنوات الما...",
+  "suggested_chart_type": "stacked_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

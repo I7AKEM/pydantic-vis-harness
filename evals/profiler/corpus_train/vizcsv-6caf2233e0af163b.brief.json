@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "SELECT region, SUM(CASE WHEN gender = 'F' THEN population_count ELSE 0 END) AS female_count, SUM(CASE WHEN gender = 'M' THEN population_count ELSE 0 END) AS male_count, SUM(population_count) AS total_count, ROUND(SUM(CASE WHEN gender = 'F' THEN population_count ELSE 0 END) * 100.0 / SUM(population_count), 2) AS female_percentage, ROUND(SUM(CASE WHEN gender = 'M' THEN population_count ELSE 0 END) * 100.0 / SUM(population_count), 2) AS male_percentage FROM (SELECT hl.region, hp.gender, COUNT(DISTINCT hp.id, hp.dependent_seq_no) AS population_count FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id WHERE hp.is_in_population = true AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND hl.region IS NOT NULL AND Trim( hl.region ) != '' GROUP BY hl.region, hp.gender) sub GROUP BY region ORDER BY region LIMIT 1200",
+  "raw_question": "توزيع السكان حسب الجنس لكل منطقة",
+  "intent": "compare",
+  "suggested_chart_type": "stacked_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH IndividualTrips AS (\n    SELECT \n        id,\n        dependent_seq_no,\n        COUNT(*) AS total_trips\n    FROM estishraf_llm_border_crossings_impala\n    WHERE (YEAR(entry_date) >= 2023 OR YEAR(exit_date) >= 2023)\n    AND entry_date IS NOT NULL OR exit_date IS NOT NULL\n    GROUP BY id, dependent_seq_no\n)\nSELECT \n    AVG(total_trips) AS average_trips_per_individual\nFROM IndividualTrips LIMIT 20000",
+  "raw_question": "سو لي تقرير عن الحدود",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH monthly_counts AS (SELECT CONCAT(CAST(YEAR(entry_timestamp) AS STRING), '-', LPAD(CAST(MONTH(entry_timestamp) AS STRING), 2, '0')) AS year_month, COUNT(*) AS visitor_count FROM estishraf_llm_border_crossings_impala WHERE visa_type_description LIKE '%زيارة سياحية%' AND NOT entry_timestamp IS NULL AND entry_timestamp >= '2023-04-10' AND entry_timestamp <= '2026-04-10' GROUP BY YEAR(entry_timestamp), MONTH(entry_timestamp)), monthly_with_growth AS (SELECT year_month, visitor_count, LAG(visitor_count) OVER (ORDER BY year_month) AS prev_month_count FROM monthly_counts) SELECT year_month, visitor_count, CASE WHEN NOT prev_month_count IS NULL AND prev_month_count <> 0 THEN ROUND((visitor_count - prev_month_count) * 100.0 / prev_month_count, 2) ELSE NULL END AS growth_rate_pct FROM monthly_with_growth ORDER BY year_month LIMIT 1200",
+  "raw_question": "نسبة نمو الزوار بتأشيرة سياحية شهرياً",
+  "suggested_chart_type": "line",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

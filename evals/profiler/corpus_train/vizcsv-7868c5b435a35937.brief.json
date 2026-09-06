@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH paid_violations AS (SELECT t.violator_id, t.gdate_happened, t.gdate_paid, DATEDIFF(t.gdate_paid, t.gdate_happened) AS payment_days FROM estishraf_llm_traffic_violation AS t WHERE t.gdate_happened >= '2025-01-01' AND t.gdate_happened < '2026-01-01' AND NOT t.gdate_paid IS NULL AND t.status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid')), violator_wealth AS (SELECT pv.violator_id, pv.payment_days, w.wealth_level FROM paid_violations AS pv JOIN estishraf_llm_demographics_impala AS d ON CAST(pv.violator_id AS BIGINT) = d.id JOIN estishraf_llm_wealth_index AS w ON d.head_of_household_id = w.head_of_household_id) SELECT wealth_level, ROUND(AVG(payment_days), 1) AS avg_payment_days, COUNT(*) AS violation_count FROM violator_wealth GROUP BY wealth_level ORDER BY CASE wealth_level WHEN 'Poor' THEN 1 WHEN 'Lower Middle' THEN 2 WHEN 'Middle' THEN 3 WHEN 'Upper Middle' THEN 4 WHEN 'Rich' THEN 5 END LIMIT 1200",
+  "raw_question": "أثر مستوى الثروة على سرعة سداد المخالفات",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

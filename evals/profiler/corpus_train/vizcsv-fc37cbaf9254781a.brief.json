@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH household_sizes AS (SELECT hl.region, d.head_of_household_id, COUNT(d.id) AS household_size FROM estishraf_llm_demographics_impala d JOIN estishraf_llm_home_location hl ON d.id = hl.id WHERE d.person_status = 'صالح' AND d.head_of_household_id IS NOT NULL AND TRIM(hl.region) != '' AND hl.region IS NOT NULL GROUP BY hl.region, d.head_of_household_id), regional_avg AS (SELECT region, AVG(household_size) AS avg_household_size FROM household_sizes GROUP BY region), national_avg AS (SELECT AVG(household_size) AS national_average FROM household_sizes), input AS (SELECT r.region AS المنطقة, ROUND(r.avg_household_size, 2) AS متوسط_عدد_أفراد_الأسرة, ROUND(n.national_average, 2) AS المتوسط_الوطني FROM regional_avg r CROSS JOIN national_avg n ORDER BY r.avg_household_size DESC) SELECT input.*, poly.wkt FROM input JOIN ESTISHRAF_LLM_KSA_Regions_Polygons poly ON input.المنطقة = poly.region",
+  "raw_question": "سو لي تقرير عن السكان",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

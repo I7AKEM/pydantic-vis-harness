@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT *\nFROM estishraf_llm_delivery_orders_information\nLIMIT 100",
+  "raw_question": "عطني خريطة لمسارات طلبات التوصيل من الجدول estishraf_llm_delivery_orders_information",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

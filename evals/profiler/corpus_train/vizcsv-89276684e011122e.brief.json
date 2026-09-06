@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_population AS (SELECT id FROM estishraf_llm_historical_population_impala WHERE snapshot = '2026-02-01' AND is_in_population = TRUE AND person_type = 'Saudi'), employed AS (SELECT DISTINCT id FROM estishraf_llm_jobs_info_v3_impala WHERE is_active_job = 1 AND id IN (SELECT id FROM latest_population)), unemployed AS (SELECT id FROM latest_population WHERE id NOT IN (SELECT id FROM employed)), recent_graduates AS (SELECT DISTINCT id FROM estishraf_llm_university_graduates_impala WHERE graduation_date >= DATE_SUB(CAST('2026-02-01' AS TIMESTAMP), INTERVAL 1 YEAR) AND id IN (SELECT id FROM latest_population)) SELECT (SELECT COUNT(*) FROM unemployed) AS unemployed_count, (SELECT COUNT(*) FROM employed) AS employed_count, (SELECT COUNT(*) FROM recent_graduates) AS recent_graduates_count",
+  "raw_question": "محادثة جديدة",
+  "suggested_chart_type": "indicator|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

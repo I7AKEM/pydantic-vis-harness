@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT \n    YEAR(d.birth_date) AS birth_year,\n    COUNT(*) AS employee_count\nFROM estishraf_llm_jobs_info_v3_impala j\nJOIN estishraf_llm_demographics_impala d ON j.id = d.id\nWHERE j.is_active_job = 1 \nAND j.employer_name = 'شركة أوبن لتقنية المعلومات'\nAND d.birth_date IS NOT NULL\nGROUP BY YEAR(d.birth_date)\nORDER BY birth_year;",
+  "raw_question": "كم عدد موظفي أوبن؟",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

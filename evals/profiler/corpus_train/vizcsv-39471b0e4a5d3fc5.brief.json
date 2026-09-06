@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH driver_violators AS (SELECT DISTINCT CAST(violator_id AS BIGINT) AS violator_id FROM estishraf_llm_traffic_violation AS tv JOIN estishraf_llm_jobs_info_v3_impala AS j ON CAST(tv.violator_id AS BIGINT) = j.id WHERE j.job_title LIKE '%سائق%' AND tv.status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid')), non_driver_violators AS (SELECT DISTINCT CAST(violator_id AS BIGINT) AS violator_id FROM estishraf_llm_traffic_violation AS tv JOIN estishraf_llm_jobs_info_v3_impala AS j ON CAST(tv.violator_id AS BIGINT) = j.id WHERE NOT j.job_title LIKE '%سائق%' AND NOT j.job_title IS NULL AND tv.status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid')), driver_violation_count AS (SELECT COUNT(*) AS total_violations, COUNT(DISTINCT violator_id) AS unique_drivers FROM estishraf_llm_traffic_violation WHERE CAST(violator_id AS BIGINT) IN (SELECT violator_id FROM driver_violators) AND status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid')), non_driver_violation_count AS (SELECT COUNT(*) AS total_violations, COUNT(DISTINCT violator_id) AS unique_non_drivers FROM estishraf_llm_traffic_violation WHERE CAST(violator_id AS BIGINT) IN (SELECT violator_id FROM non_driver_violators) AND status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid')) SELECT 'سائق' AS profession_group, dvc.total_violations AS total_violations, dvc.unique_drivers AS unique_violators, ROUND(dvc.total_violations / dvc.unique_drivers, 2) AS avg_violations_per_person FROM driver_violation_count AS dvc UNION ALL SELECT 'غير سائق' AS profession_group, ndc.total_violations AS total_violations, ndc.unique_non_drivers AS unique_violators, ROUND(ndc.total_violations / ndc.unique_non_drivers, 2) AS avg_violations_per_person FROM non_driver_violation_count AS ndc LIMIT 1200",
+  "raw_question": "ما هو متوسط المخالفات للأشخاص العاملين بمهنة سائق مقارنة بالأشخاص الغير عاملين بالمهنة؟",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

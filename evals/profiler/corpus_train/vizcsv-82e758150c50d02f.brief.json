@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_population AS (SELECT id, age FROM estishraf_llm_historical_population_impala WHERE snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND is_in_population = TRUE), joined_data AS (SELECT lp.id, lp.age, ug.qualification FROM latest_population lp LEFT JOIN estishraf_llm_university_graduates_impala ug ON lp.id = ug.id WHERE ug.qualification IN ('بكالوريوس', 'ماجستير', 'دكتوراه', 'زمالة') OR ug.qualification IS NULL), age_groups AS (SELECT id, age, qualification, CASE WHEN age <= 14 THEN '0-14' WHEN age BETWEEN 15 AND 24 THEN '15-24' WHEN age BETWEEN 25 AND 44 THEN '25-44' WHEN age BETWEEN 45 AND 64 THEN '45-64' ELSE '65+' END AS age_group FROM joined_data), population_by_age AS (SELECT age_group, COUNT(*) AS total_count FROM age_groups GROUP BY age_group), graduates_by_age AS (SELECT age_group, COUNT(*) AS graduate_count FROM age_groups WHERE qualification IN ('بكالوريوس', 'ماجستير', 'دكتوراه', 'زمالة') GROUP BY age_group) SELECT p.age_group, COALESCE(g.graduate_count, 0) AS with_higher_education, p.total_count AS total_population, ROUND((COALESCE(g.graduate_count, 0) * 100.0) / p.total_count, 2) AS percentage FROM population_by_age p LEFT JOIN graduates_by_age g ON p.age_group = g.age_group ORDER BY CASE p.age_group WHEN '0-14' THEN 1 WHEN '15-24' THEN 2 WHEN '25-44' THEN 3 WHEN '45-64' THEN 4 WHEN '65+' THEN 5 ELSE 6 END LIMIT 1200",
+  "raw_question": "ما نسبة الحاصلين على تعليم جامعي حسب الفئة العمرية؟",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

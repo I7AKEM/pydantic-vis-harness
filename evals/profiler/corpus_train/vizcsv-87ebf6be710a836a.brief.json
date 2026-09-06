@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH non_saudi_population AS (\n  SELECT \n    TRIM(nationality) as nationality,\n    COUNT(DISTINCT id, dependent_seq_no) as count_by_nationality\n  FROM estishraf_llm_historical_population_impala\n  WHERE snapshot = '2026-02-01' \n    AND TRIM(person_type) != 'Saudi'\n    AND is_in_population = TRUE\n  GROUP BY TRIM(nationality)\n),\ntotal_non_saudi AS (\n  SELECT SUM(count_by_nationality) as total_count\n  FROM non_saudi_population\n)\nSELECT \n  np.nationality,\n  np.count_by_nationality,\n  ROUND((np.count_by_nationality * 100.0 / tp.total_count), 2) as percentage\nFROM non_saudi_population np\nCROSS JOIN total_non_saudi tp\nORDER BY np.count_by_nationality DESC\nLIMIT 10",
+  "raw_question": "عطني تقرير عن سكان المملكة",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

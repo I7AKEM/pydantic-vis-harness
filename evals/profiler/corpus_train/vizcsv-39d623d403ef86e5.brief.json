@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "SELECT person_type, entry_mode_value, COUNT(*) AS trip_count, COUNT(DISTINCT id) AS unique_persons FROM estishraf_llm_border_crossings_impala GROUP BY person_type, entry_mode_value ORDER BY trip_count DESC LIMIT 1200",
+  "raw_question": "حركة منافذ المملكة",
+  "intent": "composition",
+  "suggested_chart_type": "stacked_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH years AS (\n  SELECT 2021 AS year UNION ALL\n  SELECT 2022 UNION ALL\n  SELECT 2023 UNION ALL\n  SELECT 2024 UNION ALL\n  SELECT 2025\n),\nactive_counts AS (\n  SELECT \n    y.year,\n    COUNT(DISTINCT j.id) AS active_employees\n  FROM years y\n  LEFT JOIN estishraf_llm_jobs_info_v3_impala j \n    ON YEAR(j.job_start_date) <= y.year \n    AND (j.job_end_date IS NULL OR YEAR(j.job_end_date) >= y.year)\n    AND j.is_active_job = 1\n  GROUP BY y.year\n)\nSELECT \n  year,\n  active_employees,\n  LAG(active_employees) OVER (ORDER BY year) AS prev_year_count,\n  ROUND(\n    CASE \n      WHEN LAG(active_employees) OVER (ORDER BY year) > 0 \n      THEN ((active_employees - LAG(active_employees) OVER (ORDER BY year)) / LAG(active_employees) OVER (ORDER BY year)) * 100 \n      ELSE NULL \n    END, 2\n  ) AS growth_rate_pct\nFROM active_counts\nORDER BY year LIMIT 1200",
+  "raw_question": "أريد تقرير شامل عن حالة التوظيف والرواتب مع التحليلات البيانية",
+  "suggested_chart_type": "line",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

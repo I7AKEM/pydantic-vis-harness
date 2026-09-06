@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_snapshot AS (\n    SELECT MAX(snapshot) as max_snap \n    FROM estishraf_llm_historical_population_impala\n),\nwealthy_households AS (\n    SELECT head_of_household_id \n    FROM estishraf_llm_wealth_index \n    WHERE wealth_level = 'Rich'\n),\npop_25_40 AS (\n    SELECT hp.id\n    FROM estishraf_llm_historical_population_impala hp\n    CROSS JOIN latest_snapshot ls\n    WHERE hp.snapshot = ls.max_snap\n    AND hp.is_in_population = TRUE\n    AND hp.age BETWEEN 25 AND 40\n),\ngraduates_list AS (\n    SELECT DISTINCT id \n    FROM estishraf_llm_university_graduates_impala \n    WHERE qualification IN ('بكالوريوس', 'ماجستير', 'دكتوراه', 'زمالة')\n),\nnon_graduate_wealthy AS (\n    SELECT d.id, d.head_of_household_id\n    FROM pop_25_40 p\n    JOIN estishraf_llm_demographics_impala d ON p.id = d.id\n    LEFT JOIN graduates_list g ON p.id = g.id\n    WHERE g.id IS NULL\n    AND d.head_of_household_id IN (SELECT head_of_household_id FROM wealthy_households)\n)\nSELECT \n    hl.city,\n    COUNT(DISTINCT ng.id) as wealthy_count\nFROM non_graduate_wealthy ng\nJOIN estishraf_llm_home_location hl ON ng.id = hl.id\nWHERE hl.city IS NOT NULL \n  AND hl.city != 'nan'\n  AND TRIM(hl.city) != ''\nGROUP BY hl.city\nORDER BY wealthy_count DESC\nLIMIT 5",
+  "raw_question": "رتب لي اعلى خمس مدن من حيث عدد الأثرياء بين عمر 25 و 40 سنة الذين لا يملكون شهادات جامعية حسب احد...",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

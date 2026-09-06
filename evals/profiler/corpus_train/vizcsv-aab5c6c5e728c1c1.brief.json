@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_snapshot AS (SELECT MAX(snapshot) AS max_snapshot FROM estishraf_llm_historical_population_impala), household_sizes AS (SELECT hl.region, d.head_of_household_id, COUNT(d.id) AS household_size FROM estishraf_llm_demographics_impala d JOIN estishraf_llm_home_location hl ON d.id = hl.id CROSS JOIN latest_snapshot ls WHERE d.person_status = 'صالح' AND d.head_of_household_id IS NOT NULL AND hl.region IS NOT NULL GROUP BY hl.region, d.head_of_household_id), input AS (SELECT region AS المنطقة, AVG(household_size) AS متوسط_عدد_أفراد_الأسرة FROM household_sizes GROUP BY region ORDER BY متوسط_عدد_أفراد_الأسرة DESC) SELECT input.*, poly.wkt FROM input JOIN ESTISHRAF_LLM_KSA_Regions_Polygons poly ON input.المنطقة = poly.region",
+  "raw_question": "عذني تقرير عن السكان",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

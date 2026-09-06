@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH saudi_households AS (SELECT head_of_household_id, COUNT(id) as household_size FROM estishraf_llm_demographics_impala WHERE person_type = 'Saudi' AND person_status = 'صالح' AND death_date IS NULL GROUP BY head_of_household_id), foreigner_households AS (SELECT head_of_household_id, COUNT(id) as household_size FROM estishraf_llm_demographics_impala WHERE person_type = 'Alien' AND person_status = 'صالح' AND death_date IS NULL GROUP BY head_of_household_id) SELECT 'سعودي' as type, ROUND(AVG(household_size), 2) as avg_household_size FROM saudi_households UNION ALL SELECT 'أجنبي' as type, ROUND(AVG(household_size), 2) as avg_household_size FROM foreigner_households LIMIT 20000",
+  "raw_question": "سو لي تقرير عن السكان",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

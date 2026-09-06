@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH\n    lvl AS (\n        SELECT\n            wealth_level,\n            COUNT(*) AS cnt\n        FROM\n            estishraf_llm_wealth_index\n        GROUP BY\n            wealth_level\n        ORDER BY\n            cnt DESC\n    ),\n    cum AS (\n        SELECT\n            wealth_level,\n            cnt,\n            SUM(cnt) OVER (\n                ORDER BY\n                    cnt DESC ROWS UNBOUNDED PRECEDING\n            ) AS cum_cnt,\n            SUM(cnt) OVER () AS total\n        FROM\n            lvl\n    )\nSELECT\n    wealth_level,\n     ROUND(100.0 * cum_cnt / total, 2) AS cum_pct\nFROM\n    cum\nWHERE\n    ROUND(100.0 * cum_cnt / total, 2) - (100.0 * cnt / total) < 70\nORDER BY\n    cum_pct\nLIMIT 2",
+  "raw_question": "ماهم أعلى مستويين من الثروة يغطيان ما لا يقل عن 70% من جميع الأسر؟ أظهر االمستوى و النسبة التراكمية",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

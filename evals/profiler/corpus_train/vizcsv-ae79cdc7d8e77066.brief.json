@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH TotalPostgraduates AS (/* إجمالي الحاصلين على الماجستير أو الدكتوراه (أشخاص مميزون) */ SELECT COUNT(DISTINCT id) AS total_postgraduates FROM estishraf_llm_university_graduates_impala WHERE qualification IN ('ماجستير', 'دكتوراه') AND NOT graduation_date IS NULL), SameUniversityPostgraduates AS (/* الطلاب الذين حصلوا على الماجستير أو الدكتوراه من نفس جامعة البكالوريوس */ SELECT COUNT(DISTINCT t2.id) AS same_uni_count FROM estishraf_llm_university_graduates_impala AS t1 INNER JOIN estishraf_llm_university_graduates_impala AS t2 ON t1.id = t2.id WHERE t1.qualification = 'بكالوريوس' AND t2.qualification IN ('ماجستير', 'دكتوراه') AND NOT t1.graduation_date IS NULL AND NOT t2.graduation_date IS NULL AND TRIM(t1.university_name) = TRIM(t2.university_name) AND t2.graduation_date > t1.graduation_date) SELECT ROUND(same_uni_count * 100.0 / total_postgraduates, 2) AS percentage, same_uni_count AS students_returned_to_same_university, total_postgraduates AS total_postgraduates FROM SameUniversityPostgraduates CROSS JOIN TotalPostgraduates LIMIT 1200",
+  "raw_question": "الطلاب العائدون للجامعات للحصول على الماجستير والدكتوراه",
+  "suggested_chart_type": "indicator|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

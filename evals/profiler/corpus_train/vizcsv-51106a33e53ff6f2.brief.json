@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH violation_ages AS (SELECT t.violator_id, t.gdate_happened, YEAR(t.gdate_happened) AS violation_year, FLOOR(DATEDIFF(t.gdate_happened, d.birth_date) / 365.25) AS age_at_violation FROM estishraf_llm_traffic_violation AS t JOIN estishraf_llm_demographics_impala AS d ON CAST(t.violator_id AS BIGINT) = d.id WHERE t.gdate_happened BETWEEN '2021-01-01' AND '2025-12-31' AND t.status_description <> CONCAT('Cancelled due to the violator', 's death') AND NOT d.birth_date IS NULL), under_25 AS (SELECT violation_year, COUNT(*) AS total_violations, COUNT(DISTINCT violator_id) AS unique_drivers, COUNT(*) * 1.0 / COUNT(DISTINCT violator_id) AS avg_violations_per_driver FROM violation_ages WHERE age_at_violation < 25 GROUP BY violation_year), over_25 AS (SELECT violation_year, COUNT(*) AS total_violations, COUNT(DISTINCT violator_id) AS unique_drivers, COUNT(*) * 1.0 / COUNT(DISTINCT violator_id) AS avg_violations_per_driver FROM violation_ages WHERE age_at_violation >= 25 GROUP BY violation_year) SELECT u.violation_year, ROUND(u.avg_violations_per_driver, 3) AS avg_under_25, ROUND(o.avg_violations_per_driver, 3) AS avg_over_25, ROUND(((o.avg_violations_per_driver - u.avg_violations_per_driver) / u.avg_violations_per_driver) * 100, 2) AS pct_difference FROM under_25 AS u JOIN over_25 AS o ON u.violation_year = o.violation_year ORDER BY u.violation_year LIMIT 1200",
+  "raw_question": "الفرق بالنسبة المئوية في المخالفات بين الفئتين العمريتين",
+  "suggested_chart_type": "line",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

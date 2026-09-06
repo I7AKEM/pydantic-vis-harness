@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH filtered_graduates AS (SELECT TRIM(university_name) AS university, CASE WHEN gpa_type = 'نظام المعدل التراكمي المئوي' THEN LEAST(gpa / 25, 4.0) WHEN gpa_type = 'نظام المعدل التراكمي المكون من خمس نقاط' THEN LEAST(gpa * 0.8, 4.0) WHEN gpa_type = 'نظام المعدل التراكمي المكون من أربع نقاط' THEN gpa ELSE NULL END AS normalized_gpa FROM estishraf_llm_university_graduates_impala WHERE graduation_date BETWEEN '2025-01-01' AND '2025-12-31' AND gpa IS NOT NULL AND gpa <= 100 AND university_name IS NOT NULL), university_stats AS (SELECT university, ROUND(AVG(normalized_gpa), 2) AS avg_normalized_gpa, COUNT(*) AS student_count FROM filtered_graduates GROUP BY university HAVING COUNT(*) >= 10) SELECT university, avg_normalized_gpa, student_count FROM university_stats ORDER BY avg_normalized_gpa DESC LIMIT 1200",
+  "raw_question": "ما متوسط معدل التخرج (GPA) للطلاب في كل جامعة خلال آخر سنة؟",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

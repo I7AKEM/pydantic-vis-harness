@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT EXTRACT(YEAR FROM entry_timestamp) AS year, EXTRACT(MONTH FROM entry_timestamp) AS month, COUNT(*) AS visitor_count FROM estishraf_llm_border_crossings_impala WHERE person_type = 'visitor' AND entry_mode_value = 'land' AND NOT entry_timestamp IS NULL AND EXTRACT(YEAR FROM entry_timestamp) = 2025 GROUP BY EXTRACT(YEAR FROM entry_timestamp), EXTRACT(MONTH FROM entry_timestamp) ORDER BY month LIMIT 1200",
+  "raw_question": "دخول الزوار عبر المنافذ البرية في ذو الحجة",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

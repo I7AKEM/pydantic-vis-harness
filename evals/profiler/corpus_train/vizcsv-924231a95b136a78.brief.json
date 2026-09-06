@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH alien_exits_2025 AS (SELECT id, birth_date, FLOOR(DATEDIFF(final_exit_date, birth_date) / 365.25) AS age_at_exit FROM estishraf_llm_demographics_impala WHERE person_type = 'Alien' AND final_exit_date >= '2025-01-01' AND final_exit_date < '2026-01-01' AND NOT birth_date IS NULL AND birth_date > '1900-01-01') SELECT CASE WHEN age_at_exit >= 20 AND age_at_exit <= 25 THEN '20-25' WHEN age_at_exit >= 26 AND age_at_exit <= 30 THEN '26-30' WHEN age_at_exit >= 31 AND age_at_exit <= 40 THEN '31-40' WHEN age_at_exit >= 41 AND age_at_exit <= 50 THEN '41-50' WHEN age_at_exit >= 51 THEN '51+' ELSE 'أخرى' END AS age_group, COUNT(DISTINCT id) AS count FROM alien_exits_2025 GROUP BY CASE WHEN age_at_exit >= 20 AND age_at_exit <= 25 THEN 1 WHEN age_at_exit >= 26 AND age_at_exit <= 30 THEN 2 WHEN age_at_exit >= 31 AND age_at_exit <= 40 THEN 3 WHEN age_at_exit >= 41 AND age_at_exit <= 50 THEN 4 WHEN age_at_exit >= 51 THEN 5 ELSE 6 END, CASE WHEN age_at_exit >= 20 AND age_at_exit <= 25 THEN '20-25' WHEN age_at_exit >= 26 AND age_at_exit <= 30 THEN '26-30' WHEN age_at_exit >= 31 AND age_at_exit <= 40 THEN '31-40' WHEN age_at_exit >= 41 AND age_at_exit <= 50 THEN '41-50' WHEN age_at_exit >= 51 THEN '51+' ELSE 'أخرى' END ORDER BY CASE WHEN age_at_exit >= 20 AND age_at_exit <= 25 THEN 1 WHEN age_at_exit >= 26 AND age_at_exit <= 30 THEN 2 WHEN age_at_exit >= 31 AND age_at_exit <= 40 THEN 3 WHEN age_at_exit >= 41 AND age_at_exit <= 50 THEN 4 WHEN age_at_exit >= 51 THEN 5 ELSE 6 END LIMIT 1200",
+  "raw_question": "عدد الأجانب المغادرين من سوق العمل في 2025م مقسمة حسب الفئة العمرية (20-25، 26-30، 31-40، 41-50، ...",
+  "suggested_chart_type": "bar|horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH monthly_visitors AS (SELECT YEAR(entry_timestamp) AS year, MONTH(entry_timestamp) AS month, COUNT(*) AS visitor_count FROM estishraf_llm_border_crossings_impala WHERE TRIM(visa_type_description) = 'زيارة سياحية' AND entry_timestamp >= '2023-07-01' AND entry_timestamp < '2026-04-11' AND NOT YEAR(entry_timestamp) IN (1902, 1903) GROUP BY YEAR(entry_timestamp), MONTH(entry_timestamp)), growth_calc AS (SELECT year, month, visitor_count, LAG(visitor_count) OVER (ORDER BY year, month) AS prev_month_count FROM monthly_visitors) SELECT year, month, visitor_count, prev_month_count, ROUND(CASE WHEN prev_month_count > 0 THEN ((visitor_count - prev_month_count) * 100.0 / prev_month_count) ELSE NULL END, 2) AS growth_rate_percentage FROM growth_calc ORDER BY year, month LIMIT 1200",
+  "raw_question": "ما نسبة النمو في عدد الزوار الداخلين بتأشيرة زيارة سياحية لكل شهر في آخر 3 أعوام من اليوم؟",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

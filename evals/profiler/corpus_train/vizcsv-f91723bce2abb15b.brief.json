@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH\n    statistics AS (\n        SELECT\n            AVG(cnt) AS mean_cnt,\n            STDDEV (cnt) AS sd_cnt\n        FROM\n            (\n                SELECT\n                    wealth_level,\n                    COUNT(*) AS cnt\n                FROM\n                    estishraf_llm_wealth_index\n                GROUP BY\n                    wealth_level\n            ) lc\n    ),\n    lvl AS (\n        SELECT\n            wealth_level,\n            COUNT(*) AS cnt\n        FROM\n            estishraf_llm_wealth_index\n                GROUP BY\n            wealth_level\n    )\nSELECT\n    l.wealth_level,\n    l.cnt,\n    ROUND(s.mean_cnt, 2) AS mean_cnt,\n    ROUND(s.sd_cnt, 2) AS sd_cnt,\n    ROUND((l.cnt - s.mean_cnt) / s.sd_cnt, 2) AS z_score\nFROM\n    lvl l\n        CROSS JOIN statistics s\nORDER BY\n    ABS(ROUND((l.cnt - s.mean_cnt) / s.sd_cnt, 2)) DESC\n    LIMIT 1",
+  "raw_question": "ابحث عن مستوى الثروة الذي يكون عدد أسره هو أكبر انحراف عن المتوسط لعدد الأسر في كل مستوى، معبّرًا...",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

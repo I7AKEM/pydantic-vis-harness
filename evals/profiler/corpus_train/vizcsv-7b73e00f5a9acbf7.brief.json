@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH ValidDates AS (SELECT YEAR(CAST(graduation_date AS DATE)) AS graduation_year FROM estishraf_llm_university_graduates_impala WHERE graduation_date IS NOT NULL AND university_classification_name = 'الجامعات الحكومية' ) SELECT graduation_year, COUNT(*) AS graduate_count FROM ValidDates GROUP BY graduation_year ORDER BY graduate_count DESC LIMIT 1",
+  "raw_question": "ماهي أعلى سنة في عدد الخريجين لجميع الجامعات الحكومية؟",
+  "suggested_chart_type": "bar|indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

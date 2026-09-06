@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT COUNT(*) AS total_violations, COUNT(DISTINCT control_number) AS unique_violation_events, MAX(gdate_happened) AS latest_date, MIN(gdate_happened) AS earliest_date FROM estishraf_llm_traffic_violation WHERE TRIM(violation_type_latin_description) = 'NOT WEARING A SEATBELT' AND status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid') LIMIT 1200",
+  "raw_question": "عدد مخالفات عدم ربط حزام الأمان في المملكة",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

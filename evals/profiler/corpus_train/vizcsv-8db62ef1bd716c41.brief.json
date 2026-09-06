@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT app_name, COUNT(*) AS order_count FROM estishraf_llm_delivery_orders_information GROUP BY app_name ORDER BY order_count DESC LIMIT 1200",
+  "raw_question": "ما هي اعلى المخالفات في مدينة الرياض الاسبوع الماضي",
+  "suggested_chart_type": "bar|horizontal_bar|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH total_population_by_region AS (SELECT hl.region, COUNT(DISTINCT hp.id, hp.dependent_seq_no) AS total_pop FROM estishraf_llm_historical_population_impala AS hp JOIN estishraf_llm_home_location AS hl ON hp.id = hl.id WHERE hp.snapshot = '2026-01-29' AND hp.is_in_population = TRUE AND NOT hl.region IS NULL AND TRIM(hl.region) <> '' GROUP BY hl.region), citizen_population_by_region AS (SELECT hl.region, COUNT(DISTINCT hp.id, hp.dependent_seq_no) AS citizen_pop FROM estishraf_llm_historical_population_impala AS hp JOIN estishraf_llm_home_location AS hl ON hp.id = hl.id WHERE hp.snapshot = '2026-01-29' AND hp.is_in_population = TRUE AND hp.person_type = 'Saudi' AND NOT hl.region IS NULL AND TRIM(hl.region) <> '' GROUP BY hl.region) SELECT t.region, t.total_pop, c.citizen_pop, ROUND((c.citizen_pop * 100.0 / t.total_pop), 2) AS citizen_percentage FROM total_population_by_region AS t JOIN citizen_population_by_region AS c ON t.region = c.region ORDER BY t.total_pop DESC LIMIT 1200",
+  "raw_question": "اكتب تقرير عن السكان",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

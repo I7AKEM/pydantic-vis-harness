@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH input AS (SELECT hl.region, hl.city, hl.district, COUNT(DISTINCT hp.id) as population FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id WHERE hp.is_in_population = TRUE AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND TRIM(hl.region) != '' AND hl.region IS NOT NULL AND hl.district IS NOT NULL AND hl.district NOT IN ('خارج حدود الاحياء', 'بدون اسم') AND hl.city != 'nan' GROUP BY hl.region, hl.city, hl.district) SELECT input.*, poly.wkt FROM input JOIN ESTISHRAF_LLM_KSA_Districts_Polygons poly ON input.district = poly.district AND input.city = poly.city",
+  "raw_question": "كم سكان المملكة؟",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,54 @@
+city,wealth_level,qualification,count
+الرياض,Lower Middle,بكالوريوس,7
+الرياض,Lower Middle,ماجستير,7
+الرياض,Lower Middle,دبلوم عالي,3
+الرياض,Lower Middle,دبلوم متوسط,2
+الرياض,Lower Middle,دكتوراه,1
+الرياض,Middle,دكتوراه,8
+الرياض,Middle,ماجستير,6
+الرياض,Middle,بكالوريوس,5
+الرياض,Middle,دبلوم عالي,4
+الرياض,Middle,دبلوم متوسط,4
+الرياض,Middle,,2
+الرياض,Poor,دكتوراه,8
+الرياض,Poor,ماجستير,7
+الرياض,Poor,بكالوريوس,6
+الرياض,Poor,دبلوم عالي,1
+الرياض,Poor,دبلوم متوسط,1
+الرياض,Rich,بكالوريوس,9
+الرياض,Rich,دكتوراه,7
+الرياض,Rich,ماجستير,4
+الرياض,Rich,دبلوم عالي,3
+الرياض,Rich,دبلوم متوسط,3
+الرياض,Upper Middle,ماجستير,9
+الرياض,Upper Middle,دكتوراه,7
+الرياض,Upper Middle,دبلوم عالي,6
+الرياض,Upper Middle,بكالوريوس,5
+الرياض,Upper Middle,دبلوم متوسط,4
+الرياض,Upper Middle,,1
+جدة,Lower Middle,بكالوريوس,12
+جدة,Lower Middle,ماجستير,10
+جدة,Lower Middle,دكتوراه,8
+جدة,Lower Middle,دبلوم عالي,2
+جدة,Lower Middle,,1
+جدة,Middle,بكالوريوس,14
+جدة,Middle,ماجستير,13
+جدة,Middle,دكتوراه,9
+جدة,Middle,دبلوم عالي,4
+جدة,Middle,,1
+جدة,Middle,دبلوم متوسط,1
+جدة,Poor,ماجستير,13
+جدة,Poor,بكالوريوس,9
+جدة,Poor,دكتوراه,8
+جدة,Poor,دبلوم عالي,5
+جدة,Poor,دبلوم متوسط,1
+جدة,Rich,ماجستير,16
+جدة,Rich,بكالوريوس,13
+جدة,Rich,دكتوراه,8
+جدة,Rich,دبلوم عالي,5
+جدة,Upper Middle,دكتوراه,7
+جدة,Upper Middle,دبلوم عالي,7
+جدة,Upper Middle,ماجستير,7
+جدة,Upper Middle,بكالوريوس,5
+جدة,Upper Middle,دبلوم متوسط,3
+جدة,Upper Middle,,3

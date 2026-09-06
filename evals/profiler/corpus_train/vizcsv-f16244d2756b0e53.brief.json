@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH recent_violations AS (SELECT region, gdate_happened FROM estishraf_llm_traffic_violation ORDER BY gdate_happened DESC LIMIT 100000) SELECT input.region, input.violation_count, poly.wkt FROM (SELECT region, COUNT(*) as violation_count FROM recent_violations GROUP BY region ORDER BY violation_count DESC) input JOIN ESTISHRAF_LLM_KSA_Regions_Polygons poly ON input.region = poly.region",
+  "raw_question": "أريد خريطة توضح آخر 100000 مخالفة مرورية موزعة حسب المنطقة",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

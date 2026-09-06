@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH LatestSnapshot AS (\n    SELECT MAX(snapshot) AS max_snapshot\n    FROM estishraf_llm_historical_population_impala\n),\nHouseholdCountsByRegion AS (\n    SELECT \n        hl.region,\n        d.head_of_household_id,\n        COUNT(d.id) AS member_count\n    FROM estishraf_llm_demographics_impala d\n    JOIN estishraf_llm_home_location hl ON d.id = hl.id\n    JOIN LatestSnapshot ls ON TRUE\n    WHERE d.death_date IS NULL\n      AND d.head_of_household_id IS NOT NULL\n      AND d.person_status = 'صالح'\n    GROUP BY hl.region, d.head_of_household_id\n),\nRegionalAverages AS (\n    SELECT \n        region,\n        ROUND(AVG(member_count), 2) AS avg_household_size\n    FROM HouseholdCountsByRegion\n    GROUP BY region\n),\nNationalAverage AS (\n    SELECT \n        ROUND(AVG(member_count), 2) AS national_avg_household_size\n    FROM HouseholdCountsByRegion\n)\nSELECT \n    ra.region,\n    ra.avg_household_size,\n    na.national_avg_household_size\nFROM RegionalAverages ra\nCROSS JOIN NationalAverage na\nORDER BY ra.avg_household_size DESC LIMIT 1200",
+  "raw_question": "عطني تقرير عن السكان",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

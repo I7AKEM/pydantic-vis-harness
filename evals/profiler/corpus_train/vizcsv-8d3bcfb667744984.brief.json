@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT Trim( hl.region ) AS region, COUNT(DISTINCT hp.id, hp.dependent_seq_no) AS population FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id WHERE hp.is_in_population = true AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND Trim( hl.region ) IS NOT NULL AND Trim( hl.region ) != '' GROUP BY Trim( hl.region ) ORDER BY population DESC LIMIT 1200",
+  "raw_question": "سكان المملكة حسب المناطق",
+  "suggested_chart_type": "bar|horizontal_bar|map|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

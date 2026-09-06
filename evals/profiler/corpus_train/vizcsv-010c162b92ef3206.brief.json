@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT EXTRACT(YEAR FROM job_start_date) AS year, COUNT(*) AS new_jobs_count FROM estishraf_llm_jobs_info_v3_impala WHERE job_start_date >= '2015-01-01' AND job_start_date < '2026-01-01' GROUP BY EXTRACT(YEAR FROM job_start_date) ORDER BY year LIMIT 1200",
+  "raw_question": "مقارنة الوظائف الجديدة 2015 مع يناير 2025",
+  "suggested_chart_type": "line",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

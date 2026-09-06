@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH population_per_region AS (\n    SELECT \n        hl.region AS region_name,\n        COUNT(DISTINCT hp.id) AS population_count\n    FROM estishraf_llm_historical_population_impala hp\n    JOIN estishraf_llm_home_location hl ON hp.id = hl.id\n    WHERE hp.is_in_population = TRUE \n      AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n      AND TRIM(hl.region) != '' AND hl.region IS NOT NULL\n    GROUP BY hl.region\n),\nactive_jobs_per_region AS (\n    SELECT \n        employer_work_region AS region_name,\n        COUNT(*) AS active_jobs_count\n    FROM estishraf_llm_jobs_info_v3_impala\n    WHERE is_active_job = 1\n      AND TRIM(employer_work_region) != '' AND employer_work_region IS NOT NULL\n      AND employer_work_region != 'لاينطبق'\n    GROUP BY employer_work_region\n)\nSELECT \n    p.region_name,\n    p.population_count,\n    COALESCE(j.active_jobs_count, 0) AS active_jobs_count\nFROM population_per_region p\nLEFT JOIN active_jobs_per_region j ON p.region_name = j.region_name\nORDER BY p.population_count DESC LIMIT 1200",
+  "raw_question": "عطني تقرير عن السكان",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

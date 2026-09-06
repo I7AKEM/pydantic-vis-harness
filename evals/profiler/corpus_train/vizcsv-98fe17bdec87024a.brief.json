@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH city_population AS (SELECT TRIM(hl.city) AS city, COUNT(DISTINCT hp.id, hp.dependent_seq_no) AS population FROM estishraf_llm_historical_population_impala AS hp JOIN estishraf_llm_home_location AS hl ON hp.id = hl.id WHERE hp.is_in_population = TRUE AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) GROUP BY TRIM(hl.city) ORDER BY population DESC LIMIT 5), total_top5 AS (SELECT SUM(population) AS total FROM city_population) SELECT cp.city, cp.population, ROUND(cp.population * 100.0 / t.total, 2) AS percentage FROM city_population AS cp CROSS JOIN total_top5 AS t ORDER BY cp.population DESC LIMIT 1200",
+  "raw_question": "كم سكان المملكة؟",
+  "suggested_chart_type": "donut",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

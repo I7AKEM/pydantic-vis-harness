@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH ChildCounts AS (\n    SELECT \n        d.head_of_household_id,\n        COUNT(d.id) - 1 AS child_count  -- Excluding the head\n    FROM estishraf_llm_demographics_impala d\n    WHERE d.person_status = 'صالح' \n      AND d.death_date IS NULL\n      AND d.birth_date IS NOT NULL\n    GROUP BY d.head_of_household_id\n),\nWealthWithChildren AS (\n    SELECT \n        w.wealth_level,\n        COALESCE(c.child_count, 0) AS child_count\n    FROM estishraf_llm_wealth_index w\n    LEFT JOIN ChildCounts c ON w.head_of_household_id = c.head_of_household_id\n)\nSELECT \n    wealth_level,\n    AVG(child_count) AS avg_children\nFROM WealthWithChildren\nGROUP BY wealth_level\nORDER BY \n    CASE wealth_level\n        WHEN 'Poor' THEN 1\n        WHEN 'Lower Middle' THEN 2\n        WHEN 'Middle' THEN 3\n        WHEN 'Upper Middle' THEN 4\n        WHEN 'Rich' THEN 5\n    END LIMIT 20000",
+  "raw_question": "ما هو متوسط عدد الابناء في الاسر السعودية موزعة حسب مؤشر الثروة؟",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

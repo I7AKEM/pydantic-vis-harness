@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH supplier_values AS (SELECT importer_national_id, SUM(cost) AS total_cost FROM estishraf_llm_customs WHERE EXTRACT(YEAR FROM declaration_date) = 2025 AND cost > 0 AND NOT source IS NULL GROUP BY importer_national_id HAVING SUM(cost) > 1000000), saudi_suppliers AS (SELECT d.id, d.gender, d.person_type FROM estishraf_llm_demographics_impala AS d INNER JOIN supplier_values AS sv ON CAST(d.id AS BIGINT) = sv.importer_national_id WHERE d.person_type = 'Saudi') SELECT COUNT(CASE WHEN gender = 'F' THEN 1 END) AS saudi_female_suppliers, COUNT(*) AS total_saudi_suppliers, ROUND(COUNT(CASE WHEN gender = 'F' THEN 1 END) * 100.0 / NULLIF(COUNT(*), 0), 2) AS percentage_female FROM saudi_suppliers LIMIT 1200",
+  "raw_question": "نسبة النساء بين الموردين السعوديين تجاوزت صادراتهم مليون ريال",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

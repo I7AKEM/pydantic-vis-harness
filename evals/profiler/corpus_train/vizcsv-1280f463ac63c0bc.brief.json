@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT COUNT(DISTINCT violator_id) AS violator_count\nFROM (\n  SELECT violator_id\n  FROM estishraf_llm_traffic_violation\n  WHERE gdate_paid IS NULL\n    AND gdate_happened <= '2025-07-31'\n    AND status_description != 'Cancelled due to the violator''s death'\n  GROUP BY violator_id\n  HAVING SUM(actual_fine) > 500000\n) AS high_fine_violators\nLIMIT 100",
+  "raw_question": "كم يبلغ عدد المخالفين الذين تتجاوز قيمة مخالفاتهم المرورية غير المسددة 500 ألف ريال حتى نهاية يول...",
+  "suggested_chart_type": "indicator|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

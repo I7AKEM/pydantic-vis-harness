@@ -27,9 +27,13 @@ TIME_TYPES = ("DATE", "TIMESTAMP", "TIME")
 GEOMETRY_NAME = re.compile(r"(^|[_\s])(wkt|geom|geometry|the_geom|shape)($|[_\s])", re.IGNORECASE)
 LATITUDE_NAME = re.compile(r"(^|[_\s])(lat|latitude)($|[_\s])", re.IGNORECASE)
 LONGITUDE_NAME = re.compile(r"(^|[_\s])(lon|lng|long|longitude)($|[_\s])", re.IGNORECASE)
-PLACE_NAME = re.compile(
-    r"(^|[_\s])(country|region|city|state|province|district|governorate|county)($|[_\s])", re.IGNORECASE
-)
+PLACE_TOKENS = ("country", "region", "city", "cities", "state", "province", "district", "governorate", "county",
+                "municipality", "location", "port", "airport", "station", "town", "village", "neighborhood", "zone",
+                "address", "منطقة", "مدينة", "محافظة", "بلدية", "حي", "مطار", "منفذ", "ميناء", "قرية", "دولة", "موقع")
+MEASURE_TOKENS = ("count", "total", "sum", "avg", "mean", "percentage", "percent", "rate", "ratio", "size", "number",
+                  "num", "value", "amount", "share", "category", "mode", "type")
+PLACE_NAME = re.compile(r"(^|[_\s])(ال)?(" + "|".join(PLACE_TOKENS) + r")($|[_\s])", re.IGNORECASE)
+MEASURE_NAME = re.compile(r"(^|[_\s])(" + "|".join(MEASURE_TOKENS) + r")($|[_\s])", re.IGNORECASE)
 # RE2 syntax, evaluated inside DuckDB. Values never leave the database for these checks.
 WKT_SQL_PATTERN = r"^\s*(SRID=\d+;)?(POINT|LINESTRING|POLYGON|MULTIPOINT|MULTILINESTRING|MULTIPOLYGON|GEOMETRYCOLLECTION)\b"
 ORDINAL_SQL_PATTERN = r"^\D*\d+\D*$"
@@ -117,7 +121,7 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
                 stats.measurement_levels = ["nominal"]
                 if geometry_name or wkt_count > 0:
                     stats.geographic_role = "wkt"
-                elif PLACE_NAME.search(name):
+                elif PLACE_NAME.search(name) and not MEASURE_NAME.search(name):
                     stats.geographic_role = "place_name"
                 if stats.geographic_role is not None:
                     stats.measurement_levels.append("geographic")

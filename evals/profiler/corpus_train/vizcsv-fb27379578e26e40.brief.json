@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH population_25plus AS (\n    SELECT hp.id, hp.age, hl.city, hl.region\n    FROM estishraf_llm_historical_population_impala hp\n    JOIN estishraf_llm_home_location hl ON hp.id = hl.id\n    WHERE hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n      AND hp.is_in_population = TRUE\n      AND hp.age >= 25\n      AND TRIM(hl.city) IN ('الرياض', 'جدة')\n),\ndemographics_with_hoh AS (\n    SELECT d.id, d.head_of_household_id\n    FROM estishraf_llm_demographics_impala d\n    WHERE d.person_status = 'صالح'\n),\nwealth_levels AS (\n    SELECT w.head_of_household_id, w.wealth_level\n    FROM estishraf_llm_wealth_index w\n),\nhighest_education AS (\n    SELECT id, qualification,\n           ROW_NUMBER() OVER (PARTITION BY id ORDER BY \n             CASE qualification\n               WHEN 'دكتوراه' THEN 5\n               WHEN 'ماجستير' THEN 4\n               WHEN 'بكالوريوس' THEN 3\n               WHEN 'دبلوم عالي' THEN 2\n               WHEN 'دبلوم متوسط' THEN 1\n               ELSE 0\n             END DESC) as rn\n    FROM estishraf_llm_university_graduates_impala\n    WHERE graduation_date IS NOT NULL\n),\nfinal_education AS (\n    SELECT id, qualification\n    FROM highest_education\n    WHERE rn = 1\n)\nSELECT \n    p.city,\n    w.wealth_level,\n    e.qualification as highest_education,\n    COUNT(*) as count,\n    ROW_NUMBER() OVER (PARTITION BY p.city, w.wealth_level ORDER BY COUNT(*) DESC) as edu_rank\nFROM population_25plus p\nJOIN demographics_with_hoh d ON p.id = d.id\nJOIN wealth_levels w ON d.head_of_household_id = w.head_of_household_id\nLEFT JOIN final_education e ON p.id = e.id\nGROUP BY p.city, w.wealth_level, e.qualification\nORDER BY p.city, w.wealth_level, count DESC\nLIMIT 100",
+  "raw_question": "هل تختلف المستويات التعليمية الشائعة بين فئات الثروة باختلاف المناطق؟ قارن بين سكان الرياض، والدم...",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

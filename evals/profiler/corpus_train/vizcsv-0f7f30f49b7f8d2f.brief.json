@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT YEAR(bc.exit_timestamp) AS exit_year, COUNT(DISTINCT bc.id) AS citizens_who_exited, COUNT(DISTINCT CASE WHEN NOT c.declaration_date IS NULL AND DATEDIFF(c.declaration_date, bc.entry_timestamp) BETWEEN 0 AND 180 THEN bc.id END) AS citizens_with_exports_within_6months FROM estishraf_llm_border_crossings_impala AS bc LEFT JOIN estishraf_llm_customs AS c ON CAST(bc.id AS STRING) = CAST(c.importer_national_id AS STRING) AND bc.destination = c.destination_country AND c.declaration_type_category = 'صادرات' AND c.cost > 0 AND NOT c.declaration_date IS NULL WHERE bc.person_type = 'citizen' AND YEAR(bc.exit_timestamp) BETWEEN 2016 AND 2025 AND NOT bc.exit_timestamp IS NULL AND NOT bc.destination IS NULL AND bc.destination <> 'nan' AND NOT bc.entry_timestamp IS NULL AND YEAR(bc.exit_timestamp) <> 1902 AND YEAR(bc.exit_timestamp) <> 1903 GROUP BY YEAR(bc.exit_timestamp) ORDER BY exit_year LIMIT 1200",
+  "raw_question": "هجرة المواطنين السعوديين",
+  "suggested_chart_type": "line",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH ViolationCounts AS\n  (SELECT h.city,\n          t.violation_type_description,\n          COUNT(*) AS violation_count\n   FROM estishraf_llm_traffic_violation t\n   JOIN estishraf_llm_demographics_impala d ON CAST(t.violator_id AS BIGINT) = d.id\n   JOIN estishraf_llm_home_location h ON d.id = h.id\n   WHERE d.gender = 'M'\n     AND t.status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid')\n     AND TRIM(t.violation_type_description) IS NOT NULL\n     AND h.city IS NOT NULL\n   GROUP BY h.city,\n            t.violation_type_description),\n     RankedViolations AS\n  (SELECT city,\n          violation_type_description,\n          violation_count,\n          RANK() OVER (PARTITION BY city\n                       ORDER BY violation_count DESC) AS rnk\n   FROM ViolationCounts)\nSELECT city,\n       violation_type_description,\n       violation_count\nFROM RankedViolations\nWHERE rnk <= 5\nORDER BY city,\n         rnk\nLIMIT 100",
+  "raw_question": "ما أكثر نوع من المخالفات يرتكبه الرجال في مدن معينة؟",
+  "suggested_chart_type": "stacked_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT * FROM estishraf_llm_university_graduates_impala LIMIT 5",
+  "raw_question": "كم عدد الخريجين غير السعوديين حسب الجنس لعام 2024م؟",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

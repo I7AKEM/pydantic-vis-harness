@@ -75,7 +75,8 @@ def create_profiler(model: str) -> Agent[ProfilerInput, SemanticProfile]:
         output_type=SemanticProfile,
         retries={"output": 2},
         instructions=PROFILER_INSTRUCTIONS,
-        model_settings={"thinking": False},  # the profile is interpretation, not reasoning; thinking only adds latency
+        # Interpretation, not reasoning: thinking only adds latency, and temperature 0 keeps runs repeatable.
+        model_settings={"thinking": False, "temperature": 0.0},
     )
 
     @agent.tool

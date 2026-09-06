@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH annual_counts AS (SELECT YEAR(graduation_date) AS grad_year, COUNT(DISTINCT id) AS bachelor_count FROM estishraf_llm_university_graduates_impala WHERE TRIM(qualification) = 'بكالوريوس' AND NOT graduation_date IS NULL AND YEAR(graduation_date) BETWEEN 2016 AND 2025 GROUP BY YEAR(graduation_date)) SELECT grad_year, bachelor_count, LAG(bachelor_count) OVER (ORDER BY grad_year) AS prev_year_count, ROUND(((bachelor_count - LAG(bachelor_count) OVER (ORDER BY grad_year)) / LAG(bachelor_count) OVER (ORDER BY grad_year)) * 100.0, 2) AS yoy_growth_rate_pct FROM annual_counts ORDER BY grad_year LIMIT 1200",
+  "raw_question": "معدل نمو الحاصلين على البكالوريوس",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

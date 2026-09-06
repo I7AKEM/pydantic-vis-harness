@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH yearly_data AS (SELECT YEAR(g.graduation_date) AS grad_year, COUNT(DISTINCT g.id) AS foreign_grad_count FROM estishraf_llm_university_graduates_impala AS g INNER JOIN estishraf_llm_demographics_impala AS d ON g.id = d.id WHERE g.graduation_date BETWEEN '2016-01-01' AND '2025-12-31' AND NOT g.graduation_date IS NULL AND g.university_classification_name = 'الجامعات الحكومية' AND g.major_name = 'القانون' AND d.person_type = 'Alien' GROUP BY YEAR(g.graduation_date)) SELECT grad_year, foreign_grad_count, ROUND(((foreign_grad_count - LAG(foreign_grad_count) OVER (ORDER BY grad_year)) / NULLIF(LAG(foreign_grad_count) OVER (ORDER BY grad_year), 0)) * 100, 2) AS growth_rate_percent FROM yearly_data ORDER BY grad_year LIMIT 1200",
+  "raw_question": "خريجي القانون الأجانب",
+  "suggested_chart_type": "line",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

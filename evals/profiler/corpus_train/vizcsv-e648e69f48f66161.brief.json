@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH input AS (SELECT COUNT(*) as record_count FROM estishraf_llm_home_location WHERE city = 'حفر الباطن') SELECT input.*, poly.wkt FROM input JOIN ESTISHRAF_LLM_KSA_Cities_Polygons poly ON poly.city = 'حفر الباطن'",
+  "raw_question": "ما هو متوسط عمر السكان الذين يعيشون حالياً في محافظة حفر الباطن؟ رد كالتالي: \"متوسط العمر (الرقم)...",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

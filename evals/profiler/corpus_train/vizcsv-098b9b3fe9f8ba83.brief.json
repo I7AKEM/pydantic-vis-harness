@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH city_population AS (\n    SELECT \n        TRIM(hl.city) AS city,\n        TRIM(hl.region) AS region,\n        COUNT(DISTINCT p.id) AS population\n    FROM \n        estishraf_llm_historical_population_impala p\n    JOIN \n        estishraf_llm_home_location hl ON p.id = hl.id\n    WHERE \n        p.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n        AND p.is_in_population = TRUE\n    GROUP BY \n        TRIM(hl.city), TRIM(hl.region)\n),\ncity_size_categories AS (\n    SELECT \n        city,\n        region,\n        population,\n        CASE \n            WHEN population >= 500000 THEN 'كبارى (أكثر من 500 ألف)'\n            WHEN population >= 100000 THEN 'متوسطة (100 ألف - 500 ألف)'\n            ELSE 'صغيرة (أقل من 100 ألف)'\n        END AS city_size_category\n    FROM \n        city_population\n)\nSELECT \n    city_size_category,\n    COUNT(*) AS city_count,\n    SUM(population) AS total_population\nFROM \n    city_size_categories\nGROUP BY \n    city_size_category\nORDER BY \n    total_population DESC\nLIMIT 1000",
+  "raw_question": "عطني تقرير عن السكان",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

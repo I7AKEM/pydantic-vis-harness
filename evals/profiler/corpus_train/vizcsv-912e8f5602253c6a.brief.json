@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH driver_ids_over_25 AS (\n    SELECT DISTINCT id\n    FROM estishraf_llm_historical_population_impala\n    WHERE is_in_population = TRUE\n      AND occupation_description = 'سائق خاص'\n      AND age > 25\n), \n\nviolations_by_year AS (\n    SELECT \n        EXTRACT(YEAR FROM tv.gdate_happened) AS violation_year,\n        COUNT(*) AS total_violations\n    FROM estishraf_llm_traffic_violation tv\n    JOIN driver_ids_over_25 d ON tv.violator_id = d.id\n    WHERE tv.status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid')\n      AND EXTRACT(YEAR FROM tv.gdate_happened) BETWEEN 2021 AND 2025\n    GROUP BY EXTRACT(YEAR FROM tv.gdate_happened)\n),\n\ndriver_counts_by_year AS (\n    SELECT \n        EXTRACT(YEAR FROM tv.gdate_happened) AS violation_year,\n        COUNT(DISTINCT tv.violator_id) AS distinct_drivers\n    FROM estishraf_llm_traffic_violation tv\n    JOIN driver_ids_over_25 d ON tv.violator_id = d.id\n    WHERE tv.status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid')\n      AND EXTRACT(YEAR FROM tv.gdate_happened) BETWEEN 2021 AND 2025\n    GROUP BY EXTRACT(YEAR FROM tv.gdate_happened)\n)\n\nSELECT \n    v.violation_year AS \"العام\",\n    ROUND(v.total_violations * 1.0 / d.distinct_drivers, 2) AS \"متوسط المخالفات السنوية للسائقين فوق 25 سنة\"\nFROM violations_by_year v\nJOIN driver_counts_by_year d ON v.violation_year = d.violation_year\nORDER BY v.violation_year LIMIT 20000;",
+  "raw_question": "ما الفرق بالنسبة المئوية في متوسط عدد المخالفات السنوية بين السائقين تحت عمر  25 سنة وفوق عمر 25 ...",
+  "suggested_chart_type": "line",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH april_entries AS (SELECT TRIM(nationality) AS nationality, TRIM(entry_location_name) AS entry_port, COUNT(*) AS entry_count FROM estishraf_llm_border_crossings_impala WHERE person_type = 'resident' AND YEAR(entry_timestamp) = 2025 AND MONTH(entry_timestamp) = 4 AND NOT entry_timestamp IS NULL GROUP BY TRIM(nationality), TRIM(entry_location_name)), nationality_totals AS (SELECT nationality, SUM(entry_count) AS total_entries FROM april_entries GROUP BY nationality), nationality_with_ports AS (SELECT ae.nationality, ae.entry_port, ae.entry_count, nt.total_entries, ROUND(ae.entry_count * 100.0 / nt.total_entries, 2) AS percentage FROM april_entries AS ae JOIN nationality_totals AS nt ON ae.nationality = nt.nationality), ranked_ports AS (SELECT nationality, entry_port, entry_count, total_entries, percentage, ROW_NUMBER() OVER (PARTITION BY nationality ORDER BY entry_count DESC) AS rank FROM nationality_with_ports), top_10 AS (SELECT nationality, total_entries FROM nationality_totals ORDER BY total_entries DESC LIMIT 10) SELECT rp.nationality, rp.entry_port AS most_used_port, rp.entry_count AS port_entries, rp.total_entries AS total_nationality_entries, rp.percentage AS port_percentage FROM ranked_ports AS rp JOIN top_10 AS t10 ON rp.nationality = t10.nationality WHERE rp.rank = 1 ORDER BY t10.total_entries DESC LIMIT 1200",
+  "raw_question": "لأعلى 10 جنسيات من السكان المقيمين في أبريل 2025, ماهو أكثر منفذ استخداماً للدخول للمملكة لكل جنس...",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

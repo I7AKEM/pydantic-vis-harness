@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH DateRange AS (\n  SELECT\n    DATE_SUB(CAST('2026-02-23' AS DATE), INTERVAL 12 MONTH) AS start_date,\n    CAST('2026-02-23' AS DATE) AS end_date\n), EntryZones AS (\n  SELECT\n    entry_zone AS zone,\n    COUNT(*) AS entry_count\n  FROM estishraf_llm_border_crossings_impala\n  WHERE\n    entry_date BETWEEN (\n      SELECT\n        start_date\n      FROM DateRange\n    ) AND (\n      SELECT\n        end_date\n      FROM DateRange\n    )\n  GROUP BY\n    entry_zone\n), ExitZones AS (\n  SELECT\n    exit_zone AS zone,\n    COUNT(*) AS exit_count\n  FROM estishraf_llm_border_crossings_impala\n  WHERE\n    exit_date BETWEEN (\n      SELECT\n        start_date\n      FROM DateRange\n    ) AND (\n      SELECT\n        end_date\n      FROM DateRange\n    )\n  GROUP BY\n    exit_zone\n)\nSELECT\n  COALESCE(e.zone, x.zone) AS zone,\n  COALESCE(e.entry_count, 0) AS entry_count,\n  COALESCE(x.exit_count, 0) AS exit_count\nFROM EntryZones AS e\nFULL OUTER JOIN ExitZones AS x\n  ON e.zone = x.zone\nORDER BY\n  (\n    COALESCE(e.entry_count, 0) + COALESCE(x.exit_count, 0)\n  ) DESC\nLIMIT 20000",
+  "raw_question": "سو لي تقرير عن الحدود",
+  "suggested_chart_type": "grouped_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_data AS (SELECT hl.region, hp.person_type, COUNT(DISTINCT hp.id, hp.dependent_seq_no) AS count FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id WHERE hp.is_in_population = TRUE AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND hl.region IS NOT NULL GROUP BY hl.region, hp.person_type), regional_ratios AS (SELECT region, MAX(CASE WHEN person_type = 'Saudi' THEN count ELSE 0 END) AS saudi_count, MAX(CASE WHEN person_type = 'Alien' THEN count ELSE 0 END) AS alien_count, ROUND(MAX(CASE WHEN person_type = 'Alien' THEN count ELSE 0 END) * 100.0 / NULLIF(MAX(CASE WHEN person_type = 'Saudi' THEN count ELSE 0 END), 0), 2) AS alien_to_saudi_ratio FROM latest_data GROUP BY region) SELECT region, alien_to_saudi_ratio FROM regional_ratios ORDER BY alien_to_saudi_ratio DESC LIMIT 5",
+  "raw_question": "كم سكان المملكة؟",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

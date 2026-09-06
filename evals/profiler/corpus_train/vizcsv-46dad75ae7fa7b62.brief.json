@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH PostgradGraduates AS (/* All unique individuals with Master's, PhD, or Fellowship */ SELECT DISTINCT id FROM estishraf_llm_university_graduates_impala WHERE qualification IN ('ماجستير', 'دكتوراه', 'زمالة') AND NOT graduation_date IS NULL), SameUniversityReturners AS (/* Individuals who got Bachelor's from university X and postgrad from same university X */ SELECT DISTINCT g2.id FROM estishraf_llm_university_graduates_impala AS g1 INNER JOIN estishraf_llm_university_graduates_impala AS g2 ON g1.id = g2.id AND TRIM(g1.university_name) = TRIM(g2.university_name) WHERE g1.qualification = 'بكالوريوس' AND g2.qualification IN ('ماجستير', 'دكتوراه', 'زمالة') AND NOT g1.graduation_date IS NULL AND NOT g2.graduation_date IS NULL AND g2.graduation_date > g1.graduation_date) SELECT COUNT(DISTINCT pg.id) AS total_postgrad, COUNT(DISTINCT sr.id) AS same_university_returners, ROUND(COUNT(DISTINCT sr.id) * 100.0 / NULLIF(COUNT(DISTINCT pg.id), 0), 2) AS percentage FROM PostgradGraduates AS pg LEFT JOIN SameUniversityReturners AS sr ON pg.id = sr.id LIMIT 1200",
+  "raw_question": "ما نسبة الطلاب الذين عادوا الى الجامعات التي تخرجوا منها في مرحلة البكالوريوس للحصول على الماجستي...",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

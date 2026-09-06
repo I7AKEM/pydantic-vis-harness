@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "-- الحصول على بيانات المسافرين إلى الصين مع تفاصيلهم الديموغرافية\nWITH china_travelers AS (\n  SELECT \n    id,\n    exit_timestamp AS return_date,\n    gender,\n    nationality\n  FROM estishraf_llm_border_crossings_impala\n  WHERE destination = 'الصين'\n    AND exit_timestamp >= '2016-01-01'\n    AND exit_timestamp <= '2025-12-31'\n    AND exit_timestamp NOT IN ('1902-01-01', '1903-01-01')\n)\nSELECT \n  t.gender,\n  t.nationality,\n  FLOOR(DATEDIFF(NOW(), d.birth_date) / 365.25) AS exact_age,\n  COUNT(DISTINCT t.id) AS person_count\nFROM china_travelers t\nINNER JOIN estishraf_llm_demographics_impala d ON t.id = d.id\nWHERE d.birth_date IS NOT NULL \n  AND d.birth_date > '1900-01-01'\nGROUP BY t.gender, t.nationality, exact_age\nORDER BY person_count DESC\nLIMIT 30",
+  "raw_question": "ما هي الفئة حسب (الجنس، والعمر بالضبط، و الجنسية) التي تغلب على السكان الذين يسافرون الى الصين  و...",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

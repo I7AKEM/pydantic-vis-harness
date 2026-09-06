@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "SELECT 'منطقة الرياض' AS region, hp.gender, COUNT(DISTINCT hp.id, hp.dependent_seq_no) AS population FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id WHERE hp.is_in_population = true AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND Trim( hl.region ) = 'منطقة الرياض' GROUP BY hp.gender ORDER BY population DESC LIMIT 1200",
+  "raw_question": "عدد سكان الرياض حسب الجنس",
+  "intent": "compare",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

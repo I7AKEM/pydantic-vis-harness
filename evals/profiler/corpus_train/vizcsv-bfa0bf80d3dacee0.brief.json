@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH monthly_tourist_visitors AS (\n    SELECT \n        YEAR(entry_date) AS year,\n        MONTH(entry_date) AS month,\n        COUNT(*) AS tourist_visitors_count\n    FROM \n        estishraf_llm_border_crossings_impala\n    WHERE \n        (person_type = 'visitor' OR person_type IS NULL)\n        AND visa_type_description = 'زيارة سياحية'\n        AND entry_date >= ADD_MONTHS(NOW(), -36)\n        AND entry_date IS NOT NULL\n    GROUP BY \n        YEAR(entry_date),\n        MONTH(entry_date)\n),\ngrowth_rates AS (\n    SELECT \n        year,\n        month,\n        tourist_visitors_count,\n        LAG(tourist_visitors_count) OVER (ORDER BY year, month) AS prev_month_count,\n        ROUND(\n            ((COUNT(*) - LAG(COUNT(*)) OVER (ORDER BY year, month)) * 100.0) / \n            NULLIF(LAG(COUNT(*)) OVER (ORDER BY year, month), 0), 2\n        ) AS growth_rate_percentage\n    FROM \n        monthly_tourist_visitors\n    GROUP BY \n        year, month, tourist_visitors_count\n)\nSELECT \n    year,\n    month,\n    tourist_visitors_count,\n    prev_month_count,\n    CASE \n        WHEN prev_month_count IS NOT NULL AND prev_month_count != 0 THEN \n            ROUND(((tourist_visitors_count - prev_month_count) * 100.0) / prev_month_count, 2)\n        ELSE NULL\n    END AS growth_rate_percentage\nFROM \n    growth_rates\nORDER BY \n    year,\n    month LIMIT 20000",
+  "raw_question": "ما نسبة النمو في عدد الزوار الداخلين بتأشيرة زيارة سياحية لكل شهر في آخر 3 أعوام من اليوم؟",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

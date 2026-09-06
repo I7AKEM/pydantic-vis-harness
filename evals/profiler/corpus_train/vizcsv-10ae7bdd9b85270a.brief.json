@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH scheduled_final_exits_2024 AS (\n  SELECT DISTINCT id\n  FROM estishraf_llm_demographics_impala\n  WHERE person_status = 'خروج نهائي'\n    AND final_exit_date BETWEEN '2024-01-01' AND '2024-12-31'\n)\n\nSELECT d.nationality, COUNT(*) as count\nFROM scheduled_final_exits_2024 sfe\nJOIN estishraf_llm_home_location hl ON sfe.id = hl.id\nJOIN estishraf_llm_demographics_impala d ON sfe.id = d.id\nWHERE hl.city = 'الرياض'\nGROUP BY d.nationality\nORDER BY count DESC\nLIMIT 3",
+  "raw_question": "كم عدد الأشخاص الذين لديهم خروج نهائي مجدول في عام 2024 ولكنهم لا يزالون يعيشون في الرياض؟ رد كال...",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

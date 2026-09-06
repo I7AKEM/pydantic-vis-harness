@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH graduates_per_major AS (     SELECT         major_name,         COUNT(DISTINCT id) AS total_graduates     FROM estishraf_llm_university_graduates_impala     WHERE qualification = 'بكالوريوس'     AND YEAR(graduation_date) = 2024     GROUP BY major_name ), employed_per_major AS (     SELECT         g.major_name AS major_name,         COUNT(DISTINCT g.id) AS employed_within_6_months     FROM estishraf_llm_university_graduates_impala g     JOIN estishraf_llm_jobs_info_v3_impala j ON j.id = g.id     WHERE g.qualification = 'بكالوريوس'     AND YEAR(g.graduation_date) = 2024     AND j.job_start_date BETWEEN g.graduation_date AND DATE_ADD(g.graduation_date, INTERVAL 6 MONTH)     GROUP BY g.major_name ) SELECT      g.major_name,     total_graduates,     employed_within_6_months,     ROUND(employed_within_6_months / total_graduates * 100, 2) AS percentage FROM graduates_per_major g  JOIN employed_per_major e ON g.major_name = e.major_name WHERE total_graduates > 30 ORDER BY percentage DESC LIMIT 10",
+  "raw_question": "ما هي التخصصات الأكثر طلبا في عام 2024م؟",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

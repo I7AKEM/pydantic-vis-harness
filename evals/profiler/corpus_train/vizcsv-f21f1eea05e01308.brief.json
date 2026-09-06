@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH driver_jobs AS (SELECT DISTINCT id FROM estishraf_llm_jobs_info_v3_impala WHERE job_title LIKE '%سائق%'), violators_with_driver_status AS (SELECT CAST(v.violator_id AS BIGINT) AS violator_id, CASE WHEN NOT d.id IS NULL THEN 1 ELSE 0 END AS is_driver FROM estishraf_llm_traffic_violation AS v LEFT JOIN driver_jobs AS d ON CAST(v.violator_id AS BIGINT) = d.id WHERE v.status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid') AND NOT v.status_description LIKE 'Cancelled due to%'), violation_counts AS (SELECT violator_id, is_driver, COUNT(*) AS violation_count FROM violators_with_driver_status GROUP BY violator_id, is_driver) SELECT CASE WHEN is_driver = 1 THEN 'سائق' ELSE 'غير سائق' END AS profession_group, COUNT(DISTINCT violator_id) AS total_violators, SUM(violation_count) AS total_violations, ROUND(AVG(violation_count), 2) AS avg_violations_per_person, MIN(violation_count) AS min_violations, MAX(violation_count) AS max_violations FROM violation_counts GROUP BY is_driver ORDER BY is_driver DESC LIMIT 1200",
+  "raw_question": "ما هو متوسط المخالفات للأشخاص العاملين بمهنة سائق مقارنة بالأشخاص الغير عاملين بالمهنة؟",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

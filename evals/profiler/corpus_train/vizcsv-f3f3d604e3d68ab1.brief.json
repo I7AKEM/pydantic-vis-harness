@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH ViolationsWithAge AS (\n  SELECT \n    t.violator_id,\n    t.gdate_happened,\n    FLOOR(DATEDIFF(t.gdate_happened, d.birth_date) / 365.25) AS age_at_violation,\n    YEAR(t.gdate_happened) AS violation_year\n  FROM estishraf_llm_traffic_violation t\n  JOIN estishraf_llm_demographics_impala d \n    ON CAST(t.violator_id AS BIGINT) = d.id\n  WHERE t.status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid')\n    AND d.birth_date IS NOT NULL\n    AND d.birth_date > '1900-01-01'\n    AND t.gdate_happened BETWEEN '2021-01-01' AND '2025-12-31'\n),\nUnder25 AS (\n  SELECT \n    violation_year,\n    COUNT(DISTINCT violator_id) AS distinct_violators,\n    COUNT(*) AS total_violations\n  FROM ViolationsWithAge\n  WHERE age_at_violation < 25 AND age_at_violation > 0\n  GROUP BY violation_year\n),\nOver25 AS (\n  SELECT \n    violation_year,\n    COUNT(DISTINCT violator_id) AS distinct_violators,\n    COUNT(*) AS total_violations\n  FROM ViolationsWithAge\n  WHERE age_at_violation > 25\n  GROUP BY violation_year\n)\nSELECT \n  u.violation_year AS year,\n  u.total_violations AS violations_under_25,\n  o.total_violations AS violations_over_25,\n  u.distinct_violators AS drivers_under_25,\n  o.distinct_violators AS drivers_over_25,\n  ROUND(u.total_violations * 1.0 / u.distinct_violators, 3) AS avg_violations_under_25,\n  ROUND(o.total_violations * 1.0 / o.distinct_violators, 3) AS avg_violations_over_25,\n  ROUND(((o.total_violations * 1.0 / o.distinct_violators) - (u.total_violations * 1.0 / u.distinct_violators)) * 100.0 / (u.total_violations * 1.0 / u.distinct_violators), 2) AS pct_difference\nFROM Under25 u\nJOIN Over25 o ON u.violation_year = o.violation_year\nORDER BY u.violation_year\nLIMIT 100",
+  "raw_question": "ما الفرق بالنسبة المئوية في متوسط عدد المخالفات السنوية بين السائقين تحت عمر  25 سنة وفوق عمر 25 ...",
+  "suggested_chart_type": "line",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

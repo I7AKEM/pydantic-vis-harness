@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_population AS (SELECT DISTINCT id FROM estishraf_llm_historical_population_impala WHERE SNAPSHOT = (SELECT MAX(SNAPSHOT) FROM estishraf_llm_historical_population_impala) AND is_in_population = TRUE), low_wealth_individuals AS (SELECT ewi.head_of_household_id FROM estishraf_llm_wealth_index ewi JOIN latest_population lp ON ewi.head_of_household_id = lp.id WHERE ewi.wealth_level = 'Poor'), total_low_wealth AS (SELECT COUNT(DISTINCT head_of_household_id) AS total_count FROM low_wealth_individuals), postgraduates_in_low_wealth AS (SELECT COUNT(DISTINCT eug.id) AS postgrad_count FROM estishraf_llm_university_graduates_impala eug JOIN low_wealth_individuals lwi ON eug.id = lwi.head_of_household_id WHERE eug.qualification IN ('ماجستير', 'دكتوراه', 'زمالة')) SELECT ROUND((postgraduates_in_low_wealth.postgrad_count * 100.0) / total_low_wealth.total_count, 2) AS percentage FROM postgraduates_in_low_wealth, total_low_wealth LIMIT 20000",
+  "raw_question": "كم نسبة الافراد أصحاب مؤشر الثروة المنخفض (Poor) الحاصلين على شهادات عليا (ماجستير ودكتوراه) مقار...",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

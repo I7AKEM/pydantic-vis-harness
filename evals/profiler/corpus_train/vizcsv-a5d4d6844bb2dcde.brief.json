@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_snapshot AS (SELECT MAX(snapshot) AS max_snap FROM estishraf_llm_historical_population_impala), population_by_region_gender AS (SELECT hl.region, hp.gender, COUNT(DISTINCT hp.id, hp.dependent_seq_no) AS pop_count FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id CROSS JOIN latest_snapshot ls WHERE hp.snapshot = ls.max_snap AND hp.is_in_population = true AND hl.region IS NOT NULL AND Trim( hl.region ) != '' GROUP BY hl.region, hp.gender), region_totals AS (SELECT region, SUM(pop_count) AS total_region FROM population_by_region_gender GROUP BY region) SELECT prg.region, prg.gender, prg.pop_count, rt.total_region, ROUND((prg.pop_count * 100.0 / rt.total_region), 2) AS percentage FROM population_by_region_gender prg JOIN region_totals rt ON prg.region = rt.region WHERE prg.gender = 'F' ORDER BY percentage ASC LIMIT 1200",
+  "raw_question": "نسبة السكان حسب الجنس لكل منطقة",
+  "intent": "rank",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

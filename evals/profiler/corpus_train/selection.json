@@ -1,0 +1,1352 @@
+{
+  "vizcsv-c8dab63cb92e3358": {
+    "shape": "multi_column_table",
+    "rows": 10,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "",
+    "domains": "geography_administration|population_demographics|transport_traffic",
+    "bytes": 813
+  },
+  "vizcsv-eea1fdbaad35f5ea": {
+    "shape": "multi_column_table",
+    "rows": 8,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|duplicate_provenance|geographic|percentage_or_rate",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 312
+  },
+  "vizcsv-170fa6c241a5b3e8": {
+    "shape": "multi_column_table",
+    "rows": 8,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|geographic",
+    "domains": "geography_administration|housing_real_estate|population_demographics|social_family",
+    "bytes": 301
+  },
+  "vizcsv-aab5c6c5e728c1c1": {
+    "shape": "multi_column_table",
+    "rows": 7,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|geographic|geometry_payload|long_text_cells",
+    "domains": "geography_administration|housing_real_estate|population_demographics|social_family",
+    "bytes": 338655
+  },
+  "vizcsv-1ddfa1a4c0823358": {
+    "shape": "multi_column_table",
+    "rows": 7,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|geographic|geometry_payload|long_text_cells|percentage_or_rate",
+    "domains": "geography_administration|housing_real_estate|population_demographics|public_safety_justice",
+    "bytes": 338622
+  },
+  "vizcsv-da3ad013dc90ee17": {
+    "shape": "multi_column_table",
+    "rows": 8,
+    "columns": 4,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|geographic|percentage_or_rate",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 388
+  },
+  "vizcsv-d777e3575a0294d3": {
+    "shape": "multi_column_table",
+    "rows": 8,
+    "columns": 4,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|geographic|zero_values",
+    "domains": "geography_administration|labor_employment|population_demographics|public_safety_justice",
+    "bytes": 352
+  },
+  "vizcsv-442c49334e0784cf": {
+    "shape": "multi_column_table",
+    "rows": 16,
+    "columns": 4,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|negative_numbers|nulls|percentage_or_rate|temporal",
+    "domains": "education",
+    "bytes": 400
+  },
+  "vizcsv-1706fb33ef7fd300": {
+    "shape": "multi_column_table",
+    "rows": 10,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|negative_numbers|nulls|percentage_or_rate|temporal|zero_values",
+    "domains": "education",
+    "bytes": 191
+  },
+  "vizcsv-64538506631268ea": {
+    "shape": "multi_column_table",
+    "rows": 10,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|nulls",
+    "domains": "education|public_safety_justice",
+    "bytes": 495
+  },
+  "vizcsv-5b75d7ceaceab8b6": {
+    "shape": "multi_column_table",
+    "rows": 10,
+    "columns": 4,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|nulls|percentage_or_rate|temporal",
+    "domains": "education",
+    "bytes": 273
+  },
+  "vizcsv-de1abfed1b99352d": {
+    "shape": "multi_column_table",
+    "rows": 10,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|nulls|temporal",
+    "domains": "health",
+    "bytes": 251
+  },
+  "vizcsv-87ebf6be710a836a": {
+    "shape": "multi_column_table",
+    "rows": 10,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|percentage_or_rate",
+    "domains": "population_demographics",
+    "bytes": 250
+  },
+  "vizcsv-916384565d074a0d": {
+    "shape": "multi_column_table",
+    "rows": 10,
+    "columns": 4,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|percentage_or_rate|temporal",
+    "domains": "education|labor_employment|population_demographics",
+    "bytes": 398
+  },
+  "vizcsv-a987ac48cb20a44c": {
+    "shape": "multi_column_table",
+    "rows": 6,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "duplicate_provenance",
+    "domains": "geography_administration",
+    "bytes": 266
+  },
+  "vizcsv-a77aa27103725fc6": {
+    "shape": "multi_column_table",
+    "rows": 16,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "duplicate_provenance|geographic",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 521
+  },
+  "vizcsv-f16244d2756b0e53": {
+    "shape": "multi_column_table",
+    "rows": 7,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "duplicate_provenance|geographic|geometry_payload|long_text_cells",
+    "domains": "geography_administration|public_safety_justice|transport_traffic",
+    "bytes": 338533
+  },
+  "vizcsv-2480250f05e53a13": {
+    "shape": "multi_column_table",
+    "rows": 8,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "duplicate_provenance|geographic|zero_values",
+    "domains": "geography_administration|labor_employment|population_demographics",
+    "bytes": 296
+  },
+  "vizcsv-5cd71a369b0b665b": {
+    "shape": "multi_column_table",
+    "rows": 8,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "geographic",
+    "domains": "geography_administration|housing_real_estate|population_demographics|social_family",
+    "bytes": 315
+  },
+  "vizcsv-fc37cbaf9254781a": {
+    "shape": "multi_column_table",
+    "rows": 7,
+    "columns": 4,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "geographic|geometry_payload|long_text_cells",
+    "domains": "geography_administration|housing_real_estate|population_demographics|social_family",
+    "bytes": 338609
+  },
+  "vizcsv-d7fb489a344da23d": {
+    "shape": "multi_column_table",
+    "rows": 20,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "geographic|temporal",
+    "domains": "geography_administration",
+    "bytes": 444
+  },
+  "vizcsv-39d623d403ef86e5": {
+    "shape": "multi_column_table",
+    "rows": 19,
+    "columns": 4,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "nulls",
+    "domains": "transport_traffic",
+    "bytes": 525
+  },
+  "vizcsv-1ea76a97e400d852": {
+    "shape": "multi_column_table",
+    "rows": 9,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "temporal",
+    "domains": "other_unclassified",
+    "bytes": 118
+  },
+  "vizcsv-0f7f30f49b7f8d2f": {
+    "shape": "multi_column_table",
+    "rows": 10,
+    "columns": 3,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "temporal|zero_values",
+    "domains": "finance_budget|industry_trade|public_safety_justice|transport_traffic",
+    "bytes": 187
+  },
+  "vizcsv-73777b277dd2df9e": {
+    "shape": "multi_column_table",
+    "rows": 40,
+    "columns": 4,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "decimals|geographic",
+    "domains": "geography_administration|housing_real_estate|social_family",
+    "bytes": 2278
+  },
+  "vizcsv-fec875ba65e1153f": {
+    "shape": "multi_column_table",
+    "rows": 34,
+    "columns": 4,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "decimals|geographic|percentage_or_rate",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 840
+  },
+  "vizcsv-6616fb91afa0ee0e": {
+    "shape": "multi_column_table",
+    "rows": 28,
+    "columns": 3,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "decimals|negative_numbers|nulls|percentage_or_rate|temporal|zero_values",
+    "domains": "geography_administration|public_safety_justice",
+    "bytes": 539
+  },
+  "vizcsv-77f97083ad0e424d": {
+    "shape": "multi_column_table",
+    "rows": 63,
+    "columns": 3,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "decimals|temporal",
+    "domains": "economy_business|labor_employment|population_demographics|technology_telecom",
+    "bytes": 1473
+  },
+  "vizcsv-03384a96e9fe5870": {
+    "shape": "multi_column_table",
+    "rows": 51,
+    "columns": 3,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "duplicate_provenance",
+    "domains": "population_demographics|transport_traffic",
+    "bytes": 3979
+  },
+  "vizcsv-244e80ce1f6ea1e6": {
+    "shape": "multi_column_table",
+    "rows": 85,
+    "columns": 3,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "duplicate_provenance|geographic",
+    "domains": "geography_administration|population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 6654
+  },
+  "vizcsv-c0929d6ebea2582e": {
+    "shape": "multi_column_table",
+    "rows": 24,
+    "columns": 3,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "geographic",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 972
+  },
+  "vizcsv-e9ff66ca65930ade": {
+    "shape": "multi_column_table",
+    "rows": 53,
+    "columns": 4,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "geographic|nulls",
+    "domains": "education|geography_administration|housing_real_estate|population_demographics|public_safety_justice",
+    "bytes": 2020
+  },
+  "vizcsv-5db4e859a906f4d4": {
+    "shape": "multi_column_table",
+    "rows": 4,
+    "columns": 3,
+    "row_bucket": "two_to_five",
+    "edge_cases": "",
+    "domains": "geography_administration|population_demographics|public_safety_justice",
+    "bytes": 136
+  },
+  "vizcsv-1310bafd7e3e8788": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 3,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals",
+    "domains": "housing_real_estate|population_demographics|public_safety_justice",
+    "bytes": 219
+  },
+  "vizcsv-2da836322feb0a01": {
+    "shape": "multi_column_table",
+    "rows": 3,
+    "columns": 3,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|duplicate_provenance|geographic|percentage_or_rate",
+    "domains": "population_demographics|public_safety_justice",
+    "bytes": 100
+  },
+  "vizcsv-4af8ec6ad3258a1c": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 4,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|duplicate_provenance|geographic|percentage_or_rate|temporal",
+    "domains": "population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 386
+  },
+  "vizcsv-be5e3246503d4691": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 4,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|duplicate_provenance|negative_numbers|temporal",
+    "domains": "population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 351
+  },
+  "vizcsv-649f7c35cff701c0": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 4,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|duplicate_provenance|percentage_or_rate",
+    "domains": "education|housing_real_estate|population_demographics|public_safety_justice",
+    "bytes": 197
+  },
+  "vizcsv-39471b0e4a5d3fc5": {
+    "shape": "multi_column_table",
+    "rows": 2,
+    "columns": 4,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic",
+    "domains": "labor_employment|public_safety_justice|transport_traffic",
+    "bytes": 137
+  },
+  "vizcsv-64934e67357d1530": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 4,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic|negative_numbers|percentage_or_rate|temporal",
+    "domains": "population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 172
+  },
+  "vizcsv-51106a33e53ff6f2": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 4,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic|negative_numbers|temporal",
+    "domains": "population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 175
+  },
+  "vizcsv-98fe17bdec87024a": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 3,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic|percentage_or_rate",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 138
+  },
+  "vizcsv-793badd4dede9c25": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 4,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic|percentage_or_rate|temporal",
+    "domains": "population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 303
+  },
+  "vizcsv-82e758150c50d02f": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 4,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic|percentage_or_rate|zero_values",
+    "domains": "education|population_demographics|public_safety_justice",
+    "bytes": 156
+  },
+  "vizcsv-7868c5b435a35937": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 3,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic|temporal",
+    "domains": "housing_real_estate|public_safety_justice|transport_traffic",
+    "bytes": 144
+  },
+  "vizcsv-3360bb636fce068c": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 4,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|nulls|percentage_or_rate|temporal",
+    "domains": "labor_employment|public_safety_justice",
+    "bytes": 172
+  },
+  "vizcsv-1e2bacf0dff5563b": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 4,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|percentage_or_rate",
+    "domains": "education|housing_real_estate|population_demographics",
+    "bytes": 184
+  },
+  "vizcsv-d56055b907ca1490": {
+    "shape": "multi_column_table",
+    "rows": 4,
+    "columns": 4,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|temporal",
+    "domains": "labor_employment|population_demographics",
+    "bytes": 237
+  },
+  "vizcsv-8f1e125efa0861bc": {
+    "shape": "multi_column_table",
+    "rows": 4,
+    "columns": 3,
+    "row_bucket": "two_to_five",
+    "edge_cases": "duplicate_provenance",
+    "domains": "finance_budget|geography_administration|population_demographics",
+    "bytes": 77
+  },
+  "vizcsv-34c1bd07e9e8dda4": {
+    "shape": "multi_column_table",
+    "rows": 5,
+    "columns": 3,
+    "row_bucket": "two_to_five",
+    "edge_cases": "duplicate_provenance|temporal",
+    "domains": "education|technology_telecom",
+    "bytes": 305
+  },
+  "vizcsv-4ed9d72a0a3ae246": {
+    "shape": "multi_column_table",
+    "rows": 2,
+    "columns": 3,
+    "row_bucket": "two_to_five",
+    "edge_cases": "geographic",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 85
+  },
+  "vizcsv-877f2a3730984e4e": {
+    "shape": "two_column_series",
+    "rows": 9,
+    "columns": 2,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "",
+    "domains": "economy_business|education|geography_administration|labor_employment",
+    "bytes": 399
+  },
+  "vizcsv-924231a95b136a78": {
+    "shape": "two_column_series",
+    "rows": 6,
+    "columns": 2,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "duplicate_provenance",
+    "domains": "labor_employment|population_demographics|public_safety_justice",
+    "bytes": 89
+  },
+  "vizcsv-a37ff36a7557e756": {
+    "shape": "two_column_series",
+    "rows": 8,
+    "columns": 2,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "duplicate_provenance|geographic",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 255
+  },
+  "vizcsv-a6e88d9dbec260c8": {
+    "shape": "two_column_series",
+    "rows": 8,
+    "columns": 2,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "geographic",
+    "domains": "geography_administration|housing_real_estate|population_demographics|social_family",
+    "bytes": 286
+  },
+  "vizcsv-bcffc8efeaff54d2": {
+    "shape": "two_column_series",
+    "rows": 6,
+    "columns": 2,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "nulls",
+    "domains": "other_unclassified",
+    "bytes": 115
+  },
+  "vizcsv-010c162b92ef3206": {
+    "shape": "two_column_series",
+    "rows": 11,
+    "columns": 2,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "temporal",
+    "domains": "labor_employment",
+    "bytes": 129
+  },
+  "vizcsv-8db62ef1bd716c41": {
+    "shape": "two_column_series",
+    "rows": 24,
+    "columns": 2,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "duplicate_provenance|temporal",
+    "domains": "geography_administration|health|population_demographics",
+    "bytes": 285
+  },
+  "vizcsv-67b12f8d67a3af40": {
+    "shape": "two_column_series",
+    "rows": 63,
+    "columns": 2,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "temporal",
+    "domains": "economy_business|labor_employment|technology_telecom",
+    "bytes": 481
+  },
+  "vizcsv-10ae7bdd9b85270a": {
+    "shape": "two_column_series",
+    "rows": 3,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 64
+  },
+  "vizcsv-070773160d055614": {
+    "shape": "two_column_series",
+    "rows": 5,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals",
+    "domains": "housing_real_estate|population_demographics|public_safety_justice",
+    "bytes": 119
+  },
+  "vizcsv-931e817b28c5673a": {
+    "shape": "two_column_series",
+    "rows": 2,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|duplicate_provenance",
+    "domains": "other_unclassified",
+    "bytes": 51
+  },
+  "vizcsv-a84dff81b391a197": {
+    "shape": "two_column_series",
+    "rows": 2,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic|percentage_or_rate",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 74
+  },
+  "vizcsv-4fe57ec912cce198": {
+    "shape": "two_column_series",
+    "rows": 5,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic|temporal",
+    "domains": "population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 95
+  },
+  "vizcsv-912e8f5602253c6a": {
+    "shape": "two_column_series",
+    "rows": 5,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|temporal",
+    "domains": "population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 139
+  },
+  "vizcsv-cd58595da4454e63": {
+    "shape": "two_column_series",
+    "rows": 2,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "duplicate_provenance",
+    "domains": "public_safety_justice|transport_traffic",
+    "bytes": 108
+  },
+  "vizcsv-815b36d6b17ae7dc": {
+    "shape": "two_column_series",
+    "rows": 2,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "duplicate_provenance|geographic",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 89
+  },
+  "vizcsv-db2e8fddc89a6f3a": {
+    "shape": "two_column_series",
+    "rows": 5,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "geographic",
+    "domains": "population_demographics|public_safety_justice",
+    "bytes": 110
+  },
+  "vizcsv-ec9b6239518a7b5e": {
+    "shape": "two_column_series",
+    "rows": 4,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "geographic|negative_numbers",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 105
+  },
+  "vizcsv-ab1d39cfc5d3cd93": {
+    "shape": "two_column_series",
+    "rows": 2,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "nulls",
+    "domains": "housing_real_estate|population_demographics|social_family",
+    "bytes": 51
+  },
+  "vizcsv-0fb4349d19499ce0": {
+    "shape": "two_column_series",
+    "rows": 5,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "temporal",
+    "domains": "environment_agriculture",
+    "bytes": 71
+  },
+  "vizcsv-cedfb1135c28e1f0": {
+    "shape": "two_column_series",
+    "rows": 5,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "very_large_numbers",
+    "domains": "economy_business|population_demographics",
+    "bytes": 91
+  },
+  "vizcsv-513085257f7a3729": {
+    "shape": "two_column_series",
+    "rows": 5,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "zero_values",
+    "domains": "housing_real_estate|population_demographics|public_safety_justice|social_family",
+    "bytes": 99
+  },
+  "vizcsv-51d8ee210d07e31f": {
+    "shape": "two_column_series",
+    "rows": 10,
+    "columns": 2,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 185
+  },
+  "vizcsv-3283a737bb04b7d2": {
+    "shape": "two_column_series",
+    "rows": 10,
+    "columns": 2,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "duplicate_provenance",
+    "domains": "economy_business|education|geography_administration|health|housing_real_estate|labor_employment|public_safety_justice",
+    "bytes": 253
+  },
+  "vizcsv-8d3bcfb667744984": {
+    "shape": "two_column_series",
+    "rows": 8,
+    "columns": 2,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "duplicate_provenance|geographic",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 247
+  },
+  "vizcsv-442a491c20867c73": {
+    "shape": "two_column_series",
+    "rows": 7,
+    "columns": 2,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "geographic",
+    "domains": "geography_administration|population_demographics|public_safety_justice",
+    "bytes": 144
+  },
+  "vizcsv-615ec665196de860": {
+    "shape": "two_column_series",
+    "rows": 2,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "",
+    "domains": "housing_real_estate|population_demographics|social_family",
+    "bytes": 55
+  },
+  "vizcsv-620e192d0fd6f826": {
+    "shape": "two_column_series",
+    "rows": 5,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals",
+    "domains": "housing_real_estate|public_safety_justice",
+    "bytes": 180
+  },
+  "vizcsv-5fbab3a001f0b4ba": {
+    "shape": "two_column_series",
+    "rows": 5,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic|percentage_or_rate",
+    "domains": "geography_administration|population_demographics|public_safety_justice",
+    "bytes": 194
+  },
+  "vizcsv-9f9e67d10f479c16": {
+    "shape": "two_column_series",
+    "rows": 4,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|temporal",
+    "domains": "economy_business|geography_administration|labor_employment|population_demographics",
+    "bytes": 152
+  },
+  "vizcsv-ed752a04bd232146": {
+    "shape": "two_column_series",
+    "rows": 5,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "duplicate_provenance",
+    "domains": "other_unclassified",
+    "bytes": 127
+  },
+  "vizcsv-8be738ba6fdc3e77": {
+    "shape": "two_column_series",
+    "rows": 3,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "duplicate_provenance|geographic",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 110
+  },
+  "vizcsv-2bc0cfa90c65f142": {
+    "shape": "two_column_series",
+    "rows": 5,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "geographic",
+    "domains": "education|geography_administration|housing_real_estate|population_demographics",
+    "bytes": 97
+  },
+  "vizcsv-d1762a777a5d8f28": {
+    "shape": "two_column_series",
+    "rows": 4,
+    "columns": 2,
+    "row_bucket": "two_to_five",
+    "edge_cases": "temporal",
+    "domains": "labor_employment|population_demographics",
+    "bytes": 107
+  },
+  "vizcsv-89276684e011122e": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "",
+    "domains": "education|labor_employment|population_demographics|transport_traffic",
+    "bytes": 67
+  },
+  "vizcsv-d44741b0b2807439": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "decimals|duplicate_provenance|percentage_or_rate",
+    "domains": "geography_administration|labor_employment|population_demographics|public_safety_justice",
+    "bytes": 71
+  },
+  "vizcsv-a7761ce7247590cc": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 4,
+    "row_bucket": "one",
+    "edge_cases": "decimals|geographic",
+    "domains": "geography_administration|government_services|population_demographics",
+    "bytes": 87
+  },
+  "vizcsv-44cfda42866aa5ae": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "decimals|geographic|percentage_or_rate",
+    "domains": "education|geography_administration|housing_real_estate|population_demographics",
+    "bytes": 74
+  },
+  "vizcsv-f91723bce2abb15b": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 5,
+    "row_bucket": "one",
+    "edge_cases": "decimals|negative_numbers",
+    "domains": "other_unclassified",
+    "bytes": 83
+  },
+  "vizcsv-6c8cc1666963d616": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "decimals|negative_numbers|percentage_or_rate",
+    "domains": "population_demographics|public_safety_justice|tourism_culture|transport_traffic",
+    "bytes": 83
+  },
+  "vizcsv-1adcf9de6971a077": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "decimals|percentage_or_rate",
+    "domains": "geography_administration|population_demographics|public_safety_justice|social_family",
+    "bytes": 61
+  },
+  "vizcsv-db5027c1e8dd161d": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 4,
+    "row_bucket": "one",
+    "edge_cases": "decimals|percentage_or_rate|temporal",
+    "domains": "population_demographics",
+    "bytes": 73
+  },
+  "vizcsv-b9b02a1b59143a94": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "decimals|temporal",
+    "domains": "public_safety_justice|transport_traffic",
+    "bytes": 112
+  },
+  "vizcsv-c2315009d8035563": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 2,
+    "row_bucket": "one",
+    "edge_cases": "duplicate_provenance",
+    "domains": "other_unclassified",
+    "bytes": 36
+  },
+  "vizcsv-098b9b3fe9f8ba83": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "duplicate_provenance|geographic",
+    "domains": "geography_administration|population_demographics|public_safety_justice",
+    "bytes": 91
+  },
+  "vizcsv-e07c573241abdb02": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 2,
+    "row_bucket": "one",
+    "edge_cases": "duplicate_provenance|geographic|geometry_payload|long_text_cells|zero_values",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 57284
+  },
+  "vizcsv-755f793be33c1277": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 2,
+    "row_bucket": "one",
+    "edge_cases": "duplicate_provenance|geographic|temporal",
+    "domains": "population_demographics",
+    "bytes": 61
+  },
+  "vizcsv-5a978d632cfd754c": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "duplicate_provenance|nulls|percentage_or_rate|zero_values",
+    "domains": "finance_budget|industry_trade|population_demographics|transport_traffic",
+    "bytes": 74
+  },
+  "vizcsv-ef7d788d53af126a": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "duplicate_provenance|nulls|temporal|zero_values",
+    "domains": "finance_budget|geography_administration|industry_trade|labor_employment|population_demographics|transport_traffic",
+    "bytes": 26
+  },
+  "vizcsv-ae79cdc7d8e77066": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "duplicate_provenance|percentage_or_rate|zero_values",
+    "domains": "education|population_demographics",
+    "bytes": 82
+  },
+  "vizcsv-7b73e00f5a9acbf7": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 2,
+    "row_bucket": "one",
+    "edge_cases": "duplicate_provenance|temporal",
+    "domains": "education",
+    "bytes": 42
+  },
+  "vizcsv-8f706ab9f208d7db": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 2,
+    "row_bucket": "one",
+    "edge_cases": "geographic",
+    "domains": "geography_administration|labor_employment",
+    "bytes": 41
+  },
+  "vizcsv-e648e69f48f66161": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 2,
+    "row_bucket": "one",
+    "edge_cases": "geographic|geometry_payload|long_text_cells|zero_values",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 1732
+  },
+  "vizcsv-92e6d5bee4a72b39": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 4,
+    "row_bucket": "one",
+    "edge_cases": "geographic|temporal",
+    "domains": "public_safety_justice|tourism_culture|transport_traffic",
+    "bytes": 116
+  },
+  "vizcsv-4e5e9a7e87bf8dfc": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 4,
+    "row_bucket": "one",
+    "edge_cases": "geographic|temporal|very_large_numbers",
+    "domains": "education|geography_administration|housing_real_estate|population_demographics",
+    "bytes": 59
+  },
+  "vizcsv-09050180d3961b03": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 4,
+    "row_bucket": "one",
+    "edge_cases": "nulls|percentage_or_rate|temporal|zero_values",
+    "domains": "labor_employment|population_demographics",
+    "bytes": 95
+  },
+  "vizcsv-11d58745a95a7a08": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "nulls|percentage_or_rate|zero_values",
+    "domains": "finance_budget|industry_trade|population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 68
+  },
+  "vizcsv-46dad75ae7fa7b62": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "percentage_or_rate|zero_values",
+    "domains": "education|population_demographics",
+    "bytes": 66
+  },
+  "vizcsv-9e75590151f7b7a0": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 3,
+    "row_bucket": "one",
+    "edge_cases": "zero_values",
+    "domains": "economy_business|finance_budget|industry_trade|transport_traffic",
+    "bytes": 60
+  },
+  "vizcsv-1269941b51a0685b": {
+    "shape": "single_row_wide",
+    "rows": 1,
+    "columns": 4,
+    "row_bucket": "one",
+    "edge_cases": "",
+    "domains": "population_demographics",
+    "bytes": 60
+  },
+  "vizcsv-b5d188da970cad0d": {
+    "shape": "wide_table",
+    "rows": 16,
+    "columns": 5,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|duplicate_provenance|geographic|percentage_or_rate",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 716
+  },
+  "vizcsv-829ec116c1e0cbe9": {
+    "shape": "wide_table",
+    "rows": 10,
+    "columns": 5,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|duplicate_provenance|percentage_or_rate",
+    "domains": "population_demographics|transport_traffic",
+    "bytes": 880
+  },
+  "vizcsv-a5d4d6844bb2dcde": {
+    "shape": "wide_table",
+    "rows": 8,
+    "columns": 5,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|geographic|percentage_or_rate",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 373
+  },
+  "vizcsv-556299306be42578": {
+    "shape": "wide_table",
+    "rows": 20,
+    "columns": 5,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|percentage_or_rate",
+    "domains": "population_demographics",
+    "bytes": 638
+  },
+  "vizcsv-4a52f82aca78cd51": {
+    "shape": "wide_table",
+    "rows": 11,
+    "columns": 5,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "geographic|geometry_payload|long_text_cells",
+    "domains": "geography_administration|government_services|population_demographics",
+    "bytes": 3368
+  },
+  "vizcsv-85eb007f0c79578f": {
+    "shape": "wide_table",
+    "rows": 8,
+    "columns": 9,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "geographic|geometry_payload|long_text_cells|temporal",
+    "domains": "geography_administration|population_demographics|public_safety_justice",
+    "bytes": 365662
+  },
+  "vizcsv-be23dbebb3cfc9e9": {
+    "shape": "wide_table",
+    "rows": 26,
+    "columns": 5,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "decimals|duplicate_provenance|negative_numbers|nulls|percentage_or_rate|temporal|zero_values",
+    "domains": "geography_administration|population_demographics|public_safety_justice",
+    "bytes": 650
+  },
+  "vizcsv-5b598d47ed1741aa": {
+    "shape": "wide_table",
+    "rows": 28,
+    "columns": 5,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "decimals|geographic|percentage_or_rate",
+    "domains": "population_demographics|public_safety_justice",
+    "bytes": 1247
+  },
+  "vizcsv-5ab7c06fb1936175": {
+    "shape": "wide_table",
+    "rows": 28,
+    "columns": 5,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "decimals|negative_numbers|nulls|percentage_or_rate|temporal|zero_values",
+    "domains": "geography_administration|public_safety_justice|tourism_culture",
+    "bytes": 689
+  },
+  "vizcsv-e60c2b77a35f6ebc": {
+    "shape": "wide_table",
+    "rows": 48,
+    "columns": 5,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "decimals|percentage_or_rate",
+    "domains": "population_demographics|transport_traffic",
+    "bytes": 3405
+  },
+  "vizcsv-fb27379578e26e40": {
+    "shape": "wide_table",
+    "rows": 39,
+    "columns": 5,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "geographic",
+    "domains": "education|geography_administration|housing_real_estate|population_demographics|public_safety_justice",
+    "bytes": 1626
+  },
+  "vizcsv-bfec427bf3135ffe": {
+    "shape": "wide_table",
+    "rows": 63,
+    "columns": 5,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "geographic|geometry_payload|long_text_cells",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 55324
+  },
+  "vizcsv-262c92a13f5178a0": {
+    "shape": "wide_table",
+    "rows": 5,
+    "columns": 8,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|duplicate_provenance|geographic|negative_numbers|temporal",
+    "domains": "population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 517
+  },
+  "vizcsv-f21f1eea05e01308": {
+    "shape": "wide_table",
+    "rows": 2,
+    "columns": 6,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic",
+    "domains": "labor_employment|public_safety_justice|transport_traffic",
+    "bytes": 175
+  },
+  "vizcsv-f3f3d604e3d68ab1": {
+    "shape": "wide_table",
+    "rows": 5,
+    "columns": 8,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic|negative_numbers|temporal",
+    "domains": "population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 379
+  },
+  "vizcsv-831abf1094773030": {
+    "shape": "wide_table",
+    "rows": 2,
+    "columns": 5,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic|percentage_or_rate",
+    "domains": "education|population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 255
+  },
+  "vizcsv-41cce225b5d818d2": {
+    "shape": "wide_table",
+    "rows": 5,
+    "columns": 5,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|percentage_or_rate",
+    "domains": "education|labor_employment|population_demographics|public_safety_justice",
+    "bytes": 534
+  },
+  "vizcsv-71ad344b7a106528": {
+    "shape": "wide_table",
+    "rows": 5,
+    "columns": 5,
+    "row_bucket": "two_to_five",
+    "edge_cases": "geographic|geometry_payload|long_text_cells|nulls",
+    "domains": "geography_administration|health",
+    "bytes": 8389
+  },
+  "vizcsv-6157cbb868c22e86": {
+    "shape": "wide_table",
+    "rows": 10,
+    "columns": 5,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|duplicate_provenance|percentage_or_rate",
+    "domains": "population_demographics|transport_traffic",
+    "bytes": 953
+  },
+  "vizcsv-6caf2233e0af163b": {
+    "shape": "wide_table",
+    "rows": 8,
+    "columns": 6,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|geographic|percentage_or_rate",
+    "domains": "geography_administration|population_demographics|public_safety_justice",
+    "bytes": 466
+  },
+  "vizcsv-e0a430bc32da8a1c": {
+    "shape": "wide_table",
+    "rows": 10,
+    "columns": 5,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "decimals|percentage_or_rate",
+    "domains": "population_demographics|transport_traffic",
+    "bytes": 902
+  },
+  "vizcsv-bfa0bf80d3dacee0": {
+    "shape": "wide_table",
+    "rows": 28,
+    "columns": 5,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "decimals|negative_numbers|nulls|percentage_or_rate|temporal|zero_values",
+    "domains": "geography_administration|population_demographics|public_safety_justice|tourism_culture",
+    "bytes": 695
+  },
+  "vizcsv-c6da0a0187a238a8": {
+    "shape": "wide_table",
+    "rows": 2,
+    "columns": 5,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic",
+    "domains": "education|population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 259
+  },
+  "vizcsv-468b4112af9ead1d": {
+    "shape": "wide_table",
+    "rows": 5,
+    "columns": 8,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|geographic|negative_numbers|temporal",
+    "domains": "population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 384
+  },
+  "vizcsv-601a174b0df48bb9": {
+    "shape": "very_wide_table",
+    "rows": 8,
+    "columns": 10,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "geographic|geometry_payload|long_text_cells",
+    "domains": "geography_administration|population_demographics|public_safety_justice",
+    "bytes": 365557
+  },
+  "vizcsv-1d9cda665cf60239": {
+    "shape": "very_wide_table",
+    "rows": 100,
+    "columns": 28,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "decimals|geographic|geometry_payload|long_text_cells|nulls|temporal|very_large_numbers|zero_values",
+    "domains": "geography_administration",
+    "bytes": 314112
+  },
+  "vizcsv-da15461d94d596f1": {
+    "shape": "very_wide_table",
+    "rows": 5,
+    "columns": 14,
+    "row_bucket": "two_to_five",
+    "edge_cases": "decimals|temporal|very_large_numbers",
+    "domains": "education|housing_real_estate|population_demographics",
+    "bytes": 2545
+  },
+  "vizcsv-b73356e90986653f": {
+    "shape": "single_column_list",
+    "rows": 383,
+    "columns": 1,
+    "row_bucket": "101_to_1000",
+    "edge_cases": "",
+    "domains": "other_unclassified",
+    "bytes": 14138
+  },
+  "vizcsv-ac951afc1e53d382": {
+    "shape": "single_column_list",
+    "rows": 8,
+    "columns": 1,
+    "row_bucket": "six_to_twenty",
+    "edge_cases": "duplicate_provenance|geographic",
+    "domains": "geography_administration|population_demographics|public_safety_justice|transport_traffic",
+    "bytes": 204
+  },
+  "vizcsv-723bbc49059afa27": {
+    "shape": "single_column_list",
+    "rows": 50,
+    "columns": 1,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "geographic|geometry_payload|long_text_cells",
+    "domains": "geography_administration|population_demographics",
+    "bytes": 101973
+  },
+  "vizcsv-c5c53b28e31eb9bf": {
+    "shape": "single_column_list",
+    "rows": 100,
+    "columns": 1,
+    "row_bucket": "twenty_one_to_100",
+    "edge_cases": "geographic|geometry_payload|long_text_cells",
+    "domains": "other_unclassified",
+    "bytes": 186969
+  },
+  "vizcsv-181c9d23bd80cf9c": {
+    "shape": "scalar",
+    "rows": 1,
+    "columns": 1,
+    "row_bucket": "one",
+    "edge_cases": "",
+    "domains": "labor_employment",
+    "bytes": 28
+  },
+  "vizcsv-7a01599b82a646f2": {
+    "shape": "scalar",
+    "rows": 1,
+    "columns": 1,
+    "row_bucket": "one",
+    "edge_cases": "decimals",
+    "domains": "population_demographics",
+    "bytes": 48
+  },
+  "vizcsv-c61dd08461a844cc": {
+    "shape": "scalar",
+    "rows": 1,
+    "columns": 1,
+    "row_bucket": "one",
+    "edge_cases": "decimals|duplicate_provenance|percentage_or_rate",
+    "domains": "population_demographics",
+    "bytes": 38
+  },
+  "vizcsv-3b62e4047e2cb455": {
+    "shape": "scalar",
+    "rows": 1,
+    "columns": 1,
+    "row_bucket": "one",
+    "edge_cases": "decimals|percentage_or_rate",
+    "domains": "education|housing_real_estate|population_demographics",
+    "bytes": 17
+  },
+  "vizcsv-3c9b38b7a1e11816": {
+    "shape": "scalar",
+    "rows": 1,
+    "columns": 1,
+    "row_bucket": "one",
+    "edge_cases": "decimals|very_large_numbers",
+    "domains": "finance_budget|labor_employment|population_demographics",
+    "bytes": 38
+  },
+  "vizcsv-d74a4645a10586ad": {
+    "shape": "scalar",
+    "rows": 1,
+    "columns": 1,
+    "row_bucket": "one",
+    "edge_cases": "duplicate_provenance",
+    "domains": "population_demographics",
+    "bytes": 11
+  },
+  "vizcsv-76a4f9fe5ba2e6ff": {
+    "shape": "scalar",
+    "rows": 1,
+    "columns": 1,
+    "row_bucket": "one",
+    "edge_cases": "duplicate_provenance|geographic",
+    "domains": "geography_administration|labor_employment|population_demographics|transport_traffic",
+    "bytes": 22
+  },
+  "vizcsv-1280f463ac63c0bc": {
+    "shape": "scalar",
+    "rows": 1,
+    "columns": 1,
+    "row_bucket": "one",
+    "edge_cases": "duplicate_provenance|geographic|zero_values",
+    "domains": "public_safety_justice|transport_traffic",
+    "bytes": 17
+  }
+}

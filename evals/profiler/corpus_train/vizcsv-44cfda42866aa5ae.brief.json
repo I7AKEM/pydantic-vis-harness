@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH poor_households AS (\n  SELECT head_of_household_id \n  FROM estishraf_llm_wealth_index \n  WHERE wealth_level = 'Poor'\n),\nliving_saudi_poor AS (\n  SELECT DISTINCT d.id\n  FROM estishraf_llm_demographics_impala d\n  JOIN poor_households ph ON d.head_of_household_id = ph.head_of_household_id\n  WHERE d.person_status = 'صالح' \n    AND d.death_date IS NULL\n    AND d.person_type = 'Saudi'\n),\ntotal_poor_population AS (\n  SELECT COUNT(DISTINCT id) as total_count\n  FROM living_saudi_poor\n),\nhigher_education_poor AS (\n  SELECT COUNT(DISTINCT lsp.id) as higher_ed_count\n  FROM living_saudi_poor lsp\n  JOIN estishraf_llm_university_graduates_impala ug \n    ON lsp.id = ug.id\n  WHERE ug.qualification IN ('ماجستير', 'دكتوراه')\n)\nSELECT \n  tp.total_count as total_poor_population,\n  hp.higher_ed_count as higher_education_count,\n  ROUND((hp.higher_ed_count * 100.0 / tp.total_count), 2) as percentage\nFROM total_poor_population tp\nCROSS JOIN higher_education_poor hp\nLIMIT 100",
+  "raw_question": "كم نسبة الافراد الاحياء أصحاب طبقة الثروة الدنيا الحاصلين على شهادات عليا (ماجستير ودكتوراه) مقار...",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

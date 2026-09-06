@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "SELECT Trim( hl.region ) AS region, COUNT(DISTINCT hp.id) AS population_count FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id WHERE hp.is_in_population = true AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND Trim( hl.region ) != '' AND hl.region IS NOT NULL GROUP BY Trim( hl.region ) ORDER BY population_count DESC LIMIT 3",
+  "raw_question": "أعلى ثلاث مناطق في عدد السكان",
+  "intent": "rank",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

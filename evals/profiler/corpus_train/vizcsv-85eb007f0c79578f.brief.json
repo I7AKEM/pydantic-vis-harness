@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_snapshot AS (\n  SELECT MAX(snapshot) AS snapshot_date\n  FROM estishraf_llm_historical_population_impala\n),\nfiltered_population AS (\n  SELECT hp.ID AS id, hp.dependent_seq_no, hp.age, hl.region, ls.snapshot_date\n  FROM estishraf_llm_historical_population_impala hp\n  JOIN estishraf_llm_home_location hl ON hp.ID = hl.id\n  CROSS JOIN latest_snapshot ls\n  WHERE hp.is_in_population = TRUE\n    AND hp.snapshot = ls.snapshot_date\n    AND hp.age > 0\n    AND hp.age <= 100\n    AND TRIM(hl.region) != ''\n    AND hl.region IS NOT NULL\n),\npopulation_age_region AS (\n  SELECT\n    TRIM(region) AS region,\n    snapshot_date,\n    CASE\n      WHEN age BETWEEN 0 AND 14 THEN '0-14'\n      WHEN age BETWEEN 15 AND 24 THEN '15-24'\n      WHEN age BETWEEN 25 AND 44 THEN '25-44'\n      WHEN age BETWEEN 45 AND 64 THEN '45-64'\n      WHEN age >= 65 THEN '65+'\n    END AS age_group,\n    id,\n    dependent_seq_no\n  FROM filtered_population\n),\ninput AS (\n  SELECT\n    region,\n    snapshot_date,\n    age_group,\n    COUNT(DISTINCT id, dependent_seq_no) AS population\n  FROM population_age_region\n  GROUP BY region, snapshot_date, age_group\n  ORDER BY region, age_group\n)\nSELECT input.*, poly.wkt\nFROM input\nLEFT JOIN ESTISHRAF_LLM_KSA_Regions_Polygons poly\n  ON regexp_replace(trim(input.region), '^(المنطقة|منطقة)\\\\s+', '') = regexp_replace(trim(poly.region), '^(المنطقة|منطقة)\\\\s+', '');",
+  "raw_question": "كم سكان المملكة؟",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

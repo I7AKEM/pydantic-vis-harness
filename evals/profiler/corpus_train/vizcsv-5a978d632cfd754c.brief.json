@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH supplier_totals AS (SELECT importer_national_id, SUM(cost) AS total_cost FROM estishraf_llm_customs WHERE YEAR(declaration_date) = 2025 AND cost > 0 AND NOT importer_national_id IS NULL GROUP BY importer_national_id HAVING SUM(cost) > 1000000), saudi_suppliers AS (SELECT d.id, d.gender, d.person_type FROM supplier_totals AS s JOIN estishraf_llm_demographics_impala AS d ON s.importer_national_id = d.id WHERE d.person_type = 'Saudi'), total_saudi AS (SELECT COUNT(DISTINCT id) AS total_count FROM saudi_suppliers), saudi_females AS (SELECT COUNT(DISTINCT id) AS female_count FROM saudi_suppliers WHERE gender = 'F') SELECT ROUND((f.female_count * 100.0 / NULLIF(t.total_count, 0)), 2) AS percentage_female_saudi, t.total_count AS total_saudi_suppliers, f.female_count AS female_saudi_suppliers FROM total_saudi AS t CROSS JOIN saudi_females AS f LIMIT 1200",
+  "raw_question": "كم تبلغ نسبة النساء السعوديات من اجمالي الموردين السعوديين الذين قاموا بتوريد منتجات تزيد قيمتها ...",
+  "suggested_chart_type": "indicator|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH total_pop AS (SELECT COUNT(DISTINCT id, dependent_seq_no) AS total FROM estishraf_llm_historical_population_impala WHERE snapshot = '2026-02-01' AND is_in_population = TRUE), over_60_pop AS (SELECT COUNT(DISTINCT id, dependent_seq_no) AS over_60 FROM estishraf_llm_historical_population_impala WHERE snapshot = '2026-02-01' AND is_in_population = TRUE AND age > 60 AND age IS NOT NULL) SELECT (over_60 * 100.0 / total) AS percentage_over_60 FROM total_pop CROSS JOIN over_60_pop LIMIT 1200",
+  "raw_question": "ما نسبة السكان في الفئة العمرية فوق 60 سنة في 2025؟",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

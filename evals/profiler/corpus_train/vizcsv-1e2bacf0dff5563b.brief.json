@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH saudi_women AS (SELECT id, head_of_household_id FROM estishraf_llm_demographics_impala WHERE person_type = 'Saudi' AND gender = 'F' AND person_status = 'صالح'), wealthy_status AS (SELECT sw.id, w.wealth_level FROM saudi_women AS sw JOIN estishraf_llm_wealth_index AS w ON sw.head_of_household_id = w.head_of_household_id), postgrad_counts AS (SELECT ws.wealth_level, COUNT(DISTINCT ws.id) AS postgrad_count FROM wealthy_status AS ws JOIN estishraf_llm_university_graduates_impala AS g ON ws.id = g.id WHERE g.qualification IN ('ماجستير', 'دكتوراه', 'زمالة') AND NOT g.graduation_date IS NULL GROUP BY ws.wealth_level), total_counts AS (SELECT wealth_level, COUNT(DISTINCT id) AS total_count FROM wealthy_status GROUP BY wealth_level) SELECT tc.wealth_level, tc.total_count, COALESCE(pc.postgrad_count, 0) AS postgrad_count, ROUND(COALESCE(pc.postgrad_count, 0) * 100.0 / tc.total_count, 2) AS percentage FROM total_counts AS tc LEFT JOIN postgrad_counts AS pc ON tc.wealth_level = pc.wealth_level ORDER BY tc.wealth_level LIMIT 1200",
+  "raw_question": "هل يميل  النساء السعوديات الثريات الى اكمال الدراسات العليا (ماجستير - دكتوراة - زمالة) مقارنة مع...",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

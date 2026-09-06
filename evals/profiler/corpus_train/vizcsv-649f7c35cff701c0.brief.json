@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH female_saudi_by_wealth AS (/* جميع النساء السعوديات حسب طبقة الثراء */ SELECT w.wealth_level, COUNT(DISTINCT d.id) AS total_females FROM estishraf_llm_demographics_impala AS d JOIN estishraf_llm_wealth_index AS w ON d.head_of_household_id = w.head_of_household_id WHERE d.person_type = 'Saudi' AND d.gender = 'F' AND d.person_status = 'صالح' AND d.death_date IS NULL GROUP BY w.wealth_level), female_postgrad_by_wealth AS (/* النساء السعوديات اللواتي أكملن دراسات عليا حسب طبقة الثراء */ SELECT w.wealth_level, COUNT(DISTINCT d.id) AS postgrad_females FROM estishraf_llm_demographics_impala AS d JOIN estishraf_llm_wealth_index AS w ON d.head_of_household_id = w.head_of_household_id JOIN estishraf_llm_university_graduates_impala AS edu ON d.id = edu.id WHERE d.person_type = 'Saudi' AND d.gender = 'F' AND d.person_status = 'صالح' AND d.death_date IS NULL AND edu.qualification IN ('ماجستير', 'دكتوراه', 'زمالة') AND NOT edu.graduation_date IS NULL GROUP BY w.wealth_level) SELECT f.wealth_level, f.total_females, COALESCE(p.postgrad_females, 0) AS postgrad_females, ROUND(COALESCE(p.postgrad_females, 0) * 100.0 / f.total_females, 2) AS postgrad_percentage FROM female_saudi_by_wealth AS f LEFT JOIN female_postgrad_by_wealth AS p ON f.wealth_level = p.wealth_level ORDER BY CASE f.wealth_level WHEN 'Rich' THEN 1 WHEN 'Upper Middle' THEN 2 WHEN 'Middle' THEN 3 WHEN 'Lower Middle' THEN 4 WHEN 'Poor' THEN 5 END LIMIT 1200",
+  "raw_question": "الدراسات العليا للنساء السعوديات حسب الثراء",
+  "suggested_chart_type": "bar|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

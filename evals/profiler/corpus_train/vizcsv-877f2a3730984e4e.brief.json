@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "-- تحليل الجامعات المغذة للشركات الكبرى (أعلى 50 شركة)\nWITH TopCompanies AS (\n    SELECT employer_id, employer_name\n    FROM estishraf_llm_jobs_info_v3_impala\n    WHERE is_active_job = 1\n    AND employer_id IS NOT NULL\n    GROUP BY employer_id, employer_name\n    ORDER BY COUNT(*) DESC\n    LIMIT 50\n),\nUniversityCounts AS (\n    SELECT \n        TRIM(u.university_name) AS university_name,\n        COUNT(DISTINCT u.id) AS graduate_count\n    FROM estishraf_llm_university_graduates_impala u\n    INNER JOIN estishraf_llm_jobs_info_v3_impala j ON u.id = j.id\n    INNER JOIN TopCompanies tc ON j.employer_id = tc.employer_id\n    WHERE j.is_active_job = 1\n    AND u.graduation_date IS NOT NULL\n    AND u.qualification IN ('بكالوريوس', 'ماجستير', 'دكتوراه', 'زمالة')\n    GROUP BY TRIM(u.university_name)\n)\nSELECT \n    university_name,\n    graduate_count\nFROM UniversityCounts\nWHERE graduate_count > 0\nORDER BY graduate_count DESC\nLIMIT 30",
+  "raw_question": "ترتيب الجامعات حسب خريجيها في الشركات الكبرى",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

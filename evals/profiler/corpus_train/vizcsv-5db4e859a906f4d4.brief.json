@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "WITH filtered_population AS (SELECT id, dependent_seq_no, person_type, gender FROM estishraf_llm_historical_population_impala WHERE snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND is_in_population = TRUE) SELECT CASE WHEN TRIM(person_type) = 'Saudi' THEN 'مواطن' WHEN TRIM(person_type) = 'Alien' THEN 'مقيم' WHEN TRIM(person_type) = 'Visitor' THEN 'زائر' ELSE TRIM(person_type) END AS نوع_الشخص, CASE WHEN gender = 'M' THEN 'ذكور' WHEN gender = 'F' THEN 'إناث' ELSE gender END AS الجنس, COUNT(DISTINCT id, dependent_seq_no) AS العدد FROM filtered_population GROUP BY CASE WHEN TRIM(person_type) = 'Saudi' THEN 'مواطن' WHEN TRIM(person_type) = 'Alien' THEN 'مقيم' WHEN TRIM(person_type) = 'Visitor' THEN 'زائر' ELSE TRIM(person_type) END, CASE WHEN gender = 'M' THEN 'ذكور' WHEN gender = 'F' THEN 'إناث' ELSE gender END ORDER BY نوع_الشخص, الجنس LIMIT 1200",
+  "raw_question": "ترحيب",
+  "intent": "composition",
+  "suggested_chart_type": "stacked_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

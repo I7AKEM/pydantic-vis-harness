@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_snapshot AS (\n  SELECT MAX(snapshot) as max_snap \n  FROM estishraf_llm_historical_population_impala\n),\npopulation_25plus AS (\n  SELECT DISTINCT hp.id, hp.gender, hl.city, d.head_of_household_id\n  FROM estishraf_llm_historical_population_impala hp\n  JOIN estishraf_llm_home_location hl ON hp.id = hl.id\n  JOIN estishraf_llm_demographics_impala d ON hp.id = d.id\n  CROSS JOIN latest_snapshot ls\n  WHERE hp.snapshot = ls.max_snap\n    AND hp.is_in_population = TRUE\n    AND hp.age >= 25\n    AND hl.city IN ('الرياض', 'جدة')\n),\nhighest_edu AS (\n  SELECT id, qualification,\n    ROW_NUMBER() OVER (PARTITION BY id ORDER BY \n      CASE qualification \n        WHEN 'دكتوراه' THEN 1\n        WHEN 'زمالة' THEN 2\n        WHEN 'ماجستير' THEN 3\n        WHEN 'بكالوريوس' THEN 4\n        WHEN 'دبلوم عال' THEN 5\n        WHEN 'دبلوم متوسط' THEN 6\n        ELSE 7\n      END) as rn\n  FROM estishraf_llm_university_graduates_impala\n  WHERE graduation_date IS NOT NULL\n),\nenriched_pop AS (\n  SELECT p.id, p.city, p.head_of_household_id, he.qualification\n  FROM population_25plus p\n  LEFT JOIN highest_edu he ON p.id = he.id AND he.rn = 1\n),\nwith_wealth AS (\n  SELECT ep.city, ep.qualification, w.wealth_level\n  FROM enriched_pop ep\n  JOIN estishraf_llm_wealth_index w ON ep.head_of_household_id = w.head_of_household_id\n)\nSELECT city, wealth_level, qualification, COUNT(*) as count\nFROM with_wealth\nGROUP BY city, wealth_level, qualification\nORDER BY city, wealth_level, count DESC\nLIMIT 200",
+  "raw_question": "هل تختلف المستويات التعليمية الشائعة بين فئات الثروة باختلاف المناطق؟ قارن بين سكان الرياض، والدم...",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH population_by_region AS (\n    SELECT \n        hl.region AS region_name,\n        COUNT(DISTINCT hp.id) AS population_count\n    FROM estishraf_llm_historical_population_impala hp\n    JOIN estishraf_llm_home_location hl ON hp.id = hl.id\n    WHERE hp.is_in_population = TRUE \n      AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n      AND TRIM(hl.region) != '' \n      AND hl.region IS NOT NULL\n    GROUP BY hl.region\n),\njobs_by_region AS (\n    SELECT \n        employer_work_region AS region_name,\n        COUNT(*) AS active_jobs_count\n    FROM estishraf_llm_jobs_info_v3_impala\n    WHERE is_active_job = 1\n      AND employer_work_region IS NOT NULL\n      AND employer_work_region NOT IN ('لاينطبق', 'غير معرف')\n    GROUP BY employer_work_region\n)\nSELECT \n    p.region_name,\n    p.population_count,\n    COALESCE(j.active_jobs_count, 0) AS active_jobs_count,\n    CASE \n        WHEN p.population_count > 0 THEN ROUND(COALESCE(j.active_jobs_count, 0) * 100.0 / p.population_count, 2)\n        ELSE 0 \n    END AS jobs_per_100_people\nFROM population_by_region p\nLEFT JOIN jobs_by_region j ON p.region_name = j.region_name\nORDER BY p.population_count DESC LIMIT 1200",
+  "raw_question": "كم سكان المملكة؟",
+  "suggested_chart_type": "grouped_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

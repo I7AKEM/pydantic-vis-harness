@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH education_gender_salaries AS (SELECT u.qualification, d.gender, AVG(j.total_wage) AS average_total_wage FROM estishraf_llm_jobs_info_v3_impala j JOIN estishraf_llm_demographics_impala d ON j.id = d.id JOIN estishraf_llm_university_graduates_impala u ON j.id = u.id WHERE j.is_active_job = 1 AND YEAR(j.job_start_date) <= 2025 AND (YEAR(j.job_end_date) >= 2025 OR j.job_end_date IS NULL) AND d.gender IN ('M', 'F') AND u.qualification IN ('بكالوريوس', 'دبلوم عالي', 'دبلوم متوسط', 'دكتوراه', 'ماجستير') GROUP BY u.qualification, d.gender) SELECT qualification, MAX(CASE WHEN gender = 'M' THEN average_total_wage ELSE 0 END) AS male_salary, MAX(CASE WHEN gender = 'F' THEN average_total_wage ELSE 0 END) AS female_salary, ABS(MAX(CASE WHEN gender = 'M' THEN average_total_wage ELSE 0 END) - MAX(CASE WHEN gender = 'F' THEN average_total_wage ELSE 0 END)) AS wage_gap, (ABS(MAX(CASE WHEN gender = 'M' THEN average_total_wage ELSE 0 END) - MAX(CASE WHEN gender = 'F' THEN average_total_wage ELSE 0 END)) / MAX(CASE WHEN gender = 'M' THEN average_total_wage ELSE 0 END)) * 100 AS wage_gap_percentage FROM education_gender_salaries GROUP BY qualification ORDER BY wage_gap_percentage DESC LIMIT 1200",
+  "raw_question": "أضف تحليل للفجوة بين الجنسين في الرواتب",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

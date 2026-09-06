@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH arrivals AS (SELECT COUNT(*) AS arrival_count FROM estishraf_llm_border_crossings_impala WHERE entry_timestamp BETWEEN '2023-07-01' AND '2023-09-30' AND person_type != 'مواطن'), departures AS (SELECT COUNT(*) AS departure_count FROM estishraf_llm_border_crossings_impala WHERE exit_timestamp BETWEEN '2023-07-01' AND '2023-09-30' AND person_type != 'مواطن') SELECT arrivals.arrival_count, departures.departure_count FROM arrivals, departures LIMIT 1200",
+  "raw_question": "كم عدد المغادرين والقادمين الأجانب في الربع الثالث من عام 2023؟",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

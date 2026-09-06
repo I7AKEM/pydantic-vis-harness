@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH sector_stats AS (SELECT job_sector, AVG(total_wage) AS avg_monthly_wage, COUNT(*) AS job_count FROM estishraf_llm_jobs_info_v3_impala WHERE is_active_job = 1 AND job_sector IN ('حكومي', 'خاص', 'شبه حكومي', 'عسكري') AND total_wage > 0 GROUP BY job_sector), ranked_wages AS (SELECT job_sector, total_wage, ROW_NUMBER() OVER (PARTITION BY job_sector ORDER BY total_wage) AS rn, COUNT(*) OVER (PARTITION BY job_sector) AS cnt FROM estishraf_llm_jobs_info_v3_impala WHERE is_active_job = 1 AND job_sector IN ('حكومي', 'خاص', 'شبه حكومي', 'عسكري') AND total_wage > 0), median_calc AS (SELECT job_sector, AVG(total_wage) AS median_monthly_wage FROM ranked_wages WHERE rn IN (FLOOR((cnt + 1) / 2), FLOOR((cnt + 2) / 2)) GROUP BY job_sector) SELECT s.job_sector, s.avg_monthly_wage, m.median_monthly_wage, s.job_count FROM sector_stats AS s JOIN median_calc AS m ON s.job_sector = m.job_sector ORDER BY s.avg_monthly_wage DESC LIMIT 1200",
+  "raw_question": "أريد تقرير شامل عن حالة التوظيف والرواتب مع التحليلات البيانية",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

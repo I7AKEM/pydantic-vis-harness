@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_snapshot AS (SELECT MAX(SNAPSHOT) AS latest_date FROM estishraf_llm_historical_population_impala), input AS (SELECT COUNT(*) AS population_count FROM estishraf_llm_historical_population_impala pop JOIN estishraf_llm_home_location loc ON pop.id = loc.id WHERE pop.is_in_population = TRUE AND loc.city = 'الطائف' AND pop.snapshot = (SELECT latest_date FROM latest_snapshot)) SELECT input.*, poly.wkt FROM input CROSS JOIN ESTISHRAF_LLM_KSA_Cities_Polygons poly WHERE poly.city = 'الطائف'",
+  "raw_question": "كم عدد السكان في مدينة الطائف؟ رد كالتالي: \"عدد السكان (الرقم)\"",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

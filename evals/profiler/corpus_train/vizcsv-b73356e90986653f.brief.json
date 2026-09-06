@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SHOW TABLES LIKE 'estishraf_llm_*'",
+  "raw_question": "جداول نظام إنسايتر",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

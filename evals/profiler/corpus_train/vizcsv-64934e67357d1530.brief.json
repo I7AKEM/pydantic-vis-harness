@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH violations_with_age AS (SELECT t.violator_id, YEAR(t.gdate_happened) AS violation_year, FLOOR(DATEDIFF(t.gdate_happened, d.birth_date) / 365.25) AS age_at_violation FROM estishraf_llm_traffic_violation AS t JOIN estishraf_llm_demographics_impala AS d ON CAST(t.violator_id AS BIGINT) = d.id WHERE t.status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid') AND t.gdate_happened >= '2021-01-01' AND t.gdate_happened <= '2025-12-31' AND NOT d.birth_date IS NULL AND d.birth_date > '1900-01-01'), age_grouped AS (SELECT violation_year, CASE WHEN age_at_violation > 25 THEN 'over_25' WHEN age_at_violation < 25 THEN 'under_25' END AS age_group, violator_id FROM violations_with_age WHERE age_at_violation > 25 OR age_at_violation < 25), yearly_stats AS (SELECT violation_year, age_group, COUNT(*) AS total_violations, COUNT(DISTINCT violator_id) AS unique_drivers FROM age_grouped GROUP BY violation_year, age_group), avg_per_driver AS (SELECT violation_year, age_group, total_violations * 1.0 / unique_drivers AS avg_violations_per_driver, total_violations, unique_drivers FROM yearly_stats) SELECT a.violation_year, ROUND(a.avg_violations_per_driver, 2) AS avg_over_25, ROUND(b.avg_violations_per_driver, 2) AS avg_under_25, ROUND(((a.avg_violations_per_driver - b.avg_violations_per_driver) / b.avg_violations_per_driver) * 100, 2) AS percentage_difference FROM (SELECT * FROM avg_per_driver WHERE age_group = 'over_25') AS a JOIN (SELECT * FROM avg_per_driver WHERE age_group = 'under_25') AS b ON a.violation_year = b.violation_year ORDER BY a.violation_year LIMIT 1200",
+  "raw_question": "مقارنة المخالفات المرورية حسب الفئة العمرية",
+  "suggested_chart_type": "line",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

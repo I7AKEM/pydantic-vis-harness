@@ -124,3 +124,14 @@ def test_timezone_aware_timestamps_profile(store):
     assert columns["at"].physical_type.startswith("TIMESTAMP")
     assert columns["at"].measurement_levels == ["time"]
     assert columns["at"].earliest is not None
+
+
+def test_place_name_hint_covers_more_words_and_arabic(store):
+    header = "municipality,entry_port,airport_name,المنطقة,البلدية,city_size_category,transport_mode,total"
+    rows = ["Diriyah,KKIA,King Khalid,منطقة الرياض,الدرعية,small,bus,1", "Riyadh,KAIA,King Abdulaziz,منطقة مكة,جدة,large,car,2"]
+    columns = profile_of(store, "places.csv", ("\n".join([header] + rows) + "\n").encode())
+    for name in ("municipality", "entry_port", "airport_name", "المنطقة", "البلدية"):
+        assert columns[name].geographic_role == "place_name", name
+    for name in ("city_size_category", "transport_mode"):
+        assert columns[name].geographic_role is None, name
+    assert columns["total"].geographic_role is None

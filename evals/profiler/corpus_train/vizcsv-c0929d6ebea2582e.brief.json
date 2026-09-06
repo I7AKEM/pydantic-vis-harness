@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH nationality_counts AS (\n  SELECT \n    hl.region,\n    TRIM(hp.nationality) as nationality,\n    COUNT(DISTINCT hp.id) as population\n  FROM estishraf_llm_historical_population_impala hp\n  JOIN estishraf_llm_home_location hl ON hp.id = hl.id\n  WHERE hp.is_in_population = TRUE \n    AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n    AND TRIM(hl.region) != '' AND hl.region IS NOT NULL\n    AND hp.person_type = 'Alien'\n  GROUP BY hl.region, TRIM(hp.nationality)\n),\ntop_nationalities AS (\n  SELECT \n    nationality,\n    SUM(population) as total_population\n  FROM nationality_counts\n  GROUP BY nationality\n  ORDER BY total_population DESC\n  LIMIT 3\n)\nSELECT \n  nc.region,\n  nc.nationality,\n  nc.population\nFROM nationality_counts nc\nJOIN top_nationalities tn ON nc.nationality = tn.nationality\nORDER BY nc.region, nc.nationality",
+  "raw_question": "عطني توزيع الجنس للسكان حسب المناطق في رسم بياني",
+  "suggested_chart_type": "stacked_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

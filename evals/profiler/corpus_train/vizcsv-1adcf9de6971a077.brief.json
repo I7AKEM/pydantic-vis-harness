@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_population AS (  \n  SELECT *  \n  FROM estishraf_llm_historical_population_impala  \n  WHERE snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)  \n    AND is_in_population = TRUE  \n    AND gender = 'M'  \n),  \njeddah_males AS (  \n  SELECT lp.*  \n  FROM latest_population lp  \n  JOIN estishraf_llm_home_location hl ON lp.id = hl.id  \n  WHERE hl.city = 'جدة'  \n),  \nmarital_status_counts AS (  \n  SELECT   \n    SUM(CASE WHEN d.marital_status = 'متزوج' THEN 1 ELSE 0 END) AS married_count,  \n    COUNT(*) AS total_count  \n  FROM jeddah_males jm  \n  JOIN estishraf_llm_demographics_impala d ON jm.id = d.id  \n  WHERE d.person_status = 'صالح'  \n)  \nSELECT   \n  married_count,  \n  total_count,  \n  (married_count * 100.0 / total_count) AS percentage  \nFROM marital_status_counts LIMIT 1200",
+  "raw_question": "ما هي الحالة الاجتماعية الأكثر شيوعاً بين الرجال المقيمين في جدة؟",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH LatestPopulation AS (SELECT id, gender FROM estishraf_llm_historical_population_impala WHERE SNAPSHOT = (select max(snapshot) from estishraf_llm_historical_population_impala) AND is_in_population = TRUE AND gender IN ('M', 'F')), RegionGenderCounts AS (SELECT TRIM(hl.`city`) AS city, lp.gender, COUNT(*) AS count FROM LatestPopulation lp JOIN estishraf_llm_home_location hl ON lp.id = hl.id WHERE TRIM(hl.city) IS NOT NULL AND TRIM(hl.city) != '' GROUP BY TRIM(hl.city), lp.gender) SELECT city, gender, count, ROUND((count * 100.0) / SUM(count) OVER (PARTITION BY city), 2) AS percentage FROM RegionGenderCounts ORDER BY city, gender LIMIT 1200",
+  "raw_question": "كم نسبة الذكور والإناث لكل محافظات المملكة؟",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT sponser_id, COUNT(*) as resident_count\nFROM estishraf_llm_historical_population_impala\nWHERE snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n  AND person_type = 'Alien'\n  AND is_in_population = TRUE\n  AND sponser_id IS NOT NULL\n  AND sponser_id != '0'\nGROUP BY sponser_id\nORDER BY resident_count DESC\nLIMIT 5",
+  "raw_question": "ما هي أكبر 5 شركات ترعى المقيمين حالياً؟ رد كقائمة: \"1. (الشركة): (العدد) 2. (الشركة): (العدد)...\"",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

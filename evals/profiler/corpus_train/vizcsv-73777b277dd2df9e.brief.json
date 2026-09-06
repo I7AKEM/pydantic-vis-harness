@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH household_members AS (SELECT w.head_of_household_id, w.wealth_level, hl.region, hl.city, hl.latitude, hl.longitude, COUNT(d.id) AS household_size FROM estishraf_llm_wealth_index AS w INNER JOIN estishraf_llm_demographics_impala AS d ON w.head_of_household_id = d.head_of_household_id INNER JOIN estishraf_llm_home_location AS hl ON w.head_of_household_id = hl.id WHERE d.person_status = 'صالح' AND d.death_date IS NULL GROUP BY w.head_of_household_id, w.wealth_level, hl.region, hl.city, hl.latitude, hl.longitude) SELECT wealth_level, AVG(household_size) AS avg_household_size, COUNT(*) AS total_households, region FROM household_members GROUP BY wealth_level, region ORDER BY wealth_level, avg_household_size DESC LIMIT 1200",
+  "raw_question": "ارسم خريطة لمتوسط حجم الأسرة حسب فئات الثروة في المملكة",
+  "suggested_chart_type": "grouped_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

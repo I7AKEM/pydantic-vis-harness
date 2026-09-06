@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "WITH age_groups AS (SELECT CASE WHEN age BETWEEN 0 AND 14 THEN '0-14 سنة' WHEN age BETWEEN 15 AND 29 THEN '15-29 سنة' WHEN age BETWEEN 30 AND 44 THEN '30-44 سنة' WHEN age BETWEEN 45 AND 59 THEN '45-59 سنة' WHEN age >= 60 THEN '60+ سنة' ELSE 'غير محدد' END AS age_group, CASE WHEN age BETWEEN 0 AND 14 THEN 1 WHEN age BETWEEN 15 AND 29 THEN 2 WHEN age BETWEEN 30 AND 44 THEN 3 WHEN age BETWEEN 45 AND 59 THEN 4 WHEN age >= 60 THEN 5 ELSE 6 END AS sort_order, COUNT(DISTINCT id, dependent_seq_no) AS female_population FROM estishraf_llm_historical_population_impala WHERE is_in_population = TRUE AND snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND gender = 'F' AND age > 0 AND age <= 100 GROUP BY CASE WHEN age BETWEEN 0 AND 14 THEN '0-14 سنة' WHEN age BETWEEN 15 AND 29 THEN '15-29 سنة' WHEN age BETWEEN 30 AND 44 THEN '30-44 سنة' WHEN age BETWEEN 45 AND 59 THEN '45-59 سنة' WHEN age >= 60 THEN '60+ سنة' ELSE 'غير محدد' END, CASE WHEN age BETWEEN 0 AND 14 THEN 1 WHEN age BETWEEN 15 AND 29 THEN 2 WHEN age BETWEEN 30 AND 44 THEN 3 WHEN age BETWEEN 45 AND 59 THEN 4 WHEN age >= 60 THEN 5 ELSE 6 END) SELECT age_group, female_population FROM age_groups ORDER BY sort_order LIMIT 1200",
+  "raw_question": "عدد سكان المملكة",
+  "intent": "composition",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

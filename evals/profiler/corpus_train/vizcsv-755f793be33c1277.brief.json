@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT MAX(snapshot) AS snapshot_date, COUNT(DISTINCT id, dependent_seq_no) AS total_population FROM estishraf_llm_historical_population_impala WHERE is_in_population = TRUE AND snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) LIMIT 1200",
+  "raw_question": "عدد سكان المملكة",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

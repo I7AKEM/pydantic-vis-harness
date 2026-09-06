@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT airport, destination, COUNT(*) AS flight_count FROM (SELECT 'مطار الملك خالد الدولي (الرياض)' AS airport, destination, exit_timestamp FROM estishraf_llm_border_crossings_impala WHERE exit_location_name = 'مطار الملك خالد الدولي (الرياض)' AND destination <> 'المملكة العربية السعودية' AND YEAR(exit_timestamp) = 2025 AND exit_timestamp <> '1903-01-01' AND exit_timestamp <> '1902-01-01' UNION ALL SELECT 'مطار الملك عبدالعزيز الدولي (جدة)' AS airport, destination, exit_timestamp FROM estishraf_llm_border_crossings_impala WHERE exit_location_name = 'مطار الملك عبدالعزيز الدولي (جدة)' AND destination <> 'المملكة العربية السعودية' AND YEAR(exit_timestamp) = 2025 AND exit_timestamp <> '1903-01-01' AND exit_timestamp <> '1902-01-01') AS combined GROUP BY airport, destination ORDER BY airport, flight_count DESC LIMIT 1200",
+  "raw_question": "لسكان جدة فقط وخلال سنة (2025) قارن استخدام مطار الملك خالد ومطار الملك عبدالعزيز للسفر الدولي، و...",
+  "suggested_chart_type": "grouped_bar|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH violation_with_age AS (SELECT t.violator_id, YEAR(t.gdate_happened) AS year, FLOOR(DATEDIFF(t.gdate_happened, d.birth_date) / 365.25) AS age_at_violation FROM estishraf_llm_traffic_violation AS t JOIN estishraf_llm_demographics_impala AS d ON CAST(t.violator_id AS BIGINT) = d.id WHERE t.gdate_happened BETWEEN '2021-01-01' AND '2025-12-31' AND t.status_description <> CONCAT('Cancelled due to the violator', 's death') AND NOT d.birth_date IS NULL AND d.birth_date > '1900-01-01'), driver_violations AS (SELECT violator_id, year, CASE WHEN age_at_violation < 25 THEN 'under_25' ELSE 'over_25' END AS age_group, COUNT(*) AS violation_count FROM violation_with_age GROUP BY violator_id, year, age_group), avg_by_group AS (SELECT year, age_group, AVG(violation_count) AS avg_violations_per_driver FROM driver_violations GROUP BY year, age_group) SELECT a25.year, a25.avg_violations_per_driver AS avg_over_25, u25.avg_violations_per_driver AS avg_under_25, ((a25.avg_violations_per_driver - u25.avg_violations_per_driver) / u25.avg_violations_per_driver) * 100 AS pct_difference FROM avg_by_group AS a25 JOIN avg_by_group AS u25 ON a25.year = u25.year AND a25.age_group = 'over_25' AND u25.age_group = 'under_25' ORDER BY a25.year LIMIT 1200",
+  "raw_question": "ما الفرق بالنسبة المئوية في متوسط عدد المخالفات السنوية بين السائقين فوق عمر  25 سنة وتحت عمر 25 ...",
+  "suggested_chart_type": "line",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH HouseholdCounts AS (SELECT head_of_household_id, person_type, COUNT(id) AS member_count FROM estishraf_llm_demographics_impala WHERE death_date IS NULL AND head_of_household_id IS NOT NULL AND person_type IN ('Saudi', 'Alien') GROUP BY head_of_household_id, person_type) SELECT person_type, ROUND(AVG(member_count), 2) AS average_household_size FROM HouseholdCounts GROUP BY person_type ORDER BY person_type LIMIT 1200",
+  "raw_question": "كم سكان المملكة؟",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

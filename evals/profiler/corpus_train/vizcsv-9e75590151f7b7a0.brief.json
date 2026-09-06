@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT COUNT(*) AS total_records, COUNT(DISTINCT importer_national_id) AS unique_national_ids, COUNT(DISTINCT importer_business_id) AS unique_business_ids FROM estishraf_llm_customs WHERE cost > 0 LIMIT 1200",
+  "raw_question": "توزيع المواطنين المتجارين حسب المدن",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

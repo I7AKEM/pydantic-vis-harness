@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH filtered_violations AS (SELECT status_description, actual_fine FROM estishraf_llm_traffic_violation WHERE status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid') AND status_description NOT LIKE 'Cancelled due to%') SELECT status_description, SUM(actual_fine) AS total_fine FROM filtered_violations GROUP BY status_description LIMIT 1200",
+  "raw_question": "كم تبلغ قيمة المخالفات المرورية المسددة وغير المسددة حالياً؟",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

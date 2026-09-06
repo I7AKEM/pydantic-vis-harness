@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH top_regions AS (SELECT hl.region FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id WHERE hp.is_in_population = TRUE AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND TRIM(hl.region) != '' AND hl.region IS NOT NULL GROUP BY hl.region ORDER BY COUNT(DISTINCT hp.id) DESC LIMIT 5) SELECT j.job_sector, AVG(j.total_wage) as avg_monthly_income FROM estishraf_llm_jobs_info_v3_impala j JOIN estishraf_llm_home_location hl ON CAST(j.id AS STRING) = CAST(hl.id AS STRING) JOIN top_regions tr ON hl.region = tr.region WHERE j.is_active_job = 1 AND j.total_wage BETWEEN 1000 AND 500000 GROUP BY j.job_sector ORDER BY avg_monthly_income DESC",
+  "raw_question": "ارسم لي خريطة توضح سكان المملكة حسب المناطق",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

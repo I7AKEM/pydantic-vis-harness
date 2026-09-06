@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_jobs AS (SELECT id, employee_work_city, job_start_date, ROW_NUMBER() OVER (PARTITION BY id ORDER BY job_start_date DESC) AS rn FROM estishraf_llm_jobs_info_v3_impala WHERE is_active_job = 1), active_employees AS (SELECT id, employee_work_city FROM latest_jobs WHERE rn = 1), home_cities AS (SELECT id, city AS home_city FROM estishraf_llm_home_location WHERE NOT city IS NULL AND city <> ''), comparison AS (SELECT ae.id, ae.employee_work_city, hc.home_city, CASE WHEN TRIM(LOWER(ae.employee_work_city)) <> TRIM(LOWER(hc.home_city)) THEN 1 ELSE 0 END AS mismatch FROM active_employees AS ae JOIN home_cities AS hc ON ae.id = hc.id WHERE NOT ae.employee_work_city IS NULL AND ae.employee_work_city <> '') SELECT COUNT(*) AS total_employees, SUM(mismatch) AS mismatched_count, ROUND(SUM(mismatch) * 100.0 / COUNT(*), 2) AS mismatch_percentage FROM comparison LIMIT 1200",
+  "raw_question": "ما نسبة الموظفين الذين لا تتوافق مدن عملهم مع مدن سكنهم وفقًـا لأحدث اسناد؟",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

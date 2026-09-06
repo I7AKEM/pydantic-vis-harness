@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_populations AS (\n  SELECT \n    hl.district,\n    COUNT(DISTINCT hp.id) as population_count\n  FROM estishraf_llm_historical_population_impala hp\n  JOIN estishraf_llm_home_location hl ON hp.id = hl.id\n  WHERE hp.is_in_population = TRUE \n    AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n    AND TRIM(hl.city) = 'الرياض'\n    AND hl.district IS NOT NULL\n    AND hl.district NOT IN ('خارج حدود الاحياء', 'بدون اسم')\n    AND hl.category = 'احياء معتمدة'\n  GROUP BY hl.district\n),\nprevious_populations AS (\n  SELECT \n    hl.district,\n    COUNT(DISTINCT hp.id) as population_count\n  FROM estishraf_llm_historical_population_impala hp\n  JOIN estishraf_llm_home_location hl ON hp.id = hl.id\n  WHERE hp.is_in_population = TRUE \n    AND hp.snapshot = (\n      SELECT MAX(snapshot) \n      FROM estishraf_llm_historical_population_impala \n      WHERE snapshot < (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n    )\n    AND TRIM(hl.city) = 'الرياض'\n    AND hl.district IS NOT NULL\n    AND hl.district NOT IN ('خارج حدود الاحياء', 'بدون اسم')\n    AND hl.category = 'احياء معتمدة'\n  GROUP BY hl.district\n)\nSELECT \n  lp.district,\n  (lp.population_count - COALESCE(pp.population_count, 0)) as population_increase\nFROM latest_populations lp\nLEFT JOIN previous_populations pp ON lp.district = pp.district\nWHERE lp.population_count > 0\nORDER BY population_increase DESC\nLIMIT 10",
+  "raw_question": "عطني خريطة كافة مواقع السكن في احياء الرياض",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

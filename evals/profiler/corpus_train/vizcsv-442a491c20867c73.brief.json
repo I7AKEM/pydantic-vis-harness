@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "WITH LatestSnapshot AS (SELECT MAX(snapshot) AS latest_snapshot FROM estishraf_llm_historical_population_impala), FilteredPopulation AS (SELECT age FROM estishraf_llm_historical_population_impala WHERE snapshot = (SELECT latest_snapshot FROM LatestSnapshot) AND is_in_population = true) SELECT CASE WHEN age BETWEEN 0 AND 14 THEN '0-14 سنة' WHEN age BETWEEN 15 AND 24 THEN '15-24 سنة' WHEN age BETWEEN 25 AND 34 THEN '25-34 سنة' WHEN age BETWEEN 35 AND 44 THEN '35-44 سنة' WHEN age BETWEEN 45 AND 54 THEN '45-54 سنة' WHEN age BETWEEN 55 AND 64 THEN '55-64 سنة' WHEN age >= 65 THEN '65+ سنة' ELSE 'غير محدد' END AS age_group, COUNT(*) AS population_count FROM FilteredPopulation WHERE age > 0 AND age <= 100 GROUP BY CASE WHEN age BETWEEN 0 AND 14 THEN '0-14 سنة' WHEN age BETWEEN 15 AND 24 THEN '15-24 سنة' WHEN age BETWEEN 25 AND 34 THEN '25-34 سنة' WHEN age BETWEEN 35 AND 44 THEN '35-44 سنة' WHEN age BETWEEN 45 AND 54 THEN '45-54 سنة' WHEN age BETWEEN 55 AND 64 THEN '55-64 سنة' WHEN age >= 65 THEN '65+ سنة' ELSE 'غير محدد' END ORDER BY population_count DESC LIMIT 1200",
+  "raw_question": "ترحيب",
+  "intent": "distribution",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

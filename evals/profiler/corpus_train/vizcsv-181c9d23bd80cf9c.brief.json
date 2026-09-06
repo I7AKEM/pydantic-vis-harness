@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH earliest_gosi AS ( SELECT id, MIN(CAST(job_start_date AS DATE)) AS first_gosi_date FROM estishraf_llm_jobs_info_v3_impala WHERE CAST(id AS STRING) LIKE '1%' AND job_sector = 'خاص' GROUP BY id )  SELECT COUNT(*) AS saudis_first_gosi_2022  FROM earliest_gosi  WHERE YEAR(first_gosi_date) = 2022 LIMIT 1200",
+  "raw_question": "كم عدد السعوديين الذين دخلوا سوق العمل لأول مرة في القطاع الخاص في عام 2022؟",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

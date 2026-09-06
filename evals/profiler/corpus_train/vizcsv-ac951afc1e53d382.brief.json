@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT DISTINCT region FROM estishraf_llm_home_location ORDER BY region LIMIT 1200",
+  "raw_question": "كم عدد السكان في المنطقة الشرقية؟",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

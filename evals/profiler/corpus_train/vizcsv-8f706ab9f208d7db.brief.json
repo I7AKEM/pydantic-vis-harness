@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH RiyadhWorkers AS ( SELECT l.district, COUNT(DISTINCT j.id) AS worker_count FROM estishraf_llm_jobs_info_v3_impala j INNER JOIN estishraf_llm_home_location l ON j.id = l.id WHERE l.region = 'منطقة الرياض' AND l.district IS NOT NULL AND l.district NOT LIKE '%خارج حدود الاحياء%' AND j.is_active_job = 1 GROUP BY l.district )  SELECT district, worker_count FROM RiyadhWorkers  ORDER BY worker_count DESC  LIMIT 1",
+  "raw_question": "ماهو أعلى حي في منطقة الرياض من حيث عدد المشتغلين باستثناء خارج حدود الأحياء؟",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

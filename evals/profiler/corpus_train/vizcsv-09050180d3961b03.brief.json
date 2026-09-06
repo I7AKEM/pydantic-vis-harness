@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_snapshot AS (\n  SELECT MAX(snapshot) AS snap_date \n  FROM estishraf_llm_historical_population_impala\n),\ntotal_filipino_residents AS (\n  SELECT COUNT(DISTINCT id, dependent_seq_no) AS total_count\n  FROM estishraf_llm_historical_population_impala\n  WHERE snapshot = (SELECT snap_date FROM latest_snapshot)\n    AND nationality = 'الفلبين'\n    AND person_type = 'Alien'\n    AND gender = 'F'\n    AND is_in_population = TRUE\n),\nfilipino_domestic_workers AS (\n  SELECT COUNT(DISTINCT id, dependent_seq_no) AS domestic_count\n  FROM estishraf_llm_historical_population_impala\n  WHERE snapshot = (SELECT snap_date FROM latest_snapshot)\n    AND nationality = 'الفلبين'\n    AND person_type = 'Alien'\n    AND gender = 'F'\n    AND occupation_category = 'عامل منزلي'\n    AND is_in_population = TRUE\n)\nSELECT \n  ROUND((d.domestic_count * 100.0) / NULLIF(t.total_count, 0), 2) AS percentage,\n  d.domestic_count AS domestic_workers_count,\n  t.total_count AS total_filipino_residents_count,\n  (SELECT snap_date FROM latest_snapshot) AS snapshot_date\nFROM filipino_domestic_workers d\nCROSS JOIN total_filipino_residents t\nLIMIT 1",
+  "raw_question": "العاملات المنزليات الفلبينيات",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

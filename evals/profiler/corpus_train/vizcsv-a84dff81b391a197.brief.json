@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_snapshot AS (SELECT MAX(snapshot) AS max_snapshot FROM estishraf_llm_historical_population_impala), population_by_city AS (SELECT hl.city, COUNT(DISTINCT hp.id) AS population FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id WHERE hp.is_in_population = TRUE AND hp.snapshot = (SELECT max_snapshot FROM latest_snapshot) AND TRIM(hl.city) IN ('الرياض', 'جدة') GROUP BY hl.city), total_population AS (SELECT SUM(population) AS total_pop FROM population_by_city) SELECT p.city, (p.population * 100.0 / t.total_pop) AS percentage FROM population_by_city p CROSS JOIN total_population t ORDER BY percentage DESC LIMIT 20000",
+  "raw_question": "كم عدد المدن في السعودية؟",
+  "suggested_chart_type": "donut",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH turkish_population AS (\n    SELECT \n        gender,\n        CASE \n            WHEN age BETWEEN 0 AND 14 THEN '0-14'\n            WHEN age BETWEEN 15 AND 24 THEN '15-24'\n            WHEN age BETWEEN 25 AND 34 THEN '25-34'\n            WHEN age BETWEEN 35 AND 44 THEN '35-44'\n            WHEN age BETWEEN 45 AND 54 THEN '45-54'\n            WHEN age BETWEEN 55 AND 64 THEN '55-64'\n            WHEN age >= 65 THEN '65+'\n        END AS age_group,\n        COUNT(DISTINCT id, dependent_seq_no) AS count\n    FROM estishraf_llm_historical_population_impala\n    WHERE TRIM(nationality) = 'تركي'\n      AND is_in_population = TRUE\n      AND snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n    GROUP BY gender, age_group\n),\ntotal_turkish AS (\n    SELECT SUM(count) AS total FROM turkish_population\n),\nkingdom_population AS (\n    SELECT \n        gender,\n        CASE \n            WHEN age BETWEEN 0 AND 14 THEN '0-14'\n            WHEN age BETWEEN 15 AND 24 THEN '15-24'\n            WHEN age BETWEEN 25 AND 34 THEN '25-34'\n            WHEN age BETWEEN 35 AND 44 THEN '35-44'\n            WHEN age BETWEEN 45 AND 54 THEN '45-54'\n            WHEN age BETWEEN 55 AND 64 THEN '55-64'\n            WHEN age >= 65 THEN '65+'\n        END AS age_group,\n        COUNT(DISTINCT id, dependent_seq_no) AS count\n    FROM estishraf_llm_historical_population_impala\n    WHERE is_in_population = TRUE\n      AND snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n    GROUP BY gender, age_group\n),\ntotal_kingdom AS (\n    SELECT SUM(count) AS total FROM kingdom_population\n)\nSELECT \n    'السكان الأتراك' AS population_type,\n    tp.gender,\n    tp.age_group,\n    tp.count,\n    ROUND(tp.count * 100.0 / tt.total, 2) AS percentage\nFROM turkish_population tp\nCROSS JOIN total_turkish tt\nUNION ALL\nSELECT \n    'متوسط المملكة' AS population_type,\n    kp.gender,\n    kp.age_group,\n    kp.count,\n    ROUND(kp.count * 100.0 / tk.total, 2) AS percentage\nFROM kingdom_population kp\nCROSS JOIN total_kingdom tk\nORDER BY population_type, gender, age_group LIMIT 20000",
+  "raw_question": "عطني تقرير عن السكان الاتراك",
+  "suggested_chart_type": "grouped_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

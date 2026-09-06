@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT COUNT(DISTINCT hp.id) AS count FROM estishraf_llm_historical_population_impala AS hp WHERE hp.snapshot = '2026-02-01' AND hp.person_type = 'Saudi' AND hp.age > 18 AND hp.is_in_population = TRUE AND NOT hp.id IN (SELECT DISTINCT bc.id FROM estishraf_llm_border_crossings_impala AS bc WHERE bc.person_type = 'مواطن' AND NOT bc.exit_timestamp IS NULL) LIMIT 1200",
+  "raw_question": "السعوديون فوق 18 الذين لم يسافروا",
+  "suggested_chart_type": "indicator|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

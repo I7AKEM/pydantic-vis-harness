@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_snapshot AS (\n    SELECT MAX(snapshot) AS max_snap\n    FROM estishraf_llm_historical_population_impala\n),\ndomestic_workers AS (\n    SELECT DISTINCT hp.id, hl.region AS sponsor_region\n    FROM estishraf_llm_historical_population_impala hp\n    JOIN latest_snapshot ls ON hp.snapshot = ls.max_snap\n    JOIN estishraf_llm_home_location hl ON hp.id = hl.id\n    WHERE hp.is_in_population = TRUE\n      AND hp.occupation_category = 'عامل منزلي'\n)\nSELECT sponsor_region, COUNT(*) AS worker_count\nFROM domestic_workers\nWHERE sponsor_region IS NOT NULL\nGROUP BY sponsor_region\nORDER BY worker_count DESC LIMIT 20000",
+  "raw_question": "ماهو عدد العمالة المنزلية النشطين حسب منطقة سكن الكفيل؟",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

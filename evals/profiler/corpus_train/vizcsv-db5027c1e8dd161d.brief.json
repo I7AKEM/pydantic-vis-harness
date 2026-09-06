@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_year AS (\n  SELECT MAX(YEAR(birth_date)) AS max_year \n  FROM estishraf_llm_demographics_impala \n  WHERE birth_date IS NOT NULL \n    AND birth_date > '1900-01-01'\n    AND (person_status = 'صالح' OR death_date IS NULL)\n),\ntotal_births AS (\n  SELECT COUNT(DISTINCT id) AS total_count \n  FROM estishraf_llm_demographics_impala \n  WHERE YEAR(birth_date) = (SELECT max_year FROM latest_year)\n    AND birth_date IS NOT NULL \n    AND birth_date > '1900-01-01'\n    AND (person_status = 'صالح' OR death_date IS NULL)\n),\nresident_births AS (\n  SELECT COUNT(DISTINCT id) AS resident_count \n  FROM estishraf_llm_demographics_impala \n  WHERE YEAR(birth_date) = (SELECT max_year FROM latest_year)\n    AND person_type = 'Alien'\n    AND birth_date IS NOT NULL \n    AND birth_date > '1900-01-01'\n    AND (person_status = 'صالح' OR death_date IS NULL)\n)\nSELECT \n  (SELECT max_year FROM latest_year) AS year,\n  (SELECT total_count FROM total_births) AS total_births,\n  (SELECT resident_count FROM resident_births) AS resident_births,\n  ROUND((SELECT resident_count FROM resident_births) * 100.0 / (SELECT total_count FROM total_births), 2) AS resident_percentage",
+  "raw_question": "كم تبلغ نسبة المواليد المقيمين هذا العام من اجمالي المواليد حسب احدث بيانات؟",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

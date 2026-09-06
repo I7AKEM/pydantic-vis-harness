@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT app_name, SUM(price) as total_value, COUNT(*) as order_count FROM estishraf_llm_delivery_orders_information GROUP BY app_name ORDER BY total_value DESC LIMIT 10",
+  "raw_question": "عطني مسارات التوصيل على خريطة مع قيمة الطلب و اسم التطبيق",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

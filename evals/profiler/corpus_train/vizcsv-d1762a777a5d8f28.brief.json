@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH workers AS ( SELECT total_wage, job_sector FROM estishraf_llm_jobs_info_v3_impala WHERE is_active_job = 1 AND CAST(id AS STRING) LIKE '1%' AND total_wage BETWEEN 100 AND 600000) SELECT job_sector, ROUND(AVG(total_wage)) AS avg_monthly_wage FROM workers GROUP BY job_sector ORDER BY avg_monthly_wage DESC LIMIT 1200",
+  "raw_question": "ماهي متوسطات رواتب السعوديين في كل قطاع؟",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}
