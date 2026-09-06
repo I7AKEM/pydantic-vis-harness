@@ -154,3 +154,14 @@ category. Small models also vary by run: allow one column either way between run
 Two other changes landed with this step: the profiler retries once when a model request stalls, since one stall used
 to cost the whole 90 s timeout and a partial profile, and `evals/profiler/corpus_tools` holds the selection,
 labelling, and merging scripts that built both corpus sets.
+
+## Final profiler state before the merge (2026-09-07)
+
+Ordered levels written in words (Poor to Rich, low to high, and the Arabic equivalents) are now detected by the scan
+and reported as an ordinal level with the scale spelled out; a review check with severity error sends the profile back
+when such a column is labelled category or text. With that in place, Gemma's wealth-level misses disappeared.
+Three consecutive runs on the held-out 50 scored 0.978, 0.979, and a fourth earlier run 0.992, at about 2 s per
+profile; the hand-made twelve scored 0.958 at 1.9 s. The columns still wrong are the same each time: a 1 to 10
+sequence read as measure, coordinates stored as dirty text read as category on some runs, GPA bands written as
+"above 4" and "below 4", and the traffic-office column that follows the place-name hint. Treat 0.98 as the honest
+held-out number and allow one column either way between runs.
