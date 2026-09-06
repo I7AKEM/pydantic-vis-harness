@@ -16,6 +16,11 @@ Set `OPENROUTER_API_KEY` in `.env` to your OpenRouter API key. Set
 `PYDANTIC_AI_MODEL` to choose a model; the default is
 `openrouter:anthropic/claude-sonnet-4.6`.
 
+Evaluation sets live under `evals/profiler`: twelve hand-made cases, fifty held-out corpus cases, and 150
+corpus training cases; `docs/phase-1-lessons.md` records every result. The profiler's instructions were
+optimized for the default model with DSPy (`evals/profiler/optimize_instructions.py`, optional dependency
+group `optimize`); rerun it after changing the model.
+
 `PYDANTIC_AI_PROFILER_MODEL` selects the OpenRouter model for semantic profiling.
 When empty, it uses `openrouter:google/gemma-4-31b-it:nitro`, the fastest model in the
 Phase 1 benchmark (see `docs/phase-1-lessons.md`), routed to the highest-throughput host;

@@ -126,3 +126,31 @@ most of their loss, and both call coordinates stored as text just text. Every mo
 avoidable: the deterministic place-name hint only recognises a few English words, so widening it to municipality,
 port, district, and the Arabic equivalents would give every model the same evidence. Small models also vary between
 runs on borderline columns; Gemma's two runs differed on three columns.
+
+## Instruction optimization with DSPy (2026-09-07)
+
+The profiler's instructions were written with Sonnet in mind and run on Gemma 4 31b. DSPy GEPA rewrote them for
+Gemma using `evals/profiler/corpus_train`, 150 more corpus files labelled by majority vote of Sonnet 4.6, GPT-5.4 mini,
+and Opus 5 plus the rules in that directory's `decisions.json`, split 110 train / 40 dev. The task model was Gemma with
+reasoning off and temperature 0, the reflection model Sonnet 4.6. Two budgets ran; the light run scored 0.994 on dev
+against 0.989 for medium, so its text was pasted into `PROFILER_INSTRUCTIONS` unchanged. Pydantic AI remains the
+runtime; DSPy is an offline tool in the optional `optimize` dependency group, run with
+`uv run python -m evals.profiler.optimize_instructions`.
+
+Measured with the real runner, same code before and after, role accuracy and seconds per profile:
+
+| Set | Before | After |
+|---|---|---|
+| Held-out 50, never seen by the optimizer | 0.968, 4.9 s | 0.992, 3.0 s |
+| Hand-made 12 | 0.889, 4.6 s | 0.958, 3.4 s |
+| Training 150 | 0.946, 5.8 s | 0.983, 3.2 s |
+
+What the new text adds: integer years and period strings are ordinal, time is only a native date type, a set
+geographic hint means geography while nationality words stay category, all-null columns are unknown. Remaining
+misses: ordered levels written in words still flip to category on some files, a 1 to 10 sequence reads as measure,
+and `registry_location` (traffic office names) follows the place-name hint to geography where the label says
+category. Small models also vary by run: allow one column either way between runs.
+
+Two other changes landed with this step: the profiler retries once when a model request stalls, since one stall used
+to cost the whole 90 s timeout and a partial profile, and `evals/profiler/corpus_tools` holds the selection,
+labelling, and merging scripts that built both corpus sets.
