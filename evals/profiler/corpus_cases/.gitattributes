@@ -1,0 +1,2 @@
+# Corpus files are byte-exact copies; never convert their line endings.
+*.csv -text
