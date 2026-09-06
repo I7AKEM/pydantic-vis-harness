@@ -95,3 +95,32 @@ def test_unique_values_are_neither_ordinal_nor_codes(store):
     assert columns["order_id"].codes is None
     assert columns["order_id"].measurement_levels == ["nominal"]
     assert columns["code"].codes is None
+
+
+def test_columns_beyond_the_detail_cap_send_metadata_only(store):
+    from measurements import MAX_DETAILED_COLUMNS
+
+    names = [f"c{i}" for i in range(MAX_DETAILED_COLUMNS + 3)]
+    header = ",".join(names)
+    rows = "\n".join(",".join(f"v{i}_{r}" for i in range(len(names))) for r in range(3))
+    source = store.save_upload("wide.csv", f"{header}\n{rows}\n".encode())
+    store.import_csv(source.dataset_id)
+    profile = compute_statistics(store, source)
+    columns = {column.name: column for column in profile.columns}
+    assert len(columns) == len(names)
+    assert columns["c0"].values_omitted is False and columns["c0"].common_values
+    for name in names[MAX_DETAILED_COLUMNS:]:
+        assert columns[name].values_omitted is True
+        assert columns[name].common_values == []
+        assert columns[name].measurement_levels == ["nominal"]
+        assert columns[name].null_count == 0 and columns[name].distinct_count == 3
+    assert set(profile.sample_rows[0]) == set(names[:MAX_DETAILED_COLUMNS])
+    assert any("3 more columns" in warning for warning in profile.warnings)
+
+
+def test_timezone_aware_timestamps_profile(store):
+    content = b"at,value\n2026-01-01 10:00:00+03,1\n2026-01-02 11:30:00+03,2\n"
+    columns = profile_of(store, "tz.csv", content)
+    assert columns["at"].physical_type.startswith("TIMESTAMP")
+    assert columns["at"].measurement_levels == ["time"]
+    assert columns["at"].earliest is not None

@@ -90,3 +90,13 @@ than weights: the same DeepSeek and GLM models swung from unusable to usable dep
 | openai/gpt-oss-120b:nitro | 1.8 | 2.8 | 0.417 | 0.92 | 5 of 12 | 31 | open weights, throughput-routed host; lowest reasoning effort (off refused); 7 of 12 profiles failed |
 | openai/gpt-oss-20b:nitro | 5.5 | 8.2 | 0.100 | 0.90 | 1 of 10 | 52 | open weights, throughput-routed host; lowest reasoning effort (off refused); 9 of 10 profiles failed; 2 runs raised |
 | z-ai/glm-5.3-flash:nitro | 10.8 | 37.0 | 0.958 | 1.00 | 12 of 12 | 44 | open weights, throughput-routed host; lowest reasoning effort (off refused) |
+
+## Dry run over the 500-file Dev CSV corpus (2026-09-06)
+
+The deterministic stage ran over every CSV in the Insightor dev corpus with no model call, measuring the prompt the
+profiler would send. Median prompt 2,566 characters, 99th percentile 6,960, maximum 19,721 for a 28-column file. Row
+count never mattered: a 3.66 million row file produced a 2,366 character prompt in 4.5 s. No cell value longer than
+120 characters reached a prompt; 32 columns holding values up to 96 KB were excluded entirely. Two changes followed:
+`pytz` was added because DuckDB needs it to return timezone-aware timestamps (7 files failed without it), and columns
+past the first 40 now send counts and types only, so a 100-column upload cannot triple the prompt. The 134 MB file
+is over the 20 MB upload limit and never reaches the profiler.

@@ -12,6 +12,7 @@ dependencies = [
     "pydantic-evals>=2.38.0",
     "python-dotenv>=1.2.3",
     "python-multipart>=0.0.32",
+    "pytz>=2026.3.post1",
 ]
 
 [dependency-groups]

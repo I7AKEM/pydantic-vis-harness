@@ -15,6 +15,7 @@ from profile_models import (
 SAMPLE_ROWS = 5
 VALUE_CHARACTERS = 120
 MAX_MODEL_VALUE_BYTES = 256
+MAX_DETAILED_COLUMNS = 40  # columns past this get counts and types only, so the prompt stays bounded
 MAX_ORDINAL_DISTINCT = 50
 MAX_CODE_DISTINCT = 12
 MAX_CODE_LENGTH = 3
@@ -82,7 +83,8 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
                 null_percentage=100 * null_count / row_count if row_count else 0,
                 distinct_count=distinct_count,
                 maximum_value_bytes=maximum_value_bytes,
-                values_omitted=maximum_value_bytes > MAX_MODEL_VALUE_BYTES or geometry_name or wkt_count > 0,
+                values_omitted=maximum_value_bytes > MAX_MODEL_VALUE_BYTES or geometry_name or wkt_count > 0
+                or index >= MAX_DETAILED_COLUMNS,
             )
             if row_count and null_count == row_count:
                 warnings.append(f"{name}: all values are null.")
@@ -143,6 +145,11 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
             selection = ", ".join(map(quote_identifier, sample_names))
             rows = connection.execute(f"SELECT {selection} FROM {table} LIMIT {SAMPLE_ROWS}").fetchall()
             sample = [dict(zip(sample_names, map(preview, row))) for row in rows]
+    if len(columns) > MAX_DETAILED_COLUMNS:
+        warnings.append(
+            f"Only the first {MAX_DETAILED_COLUMNS} columns include statistics, samples, and common values; "
+            f"{len(columns) - MAX_DETAILED_COLUMNS} more columns include metadata and counts only."
+        )
     if row_count == 0:
         warnings.append("The CSV has a header but no data rows.")
     return DeterministicProfile(
@@ -156,7 +163,8 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
             f"sample and common-value text is capped at {VALUE_CHARACTERS} characters. "
             f"Columns containing any value over {MAX_MODEL_VALUE_BYTES} UTF-8 bytes, any WKT value, "
             "or named like geometry are excluded entirely from samples and common values; only metadata "
-            "and counts are included. Measurement levels are assigned from whole-column queries. "
+            f"and counts are included, as are all columns after the first {MAX_DETAILED_COLUMNS}. "
+            "Measurement levels are assigned from whole-column queries. "
             "Numeric aggregates use finite double-precision values and population standard deviation. "
             "CSV settings: UTF-8, comma delimiter, header row, full-file type inference, empty fields as null."
         ),
