@@ -164,6 +164,14 @@ Small pure functions, each with an ID, a type, a human explanation, and a sugges
 
 One renderer per library, in code, tested with fixed specs and reference images. Each renderer declares what it supports. Before rendering, check_spec resolves every feature the spec uses to supported, degraded with a documented fallback, or rejected with a message the designer can act on. The degradation list travels with the artifact to the reviewer.
 
+### 6.7 The narrative
+
+The words that accompany a chart are written in the same spirit as the chart: a small text syntax the model writes, that code can check and a renderer can style. We adopt AntV's narrative syntax, T8: ordinary Markdown for structure, plus an annotation on every data point in the prose, in the form display text, entity type, and metadata. The entity types name what a number is: a metric name, a metric value, a change, a rate, a share, a rank, a trend description, a category value, a time period, an anomaly. The metadata carries the raw value behind the display text, the unit, and whether the change is good or bad.
+
+Two rules make it more than styling. Every annotated value must carry its raw value, and code checks that the raw value exists in the result table or in a computed comparison between result rows. A sentence whose number cannot be found is a validation failure and goes back to the model once. This closes the gap in AVA v4, where the summary is free prose and any number in it is the model's own reading. Second, the narrative is written in the language of the raw question, detected once and passed to every agent.
+
+The analyst writes the two-sentence summary this way. The lead writes the explanation this way. In a later phase the insight finder produces annotated sentences from fixed templates per finding type, the way AVA v3 did without a model, and the model only smooths the wording.
+
 ## 7. Rendering targets
 
 The reviewer must see a picture, so "can this library draw an image on a server" is the deciding question.
