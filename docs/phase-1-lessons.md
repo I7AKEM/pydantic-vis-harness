@@ -117,6 +117,9 @@ expectations; time is seconds per profile with six profiles in flight.
 | mistralai/mistral-small-2603 | 0.808 | 35 of 195 | 12.4 s | open weights, Mistral's host |
 | openai/gpt-5.4-mini | 0.900 | 14 of 195 | 7.3 s | closed; one of the two label sources |
 
+Qwen's loss is mostly one file: it produced no usable profile for the 19-column traffic file, which counts as 19
+wrong columns; on the other 49 files it was close to Gemma but three times slower.
+
 What each model gets wrong, from the mismatch lists: Gemma flips ordered levels named in words (Poor to Rich) to
 category and a 1 to 10 sequence to measure. GPT-5.4 mini and Mistral label place names as plain categories, which is
 most of their loss, and both call coordinates stored as text just text. Every model's own place-name confusion is
