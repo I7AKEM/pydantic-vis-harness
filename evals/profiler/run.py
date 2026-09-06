@@ -55,6 +55,10 @@ def load_cases() -> list[Case]:
     return cases
 
 
+def build_dataset() -> Dataset:
+    return Dataset(name="profiler-phase-1", cases=load_cases(), evaluators=[RoleAccuracy(), ExpectedChecksFlagged()])
+
+
 def main() -> None:
     load_dotenv()
     model = os.getenv("PYDANTIC_AI_PROFILER_MODEL") or os.getenv("PYDANTIC_AI_MODEL", "openrouter:anthropic/claude-sonnet-4.6")
@@ -68,7 +72,7 @@ def main() -> None:
         dataset = store.save_upload(path.name, path.read_bytes(), brief)
         return await profile_dataset(store, profiler, dataset.dataset_id)
 
-    dataset = Dataset(cases=load_cases(), evaluators=[RoleAccuracy(), ExpectedChecksFlagged()])
+    dataset = build_dataset()
     report = asyncio.run(dataset.evaluate(task))
     report.print(include_input=False, include_output=False)
 
