@@ -37,5 +37,22 @@
    "job_title": "category"
   }
  },
- "provenance": "Roles where Sonnet 4.6 and GPT-5.4 mini agreed were accepted (183 of 195 columns); the 12 disagreements were decided by the rules above. vizcsv-45cb123b948dd498 has GPT-5.4 mini's labels only because Sonnet exceeded the 90 s profiling timeout twice on its 19 columns."
+ "provenance": "Roles where Sonnet 4.6 and GPT-5.4 mini agreed were accepted (183 of 195 columns); the 12 disagreements were decided by the rules above. vizcsv-45cb123b948dd498 has GPT-5.4 mini's labels only because Sonnet exceeded the 90 s profiling timeout twice on its 19 columns.",
+ "rule_overrides_of_agreed_labels": {
+  "note": "Both label models said category for these place-name columns (airport, entry region, municipality, district names); the place-name rule overrides them. registry_location (traffic office names) stays category because the values name organisational units, not places.",
+  "columns": {
+   "vizcsv-5bced735b4170137": {
+    "entry_location_name": "geography"
+   },
+   "vizcsv-98f1ef4953f7c74d": {
+    "منطقة_الدخول": "geography"
+   },
+   "vizcsv-ea92e1f088d42fcd": {
+    "البلدية": "geography"
+   },
+   "vizcsv-f849bdeb0d6ec0b8": {
+    "municipality": "geography"
+   }
+  }
+ }
 }

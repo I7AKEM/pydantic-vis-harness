@@ -173,7 +173,7 @@
  "vizcsv-5bced735b4170137": {
   "roles": {
    "nationality": "category",
-   "entry_location_name": "category",
+   "entry_location_name": "geography",
    "percentage": "measure"
   },
   "failed_checks": []
@@ -243,7 +243,7 @@
  },
  "vizcsv-98f1ef4953f7c74d": {
   "roles": {
-   "منطقة_الدخول": "category",
+   "منطقة_الدخول": "geography",
    "عدد_الرحلات": "measure"
   },
   "failed_checks": []
@@ -361,7 +361,7 @@
  },
  "vizcsv-ea92e1f088d42fcd": {
   "roles": {
-   "البلدية": "category",
+   "البلدية": "geography",
    "العدد": "measure"
   },
   "failed_checks": []
@@ -425,7 +425,7 @@
  },
  "vizcsv-f849bdeb0d6ec0b8": {
   "roles": {
-   "municipality": "category"
+   "municipality": "geography"
   },
   "failed_checks": []
  },
