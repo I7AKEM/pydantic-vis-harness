@@ -135,3 +135,13 @@ def test_place_name_hint_covers_more_words_and_arabic(store):
     for name in ("city_size_category", "transport_mode"):
         assert columns[name].geographic_role is None, name
     assert columns["total"].geographic_role is None
+
+
+def test_ordered_levels_in_words_are_ordinal(store):
+    content = "wealth,size_ar,label\nPoor,صغير,alpha\nMiddle,متوسط,beta\nRich,كبير,gamma\nPoor,صغير,alpha\nUpper Middle,متوسط,delta\nLower Middle,كبير,alpha\n"
+    columns = profile_of(store, "levels.csv", content.encode("utf-8"))
+    assert columns["wealth"].measurement_levels == ["nominal", "ordinal"]
+    assert columns["wealth"].ordinal_pattern == "poor < lower middle < middle < upper middle < rich"
+    assert columns["size_ar"].ordinal_pattern == "صغير < متوسط < كبير"
+    assert columns["label"].ordinal_pattern is None
+    assert columns["label"].measurement_levels == ["nominal"]

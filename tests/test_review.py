@@ -93,3 +93,9 @@ def test_omitted_measure_is_not_penalized():
     stats = statistics(stat("shape_area", "DOUBLE", values_omitted=True))
     result = run_checks(stats, semantic(shape_area=("measure", None, None)))
     assert failed_checks(result) == []
+
+
+def test_ordinal_evidence_must_be_used():
+    stats = statistics(stat("wealth", measurement_levels=["nominal", "ordinal"], ordinal_pattern="poor < rich"))
+    assert "ordinal_evidence_used" in names(failed_checks(run_checks(stats, semantic(wealth=("category", None, {}))), "error"))
+    assert "ordinal_evidence_used" not in names(failed_checks(run_checks(stats, semantic(wealth=("ordinal", None, {})))))

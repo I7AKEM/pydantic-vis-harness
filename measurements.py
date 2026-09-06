@@ -17,6 +17,21 @@ VALUE_CHARACTERS = 120
 MAX_MODEL_VALUE_BYTES = 256
 MAX_DETAILED_COLUMNS = 40  # columns past this get counts and types only, so the prompt stays bounded
 MAX_ORDINAL_DISTINCT = 50
+MAX_LEVEL_DISTINCT = 8
+# Ordered scales written in words. A column whose distinct values all sit on one scale is ordinal.
+ORDERED_SCALES = (
+    ("very low", "low", "medium", "high", "very high"),
+    ("poor", "lower middle", "middle", "upper middle", "rich"),
+    ("tiny", "small", "medium", "large", "huge"),
+    ("weak", "moderate", "strong"),
+    ("bad", "poor", "fair", "good", "very good", "excellent"),
+    ("first", "second", "third", "fourth", "fifth"),
+    ("primary", "intermediate", "secondary", "tertiary"),
+    ("منخفض", "متوسط", "مرتفع"),
+    ("ضعيف", "متوسط", "جيد", "جيد جدا", "ممتاز"),
+    ("صغير", "متوسط", "كبير"),
+    ("فقير", "متوسط", "غني"),
+)
 MAX_CODE_DISTINCT = 12
 MAX_CODE_LENGTH = 3
 INTEGER_TYPES = ("TINYINT", "SMALLINT", "INTEGER", "BIGINT", "HUGEINT",
@@ -209,6 +224,14 @@ def _numeric_labels(connection, table, column, name, stats, row_count, null_coun
         stats.measurement_levels.append("geographic")
 
 
+def _ordered_scale(values) -> list[str] | None:
+    present = {value for value in values if value}
+    for scale in ORDERED_SCALES:
+        if len(present) >= 2 and present <= set(scale):
+            return [value for value in scale if value in present]
+    return None
+
+
 def _text_labels(connection, table, column, stats, distinct_count, non_null) -> None:
     if distinct_count == 2:
         (values,) = connection.execute(
@@ -226,6 +249,14 @@ def _text_labels(connection, table, column, stats, distinct_count, non_null) -> 
             stats.ordinal_pattern = connection.execute(
                 f"SELECT regexp_replace(min({column}), ?, '#', 'g') FROM {table}", [DIGITS_SQL_PATTERN]
             ).fetchone()[0]
+            stats.measurement_levels.append("ordinal")
+    if stats.ordinal_pattern is None and 2 <= distinct_count <= MAX_LEVEL_DISTINCT and distinct_count < non_null:
+        (values,) = connection.execute(
+            f"SELECT list(DISTINCT lower(trim({column}))) FROM {table} WHERE {column} IS NOT NULL"
+        ).fetchone()
+        scale = _ordered_scale(values)
+        if scale:
+            stats.ordinal_pattern = " < ".join(scale)
             stats.measurement_levels.append("ordinal")
     if 1 <= distinct_count <= MAX_CODE_DISTINCT and distinct_count < non_null:
         (longest,) = connection.execute(f"SELECT max(length({column})) FROM {table}").fetchone()

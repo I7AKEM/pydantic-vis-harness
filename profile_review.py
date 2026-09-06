@@ -59,6 +59,11 @@ def run_checks(statistics: DeterministicProfile, semantic: SemanticProfile,
                 stats.geographic_role is not None,
                 f"{column.name}: role is geography but no coordinates, WKT, or place-name column was detected.",
             ))
+        if "ordinal" in stats.measurement_levels and column.role in ("category", "text"):
+            checks.append(_check(
+                column.name, "ordinal_evidence_used", "error", False,
+                f"{column.name}: the values form an ordered scale ({stats.ordinal_pattern}); use the ordinal role.",
+            ))
         if (column.role == "category" and non_null > CATEGORY_MIN_ROWS
                 and stats.distinct_count > CATEGORY_MAX_SHARE * non_null):
             checks.append(_check(
