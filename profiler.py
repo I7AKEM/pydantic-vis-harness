@@ -1,7 +1,6 @@
 """One tool: CSV -> DuckDB statistics -> semantic agent -> validated profile."""
 
 import asyncio
-import math
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
@@ -9,133 +8,14 @@ import duckdb
 from pydantic_ai import Agent, ModelRetry, RunContext
 from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior
 
-from dataset_store import DatasetStore, quote_identifier
+from dataset_store import DatasetStore
+from measurements import compute_statistics
 from profile_models import (
     PROFILE_VERSION,
-    ColumnStatistics,
     DatasetProfile,
     DeterministicProfile,
-    NumericStatistics,
     SemanticProfile,
-    UploadedDataset,
-    ValueCount,
 )
-
-SAMPLE_ROWS = 5
-VALUE_CHARACTERS = 120
-MAX_MODEL_VALUE_BYTES = 256
-OMIT_VALUE_COLUMNS = {"wkt"}
-NUMERIC_TYPES = ("TINYINT", "SMALLINT", "INTEGER", "BIGINT", "HUGEINT", "UTINYINT",
-                 "USMALLINT", "UINTEGER", "UBIGINT", "UHUGEINT", "FLOAT", "DOUBLE", "DECIMAL")
-
-
-def preview(value: object) -> str | None:
-    if value is None:
-        return None
-    text = str(value)
-    return text if len(text) <= VALUE_CHARACTERS else text[:VALUE_CHARACTERS] + "…"
-
-
-def finite_number(value: object) -> float | None:
-    if value is None:
-        return None
-    number = float(value)
-    return number if math.isfinite(number) else None
-
-
-def compute_statistics(store: DatasetStore, source: UploadedDataset) -> DeterministicProfile:
-    table = quote_identifier(store.table_name(source.dataset_id))
-    columns = []
-    warnings = []
-    with store.connect() as connection:
-        schema = connection.execute(f"DESCRIBE {table}").fetchall()
-        row_count = connection.execute(f"SELECT count(*) FROM {table}").fetchone()[0]
-        unique_rows = connection.execute(f"SELECT count(*) FROM (SELECT DISTINCT * FROM {table})").fetchone()[0]
-        for index, (name, physical_type, *_rest) in enumerate(schema):
-            column = quote_identifier(name)
-            null_count, distinct_count, maximum_value_bytes = connection.execute(
-                f"SELECT count(*) - count({column}), count(DISTINCT {column}), "
-                f"coalesce(max(octet_length(encode(CAST({column} AS VARCHAR)))), 0) FROM {table}"
-            ).fetchone()
-            stats = ColumnStatistics(
-                name=name,
-                original_name=source.headers[index],
-                physical_type=physical_type,
-                null_count=null_count,
-                null_percentage=100 * null_count / row_count if row_count else 0,
-                distinct_count=distinct_count,
-                maximum_value_bytes=maximum_value_bytes,
-                values_omitted=(
-                    maximum_value_bytes > MAX_MODEL_VALUE_BYTES
-                    or name.casefold() in OMIT_VALUE_COLUMNS
-                ),
-            )
-            if row_count and null_count == row_count:
-                warnings.append(f"{name}: all values are null.")
-            elif distinct_count == 1:
-                warnings.append(f"{name}: only one distinct non-null value.")
-
-            # Decide from the entire column, before retrieving any values for a model.
-            if stats.values_omitted:
-                columns.append(stats)
-                continue
-
-            if physical_type.startswith(NUMERIC_TYPES):
-                values = connection.execute(
-                    f"SELECT count(*), min(v), max(v), avg(v), stddev_pop(v), "
-                    "quantile_cont(v, 0.25), quantile_cont(v, 0.5), quantile_cont(v, 0.75) "
-                    f"FROM (SELECT CAST({column} AS DOUBLE) AS v FROM {table}) WHERE isfinite(v)"
-                ).fetchone()
-                finite_count, *metrics = values
-                stats.numeric = NumericStatistics(
-                    finite_count=finite_count,
-                    non_finite_count=row_count - null_count - finite_count,
-                    **dict(zip(
-                        ["minimum", "maximum", "mean", "standard_deviation", "q25", "median", "q75"],
-                        map(finite_number, metrics),
-                    )),
-                )
-                if stats.numeric.non_finite_count:
-                    warnings.append(f"{name}: numeric statistics exclude non-finite values.")
-            elif physical_type.startswith(("DATE", "TIMESTAMP", "TIME")):
-                earliest, latest = connection.execute(
-                    f"SELECT min({column}), max({column}) FROM {table}"
-                ).fetchone()
-                stats.earliest, stats.latest = preview(earliest), preview(latest)
-            else:
-                common = connection.execute(
-                    f"SELECT {column}, count(*) AS frequency FROM {table} "
-                    f"WHERE {column} IS NOT NULL GROUP BY {column} "
-                    f"ORDER BY frequency DESC, {column} ASC LIMIT 5"
-                ).fetchall()
-                stats.common_values = [ValueCount(value=preview(value), count=count) for value, count in common]
-            columns.append(stats)
-
-        # Oversized columns stay in DuckDB; neither agent receives their values.
-        sample_names = [c.name for c in columns if not c.values_omitted]
-        sample = []
-        if sample_names:
-            selection = ", ".join(map(quote_identifier, sample_names))
-            rows = connection.execute(f"SELECT {selection} FROM {table} LIMIT {SAMPLE_ROWS}").fetchall()
-            sample = [dict(zip(sample_names, map(preview, row))) for row in rows]
-    if row_count == 0:
-        warnings.append("The CSV has a header but no data rows.")
-    return DeterministicProfile(
-        row_count=row_count,
-        column_count=len(columns),
-        duplicate_rows=row_count - unique_rows,
-        columns=columns,
-        sample_rows=sample,
-        sample_description=(
-            f"Statistics cover every imported row. Sample: first {SAMPLE_ROWS} rows in import order; "
-            f"sample and common-value text is capped at {VALUE_CHARACTERS} characters. "
-            f"Columns containing any value over {MAX_MODEL_VALUE_BYTES} UTF-8 bytes, and WKT columns, "
-            "are excluded entirely from samples and common values; only metadata and counts are included. "
-            "Numeric aggregates use finite double-precision values and population standard deviation. "
-            "CSV settings: UTF-8, comma delimiter, header row, full-file type inference, empty fields as null."
-        ),
-        warnings=warnings,
-    )
 
 
 def create_semantic_profiler(model: str) -> Agent[DeterministicProfile, SemanticProfile]:

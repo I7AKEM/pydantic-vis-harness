@@ -10,7 +10,8 @@ from starlette.testclient import TestClient
 
 from dataset_store import DatasetStore
 from profile_models import PROFILE_VERSION, DatasetProfile
-from profiler import AppDeps, compute_statistics, create_semantic_profiler, profile_csv
+from measurements import compute_statistics
+from profiler import AppDeps, create_semantic_profiler, profile_csv
 from uploads import add_upload_routes
 
 SALES = (
