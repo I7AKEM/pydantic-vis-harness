@@ -60,7 +60,19 @@ The data analyst is new in this revision. AVA showed that a model writing the qu
 
 ## 5. Tools, initial catalogue
 
-Every tool is listed here so the full picture exists now. Each is built in the phase that needs it. "Done by" says whether the tool's work is fixed code or a model call.
+Every tool is listed here so the full picture exists now. Each is built in the phase that needs it.
+
+Every agent is a model. The tools below are code that the model calls, and the "Done by" column describes the tool's implementation, not the agent. A tool marked "Code" gives the model facts, candidates, or check results. The model decides what to do with them. Rendering is the only step with no model at all.
+
+| Agent | The model decides | Code does |
+|---|---|---|
+| Lead | What the caller wants, what to ask, how to explain | Runs the steps, saves checkpoints, routes questions |
+| Profiler | What each column means, units, roles | Every statistic, in DuckDB |
+| Analyst | What to compute: the SQL, the labels, the summary | Runs the SQL in DuckDB, checks labels and totals against the data |
+| Designer | Which chart, which columns in which role, title, colors, annotations, the syntax | Ranks candidates from the catalogue and rules, checks the syntax against the rules and the renderer |
+| Reviewer | Whether the picture answers the question honestly and readably, and what to fix | Loads the image and the numbers, recomputes values to compare |
+
+The ranking from recommend_charts is advice. The model may pick a lower candidate with a stated reason, and the reviewer checks the reason.
 
 ### Vis lead
 
