@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT \n    tv.control_number,\n    tv.sequence_number,\n    tv.violator_id,\n    tv.status_description,\n    tv.gdate_happened,\n    tv.gdate_paid,\n    tv.original_fine,\n    tv.actual_fine,\n    tv.is_discounted,\n    tv.violation_type_description,\n    tv.registry_location,\n    tv.vehicle_make,\n    tv.vehicle_model,\n    tv.district,\n    tv.city,\n    tv.region,\n    d.person_type\nFROM estishraf_llm_traffic_violation tv\nLEFT JOIN estishraf_llm_demographics_impala d ON tv.violator_id = d.id\nORDER BY tv.gdate_happened DESC\nLIMIT 2000",
+  "raw_question": "عطني اخر ٥ الاف مخالفة مرورية وقعت في المملكة مع تفاصيلها",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

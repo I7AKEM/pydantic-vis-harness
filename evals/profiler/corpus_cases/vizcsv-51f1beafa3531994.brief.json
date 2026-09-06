@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH input AS (SELECT hl.city, hl.district, w.wealth_level, COUNT(*) as count FROM estishraf_llm_wealth_index w JOIN estishraf_llm_home_location hl ON w.head_of_household_id = hl.id GROUP BY hl.city, hl.district, w.wealth_level) SELECT input.*, poly.wkt FROM input JOIN ESTISHRAF_LLM_KSA_Districts_Polygons poly ON input.district = poly.district AND input.city = poly.city",
+  "raw_question": "اعرض لي خريطة لتوزيع مستويات الثروة جغرافياً لآخر 100000 سجل",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

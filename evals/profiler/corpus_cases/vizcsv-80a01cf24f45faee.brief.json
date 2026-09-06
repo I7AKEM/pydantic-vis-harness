@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT \n  SUBSTR(CAST(gdate_happened AS STRING), 1, 10) AS violation_date,\n  SUM(CASE WHEN status_description = 'Issued to violator and paid' THEN 1 ELSE 0 END) AS paid_violations,\n  SUM(CASE WHEN status_description = 'Issued to violator but un-paid' THEN 1 ELSE 0 END) AS unpaid_violations,\n  COUNT(*) AS total_violations\nFROM estishraf_llm_traffic_violation\nWHERE status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid')\n  AND gdate_happened IS NOT NULL\nGROUP BY SUBSTR(CAST(gdate_happened AS STRING), 1, 10)\nORDER BY violation_date",
+  "raw_question": "عطني تسلسل زمني للمخالفات المسددة وغير المسددة في رسم بياني",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

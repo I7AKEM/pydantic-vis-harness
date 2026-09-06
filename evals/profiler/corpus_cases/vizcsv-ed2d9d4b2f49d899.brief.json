@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH jobs_by_region AS (\n  SELECT \n    employer_work_region AS region,\n    COUNT(*) AS active_jobs\n  FROM estishraf_llm_jobs_info_v3_impala\n  WHERE is_active_job = 1\n  GROUP BY employer_work_region\n),\npopulation_by_region AS (\n  SELECT \n    hl.region,\n    COUNT(DISTINCT hp.id) AS population\n  FROM estishraf_llm_historical_population_impala hp\n  JOIN estishraf_llm_home_location hl ON hp.id = hl.id\n  WHERE hp.is_in_population = TRUE \n    AND hp.snapshot >= DATE_SUB((SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala), INTERVAL 1 YEAR)\n  GROUP BY hl.region\n)\nSELECT \n  p.region,\n  p.population,\n  COALESCE(j.active_jobs, 0) AS active_jobs,\n  CASE \n    WHEN p.population > 0 THEN COALESCE(j.active_jobs, 0) / p.population\n    ELSE 0\n  END AS jobs_per_capita_ratio\nFROM population_by_region p\nLEFT JOIN jobs_by_region j ON p.region = j.region\nORDER BY jobs_per_capita_ratio DESC\nLIMIT 1000",
+  "raw_question": "سو لي تقرير عن السكان",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

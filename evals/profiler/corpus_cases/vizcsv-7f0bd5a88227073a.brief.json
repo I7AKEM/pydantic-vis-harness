@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT death_date, COUNT(*) AS death_count FROM estishraf_llm_demographics_impala WHERE person_type = 'Saudi' AND death_date IS NOT NULL AND EXTRACT(YEAR FROM death_date) = 2024 GROUP BY death_date ORDER BY death_date LIMIT 1200",
+  "raw_question": "ماهو توزيع السعوديين المتوفين في 2024 بحسب الأيام؟",
+  "suggested_chart_type": "line|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

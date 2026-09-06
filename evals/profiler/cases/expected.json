@@ -2,7 +2,7 @@
   "sales": {
     "roles": {
       "order_id": "identifier",
-      "region": "category",
+      "region": "geography",
       "order_date": "time",
       "amount": "measure"
     },
@@ -186,7 +186,7 @@
   },
   "arabic": {
     "roles": {
-      "المدينة": "category",
+      "المدينة": "geography",
       "المبيعات": "measure",
       "التاريخ": "time"
     },

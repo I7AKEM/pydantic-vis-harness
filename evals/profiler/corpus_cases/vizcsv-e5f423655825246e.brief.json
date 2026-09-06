@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH low_employment_majors AS (\n    -- First, let's identify majors with low employment rates (< 50% within first year)\n    SELECT \n        major_name,\n        COUNT(DISTINCT u.id) as total_graduates,\n        COUNT(DISTINCT j.id) as employed_graduates,\n        (COUNT(DISTINCT j.id) * 100.0 / COUNT(DISTINCT u.id)) as employment_rate\n    FROM estishraf_llm_university_graduates_impala u\n    LEFT JOIN estishraf_llm_jobs_info_v3_impala j \n        ON u.id = j.id \n        AND j.job_start_date BETWEEN u.graduation_date AND DATE_ADD(u.graduation_date, INTERVAL 1 YEAR)\n    WHERE u.graduation_date >= DATE_SUB(CAST('2026-03-03' AS DATE), INTERVAL 5 YEAR)\n        AND u.qualification IN ('بكالوريوس', 'ماجستير', 'دكتوراه', 'زمالة')\n        AND u.graduation_date IS NOT NULL\n    GROUP BY major_name\n    HAVING COUNT(DISTINCT u.id) >= 10  -- Ensure sufficient sample size\n    AND (COUNT(DISTINCT j.id) * 100.0 / COUNT(DISTINCT u.id)) < 50\n),\ntop_jobs_in_low_employment_majors AS (\n    -- Then find the most common jobs for graduates from these majors\n    SELECT \n        j.job_title,\n        COUNT(*) as job_count\n    FROM estishraf_llm_jobs_info_v3_impala j\n    INNER JOIN estishraf_llm_university_graduates_impala u \n        ON j.id = u.id\n    INNER JOIN low_employment_majors lem \n        ON u.major_name = lem.major_name\n    WHERE j.job_start_date BETWEEN u.graduation_date AND DATE_ADD(u.graduation_date, INTERVAL 1 YEAR)\n        AND j.job_start_date >= DATE_SUB(CAST('2026-03-03' AS DATE), INTERVAL 5 YEAR)\n    GROUP BY j.job_title\n    ORDER BY job_count DESC\n    LIMIT 10\n)\nSELECT job_title, job_count\nFROM top_jobs_in_low_employment_majors\nORDER BY job_count DESC",
+  "raw_question": "ماهي أعلى خمسة احياء في مدينة جدة من حيث عدد الافراد الاثرياء حسب احدث اسناد؟",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

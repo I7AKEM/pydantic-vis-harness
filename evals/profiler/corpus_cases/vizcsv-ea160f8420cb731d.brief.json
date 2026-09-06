@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SHOW TABLES",
+  "raw_question": "الجداول الرئيسية في نظام إنسايتر",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

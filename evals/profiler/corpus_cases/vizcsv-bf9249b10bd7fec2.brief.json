@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH yearly_umrah AS (SELECT YEAR(entry_timestamp) AS year, COUNT(DISTINCT CONCAT(CAST(id AS STRING), '-', CAST(dependent_seq_no AS STRING))) AS umrah_count FROM estishraf_llm_border_crossings_impala WHERE TRIM(visa_type_description) = 'عمرة' AND NOT entry_timestamp IS NULL AND YEAR(entry_timestamp) BETWEEN 2006 AND 2025 AND trip_duration_days >= 0 GROUP BY YEAR(entry_timestamp)), growth_calc AS (SELECT year, umrah_count, LAG(umrah_count) OVER (ORDER BY year) AS prev_year_count FROM yearly_umrah) SELECT year, umrah_count, ROUND((umrah_count - prev_year_count) * 100.0 / NULLIF(prev_year_count, 0), 2) AS growth_rate_pct FROM growth_calc ORDER BY year LIMIT 1200",
+  "raw_question": "معدل نمو المعتمرين لكل سنه في آخر 20 سنه مكتملة",
+  "suggested_chart_type": "line|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

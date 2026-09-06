@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH Graduates2021_2025 AS (\n  SELECT id, graduation_date, major_name, major_classification_parent_name\n  FROM estishraf_llm_university_graduates_impala\n  WHERE YEAR(graduation_date) BETWEEN 2021 AND 2025\n  AND qualification IN ('بكالوريوس', 'ماجستير', 'دكتوراه', 'زمالة')\n  AND graduation_date IS NOT NULL\n),\nAllGraduatesByMajor AS (\n  SELECT major_name, COUNT(DISTINCT id) AS total_graduates\n  FROM Graduates2021_2025\n  GROUP BY major_name\n  HAVING COUNT(DISTINCT id) >= 10\n),\nEmployedGraduatesByMajor AS (\n  SELECT g.major_name, COUNT(DISTINCT g.id) AS employed_count\n  FROM Graduates2021_2025 g\n  INNER JOIN estishraf_llm_jobs_info_v3_impala j ON g.id = j.id\n  WHERE j.job_start_date >= g.graduation_date \n    AND j.job_start_date <= DATE_ADD(g.graduation_date, 365)\n  GROUP BY g.major_name\n),\nEmploymentRates AS (\n  SELECT \n    a.major_name,\n    a.total_graduates,\n    COALESCE(e.employed_count, 0) AS employed_count,\n    ROUND(COALESCE(e.employed_count, 0) * 100.0 / a.total_graduates, 2) AS employment_rate\n  FROM AllGraduatesByMajor a\n  LEFT JOIN EmployedGraduatesByMajor e ON a.major_name = e.major_name\n),\nLowEmploymentMajors AS (\n  SELECT major_name, employment_rate\n  FROM EmploymentRates\n  WHERE employment_rate < 50\n),\nMilitaryRanks AS (\n  SELECT 'رقيب' AS rank_job UNION ALL SELECT 'نقيب' UNION ALL \n  SELECT 'جندي اول' UNION ALL SELECT 'رقيب اول' UNION ALL \n  SELECT 'جندي' UNION ALL SELECT 'عريف' UNION ALL \n  SELECT 'ملازم' UNION ALL SELECT 'ملازم اول' UNION ALL \n  SELECT 'عقيد' UNION ALL SELECT 'عميد' UNION ALL SELECT 'لواء'\n),\nLowEmploymentGraduatesJobs AS (\n  SELECT j.job_title, COUNT(*) AS job_count\n  FROM Graduates2021_2025 g\n  INNER JOIN LowEmploymentMajors l ON g.major_name = l.major_name\n  INNER JOIN estishraf_llm_jobs_info_v3_impala j ON g.id = j.id\n  WHERE j.job_title IS NOT NULL \n    AND j.job_title NOT IN ('لا ينطبق', 'غير معروف')\n    AND j.job_title NOT IN (SELECT rank_job FROM MilitaryRanks)\n  GROUP BY j.job_title\n)\nSELECT job_title, job_count\nFROM LowEmploymentGraduatesJobs\nORDER BY job_count DESC\nLIMIT 10",
+  "raw_question": "وظائف خريجي التخصصات ذات معدلات توظيف منخفضة",
+  "suggested_chart_type": "horizontal_bar|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

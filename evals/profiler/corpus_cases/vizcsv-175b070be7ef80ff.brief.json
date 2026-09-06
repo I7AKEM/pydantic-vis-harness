@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH port_data AS (SELECT TRIM(bc.nationality) AS nationality, bc.entry_location_name AS port, COUNT(*) AS entry_count FROM estishraf_llm_border_crossings_impala AS bc WHERE bc.person_type = 'resident' AND NOT bc.entry_timestamp IS NULL AND TRIM(bc.nationality) IN ('صيني', 'كويتي', 'بريطاني', 'ياباني', 'إيطالي', 'اردني', 'ليبي', 'عماني', 'بحريني', 'ألماني') GROUP BY TRIM(bc.nationality), bc.entry_location_name), nationality_totals AS (SELECT nationality, SUM(entry_count) AS total_entries FROM port_data GROUP BY nationality), with_pct AS (SELECT pd.nationality, pd.port, pd.entry_count, nt.total_entries, ROUND(100.0 * pd.entry_count / nt.total_entries, 2) AS percentage, ROW_NUMBER() OVER (PARTITION BY pd.nationality ORDER BY pd.entry_count DESC) AS rn FROM port_data AS pd JOIN nationality_totals AS nt ON pd.nationality = nt.nationality) SELECT nationality, port, entry_count, total_entries, percentage FROM with_pct WHERE rn = 1 ORDER BY total_entries DESC LIMIT 1200",
+  "raw_question": "أكثر المنافذ استخداماً حسب الجنسية",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

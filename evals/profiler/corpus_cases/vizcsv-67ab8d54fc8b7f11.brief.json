@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "WITH region_gender_counts AS (SELECT hl.region, hp.gender, COUNT(DISTINCT hp.id, hp.dependent_seq_no) AS population_count FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id WHERE hp.is_in_population = true AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND Trim( hl.region ) IS NOT NULL AND hl.region != 'nan' GROUP BY hl.region, hp.gender), region_totals AS (SELECT region, SUM(population_count) AS total_count FROM region_gender_counts GROUP BY region) SELECT rgc.region, rgc.gender, rgc.population_count, rt.total_count, ROUND((rgc.population_count * 100.0 / rt.total_count), 2) AS percentage FROM region_gender_counts rgc JOIN region_totals rt ON rgc.region = rt.region ORDER BY rgc.region, rgc.gender LIMIT 1200",
+  "raw_question": "ترحيب",
+  "intent": "composition",
+  "suggested_chart_type": "grouped_bar|stacked_bar|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

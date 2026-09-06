@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_entry AS (\n  SELECT * FROM (\n    SELECT *, ROW_NUMBER() OVER (PARTITION BY id ORDER BY entry_date DESC) AS rn\n    FROM estishraf_llm_border_crossings_impala\n    WHERE entry_date IS NOT NULL\n  ) x\n  WHERE rn = 1\n),\npop AS (\n  SELECT *\n  FROM estishraf_llm_historical_population_impala\n  WHERE snapshot = '2026-02-01' AND person_type = 'Alien' AND is_in_population = TRUE\n),\nentry_ports AS (\n  SELECT latest_entry.nationality, entry_location_name, COUNT(*) AS entry_count\n  FROM pop\n  JOIN latest_entry ON pop.id = latest_entry.id\n  WHERE TRIM(latest_entry.nationality) IN ('صيني', 'كويتي', 'بريطاني', 'ياباني', 'إيطالي', 'اردني', 'عماني', 'ليبي', 'ألماني', 'بحريني')\n  GROUP BY latest_entry.nationality, entry_location_name\n),\ntop_ports AS (\n  SELECT nationality, entry_location_name, entry_count,\n         ROW_NUMBER() OVER (PARTITION BY nationality ORDER BY entry_count DESC) AS rn\n  FROM entry_ports\n),\nnationality_totals AS (\n  SELECT nationality, SUM(entry_count) AS total_entries\n  FROM entry_ports\n  GROUP BY nationality\n)\nSELECT tp.nationality, tp.entry_location_name, \n       ROUND(tp.entry_count * 100.0 / nt.total_entries, 2) AS percentage\nFROM top_ports tp\nJOIN nationality_totals nt ON tp.nationality = nt.nationality\nWHERE tp.rn = 1\nORDER BY nt.total_entries DESC LIMIT 20000",
+  "raw_question": "لأعلى 10 جنسيات من السكان المقيمين في أبريل 2025, ماهو أكثر منفذ استخداماً للدخول للمملكة لكل جنس...",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

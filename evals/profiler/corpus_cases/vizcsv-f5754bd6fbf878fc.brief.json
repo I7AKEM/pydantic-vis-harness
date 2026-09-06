@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH LatestSnapshot AS (\n  SELECT MAX(snapshot) AS latest_snapshot\n  FROM estishraf_llm_historical_population_impala\n),\nFilteredPopulation AS (\n  SELECT TRIM(nationality) AS nationality,\n         COUNT(DISTINCT id, dependent_seq_no) AS count\n  FROM estishraf_llm_historical_population_impala\n  WHERE snapshot = (SELECT latest_snapshot FROM LatestSnapshot)\n    AND is_in_population = TRUE\n    AND person_type IN ('Alien', 'Visitor')\n  GROUP BY TRIM(nationality)\n),\nTotalNonSaudi AS (\n  SELECT SUM(count) AS total_count\n  FROM FilteredPopulation\n)\nSELECT fp.nationality,\n       fp.count,\n       ROUND((CAST(fp.count AS DOUBLE) / NULLIF(CAST(tn.total_count AS DOUBLE), 0)) * 100, 2) AS percentage\nFROM FilteredPopulation fp\nCROSS JOIN TotalNonSaudi tn\nORDER BY fp.count DESC\nLIMIT 10",
+  "raw_question": "كم سكان المملكة؟",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

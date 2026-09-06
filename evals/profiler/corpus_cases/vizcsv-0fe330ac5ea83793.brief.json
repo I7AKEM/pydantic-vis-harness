@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH graduates_2015_5point AS (SELECT g.id, g.gpa, d.head_of_household_id FROM estishraf_llm_university_graduates_impala AS g JOIN estishraf_llm_demographics_impala AS d ON g.id = d.id WHERE g.gpa_type = 'نظام المعدل التراكمي المكون من خمس نقاط' AND YEAR(g.graduation_date) = 2015 AND NOT g.gpa IS NULL AND NOT d.head_of_household_id IS NULL), above_4 AS (SELECT w.wealth_level, COUNT(DISTINCT g.id) AS graduate_count FROM graduates_2015_5point AS g JOIN estishraf_llm_wealth_index AS w ON g.head_of_household_id = w.head_of_household_id WHERE g.gpa > 4 GROUP BY w.wealth_level), below_4 AS (SELECT w.wealth_level, COUNT(DISTINCT g.id) AS graduate_count FROM graduates_2015_5point AS g JOIN estishraf_llm_wealth_index AS w ON g.head_of_household_id = w.head_of_household_id WHERE g.gpa < 4 GROUP BY w.wealth_level) SELECT 'أعلى من 4' AS gpa_group, a.wealth_level, a.graduate_count FROM above_4 AS a UNION ALL SELECT 'أقل من 4' AS gpa_group, b.wealth_level, b.graduate_count FROM below_4 AS b ORDER BY gpa_group, wealth_level LIMIT 1200",
+  "raw_question": "هل للمعدل التراكمي اثر على ثروة الأشخاص؟ اجمع جميع خريجي الجامعات التي تعتمد نظام الخمسة نقاط ثم ...",
+  "suggested_chart_type": "stacked_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

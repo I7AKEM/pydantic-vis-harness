@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "with total_vio_per_person as (\nSELECT \n  TIV.violator_id, \n  count(*) as total_violation_per_person\nFROM \n  estishraf_llm_traffic_violation TIV\nJOIN \n  estishraf_llm_demographics_impala DIM \n  ON DIM.id = CAST(TIV.violator_id AS DOUBLE)\n\nWHERE \n  YEAR(TIV.gdate_happened) = 2024\n  AND DIM.person_type = 'Saudi'\n  AND TIV.status_description IN ('Issued to violator but un-paid', 'Issued to violator and paid')\ngroup by 1\n    )\n    select \n    avg(total_violation_per_person) avg_violation_per_person_citizens \n    from total_vio_per_person LIMIT 1200",
+  "raw_question": "ما هو متوسط عدد المخالفات للمواطنين خلال عام 2024",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

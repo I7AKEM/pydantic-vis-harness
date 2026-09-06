@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH TopNationalities AS (SELECT TRIM(nationality) AS nationality FROM estishraf_llm_historical_population_impala WHERE snapshot = '2026-02-01' AND person_type = 'Alien' AND is_in_population = TRUE AND NOT TRIM(nationality) IS NULL GROUP BY TRIM(nationality) ORDER BY COUNT(DISTINCT id, dependent_seq_no) DESC LIMIT 10), EntryData AS (SELECT TRIM(bc.nationality) AS nationality, TRIM(bc.entry_location_name) AS entry_port, COUNT(*) AS entry_count FROM estishraf_llm_border_crossings_impala AS bc WHERE bc.entry_timestamp >= '2026-01-01' AND bc.entry_timestamp < '2026-03-01' AND bc.person_type = 'resident' AND TRIM(bc.nationality) IN (SELECT nationality FROM TopNationalities) GROUP BY TRIM(bc.nationality), TRIM(bc.entry_location_name)), TotalEntries AS (SELECT nationality, SUM(entry_count) AS total FROM EntryData GROUP BY nationality), RankedPorts AS (SELECT ed.nationality, ed.entry_port, ed.entry_count, te.total, ROW_NUMBER() OVER (PARTITION BY ed.nationality ORDER BY ed.entry_count DESC) AS rank FROM EntryData AS ed JOIN TotalEntries AS te ON ed.nationality = te.nationality) SELECT nationality, entry_port, entry_count, total, ROUND(entry_count * 100.0 / total, 1) AS percentage FROM RankedPorts WHERE rank = 1 ORDER BY total DESC LIMIT 1200",
+  "raw_question": "لأعلى 10 جنسيات من السكان المقيمين في أبريل 2025, ماهو أكثر منفذ استخداماً للدخول للمملكة لكل جنس...",
+  "suggested_chart_type": "stacked_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

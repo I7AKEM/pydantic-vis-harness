@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT \n    CAST(gdate_happened AS DATE) as violation_date,\n    COUNT(CASE WHEN gdate_paid IS NOT NULL THEN 1 END) as paid_violations,\n    COUNT(CASE WHEN gdate_paid IS NULL AND status_description = 'Issued to violator but un-paid' THEN 1 END) as unpaid_violations\nFROM estishraf_llm_traffic_violation\nWHERE status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid')\nGROUP BY CAST(gdate_happened AS DATE)\nORDER BY violation_date",
+  "raw_question": "عطني تسلسل زمني للمخالفات في رسم بياني للمحالفات المسددة وغير المسددة لكل يوم",
+  "suggested_chart_type": "line|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

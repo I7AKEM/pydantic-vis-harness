@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_snapshot AS (SELECT MAX(snapshot) AS max_snapshot FROM estishraf_llm_historical_population_impala), citizens_per_region AS (SELECT hl.region, COUNT(DISTINCT hp.id) AS citizen_count FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id CROSS JOIN latest_snapshot ls WHERE hp.snapshot = ls.max_snapshot AND hp.is_in_population = TRUE AND hp.person_type = 'Saudi' AND TRIM(hl.region) <> '' GROUP BY hl.region), total_population_per_region AS (SELECT hl.region, COUNT(DISTINCT hp.id) AS total_count FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id CROSS JOIN latest_snapshot ls WHERE hp.snapshot = ls.max_snapshot AND hp.is_in_population = TRUE AND TRIM(hl.region) <> '' GROUP BY hl.region), input AS (SELECT cpr.region, (cpr.citizen_count * 100.0 / tppr.total_count) AS citizen_percentage FROM citizens_per_region cpr JOIN total_population_per_region tppr ON cpr.region = tppr.region ORDER BY citizen_percentage DESC) SELECT input.*, poly.wkt FROM input JOIN ESTISHRAF_LLM_KSA_Regions_Polygons poly ON input.region = poly.region",
+  "raw_question": "كم سكان المملكة؟",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

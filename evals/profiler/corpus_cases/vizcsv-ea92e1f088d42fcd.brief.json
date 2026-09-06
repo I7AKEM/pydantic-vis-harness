@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH youth_population AS (\n    SELECT \n        hl.municipality,\n        COUNT(DISTINCT hp.id) AS youth_count\n    FROM estishraf_llm_historical_population_impala hp\n    JOIN estishraf_llm_home_location hl ON hp.id = hl.id\n    WHERE hp.is_in_population = TRUE\n      AND hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n      AND hp.age BETWEEN 18 AND 30\n      AND hl.region = 'منطقة الرياض'\n      AND hl.municipality IS NOT NULL\n    GROUP BY hl.municipality\n),\nmunicipality_ranking AS (\n    SELECT \n        municipality,\n        youth_count,\n        ROW_NUMBER() OVER (ORDER BY youth_count DESC) AS rank\n    FROM youth_population\n)\nSELECT \n    municipality AS 'البلدية',\n    youth_count AS 'العدد'\nFROM municipality_ranking\nWHERE rank = 1 LIMIT 1200",
+  "raw_question": "ما هي البلدية في الرياض التي بها أعلى كثافة من الشباب (الذين تتراوح أعمارهم بين 18 و 30 عاماً)؟ ر...",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

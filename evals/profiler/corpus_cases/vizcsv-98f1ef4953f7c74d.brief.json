@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT Trim( entry_zone ) AS منطقة_الدخول, COUNT(*) AS عدد_الرحلات FROM estishraf_llm_border_crossings_impala WHERE entry_zone IS NOT NULL GROUP BY Trim( entry_zone ) ORDER BY عدد_الرحلات DESC LIMIT 1200",
+  "raw_question": "إحصائية الرحلات حسب نوع المسافر",
+  "suggested_chart_type": "horizontal_bar|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

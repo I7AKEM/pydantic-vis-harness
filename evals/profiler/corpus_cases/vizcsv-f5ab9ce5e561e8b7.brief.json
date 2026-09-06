@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT violator_id, COUNT(*) as violation_count FROM estishraf_llm_traffic_violation WHERE violation_type_latin_description IN ('NOT WEARING A SEATBELT', 'Not Wearing a Seatbelt - Auto Detection') AND status_description IN ('Issued to violator and paid', 'Issued to violator but un-paid') GROUP BY violator_id HAVING COUNT(*) > 1 ORDER BY violation_count DESC LIMIT 1000",
+  "raw_question": "ما هي اعلى المخالفات في مدينة الرياض الاسبوع الماضي",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "with total_amount_per_person as (\nSELECT \n  TIV.violator_id, \n  sum(`actual_fine`) as sum_amount\nFROM \n  `estishraf_llm_traffic_violation` TIV\nWHERE \n  YEAR(TIV.`gdate_happened`) = 2024\n  AND TIV.`status_description` IN ('Issued to violator and paid', 'Issued to violator but un-paid')\ngroup by 1\n    )\n    select \n    avg(sum_amount) avg_sum_amount\n    from total_amount_per_person LIMIT 1200",
+  "raw_question": "ما هو متوسط قيمة المخالفات المرورية للفرد خلال عام 2024",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH ActiveEstablishments AS ( SELECT TRIM(employer_name) AS employer_name, COUNT(*) AS employee_count,         AVG(total_wage) AS avg_wage       FROM estishraf_llm_jobs_info_v3_impala     WHERE is_active_job = 1     AND total_wage BETWEEN 100 AND 600000     GROUP BY TRIM(employer_name)     HAVING COUNT(*) >= 5 ) SELECT      employer_name,             employee_count,             avg_wage  FROM ActiveEstablishments  ORDER BY avg_wage DESC  LIMIT 10;",
+  "raw_question": "ماهي أعلى 10 منشآت من حيث متوسط رواتب العاملين بها وكم يبلغ متوسط الرواتب في كل منشأة من هذه المن...",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

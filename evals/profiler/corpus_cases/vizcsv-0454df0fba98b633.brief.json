@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH LatestSnapshot AS (\n    SELECT MAX(snapshot) AS latest_snapshot\n    FROM estishraf_llm_historical_population_impala\n),\nHouseholdSizes AS (\n    SELECT \n        hl.region,\n        d.head_of_household_id,\n        COUNT(d.id) AS household_size\n    FROM estishraf_llm_demographics_impala d\n    JOIN estishraf_llm_home_location hl ON d.id = hl.id\n    JOIN LatestSnapshot ls ON TRUE\n    WHERE d.person_status = 'صالح'\n      AND d.death_date IS NULL\n      AND d.person_type = 'Saudi'\n      AND d.head_of_household_id IS NOT NULL\n      AND EXISTS (\n          SELECT 1 \n          FROM estishraf_llm_historical_population_impala hp\n          WHERE hp.id = d.id \n            AND hp.snapshot = ls.latest_snapshot\n            AND hp.is_in_population = TRUE\n      )\n    GROUP BY hl.region, d.head_of_household_id\n)\nSELECT \n    region,\n    ROUND(AVG(household_size), 2) AS avg_household_size\nFROM HouseholdSizes\nGROUP BY region\nORDER BY avg_household_size DESC LIMIT 20000",
+  "raw_question": "سو لي تقرير عن السكان",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

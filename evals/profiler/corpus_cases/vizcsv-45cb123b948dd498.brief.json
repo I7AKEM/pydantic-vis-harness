@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT * FROM estishraf_llm_traffic_violation WHERE city = 'الرياض' ORDER BY gdate_happened DESC LIMIT 1000",
+  "raw_question": "عطني اخر  الف مخالفة مرورية في الرياض مع كامل تفاصيلها",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

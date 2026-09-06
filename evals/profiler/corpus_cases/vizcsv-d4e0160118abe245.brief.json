@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH FilteredDeaths AS (\n    SELECT\n        id,\n        death_date,\n        birth_date,\n        gender,\n        nationality,\n        marital_status\n    FROM estishraf_llm_demographics_impala\n    WHERE death_date IS NOT NULL\n      AND death_date BETWEEN '2009-01-01' AND '2017-12-31'\n),\nAgeRanges AS (\n    SELECT\n        id,\n        YEAR(death_date) AS death_year,\n        CASE\n            WHEN YEAR(death_date) - YEAR(birth_date) BETWEEN 0 AND 10  THEN '0-10'\n            WHEN YEAR(death_date) - YEAR(birth_date) BETWEEN 11 AND 20 THEN '11-20'\n            WHEN YEAR(death_date) - YEAR(birth_date) BETWEEN 21 AND 40 THEN '21-40'\n            WHEN YEAR(death_date) - YEAR(birth_date) BETWEEN 41 AND 60 THEN '41-60'\n            ELSE '61+'\n        END AS age_range,\n        gender,\n        nationality,\n        marital_status\n    FROM FilteredDeaths\n),\nMaritalStatusGroups AS (\n    SELECT\n        id,\n        death_year,\n        age_range,\n        gender,\n        nationality,\n        CASE\n            WHEN marital_status IN ('زوجة واحدة', 'زوجتين', 'متزوج', 'متزوجة') THEN 'Married'\n            WHEN marital_status IN ('غير متزوجة', 'اعزب') THEN 'Single'\n            WHEN marital_status IN ('مطلق', 'مطلقة', 'منفصل', 'منفصلة') THEN 'Divorced'\n            ELSE 'Other'\n        END AS marital_status_group\n    FROM AgeRanges\n)\nSELECT\n    death_year,\n    age_range,\n    gender,\n    nationality,\n    marital_status_group,\n    COUNT(*) AS death_count\nFROM MaritalStatusGroups\nGROUP BY\n    death_year,\n    age_range,\n    gender,\n    nationality,\n    marital_status_group\nORDER BY\n    death_count DESC LIMIT 1200",
+  "raw_question": "ما هي المؤشرات الديموغرافية للوفيات في المملكة من عام 2009 إلى عام 2017؟",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

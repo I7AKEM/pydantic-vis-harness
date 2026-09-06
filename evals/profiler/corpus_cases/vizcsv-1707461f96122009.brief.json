@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH living_saudis AS (SELECT * FROM estishraf_llm_demographics_impala WHERE person_type = 'Saudi' AND (person_status = 'صالح' OR death_date IS NULL)), gender_counts AS (SELECT COUNT(*) AS total_saudis, SUM(CASE WHEN gender = 'M' THEN 1 ELSE 0 END) AS male_count FROM living_saudis) SELECT (male_count / CAST(total_saudis AS DOUBLE)) * 100 AS male_percentage FROM gender_counts LIMIT 100",
+  "raw_question": "كم نسبة الذكور من السعوديين؟",
+  "suggested_chart_type": "indicator|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

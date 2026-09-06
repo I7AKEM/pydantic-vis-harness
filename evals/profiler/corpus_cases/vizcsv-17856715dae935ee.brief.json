@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT d.id, d.gender, w.wealth_level \nFROM estishraf_llm_demographics_impala d\nJOIN estishraf_llm_wealth_index w ON d.id = w.head_of_household_id\nWHERE d.person_status = 'صالح' \nAND d.gender = 'F'\nAND d.death_date IS NULL LIMIT 1200",
+  "raw_question": "ما هو توزيع مستويات الثروة للأسر التي تعولها نساء حالياً؟ رد كجدول: \"المستوى: (الاسم) - العدد: (ا...",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

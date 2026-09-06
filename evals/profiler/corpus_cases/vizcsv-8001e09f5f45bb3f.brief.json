@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH population_stats AS (SELECT COUNT(DISTINCT id, dependent_seq_no) AS total_population, SUM(CASE WHEN age < 15 THEN 1 ELSE 0 END) AS under_15, SUM(CASE WHEN age BETWEEN 15 AND 30 THEN 1 ELSE 0 END) AS age_15_30, SUM(CASE WHEN age BETWEEN 31 AND 45 THEN 1 ELSE 0 END) AS age_31_45, SUM(CASE WHEN age BETWEEN 46 AND 60 THEN 1 ELSE 0 END) AS age_46_60, SUM(CASE WHEN age > 60 THEN 1 ELSE 0 END) AS over_60 FROM estishraf_llm_historical_population_impala WHERE snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND is_in_population = TRUE AND NOT age IS NULL AND age <= 100) SELECT under_15, age_15_30, age_31_45, age_46_60, over_60, ROUND((under_15 / total_population) * 100, 2) AS under_15_pct, ROUND((age_15_30 / total_population) * 100, 2) AS age_15_30_pct, ROUND((age_31_45 / total_population) * 100, 2) AS age_31_45_pct, ROUND((age_46_60 / total_population) * 100, 2) AS age_46_60_pct, ROUND((over_60 / total_population) * 100, 2) AS over_60_pct, total_population FROM population_stats LIMIT 1200",
+  "raw_question": "تقرير عن السكان",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

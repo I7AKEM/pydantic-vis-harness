@@ -1,0 +1,13 @@
+{
+  "source": "insightor",
+  "query": "SELECT hl.region, COUNT(DISTINCT CASE WHEN hp.gender = 'M' AND hp.is_in_population = true THEN hp.id END) AS male_count, COUNT(DISTINCT CASE WHEN hp.is_in_population = true THEN hp.id END) AS total_count, ROUND((COUNT(DISTINCT CASE WHEN hp.gender = 'M' AND hp.is_in_population = true THEN hp.id END) * 100.0 / COUNT(DISTINCT CASE WHEN hp.is_in_population = true THEN hp.id END)), 2) AS male_percentage FROM estishraf_llm_historical_population_impala hp JOIN estishraf_llm_home_location hl ON hp.id = hl.id WHERE hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala) AND hp.is_in_population = true AND hl.region IS NOT NULL AND Trim( hl.region ) != '' GROUP BY hl.region ORDER BY hl.region LIMIT 1200",
+  "raw_question": "نسبة الذكور حسب المنطقة",
+  "intent": "compare",
+  "suggested_chart_type": "bar|horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

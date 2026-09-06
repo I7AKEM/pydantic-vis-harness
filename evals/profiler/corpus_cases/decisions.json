@@ -1,0 +1,41 @@
+{
+ "rules": [
+  "Named levels with a natural order (Poor, Lower Middle, Middle, Upper Middle, Rich) are ordinal even without digits.",
+  "Place names, coordinates, and geometry are geography, never category. This also applies to the hand-made cases.",
+  "A column meant to hold coordinates stays geography when its values are dirty; data quality belongs in warnings.",
+  "Names that label the groups being charted (establishments, job titles) are category; identifier is for keys."
+ ],
+ "adjudicated": {
+  "vizcsv-0fe330ac5ea83793": {
+   "wealth_level": "ordinal"
+  },
+  "vizcsv-17856715dae935ee": {
+   "wealth_level": "ordinal"
+  },
+  "vizcsv-51f1beafa3531994": {
+   "wealth_level": "ordinal"
+  },
+  "vizcsv-89e78ba95653cdac": {
+   "region": "geography"
+  },
+  "vizcsv-a16d879b63feb1bc": {
+   "store_latitude": "geography",
+   "store_longitude": "geography"
+  },
+  "vizcsv-a546008463a38f39": {
+   "standardized_establishment": "category"
+  },
+  "vizcsv-ae315d3da67a2d11": {
+   "city": "geography",
+   "latitude": "geography",
+   "longitude": "geography"
+  },
+  "vizcsv-ed2d9d4b2f49d899": {
+   "region": "geography"
+  },
+  "vizcsv-ffcc0df19d7c2f61": {
+   "job_title": "category"
+  }
+ },
+ "provenance": "Roles where Sonnet 4.6 and GPT-5.4 mini agreed were accepted (183 of 195 columns); the 12 disagreements were decided by the rules above. vizcsv-45cb123b948dd498 has GPT-5.4 mini's labels only because Sonnet exceeded the 90 s profiling timeout twice on its 19 columns."
+}

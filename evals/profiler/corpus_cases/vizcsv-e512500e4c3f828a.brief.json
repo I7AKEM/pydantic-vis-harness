@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT hl.district, AVG(hp.age) as avg_age\nFROM estishraf_llm_historical_population_impala hp\nJOIN estishraf_llm_home_location hl ON hp.id = hl.id\nWHERE hp.snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n  AND hl.city = 'الرياض'\n  AND hp.is_in_population = TRUE\n  AND hl.district IS NOT NULL \n  AND hl.district NOT IN ('خارج حدود الاحياء', 'بدون اسم')\nGROUP BY hl.district\nORDER BY avg_age DESC\nLIMIT 1",
+  "raw_question": "بعد حساب متوسط الاعمار لسكان جميع احياء الرياض حسب احدث اسناد، ما هو الحي الاكبر سنًا؟",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

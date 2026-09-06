@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT customer_city FROM estishraf_llm_delivery_orders_information LIMIT 1000",
+  "raw_question": "كم سكان المملكة؟",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

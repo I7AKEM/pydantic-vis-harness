@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH MarriedMen AS (\n  SELECT \n    hl.region,\n    COUNT(DISTINCT d.id) AS total_married_men,\n    COUNT(DISTINCT CASE WHEN d.marital_status = 'متزوج' THEN d.id END) AS married_to_one,\n    COUNT(DISTINCT CASE WHEN d.marital_status = 'زوجتين' THEN d.id END) AS married_to_two_or_more\n  FROM estishraf_llm_demographics_impala d\n  JOIN estishraf_llm_home_location hl ON d.id = hl.id\n  WHERE d.person_status = 'صالح'\n    AND d.gender = 'M'\n    AND d.marital_status IN ('متزوج', 'زوجتين')\n    AND TRIM(hl.region) != ''\n    AND hl.district IS NOT NULL \n    AND hl.district NOT IN ('خارج حدود الاحياء', 'بدون اسم')\n    AND hl.city != 'nan'\n  GROUP BY hl.region\n),\nMarriageRatio AS (\n  SELECT \n    region,\n    total_married_men,\n    married_to_one,\n    married_to_two_or_more,\n    (married_to_two_or_more * 100.0 / NULLIF(total_married_men, 0)) AS polygamy_ratio\n  FROM MarriedMen\n)\nSELECT \n  region AS Region,\n  ROUND(polygamy_ratio, 2) AS Percentage\nFROM MarriageRatio\nORDER BY polygamy_ratio DESC LIMIT 20000",
+  "raw_question": "رتب مناطق المملكة من الاعلى الى الاقل حسب نسبة الرجال المتزوجين أكثر زوجة الى اجمالي الرجال المتز...",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

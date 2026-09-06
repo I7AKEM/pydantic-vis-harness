@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT customer_city AS city, price, app_name, customer_latitude AS latitude, customer_longitude AS longitude FROM estishraf_llm_delivery_orders_information WHERE customer_latitude IS NOT NULL AND customer_longitude IS NOT NULL LIMIT 1000",
+  "raw_question": "عطني خريطة لمسارات طلبات التوصيل مع المدينة والسعر و اسم التطبيق من الجدول estishraf_llm_delivery...",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

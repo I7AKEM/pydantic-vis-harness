@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH TotalArabicGraduates AS (SELECT COUNT(DISTINCT id) AS total_graduates FROM estishraf_llm_university_graduates_impala WHERE major_name = 'اللغة العربية' AND qualification IN ('بكالوريوس', 'ماجستير', 'دكتوراه', 'زمالة') AND YEAR(graduation_date) BETWEEN 2021 AND 2025 AND NOT graduation_date IS NULL), EmployedArabicGraduates AS (SELECT COUNT(DISTINCT g.id) AS employed_within_year_salary FROM estishraf_llm_university_graduates_impala AS g INNER JOIN estishraf_llm_jobs_info_v3_impala AS j ON g.id = j.id WHERE g.major_name = 'اللغة العربية' AND g.qualification IN ('بكالوريوس', 'ماجستير', 'دكتوراه', 'زمالة') AND YEAR(g.graduation_date) BETWEEN 2021 AND 2025 AND NOT g.graduation_date IS NULL AND j.job_start_date BETWEEN g.graduation_date AND DATE_ADD(g.graduation_date, 365) AND j.total_wage > 6000) SELECT total_graduates, employed_within_year_salary, ROUND(employed_within_year_salary / total_graduates * 100.0, 2) AS percentage FROM EmployedArabicGraduates CROSS JOIN TotalArabicGraduates LIMIT 1200",
+  "raw_question": "نسبة توظيف خريجي اللغة العربية خلال سنة من التخرج",
+  "suggested_chart_type": "indicator|table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

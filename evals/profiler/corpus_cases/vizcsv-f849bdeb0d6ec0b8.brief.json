@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT DISTINCT municipality FROM estishraf_llm_home_location WHERE city = 'الرياض' ORDER BY municipality LIMIT 1200",
+  "raw_question": "عدد سكان حي السويدي بالرياض",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

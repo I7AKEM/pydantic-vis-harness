@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT control_number, sequence_number, violator_id, status_description, gdate_happened, gdate_paid, original_fine, actual_fine, is_discounted, violation_type_description, vehicle_make, vehicle_model, district, city, region\nFROM estishraf_llm_traffic_violation\nWHERE city = 'الرياض'\nORDER BY gdate_happened DESC\nLIMIT 1000",
+  "raw_question": "عطني جدول اخر الف مخالفة مرورية في مدينة الرياض",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

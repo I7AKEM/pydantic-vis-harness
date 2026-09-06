@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH ActiveHCMJobs AS (SELECT REGEXP_REPLACE(TRIM(employer_name), ' [0-9]+$', '') AS standardized_establishment, total_wage AS effective_wage FROM estishraf_llm_jobs_info_v3_impala    WHERE  job_sector = 'حكومي' AND is_active_job = 1 AND total_wage BETWEEN 100 AND 600000), WageSummary AS (SELECT standardized_establishment, AVG(effective_wage) AS avg_wage FROM ActiveHCMJobs GROUP BY standardized_establishment    HAVING COUNT(effective_wage) >= 10) SELECT * FROM WageSummary ORDER BY avg_wage DESC LIMIT 100",
+  "raw_question": "ماهي أعلى الجهات حكومية بمتوسط الراتب؟",
+  "suggested_chart_type": "horizontal_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

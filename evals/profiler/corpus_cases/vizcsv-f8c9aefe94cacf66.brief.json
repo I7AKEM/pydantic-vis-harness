@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_snapshot AS (\n    SELECT MAX(snapshot) AS max_snap\n    FROM estishraf_llm_historical_population_impala\n),\nhousehold_counts AS (\n    SELECT \n        hl.region,\n        hp.person_type,\n        hp.id AS member_id,\n        d.head_of_household_id\n    FROM estishraf_llm_historical_population_impala hp\n    JOIN estishraf_llm_home_location hl ON hp.id = hl.id\n    JOIN estishraf_llm_demographics_impala d ON hp.id = d.id\n    CROSS JOIN latest_snapshot ls\n    WHERE hp.snapshot = ls.max_snap\n      AND hp.is_in_population = TRUE\n      AND hl.region IS NOT NULL\n),\nfamily_sizes AS (\n    SELECT \n        region,\n        person_type,\n        head_of_household_id,\n        COUNT(member_id) AS family_size\n    FROM household_counts\n    WHERE head_of_household_id IS NOT NULL\n    GROUP BY region, person_type, head_of_household_id\n)\nSELECT \n    region,\n    person_type,\n    ROUND(AVG(family_size), 2) AS avg_family_size\nFROM family_sizes\nGROUP BY region, person_type\nORDER BY region, person_type LIMIT 1200",
+  "raw_question": "عطني تقرير عن السكان",
+  "suggested_chart_type": "grouped_bar",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

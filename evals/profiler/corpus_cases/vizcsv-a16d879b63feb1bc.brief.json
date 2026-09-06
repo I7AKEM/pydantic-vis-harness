@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "SELECT customer_latitude, customer_longitude, store_latitude, store_longitude FROM estishraf_llm_delivery_orders_information WHERE customer_latitude IS NOT NULL AND customer_longitude IS NOT NULL AND store_latitude IS NOT NULL AND store_longitude IS NOT NULL LIMIT 1200",
+  "raw_question": "عطني خريطة لمسارات طلبات التوصيل في المملكة",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

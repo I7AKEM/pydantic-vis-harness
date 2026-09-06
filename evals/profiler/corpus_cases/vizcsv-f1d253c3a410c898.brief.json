@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH latest_population AS (\n    SELECT id, age\n    FROM estishraf_llm_historical_population_impala\n    WHERE snapshot = (SELECT MAX(snapshot) FROM estishraf_llm_historical_population_impala)\n      AND is_in_population = TRUE\n),\njoined_data AS (\n    SELECT lp.id, lp.age, hl.region\n    FROM latest_population lp\n    JOIN estishraf_llm_home_location hl ON lp.id = hl.id\n    WHERE hl.region IN ('منطقة الباحة', 'منطقة الجوف', 'منطقة الرياض', 'منطقة تبوك', 'منطقة جازان', 'منطقة مكة المكرمة', 'منطقة نجران')\n      AND TRIM(hl.region) != '' AND hl.region IS NOT NULL\n),\ninput AS (\n    SELECT region, ROUND(AVG(age), 2) AS average_age\n    FROM joined_data\n    GROUP BY region\n    ORDER BY average_age DESC\n)\nSELECT input.*, poly.wkt FROM input JOIN ESTISHRAF_LLM_KSA_Regions_Polygons poly ON input.region = poly.region",
+  "raw_question": "عطني معدل الاعمار للمناطق على خريطة",
+  "suggested_chart_type": "map",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

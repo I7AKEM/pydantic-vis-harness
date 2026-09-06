@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH demographics_base AS (SELECT id, gender, head_of_household_id FROM estishraf_llm_demographics_impala WHERE person_status = 'صالح' AND death_date IS NULL), gender_totals AS (SELECT SUM(CASE WHEN gender = 'F' THEN 1 ELSE 0 END) AS total_females, SUM(CASE WHEN gender = 'M' THEN 1 ELSE 0 END) AS total_males FROM demographics_base), wealthy_counts AS (SELECT SUM(CASE WHEN d.gender = 'F' THEN 1 ELSE 0 END) AS wealthy_females, SUM(CASE WHEN d.gender = 'M' THEN 1 ELSE 0 END) AS wealthy_males FROM demographics_base AS d JOIN estishraf_llm_wealth_index AS w ON d.head_of_household_id = w.head_of_household_id WHERE w.wealth_level = 'Rich') SELECT gt.total_females, gt.total_males, wc.wealthy_females, wc.wealthy_males, ROUND(wc.wealthy_females * 100.0 / gt.total_females, 2) AS wealthy_female_pct, ROUND(wc.wealthy_males * 100.0 / gt.total_males, 2) AS wealthy_male_pct FROM gender_totals AS gt CROSS JOIN wealthy_counts AS wc LIMIT 1200",
+  "raw_question": "قارن بين نسبة النساء الأثرياء الى اجمالي عدد النساء ونسبة الذكور الأثرياء الى اجمالي عدد الذكور ح...",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

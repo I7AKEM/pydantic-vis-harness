@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH PopulationStats AS (\n    SELECT COUNT(*) AS total_population,\n           SUM(CASE WHEN age BETWEEN 0 AND 14 THEN 1 ELSE 0 END) AS children_count,\n           SUM(CASE WHEN age >= 65 THEN 1 ELSE 0 END) AS seniors_count\n    FROM estishraf_llm_historical_population_impala\n    WHERE snapshot = (select max(snapshot) from estishraf_llm_historical_population_impala)\n      AND is_in_population = TRUE\n)\nSELECT ROUND((children_count / NULLIF(total_population, 0)) * 100, 2) AS children_percentage,\n       ROUND((seniors_count / NULLIF(total_population, 0)) * 100, 2) AS seniors_percentage\nFROM PopulationStats\nLIMIT 100;",
+  "raw_question": "ما نسبة الأطفال (0–14 سنة) وكبار السن (65+) في التركيبة السكانية؟",
+  "suggested_chart_type": "table",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}

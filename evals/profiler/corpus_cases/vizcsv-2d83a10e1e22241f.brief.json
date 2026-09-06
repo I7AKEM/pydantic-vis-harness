@@ -1,0 +1,12 @@
+{
+  "source": "insightor",
+  "query": "WITH filtered_graduates AS (SELECT gpa FROM estishraf_llm_university_graduates_impala WHERE TRIM(major_classification_parent_name) LIKE '%حاسب%' AND gpa IS NOT NULL) SELECT AVG(gpa) AS average_cumulative_gpa FROM filtered_graduates where gpa between 1 and 5 LIMIT 1200;",
+  "raw_question": "ما متوسط المعدل التراكمي (GPA) عند التخرج لطلاب الحاسب؟",
+  "suggested_chart_type": "indicator",
+  "column_descriptions": {},
+  "units": {},
+  "code_meanings": {},
+  "caveats": [],
+  "brand_colors": [],
+  "producer_agent": "insightor"
+}
