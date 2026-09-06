@@ -11,7 +11,8 @@ profiler as the model for every later agent, plus the lead skeleton, the upload 
 - Values from oversized, WKT, and geometry-named columns never reach a model.
 - Failures the model cannot fix are ToolFailed. Fixable mistakes are ModelRetry, once.
 - Tests use fake models through agent.override and never hand-build RunContext.
-- Preserve the CodeMode, Advisor, and TemporalDurability capabilities on the lead.
+- Preserve the Advisor and TemporalDurability capabilities on the lead. CodeMode was removed after
+  Phase 1 because no lead tool runs inside its sandbox yet; bring it back when the analyst's query tool does.
 - Do not add chart rendering, a planner, additional agents, Docker, or a generic orchestration layer.
 
 Run with:

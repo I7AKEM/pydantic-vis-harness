@@ -53,3 +53,4 @@ Cost per profile was not measured by the runner; add token accounting to the rep
 - Resolve the place-name versus category expectation for columns such as `region`.
 - Shield the shared profiling task from a joining caller's cancellation, and credit a joining caller's usage.
 - Lift model-declared brief conflicts into the profile's warnings.
+- CodeMode was removed from the lead after Phase 1: both lead tools were excluded from its sandbox, so `run_code` was a scratchpad costing a model turn. Reintroduce it when the analyst's query tool runs inside the sandbox.
