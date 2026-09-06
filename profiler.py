@@ -67,6 +67,7 @@ def create_profiler(model: str) -> Agent[ProfilerInput, SemanticProfile]:
         name="profiler",
         deps_type=ProfilerInput,
         output_type=SemanticProfile,
+        retries={"output": 2},
         instructions=PROFILER_INSTRUCTIONS,
     )
 

@@ -2,7 +2,8 @@ import asyncio
 
 import pytest
 from pydantic_ai import ToolFailed, capture_run_messages
-from pydantic_ai.messages import ToolCallPart
+from pydantic_ai.messages import ModelResponse, ToolCallPart
+from pydantic_ai.models.function import FunctionModel
 from pydantic_ai.models.test import TestModel
 from pydantic_ai.usage import RunUsage
 
@@ -146,6 +147,24 @@ def test_review_profile_tool_is_available_to_the_model(store, profiler):
             run(store, profiler, source.dataset_id)
     calls = [p.tool_name for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
     assert "review_profile" in calls
+
+
+def test_structural_retry_does_not_consume_the_check_send_back(store, profiler):
+    source = store.save_upload("sales.csv", SALES)
+    attempts = []
+
+    def drive(messages, info):
+        attempts.append(len(messages))
+        names = ["invented"] if len(attempts) == 1 else source.headers
+        args = semantic_output(names, {"region": "measure"})
+        return ModelResponse(parts=[ToolCallPart(tool_name="final_result", args=args)])
+
+    usage = RunUsage()
+    with profiler.override(model=FunctionModel(drive)):
+        result = run(store, profiler, source.dataset_id, usage=usage)
+    assert result.status == "complete"
+    assert len(attempts) == 3
+    assert [c.check for c in result.review if not c.passed] == ["measure_is_numeric"]
 
 
 def test_invalid_semantic_columns_save_partial_then_retry(store, profiler):
