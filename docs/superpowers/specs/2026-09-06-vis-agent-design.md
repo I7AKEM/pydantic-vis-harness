@@ -76,7 +76,7 @@ Every tool is listed here so the full picture exists now. Each is built in the p
 
 | Tool | What it does | Done by | Input | Output |
 |---|---|---|---|---|
-| profile_csv | Import the file, measure every column by code, interpret meaning with the model, save the profile. Exists today. | Code for facts, model for meaning | Dataset ID, optional brief | Dataset profile |
+| profile_csv | Import the file into DuckDB, measure every column with fixed DuckDB queries, interpret meaning with the model, save the profile. Exists today. | DuckDB for every statistic, code only to issue the queries and validate the results, model for meaning | Dataset ID, optional brief | Dataset profile |
 | review_profile | Check the interpretation against the measurements and the brief. Flag conflicts. Send the interpretation back for a redo when a check fails. | Code checks, then a model self-check | A profile | The same profile with warnings and conflicts filled in, or a redo request |
 
 ### Data analyst
@@ -355,7 +355,7 @@ Goal: make the profiler the model for every agent that follows, and produce what
 In scope:
 
 - Accept an optional brief. Use its hints for interpretation. Flag conflicts with the measurements as warnings.
-- Add measurement levels per column: nominal, ordinal, interval, discrete, continuous, time, geographic. A column may carry several. Detect ordinal patterns, boolean vocabularies, coded values such as F and M with their likely meanings, and geography.
+- Add measurement levels per column: nominal, ordinal, interval, discrete, continuous, time, geographic. A column may carry several. Detect ordinal patterns, boolean vocabularies, coded values such as F and M with their likely meanings, and geography. Every detection that is a measurement, such as distinct counts, value patterns, coordinate ranges, and integer-ness, is a DuckDB query. Python only assigns the labels from the query results. The semantic stage stays as it is: the model interprets the measurements and never produces one.
 - Add review_profile. Code checks first, then a model self-check against the measurements and the brief. A failed check sends the interpretation back once.
 - Start profiling automatically when an upload finishes.
 - Make the profiler callable on its own: from the chat as today, from the terminal, and from another program that passes a brief.
