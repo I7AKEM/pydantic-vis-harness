@@ -1,11 +1,39 @@
-"""The data contracts shared by storage, the profiler, and the chat agent."""
+"""The data contracts shared by storage, the profiler, the lead, and the API."""
 
+import hashlib
 from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, FiniteFloat
 
-PROFILE_VERSION = "1.2"
+PROFILE_VERSION = "2.0"
+
+MeasurementLevel = Literal["nominal", "ordinal", "interval", "discrete", "continuous", "time", "geographic"]
+GeographicRole = Literal["latitude", "longitude", "wkt", "place_name"]
+Intent = Literal["compare", "trend", "rank", "distribution", "composition", "relation", "share"]
+
+
+class DataBrief(BaseModel):
+    """Context that travels with a dataset. Hints for interpretation, never facts."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    source: str | None = None
+    query: str | None = None
+    pulled_at: datetime | None = None
+    raw_question: str | None = None
+    enriched_question: str | None = None
+    intent: Intent | None = None
+    suggested_chart_type: str | None = None
+    column_descriptions: dict[str, str] = Field(default_factory=dict)
+    units: dict[str, str] = Field(default_factory=dict)
+    code_meanings: dict[str, dict[str, str]] = Field(default_factory=dict)
+    caveats: list[str] = Field(default_factory=list)
+    brand_colors: list[str] = Field(default_factory=list)
+    producer_agent: str | None = None
+
+    def fingerprint(self) -> str:
+        return hashlib.sha256(self.model_dump_json(exclude_none=True).encode()).hexdigest()[:16]
 
 
 class UploadedDataset(BaseModel):
@@ -14,6 +42,16 @@ class UploadedDataset(BaseModel):
     sha256: str
     headers: list[str]
     uploaded_at: datetime
+    brief: DataBrief | None = None
+
+
+class DatasetSummary(BaseModel):
+    dataset_id: str
+    filename: str
+    uploaded_at: datetime
+    has_brief: bool
+    profile_status: Literal["none", "partial", "complete"]
+    row_count: int | None = None
 
 
 class ValueCount(BaseModel):
@@ -46,6 +84,13 @@ class ColumnStatistics(BaseModel):
     numeric: NumericStatistics | None = None
     earliest: str | None = None
     latest: str | None = None
+    # Measurement labels. Every one is assigned from a DuckDB query result.
+    measurement_levels: list[MeasurementLevel] = Field(default_factory=list)
+    integer_valued: bool | None = None
+    boolean_vocabulary: list[str] | None = None
+    ordinal_pattern: str | None = None
+    geographic_role: GeographicRole | None = None
+    codes: list[str] | None = None
 
 
 class DeterministicProfile(BaseModel):
@@ -62,11 +107,20 @@ class ColumnSemantics(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     name: str
-    meaning: str | None
-    role: Literal["identifier", "measure", "category", "time", "boolean", "text", "unknown"]
-    unit: str | None
+    meaning: str | None = Field(description="What the column measures or names, in plain words.")
+    role: Literal["identifier", "measure", "category", "ordinal", "time", "boolean", "geography", "text", "unknown"] = Field(
+        description="identifier: unique key. measure: a number to aggregate. category: a label. ordinal: an ordered label such as Q1. "
+                    "time: a date or time. boolean: yes or no. geography: coordinates, WKT, or place names. text: free text."
+    )
+    unit: str | None = Field(description="Unit of a measure, such as USD or kg. Null for anything that is not a measure.")
     confidence: Literal["low", "medium", "high"]
-    evidence: str
+    evidence: str = Field(description="The specific measurements or sample values this interpretation rests on.")
+    code_meanings: dict[str, str] | None = Field(
+        default=None, description="For coded values such as F and M: each code and its meaning, when known."
+    )
+    brief_conflict: str | None = Field(
+        default=None, description="Set when a hint in the brief contradicts the measurements. Say what the brief claimed and what the data shows."
+    )
 
 
 class SemanticProfile(BaseModel):
@@ -78,6 +132,14 @@ class SemanticProfile(BaseModel):
     questions: list[str] = Field(default_factory=list)
 
 
+class ProfileCheck(BaseModel):
+    column: str | None
+    check: str
+    severity: Literal["error", "warning"]
+    passed: bool
+    message: str
+
+
 class DatasetProfile(BaseModel):
     schema_version: str = PROFILE_VERSION
     source: UploadedDataset
@@ -85,5 +147,7 @@ class DatasetProfile(BaseModel):
     deterministic: DeterministicProfile
     semantic: SemanticProfile | None = None
     semantic_model: str | None = None
+    brief_fingerprint: str | None = None
+    review: list[ProfileCheck] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
     created_at: datetime

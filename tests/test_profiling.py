@@ -9,7 +9,7 @@ from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
 from dataset_store import DatasetStore
-from profile_models import DatasetProfile
+from profile_models import PROFILE_VERSION, DatasetProfile
 from profiler import AppDeps, compute_statistics, create_semantic_profiler, profile_csv
 from uploads import add_upload_routes
 
@@ -157,7 +157,7 @@ def test_wkt_stays_in_storage_and_old_profiles_are_recomputed(store):
         })
         store.save_profile(legacy)
         refreshed = asyncio.run(profile_csv(ctx, source.dataset_id))
-    assert refreshed.schema_version == "1.2"
+    assert refreshed.schema_version == PROFILE_VERSION
     assert "MULTIPOLYGON" not in refreshed.model_dump_json()
 
 
