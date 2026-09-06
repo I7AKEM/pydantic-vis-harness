@@ -401,7 +401,9 @@ Maps with a base map, the insight finder, multiple datasets, dashboards, other f
 
 - Fixed step order in code. Models decide inside steps only.
 - The model writes the query. The database computes the numbers. A data analyst agent owns that step.
+- One syntax for every chart and every map. The model writes only that syntax, in its text form. Code parses it to JSON and validates it. Each renderer translates that JSON into its own library's format. No model ever writes ApexCharts, Vega-Lite, Plotly, or map configuration directly. A renderer that cannot honor a feature reports it before rendering.
 - The chart spec is GPT-Vis's format plus our extensions. GPT-Vis on a server is the first renderer, Vega-Lite the second, Plotly third, MapLibre for maps. Mapbox not used. ApexCharts optional after license review.
+- Data enters the spec by binding result columns to chart roles. Code inserts the rows. The model never retypes values.
 - One chart catalogue file feeds both the designer's prompt and the code checks.
 - Every model output is validated against a schema before it is used. Every chart is checked before render and judged after render.
 - The reviewer is a full, independent agent, judges the rendered picture, checks numbers and label pairing, and sees the rendering compromises.
