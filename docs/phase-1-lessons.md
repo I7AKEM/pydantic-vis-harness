@@ -100,3 +100,26 @@ count never mattered: a 3.66 million row file produced a 2,366 character prompt 
 `pytz` was added because DuckDB needs it to return timezone-aware timestamps (7 files failed without it), and columns
 past the first 40 now send counts and types only, so a 100-column upload cannot triple the prompt. The 134 MB file
 is over the 20 MB upload limit and never reaches the profiler.
+
+## Corpus evaluation: fifty real files (2026-09-07)
+
+`evals/profiler/corpus_cases` holds fifty CSVs from the Insightor corpus, chosen for spread over shapes, row counts,
+edge cases, and Arabic content, each with a brief built from its sidecar's question, SQL, and chart type. Expected
+roles: Sonnet 4.6 and GPT-5.4 mini agreed on 183 of 195 columns; the 12 disagreements and 6 agreed labels that broke
+the place-name rule were decided by the rules in `decisions.json`. Run with
+`uv run python -m evals.profiler.run --cases corpus_cases --mismatches`. Scores below are against the final
+expectations; time is seconds per profile with six profiles in flight.
+
+| Model | Role accuracy | Columns wrong | Time | Notes |
+|---|---|---|---|---|
+| google/gemma-4-31b-it:nitro (default) | 0.979 | 4 of 195 | 4.6 s | open weights, fastest host |
+| qwen/qwen3.8-27b:nitro | 0.908 | 27 of 195 | 17.6 s | open weights, fastest host |
+| mistralai/mistral-small-2603 | 0.808 | 35 of 195 | 12.4 s | open weights, Mistral's host |
+| openai/gpt-5.4-mini | 0.900 | 14 of 195 | 7.3 s | closed; one of the two label sources |
+
+What each model gets wrong, from the mismatch lists: Gemma flips ordered levels named in words (Poor to Rich) to
+category and a 1 to 10 sequence to measure. GPT-5.4 mini and Mistral label place names as plain categories, which is
+most of their loss, and both call coordinates stored as text just text. Every model's own place-name confusion is
+avoidable: the deterministic place-name hint only recognises a few English words, so widening it to municipality,
+port, district, and the Arabic equivalents would give every model the same evidence. Small models also vary between
+runs on borderline columns; Gemma's two runs differed on three columns.
