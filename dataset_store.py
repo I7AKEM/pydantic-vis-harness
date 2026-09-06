@@ -12,19 +12,23 @@ from uuid import uuid4
 
 import duckdb
 
-from profile_models import DatasetProfile, UploadedDataset
+from profile_models import DataBrief, DatasetProfile, DatasetSummary, UploadedDataset
 
 
 def quote_identifier(name: str) -> str:
     return '"' + name.replace('"', '""') + '"'
 
 
+class DatasetNotFound(ValueError):
+    """The ID is well formed but no upload has it."""
+
+
 class DatasetStore:
-    def __init__(self, directory: Path, max_upload_bytes: int = 20 * 1024 * 1024):
+    def __init__(self, directory: Path, max_upload_bytes: int = 20 * 1024 * 1024, database: Path | None = None):
         self.directory = directory.resolve()
         self.uploads = self.directory / "uploads"
         self.uploads.mkdir(parents=True, exist_ok=True)
-        self.database = self.directory / "datasets.duckdb"
+        self.database = (database or self.directory / "datasets.duckdb").resolve()
         self.max_upload_bytes = max_upload_bytes
         self._lock = RLock()
         with self.connect() as connection:
@@ -45,7 +49,7 @@ class DatasetStore:
             raise ValueError("Invalid file ID. Use the ID returned by the upload page.")
         return dataset_id
 
-    def save_upload(self, filename: str, content: bytes) -> UploadedDataset:
+    def save_upload(self, filename: str, content: bytes, brief: DataBrief | None = None) -> UploadedDataset:
         if Path(filename).suffix.lower() != ".csv":
             raise ValueError("Choose a .csv file.")
         if not content or not content.strip():
@@ -77,6 +81,7 @@ class DatasetStore:
             sha256=hashlib.sha256(content).hexdigest(),
             headers=headers,
             uploaded_at=datetime.now(timezone.utc),
+            brief=brief,
         )
         path = self.uploads / f"{dataset.dataset_id}.csv"
         try:
@@ -96,8 +101,36 @@ class DatasetStore:
         with self.connect() as connection:
             row = connection.execute("SELECT metadata FROM datasets WHERE id = ?", [dataset_id]).fetchone()
         if row is None:
-            raise ValueError("File ID not found. Upload the CSV first.")
+            raise DatasetNotFound("File ID not found. Upload the CSV first.")
         return UploadedDataset.model_validate_json(row[0])
+
+    def update_brief(self, dataset_id: str, brief: DataBrief | None) -> UploadedDataset:
+        dataset = self.get_upload(dataset_id).model_copy(update={"brief": brief})
+        with self.connect() as connection:
+            connection.execute(
+                "UPDATE datasets SET metadata = ? WHERE id = ?", [dataset.model_dump_json(), dataset_id]
+            )
+        return dataset
+
+    def list_datasets(self) -> list[DatasetSummary]:
+        with self.connect() as connection:
+            rows = connection.execute(
+                "SELECT metadata, json_extract_string(profile, '$.status'), "
+                "CAST(json_extract(profile, '$.deterministic.row_count') AS INTEGER) FROM datasets "
+                "ORDER BY json_extract_string(metadata, '$.uploaded_at') DESC"
+            ).fetchall()
+        summaries = []
+        for metadata, status, row_count in rows:
+            dataset = UploadedDataset.model_validate_json(metadata)
+            summaries.append(DatasetSummary(
+                dataset_id=dataset.dataset_id,
+                filename=dataset.filename,
+                uploaded_at=dataset.uploaded_at,
+                has_brief=dataset.brief is not None,
+                profile_status=status or "none",
+                row_count=row_count,
+            ))
+        return summaries
 
     def import_csv(self, dataset_id: str) -> UploadedDataset:
         dataset = self.get_upload(dataset_id)
