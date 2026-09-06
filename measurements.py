@@ -89,6 +89,20 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
             elif distinct_count == 1:
                 warnings.append(f"{name}: only one distinct non-null value.")
 
+            # Decide from the entire column, before retrieving any values for a model.
+            if stats.values_omitted:
+                if physical_type.startswith(TIME_TYPES):
+                    stats.measurement_levels = ["time"]
+                elif physical_type.startswith(NUMERIC_TYPES):
+                    stats.measurement_levels = ["interval"]
+                else:
+                    stats.measurement_levels = ["nominal"]
+                    if geometry_name or wkt_count > 0:
+                        stats.geographic_role = "wkt"
+                        stats.measurement_levels.append("geographic")
+                columns.append(stats)
+                continue
+
             if physical_type.startswith(NUMERIC_TYPES):
                 _numeric_labels(connection, table, column, name, stats, row_count, null_count, warnings)
             elif physical_type.startswith(TIME_TYPES):
@@ -105,11 +119,6 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
                     stats.geographic_role = "place_name"
                 if stats.geographic_role is not None:
                     stats.measurement_levels.append("geographic")
-
-            # Decide from the entire column, before retrieving any values for a model.
-            if stats.values_omitted:
-                columns.append(stats)
-                continue
 
             if physical_type.startswith(TIME_TYPES):
                 earliest, latest = connection.execute(

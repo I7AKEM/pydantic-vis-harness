@@ -78,3 +78,12 @@ def test_wkt_content_and_geometry_names_are_omitted(store):
     assert columns["the_geom"].values_omitted
     assert columns["the_geom"].geographic_role == "wkt"
     assert not columns["region"].values_omitted
+
+
+def test_geometry_named_numeric_column_is_omitted_without_statistics(store):
+    columns = profile_of(store, "s.csv", b"district,shape_area\nA,12.5\nB,7.25\n")
+    assert columns["shape_area"].values_omitted
+    assert columns["shape_area"].numeric is None
+    assert columns["shape_area"].measurement_levels == ["interval"]
+    assert columns["shape_area"].geographic_role is None
+    assert not columns["district"].values_omitted
