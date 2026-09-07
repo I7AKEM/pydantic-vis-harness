@@ -141,9 +141,15 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
     return checks
 
 
-def summary_numbers_exist(summary: str, result: QueryResult) -> ProfileCheck:
-    """Every number written in the summary, in Western or Arabic-Indic digits, must exist in the result."""
+def summary_numbers_exist(summary: str, result: QueryResult, context: str = "") -> ProfileCheck:
+    """Every number written in the summary, in Western or Arabic-Indic digits, must exist in the result.
+
+    Numbers that also appear in the context (the question and the result's column names) are wording, not
+    claims: "under 15", "December 2025", "drivers over 25".
+    """
     candidates: set[float] = {float(result.row_count)}
+    for token in NUMBER.findall(context.translate(ARABIC_DIGITS)):
+        candidates.add(float(token.replace(",", "")))
     for row in result.rows:
         for value in row:
             if isinstance(value, bool) or value is None:

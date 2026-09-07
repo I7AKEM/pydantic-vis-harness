@@ -118,3 +118,6 @@ def test_summary_numbers_must_exist_in_the_result():
     assert summary_numbers_exist("الغرب يتصدر بمبلغ ٦٥ ريال أي ٦١٫٩٪ من الإجمالي عبر منطقتين.", result).passed
     check = summary_numbers_exist("West leads with 70 SAR.", result)
     assert not check.passed and "70" in check.message and check.severity == "error"
+    assert not summary_numbers_exist("Under 15, the West leads with 65 SAR.", result).passed
+    assert summary_numbers_exist("Under 15, the West leads with 65 SAR.", result, "What share is under 15?").passed
+    assert summary_numbers_exist("In December 2025 the West led with 65 SAR.", result, "violations December 2025").passed

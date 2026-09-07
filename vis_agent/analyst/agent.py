@@ -151,6 +151,12 @@ async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[Result
     return result
 
 
+def _context(deps: AnalystDeps) -> str:
+    """The question and the result's column names: numbers written there are wording, not claims."""
+    columns = deps.passed.result.columns if deps.passed else []
+    return " ".join([deps.prompt.question, *columns])
+
+
 def deliver_analysis(ctx: RunContext[AnalystDeps], summary: str, assumptions: list[str] | None = None) -> Analysis:
     """Deliver the answer: a two-sentence summary in the caller's language using only numbers from the result,
     and the assumptions you made. The last query that passed its checks is delivered with it.
@@ -159,7 +165,7 @@ def deliver_analysis(ctx: RunContext[AnalystDeps], summary: str, assumptions: li
     if deps.passed is None:
         raise ModelRetry("No query has passed its checks yet. Call run_query and fix every check with severity "
                          "error, or call ask_clarification when the columns cannot answer the question.")
-    check = summary_numbers_exist(summary, deps.passed.result)
+    check = summary_numbers_exist(summary, deps.passed.result, _context(deps))
     if not check.passed and deps.delivery_attempts == 0:
         deps.delivery_attempts += 1
         raise ModelRetry(check.message)
@@ -222,7 +228,7 @@ async def analyze_dataset(
     table = None
     if analysis is not None and deps.passed is not None:
         table = deps.passed.result
-        checks = [*table.checks, summary_numbers_exist(analysis.summary, table)]
+        checks = [*table.checks, summary_numbers_exist(analysis.summary, table, _context(deps))]
         warnings.extend(check.message for check in failed_checks(checks))
     return AnalysisReport(
         dataset_id=dataset_id, question=question, language=language,
