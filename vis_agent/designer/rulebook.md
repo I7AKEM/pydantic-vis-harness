@@ -41,9 +41,13 @@ Choosing when the rules cannot:
 - A table when nothing fits, when the caller asked for the numbers, or when the result is one number.
 - A scatter for a relation; a histogram for the distribution of raw values; a boxplot when groups are
   compared on their spread.
+- When recommend_charts rejects a bar or column for having too many categories, you may still write it
+  with sort value desc and limit 20: check_spec counts the categories after the limit.
 
 Filling the spec:
 - bind every role the chart needs to a result column by its exact name.
+- When the result holds a code column beside its label column (F beside Female), bind the label and
+  leave the code out; it is not a group.
 - title: in the caller's language; say what is shown, where, and when; no numbers.
 - description: one sentence saying what the picture shows, for a person who cannot see it.
 - language: ar for an Arabic caller, en otherwise.
