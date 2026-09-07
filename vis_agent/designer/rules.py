@@ -112,7 +112,7 @@ def s1_intent(entry, shape, binding, context):
 
 def s2_suggested(entry, shape, binding, context):
     if context.suggested and CATALOGUE.find(context.suggested) == entry:
-        return RuleResult("S2", 2, "This chart matches the suggested chart.", "")
+        return RuleResult("S2", 3, "This chart matches the suggested chart.", "")
 
 
 def s3_caution(entry, shape, binding, context):
@@ -191,7 +191,7 @@ def s13_one_number(entry, shape, binding, context):
 
 def s14_few_parts(entry, shape, binding, context):
     category = binding.get("category")
-    if entry.name == "treemap" and category and category.distinct <= 6:
+    if entry.name == "treemap" and category and category.distinct <= 7:
         return RuleResult("S14", -2, "few parts read better as a pie or a bar", "use a pie, a donut, or a bar")
 
 
@@ -255,8 +255,12 @@ def check_rules(
     if not spec.title or not spec.title.strip() or not spec.description or not spec.description.strip():
         fail("C8", "A title and a description are required.", "Write them")
     known = shape._label_values.get(category.name, set()) if category else set()
+    group = binding.get("group") if "group" in entry.roles else None
+    if group is not None:
+        known = known | shape._label_values.get(group.name, set())
     if any(label not in known for label in spec.emphasis):
-        fail("C9", "Every emphasised value must exist in the bound category.", "Fix the spelling")
+        target = "category or group" if group is not None else "category"
+        fail("C9", f"Every emphasised value must exist in the bound {target}.", "Fix the spelling")
     for rule in HARD_RULES:
         result = rule(entry, shape, binding, Context())
         if result is not None:

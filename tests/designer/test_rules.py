@@ -160,7 +160,7 @@ def test_s1_intent():
 
 
 def test_s2_suggested():
-    assert score(cities(), "bar", "S2", suggested="Horizontal Bar") == 2
+    assert score(cities(), "bar", "S2", suggested="Horizontal Bar") == 3
     assert score(cities(), "bar", "S2", suggested="missing") == 0
 
 
@@ -246,13 +246,13 @@ def test_s13_one_number():
 
 
 def test_s14_few_parts():
-    assert score(cities(6), "treemap", "S14") == -2
-    result = direct("S14", "treemap", cities(6))
+    assert score(cities(7), "treemap", "S14") == -2
+    result = direct("S14", "treemap", cities(7))
     assert result.explanation == "few parts read better as a pie or a bar"
     assert result.fix == "use a pie, a donut, or a bar"
-    assert score(cities(7), "treemap", "S14") == 0
-    assert direct("S14", "treemap", cities(7)) is None
-    assert direct("S14", "column", cities(6)) is None
+    assert score(cities(8), "treemap", "S14") == 0
+    assert direct("S14", "treemap", cities(8)) is None
+    assert direct("S14", "column", cities(7)) is None
 
 
 def test_c4_order():
@@ -304,6 +304,12 @@ def test_c9_emphasis():
     assert has(checked("column", emphasis=["Missing"]), "C9")
     assert not has(checked("column", emphasis=["City0"]), "C9")
     assert has(checked("table", emphasis=["City0"]), "C9")
+
+
+def test_c9_group_emphasis():
+    assert not checked("grouped_column", grouped(), emphasis=["F", "City0"])
+    assert has(checked("grouped_column", grouped(), emphasis=["Missing"]), "C9")
+    assert has(checked("column", grouped(), emphasis=["F"]), "C9")
 
 
 def test_c10_hard():
