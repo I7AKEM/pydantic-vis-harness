@@ -295,9 +295,11 @@ Profiles in an older format are recomputed.
 
 The analyst reads the profile, question, and brief. It writes one SELECT and describes each
 result column. DuckDB computes the answer. The model receives column facts and query results;
-the prompt contains no raw rows. The facts carry each column's measurement levels: a `hijri` column
-is bucketed as text (`substr` for the numeric forms, a `CASE` over month names) and never cast to a date,
-and an `arabic_digits` column is translated to Western digits before it is summed.
+the prompt contains no raw rows. The facts name the columns that carry the `hijri` or `arabic_digits`
+level, and only then the rules in `vis_agent/analyst/rulebook-localized.md` join the instructions for that
+run: a `hijri` column is bucketed as text (`substr` for the numeric forms, a `CASE` over month names) and
+never read as a Gregorian date, and an `arabic_digits` column is translated to Western digits before it
+is summed.
 
 Before running the SQL, code parses it. It allows one SELECT on the dataset's table and the
 query's own named subqueries (CTEs) only. It rejects other tables, schema-qualified tables,

@@ -200,6 +200,14 @@ qualifies); the analyst's rule prescribed text functions that fail on a DATE or 
 to text first); and the Hijri bounds were lexical (now reported only for one zero-padded numeric form, where
 text order is date order).
 
+The pre-merge analyst eval then caught a cost the scale set could not see: 64 to 65 of 69 on the branch
+against 68 on main the same day, with the misses moving between runs and three of them the model looping
+past its request budget. Removing the profiler's two new lines changed nothing (65); removing the analyst's
+Hijri and digit lines restored 67, the pre-phase level. Long SQL recipes in the always-on instructions cost
+ordinary questions, so those rules now reach the model per run only when a column carries one of the two
+levels, through a Pydantic AI instructions function, and the seeded cases were captured again under that
+arrangement.
+
 ## What changed
 
 - Evaluation: `corpus_tools` (select, seed, capture); the scale set under `evals/designer/agent/scale/`
@@ -208,8 +216,9 @@ text order is date order).
   dspy and hijridate; the Rendered score's blank threshold is one percent for line, area and scatter charts.
 - Profiler: `hijri` and `arabic_digits` measurement levels, the review accepting hijri as time evidence, two
   rulebook lines.
-- Analyst: measurement levels in the column facts, two rulebook lines for Hijri buckets and Arabic-Indic
-  digits, the total check translating digits before it sums text, placeholder units becoming null.
+- Analyst: the `hijri` and `arabic_digits` levels in the column facts, the Hijri and digit rules in
+  `rulebook-localized.md` added per run only when a column carries one of those levels, the total check
+  translating digits before it sums text, placeholder units becoming null.
 - Designer: resolving keeps non-Gregorian time text whole and in the analyst's order, draws Gregorian time in
   chronological order, and one rulebook line binds Hijri buckets to time.
 - Docs: README (scale set, levels, analyst rules), AGENTS (Phase 4b, Hijri conventions), the Phase 3

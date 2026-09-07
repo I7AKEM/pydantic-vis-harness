@@ -27,8 +27,11 @@ lessons in docs/phase-4b-lessons.md.
   checks and sends failed error checks back once.
 - The brief is context, never fact. Conflicts become warnings.
 - Hijri dates stay text end to end: the profiler labels them `hijri` (and Arabic-Indic numbers
-  `arabic_digits`), the analyst buckets them with substr or a CASE over month names and never casts them,
-  and resolving never shortens or reorders non-Gregorian time text. Gregorian time is drawn in order.
+  `arabic_digits`), the analyst buckets them as text with substr or a CASE over month names and never reads
+  them as Gregorian dates, and resolving never shortens or reorders non-Gregorian time text. Gregorian time
+  is drawn in order. The analyst's Hijri and digit rules live in `vis_agent/analyst/rulebook-localized.md`
+  and reach the model per run only when a column carries one of those levels: in the always-on rulebook
+  they cost three of 69 ordinary questions.
 - Values from oversized, WKT, and geometry-named columns never reach a model.
 - Failures the model cannot fix are ToolFailed. Fixable mistakes are ModelRetry, once.
 - Tests use fake models through agent.override and never hand-build RunContext.
