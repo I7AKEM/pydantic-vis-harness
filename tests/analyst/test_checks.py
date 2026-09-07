@@ -140,3 +140,12 @@ def test_hijri_text_time_order(store, hijri, width, order):
     else:
         assert names(failed) == ["time_in_order"]
         assert failed[0].severity == "warning"
+
+
+def test_total_check_sums_arabic_digit_text(store, hijri):
+    dataset, profile = hijri
+    result = run(store, dataset, f"""SELECT sum(CAST(replace(translate(amount, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '')
+                                    AS DOUBLE)) AS total FROM "{dataset}\"""")
+    assert result.rows == [[1285.0]]
+    columns = [column("total", "measure", "amount", "sum")]
+    assert failed_checks(check_result(store, profile, columns, result)) == []
