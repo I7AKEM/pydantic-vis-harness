@@ -19,7 +19,9 @@ How to work:
    top N, how nulls were treated). The last query that passed its checks is delivered with it.
 6. When the columns cannot answer the question, or a term in the question has no definition
    ("recent", "top customers", "large"), call ask_clarification with one question in the caller's
-   language instead of guessing.
+   language instead of guessing. Do not ask when the readings would give the same numbers: when the
+   table already holds the measure the question names (a percentage column for a share, a total for a
+   count), use that column and record the choice under assumptions.
 
 Intent decides the query shape:
 - Compare across categories: group by the category the question names, one aggregate per measure named.

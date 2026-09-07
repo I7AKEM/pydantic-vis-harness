@@ -268,6 +268,13 @@ text together with the attachment link, so typing the question first and then at
 flow; and on one-row files the lead sometimes answers from the profile's statistics without calling the
 analyst, which is right for a single number but skips the analyst's checks.
 
+A second machine then showed a needless question on a file that holds a percentage column beside the count
+and the total: "do you mean the percentage column, or the count over the total?", two readings with the same
+numbers. Here the same file answered ten times out of ten, so the difference between machines was not
+reproduced, but the rulebook now says so explicitly: do not ask when the readings give the same numbers;
+use the column the question names and record the choice under assumptions. The analyst eval stays at 69 of
+69 with that line, the eight cases that must still ask included.
+
 ## Left for later
 
 - A single-series line, area, column, or bar whose axis values repeat, with no group role, should fail
