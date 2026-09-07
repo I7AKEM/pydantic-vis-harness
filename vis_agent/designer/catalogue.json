@@ -672,7 +672,7 @@
       "min_rows": 30,
       "raw_values": true,
       "draw": {
-        "type": "histogram",
+        "type": "column",
         "options": {}
       },
       "summary": "Show a value distribution using at least thirty raw, unaggregated measure or share values."

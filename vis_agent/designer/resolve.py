@@ -5,6 +5,9 @@ from collections import Counter
 from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime
+from decimal import Decimal, ROUND_HALF_UP
+
+import duckdb
 
 from vis_agent.analyst.models import QueryResult, ResultColumn
 
@@ -159,6 +162,47 @@ def _fold(records: list[dict], axis: str, limit: int, other: str) -> tuple[list[
     return head + list(tail.values()), folded
 
 
+def _histogram(records: list[dict], bins: int, digits: str) -> list[dict]:
+    """Measure bounds and counts in DuckDB; write unitless range labels in Python."""
+    if bins < 1:
+        raise ResolveError("binNumber must be positive.")
+    with duckdb.connect(config={"threads": 1}) as connection:
+        measured = connection.execute("""
+            WITH cells AS (SELECT unnest(?::DOUBLE[]) AS value),
+            bounds AS (SELECT min(value) AS minimum, max(value) AS maximum FROM cells),
+            bins AS (
+                SELECT i,
+                       minimum + (maximum - minimum) * i / ? AS low,
+                       CASE WHEN i = ? - 1 THEN maximum
+                            ELSE minimum + (maximum - minimum) * (i + 1) / ? END AS high,
+                       maximum
+                FROM bounds, range(CASE WHEN minimum = maximum THEN 1 ELSE ? END) AS slots(i)
+                WHERE minimum IS NOT NULL
+            )
+            SELECT low, high, count(value)
+            FROM bins LEFT JOIN cells
+              ON value >= low AND (value < high OR (high = maximum AND value = maximum))
+            GROUP BY i, low, high ORDER BY i
+        """, [[r["value"] for r in records], bins, bins, bins, bins]).fetchall()
+
+    # Match the shared NumberFormat defaults: grouped, up to two decimals, no unit.
+    number = NumberFormat(digits=digits)
+
+    def label(value):
+        # JS toFixed rounds exact half ties away from zero, unlike Python's format.
+        if value.is_integer():
+            text = f"{int(value):,}"
+        else:
+            rounded = Decimal(value).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            text = f"{rounded:,f}".rstrip("0").rstrip(".")
+        if number.digits == "arabic":
+            text = text.translate(str.maketrans("0123456789,.", "٠١٢٣٤٥٦٧٨٩٬٫"))
+        return text
+
+    return [{"category": f"{label(low)}–{label(high)}", "value": count}
+            for low, high, count in measured]
+
+
 def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Resolved:
     """Resolve a checked spec, retaining row counts and render-time compromises."""
     entry = CATALOGUE.get(spec.type)
@@ -222,8 +266,7 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     width = spec.width if spec.width is not None else (1200 if spec.type in TRENDS and len(categories) > 12 else 800)
     config = {"type": entry.draw.type, **deepcopy(entry.draw.options),
               "theme": spec.theme, "width": width, "height": height}
-    for key, value in (("title", spec.title), ("innerRadius", spec.inner_radius),
-                       ("binNumber", spec.bin_number)):
+    for key, value in (("title", spec.title), ("innerRadius", spec.inner_radius)):
         if value is not None:
             config[key] = value
     if spec.type not in WITHOUT_AXES:
@@ -293,7 +336,7 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
         overrides["labels"] = []
     elif spec.labels == "on":
         if spec.type in BARS | COLUMNS | {"pie", "donut", "scatter", "histogram", "boxplot", "treemap", "word_cloud"}:
-            field = {"scatter": "y", "histogram": "count"}.get(spec.type, "value")
+            field = "y" if spec.type == "scatter" else "value"
             overrides["labels"] = [{"text": field}]
         else:
             compromises.append(Compromise(
@@ -318,7 +361,7 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     number2 = None
     if spec.type == "histogram":
         number.unit = None  # The formatted y axis counts records, not the bound measure.
-        config["data"] = sorted(r["value"] for r in records)
+        config["data"] = _histogram(records, spec.bin_number if spec.bin_number is not None else 10, spec.digits)
     elif spec.type == "dual_axes":
         number2 = number.model_copy(update={"unit": _column_unit(binding["value2"])})
         config["categories"] = [r["category"] for r in records]

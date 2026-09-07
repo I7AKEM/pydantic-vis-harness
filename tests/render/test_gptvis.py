@@ -185,7 +185,37 @@ def test_histogram_count_axis_draws_no_measure_unit(tmp_path):
     config = json.loads(rendered.config.read_text())
     assert config["number"]["thousands"] is True
     assert config["number"]["unit"] is None
+    labels = ["1–6.9", "6.9–12.8", "12.8–18.7", "18.7–24.6", "24.6–30.5",
+              "30.5–36.4", "36.4–42.3", "42.3–48.2", "48.2–54.1", "54.1–60"]
+    assert config["gptvis"]["type"] == "column"
+    assert config["g2"]["type"] == "interval"
+    assert config["g2"]["encode"]["x"] == "category"
+    assert config["g2"]["encode"]["y"] == "value"
+    assert config["g2"]["data"] == [{"category": label, "value": 6} for label in labels]
+    assert labels[0] in rendered.texts
     keep_image(rendered, "fix1-histogram")
+
+
+def test_histogram_discrete_bins_render_in_numeric_order_with_rtl(tmp_path):
+    columns, _ = raw_amounts()
+    result = table(columns, [[v] for v in [1100, 300, 1000, 100] * 15])
+    spec = parse(SPECS["histogram"][0] + "\ndirection rtl\nlabels on\nformat 0,0 SAR")
+    rendered = gptvis.render(spec, columns, result, tmp_path, trace=True)
+    config = json.loads(rendered.config.read_text())
+    options = config["g2"]
+    assert config["gptvis"]["type"] == "column"
+    assert options["type"] == "interval"
+    assert options["encode"]["x"] == "category"
+    assert options["encode"]["y"] == "value"
+    assert [row["category"] for row in options["data"]] == [
+        "100–200", "200–300", "300–400", "400–500", "500–600",
+        "600–700", "700–800", "800–900", "900–1,000", "1,000–1,100",
+    ]
+    assert [row["value"] for row in options["data"]] == [15, 0, 15, 0, 0, 0, 0, 0, 0, 30]
+    assert "domain" not in options["scale"].get("x", {})
+    assert options["labels"] == [{"text": "value", "formatter": {"$format": "value"}}]
+    assert {"100–200", "15", "30"} <= set(rendered.texts)
+    assert not any(text.endswith("SAR") for text in rendered.texts)
 
 
 @pytest.mark.parametrize("digits,amount,share", [("western", "533.3", "9.91%"), ("arabic", "٥٣٣٫٣", "٩٫٩١%")])
@@ -317,7 +347,7 @@ def test_smoke_test():
 
 @pytest.mark.parametrize("chart,field", [
     ("column", "value"), ("bar", "value"), ("grouped_column", "value"),
-    ("stacked_bar", "value"), ("scatter", "y"), ("histogram", "count"),
+    ("stacked_bar", "value"), ("scatter", "y"), ("histogram", "value"),
     ("boxplot", "value"), ("treemap", "value"), ("word_cloud", "value"),
 ])
 def test_labels_on_reaches_marks_and_formatter(chart, field, tmp_path):

@@ -195,7 +195,7 @@ means category, ordinal, or geography.
 | pie | **category** label, **value** additive or share | proportion | use with caution | pie |
 | donut | as pie | proportion | use with caution | pie with innerRadius |
 | scatter | **x** measure, **y** measure, group label | relation | recommended | scatter |
-| histogram | **value** measure, raw rows | distribution | recommended | histogram |
+| histogram | **value** measure, raw rows | distribution | recommended | column |
 | boxplot | **category** label, **value** measure, raw rows | distribution, comparison | recommended | boxplot |
 | treemap | **category** label, **value** additive | proportion, composition | recommended | treemap |
 | radar | **category** label, **value**, group label | comparison | use with caution | radar |
@@ -383,7 +383,15 @@ The renderer, not the spec, holds the rows. Resolving happens in code, once, bef
    buckets, `YYYY-MM` for first-of-month midnight buckets, `YYYY-MM-DD` for other midnight dates, and
    `YYYY-MM-DD HH:MM` otherwise. Keep local clock values without converting zones; an unparseable value
    leaves the whole column as text. Conversion precedes sorting, folding, emphasis matching, and RTL domains.
-   Histogram data are sorted ascending before drawing.
+   Histogram resolution measures `binNumber` equal-width bins (default 10) over the bound value's minimum
+   and maximum in DuckDB, using the result's own cells. Bins include their lower bound and exclude their
+   upper bound, except the last includes the maximum. Empty bins retain zero counts. Python writes each
+   `category` as `<low>–<high>` with the shared default number description (thousands separators, up to two
+   decimals with trailing zeros trimmed, the spec's digit shapes, no unit or compact notation); `value` is
+   the measured count. These records go to the package's `column` type in ascending numeric bin order,
+   never reversed by RTL. `binNumber` remains a histogram spec key and is consumed by resolve. A constant
+   range becomes one `<value>–<value>` bin; no non-null values produces no bins; a nonpositive bin count
+   raises a resolve error. Drawn-row accounting retains the number of non-null source observations.
 
 Tables retain every column and row in result order. Headers and record keys use the analyst's column meanings;
 empty or whitespace-only meanings and all colliding headers fall back to column names, repeating fallback if it
@@ -421,8 +429,9 @@ formatting function on the value axis and the data labels. The overrides are pla
 place in the script, and the package version is pinned so a change to its internals shows up as a failing render
 test rather than a silent loss. On request the script also lists every piece of text it drew, which is how the
 tests assert that a label reads "61.6%" without decoding pixels.
-`labels on` forces formatted value labels (`y` for scatter, `count` for histogram, `value` for bars, columns,
-pie/donut, boxplot, treemap, and word cloud); child-built line/area/dual-axis charts, pivoted radar, and tables
+`labels on` forces formatted value labels (`y` for scatter, `value` for bars, columns, histogram bin counts,
+pie/donut, boxplot, treemap, and word cloud); histograms use resolved column records with unitless count
+formatting, not the package's histogram binning. Child-built line/area/dual-axis charts, pivoted radar, and tables
 report a compromise. `legend on` removes the package legend setting to allow G2's default colour legend;
 charts without a meaningful colour encoding report "no legend: the chart has one series". `off` suppresses both
 switches recursively. Radar tick formatting applies to every `position`, `position1`, … axis as well as `y`.

@@ -54,13 +54,76 @@ def test_grouped_and_stacked_catalogue_options(chart, flag):
     assert resolved.config["data"][0] == {"category": "City4", "group": "F", "value": 14}
 
 
-def test_histogram_is_numbers_sorted_ascending():
-    spec = Spec(type="histogram", bind={"value": "amount"}, bin_number=8)
+@pytest.mark.parametrize("bin_number,labels,count", [
+    (None, ["1–6.9", "6.9–12.8", "12.8–18.7", "18.7–24.6", "24.6–30.5",
+            "30.5–36.4", "36.4–42.3", "42.3–48.2", "48.2–54.1", "54.1–60"], 6),
+    (4, ["1–15.75", "15.75–30.5", "30.5–45.25", "45.25–60"], 15),
+])
+@pytest.mark.parametrize("direction", ["ltr", "rtl"])
+def test_histogram_resolves_ascending_equal_width_bins(bin_number, labels, count, direction):
+    spec = Spec(type="histogram", bind={"value": "amount"}, bin_number=bin_number,
+                direction=direction, sort="value desc", labels="on")
     columns, result = raw_amounts()
     result.rows = result.rows[::2][::-1] + result.rows[1::2]
     resolved = resolve(spec, columns, result)
-    assert resolved.config["data"] == list(range(1, 61))
-    assert resolved.config["binNumber"] == 8
+    assert resolved.config["type"] == "column"
+    assert resolved.config["data"] == [{"category": label, "value": count} for label in labels]
+    assert "binNumber" not in resolved.config
+    assert "x" not in resolved.overrides.get("scale", {})
+    assert resolved.overrides["labels"] == [{"text": "value"}]
+    assert (resolved.drawn_rows, resolved.folded_rows, resolved.dropped_rows) == (60, 0, 0)
+
+
+@pytest.mark.parametrize("digits", ["western", "arabic"])
+def test_histogram_keeps_empty_bins_and_counts_boundaries_once(digits):
+    columns, _ = raw_amounts()
+    result = table(columns, [[v] for v in [1100, 300, 1000, 100] * 15] + [[None]])
+    spec = Spec(type="histogram", bind={"value": "amount"}, digits=digits, format="0k SAR")
+    resolved = resolve(spec, columns, result)
+    labels = ["100–200", "200–300", "300–400", "400–500", "500–600",
+              "600–700", "700–800", "800–900", "900–1,000", "1,000–1,100"]
+    if digits == "arabic":
+        labels = [label.translate(str.maketrans("0123456789,", "٠١٢٣٤٥٦٧٨٩٬")) for label in labels]
+    assert resolved.config["data"] == [
+        {"category": label, "value": count}
+        for label, count in zip(labels, [15, 0, 15, 0, 0, 0, 0, 0, 0, 30])
+    ]
+    assert (resolved.drawn_rows, resolved.dropped_rows) == (60, 1)
+    assert resolved.number.unit is None
+
+
+def test_histogram_bin_labels_match_shared_default_rounding():
+    columns, _ = raw_amounts()
+    result = table(columns, [[-1], [0]] * 30)
+    spec = Spec(type="histogram", bind={"value": "amount"}, bin_number=8)
+    resolved = resolve(spec, columns, result)
+    assert [row["category"] for row in resolved.config["data"]] == [
+        "-1–-0.88", "-0.88–-0.75", "-0.75–-0.63", "-0.63–-0.5",
+        "-0.5–-0.38", "-0.38–-0.25", "-0.25–-0.13", "-0.13–0",
+    ]
+    assert [row["value"] for row in resolved.config["data"]] == [30, 0, 0, 0, 0, 0, 0, 30]
+
+
+def test_histogram_constant_values_have_one_degenerate_bin():
+    columns, _ = raw_amounts()
+    result = table(columns, [[-2.5]] * 30)
+    resolved = resolve(Spec(type="histogram", bind={"value": "amount"}), columns, result)
+    assert resolved.config["data"] == [{"category": "-2.5–-2.5", "value": 30}]
+
+
+@pytest.mark.parametrize("rows", [[], [[None]] * 30])
+def test_histogram_without_values_has_no_bins(rows):
+    columns, _ = raw_amounts()
+    resolved = resolve(Spec(type="histogram", bind={"value": "amount"}), columns, table(columns, rows))
+    assert resolved.config["data"] == []
+    assert (resolved.drawn_rows, resolved.dropped_rows) == (0, len(rows))
+
+
+@pytest.mark.parametrize("bin_number", [0, -1])
+def test_histogram_rejects_nonpositive_bin_number(bin_number):
+    spec = Spec(type="histogram", bind={"value": "amount"}, bin_number=bin_number)
+    with pytest.raises(ResolveError, match="binNumber must be positive"):
+        resolve(spec, *raw_amounts())
 
 
 def test_dual_axes_series_and_categories_remain_aligned_after_null_drop():
