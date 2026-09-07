@@ -1,0 +1,57 @@
+{
+  "provenance": "35 cases written by hand after reading evals/analyst/cases/cases.json and expected.json. Every row is explicit, with at most 51 per case. ResultColumn kinds, aggregates, units, and share denominators are assigned by hand. Each case's why names the analyst table or identifies synthetic data; no SQL, model, renderer, or runtime row generator produces these fixtures. The first forty salary cohorts are copied from the 63-row analyst table. Raw fines, grouped city counts, radar scores, two-unit trends, words, and category-boundary data are synthetic. Monthly gender splits and the second year of the 24-month series are also synthetic.",
+  "rules": [
+    "The first expected name is the preferred top; subsequent names are independently acceptable top candidates. Only rank one counts. Presence anywhere in the top three is insufficient.",
+    "An empty expected list requires no candidates. A table for an empty result fails. An empty evaluation set is an error, not a perfect score.",
+    "Keep intended answers for cases that conflict with scoring. Do not tune vis_agent, change expected answers to observed winners, or add acceptable alternatives merely to hide a failure.",
+    "Use the contract's intent names compare and share for the design's comparison and proportion terminology.",
+    "Section 7's explicit scores and catalogue-order ties govern over section 4's illustrative donut-first walkthrough: S14 is -2 through six parts, and table never gets S1.",
+    "The CLI accepts an optional JSON file path relative to the working directory; its default is cases.json beside run.py. Evaluation mismatches are reported with exit status zero; pytest enforces the 0.9 threshold.",
+    "All fixtures use rows, so the optional rows_from shorthand is unnecessary and unsupported. The runner does not fabricate or execute SQL; QueryResult SQL, elapsed time, and physical types are inert metadata."
+  ],
+  "decisions_taken": [
+    "Cover both the design's fifty-category boundary and the brief's fifty-one-category fallback. The paired fixtures differ by one explicit row; H11 permits bars at fifty and rejects them at fifty-one.",
+    "Use the brief's final two-unit expectation [line, dual_axes] without a suggestion. There is no group, so multi_line is not an acceptable alternative.",
+    "Use section 7's ranking to expect pie before donut on an unequal small whole. Both remain acceptable where the brief permits them. An explicit doughnut suggestion has its own donut-first case.",
+    "The brief's request to keep the suite green is bounded by its explicit instruction to retain rule-conflict failures. The aggregate threshold remains 0.9; individual known failures are neither skipped nor xfailed."
+  ],
+  "ambiguous_cases": {
+    "district_fines_compare": "Column and bar both score S1 +3 and S4 +1 with short labels; catalogue order prefers column. Both are acceptable.",
+    "city_gender_compare": "Three cities and two genders make role assignment clear. Comparing values favours grouped_column via S8, not stacked_column.",
+    "city_gender_composition": "The identical table with composition intent favours stacked_column through S1 and S8. Counts are additive.",
+    "regional_nationalities_compare": "The complete 8-by-3 analyst table includes a region label longer than fifteen characters. S5 and compare's S8 select grouped_bar.",
+    "regional_nationalities_composition": "The same region table forms a separate whole within each region. Composition and long labels select stacked_bar; the share denominator is explicitly regional.",
+    "monthly_trend_3": "Three distinct months meet H7 exactly. Line and area tie on S1 and S7; only line is expected under catalogue order.",
+    "monthly_gender_trends": "Multi-line binds the group that a single line leaves unbound. Stacked area ties on trend but comes later in the catalogue.",
+    "monthly_area_requested": "A valid suggested area receives S2 +2 and overtakes line. This tests preferences without weakening hard rules.",
+    "monthly_gender_composition": "S1, S7, and S8 favour stacked_area for composition over time. Grouped columns cannot discard the time column.",
+    "order_status_whole": "Five unequal additive parts: pie and donut score 2, treemap scores 1 after S14. Table stays 0 because it has no S1 bonus.",
+    "order_status_donut_requested": "Doughnut resolves to donut; S2 makes it the sole expected top for this explicit preference.",
+    "salary_birth_year_relation_40": "Birth year is typed as a numeric cohort covariate for the analyst's relation question; average_salary is an aggregated measure. These are forty real aggregate pairs, not raw salary observations for a histogram.",
+    "raw_fines_by_district_distribution": "Thirty raw rows permit both histogram and boxplot. Boxplot binds district and avoids histogram's S9 penalty.",
+    "regional_population_whole": "Eight positive regional totals can be treemap parts; H5 excludes pie/donut and S14 does not apply. This distinct whole case retains treemap coverage independently of the required seven-slice bar case.",
+    "radar_requested_same_scale": "A requested five-axis profile on one common scale expects radar only. S1 +3, S2 +2, and S3 -1 tie ordinary column/bar at 4; catalogue order can defeat this preference. Keep that mismatch visible.",
+    "two_units_requested": "Use trend for both two-unit fixtures and vary only the suggestion. Requested dual axes should keep both units, but S1 +3, S2 +2, S3 -1 ties line's S1 +3, S7 +2, S9 -1. Keep dual_axes expected despite catalogue order.",
+    "word_cloud_requested_25": "A word-cloud preference with twenty-five actual word categories is valid. S2 favours it; this supplies word_cloud as the first expected entry independently of the unsuggested rank case.",
+    "one_number": "One scalar is a table under S13, even with compare intent. No stat-card type exists in the catalogue, and no S1 applies to table.",
+    "fifty_categories": "At exactly fifty, bars remain eligible but S4 is -2. Unknown intent leaves table at 0; avg prevents a misleading treemap. Category codes are categorical labels, not identifier metadata.",
+    "fifty_one_categories": "At fifty-one, H11 rejects both orientations. With the same average and unknown intent, word_cloud scores -1 and table wins at 0.",
+    "seven_slices_share": "The brief explicitly expects bar. H5 rejects pie/donut; S14 currently ends at six so treemap gets 3 versus long-label bar's 2. Retain bar and report the rule conflict.",
+    "two_time_points": "Column is the preferred fallback because it can bind time; H7 removes line/area. Bar remains a brief-permitted alternative although the current catalogue disallows its time binding.",
+    "two_units_without_suggestion": "The brief explicitly accepts line or dual_axes. S7 currently makes line rank first despite S9 for the unused second measure; there is no group for multi_line.",
+    "gender_share_with_code_and_count": "Section 4's whole with code, label, count, and share. Equal-cardinality code/label selection may bind the code; shared source prevents an extra S9 penalty. Pie/donut prefer the share and leave count unbound. Their rank is still expected, but readable label selection is a separate open concern.",
+    "words_rank_25": "Bar stays the preferred answer, and word_cloud is acceptable exactly as the brief specifies. S4 -2 makes the current word_cloud rank above bar for short words; this is an alternative pass, not a strict preferred-answer pass.",
+    "monthly_trend_12": "The complete analyst monthly table earns line's time bonus. Area ties but follows line in catalogue order.",
+    "monthly_trend_24": "The synthetic second year tests a longer monthly series with identical metadata. Length does not justify changing the expected top from line.",
+    "average_rejects_pie_suggestion": "A suggested pie cannot turn averages into an additive whole. H3 wins over S2; column/bar are both acceptable for three short city labels.",
+    "negative_totals_reject_whole": "Negative net totals remain additive but violate H4 for parts of a whole. Column/bar are valid; the pie suggestion cannot override H4.",
+    "balanced_two_slices": "S6 removes the small-whole advantage for nearly equal shares. Treemap gets S14 -2; column/bar tie its score but precede it, so both orientations are acceptable.",
+    "annual_arabic_average_trend": "Exact long Arabic measurement names are not category labels. They must not trigger S5; time plus averages makes line appropriate and area ineligible."
+  },
+  "known_hazards": {
+    "ranking_conflicts": "Seven slices, suggested radar, and suggested dual axes intentionally retain their preferred answers even if the current rules disagree. Inspect runner breakdowns before changing any rule.",
+    "bindings": "Evaluation checks chart type only. It does not prove the default binding picks the readable label over a code or preserves every measure; those limitations remain visible in case rationale and failure bindings.",
+    "boundary_scope": "Fifty-one categories do not imply table under every intent: rank can still reward word_cloud. The required fallback uses an explicitly unknown intent, matching the fifty-category comparison case.",
+    "source_scope": "Synthetic fixtures supplement analyst result shapes where raw rows, grouped time series, requested radar profiles, and specific cardinalities are absent; they are not asserted to be measured source facts."
+  }
+}

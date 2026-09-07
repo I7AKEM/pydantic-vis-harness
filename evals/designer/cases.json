@@ -1,0 +1,355 @@
+[
+  {
+    "name": "district_fines_compare",
+    "columns": [
+      {"name": "district", "meaning": "District", "kind": "geography"},
+      {"name": "total_actual_fine", "meaning": "Total actual fine", "kind": "measure", "unit": "SAR", "aggregate": "sum"}
+    ],
+    "rows": [["السلي", 62750], ["العليا", 61500], ["العقيق", 57950], ["الروضة", 57800], ["الغدير", 56600], ["النسيم", 54750], ["الياسمين", 54100], ["الملز", 52550], ["النرجس", 50350], ["الملقا", 47150]],
+    "intent": "compare", "suggested": null, "expected": ["column", "bar"],
+    "why": "Analyst fines_by_district, all ten rows. Short labels fit either orientation; catalogue order chooses column."
+  },
+  {
+    "name": "ports_long_arabic_rank",
+    "columns": [
+      {"name": "port", "meaning": "منفذ الدخول", "kind": "category"},
+      {"name": "entries", "meaning": "عدد الدخول", "kind": "measure", "aggregate": "sum"}
+    ],
+    "rows": [["مطار الملك خالد الدولي (الرياض)", 243], ["مطار الملك عبدالعزيز الدولي (جدة)", 157], ["مطار الأمير محمد بن عبدالعزيز (المدينة المنورة)", 11], ["ميناء جدة الإسلامي", 9], ["مطار الملك فهد الدولي (الدمام)", 8]],
+    "intent": "rank", "suggested": null, "expected": ["bar"],
+    "why": "Analyst entries_by_port_top5, all five rows. Long Arabic port names require horizontal space (S5)."
+  },
+  {
+    "name": "city_gender_compare",
+    "columns": [
+      {"name": "city", "meaning": "City", "kind": "geography"},
+      {"name": "gender", "meaning": "Gender label", "kind": "category"},
+      {"name": "deaths", "meaning": "Deaths", "kind": "measure", "aggregate": "sum"}
+    ],
+    "rows": [["الرياض", "ذكر", 80], ["الرياض", "أنثى", 60], ["جدة", "ذكر", 50], ["جدة", "أنثى", 40], ["نجران", "ذكر", 30], ["نجران", "أنثى", 20]],
+    "intent": "compare", "suggested": null, "expected": ["grouped_column"],
+    "why": "Hand-written grouped extension of analyst city and deaths_by_gender shapes. Three short cities, two genders: compare series side by side (S8). Counts are synthetic."
+  },
+  {
+    "name": "city_gender_composition",
+    "columns": [
+      {"name": "city", "meaning": "City", "kind": "geography"},
+      {"name": "gender", "meaning": "Gender label", "kind": "category"},
+      {"name": "deaths", "meaning": "Deaths", "kind": "measure", "aggregate": "sum"}
+    ],
+    "rows": [["الرياض", "ذكر", 80], ["الرياض", "أنثى", 60], ["جدة", "ذكر", 50], ["جدة", "أنثى", 40], ["نجران", "ذكر", 30], ["نجران", "أنثى", 20]],
+    "intent": "composition", "suggested": null, "expected": ["stacked_column"],
+    "why": "Same synthetic city/gender counts as city_gender_compare; only intent changes. Additive counts support stacks, with the S8 composition bonus."
+  },
+  {
+    "name": "regional_nationalities_compare",
+    "columns": [
+      {"name": "region", "meaning": "Region", "kind": "geography"},
+      {"name": "nationality", "meaning": "Nationality", "kind": "category"},
+      {"name": "share", "meaning": "Nationality share within region", "kind": "share", "unit": "%", "aggregate": "share", "denominator": "Population of the same region"}
+    ],
+    "rows": [["الحدود الشمالية", "بريطاني", 34.375], ["الحدود الشمالية", "صيني", 34.375], ["الحدود الشمالية", "كويتي", 31.25], ["منطقة الباحة", "بريطاني", 27.45098039215686], ["منطقة الباحة", "صيني", 43.13725490196079], ["منطقة الباحة", "كويتي", 29.41176470588235], ["منطقة الجوف", "بريطاني", 34.21052631578947], ["منطقة الجوف", "صيني", 44.73684210526316], ["منطقة الجوف", "كويتي", 21.05263157894737], ["منطقة الرياض", "بريطاني", 30.357142857142858], ["منطقة الرياض", "صيني", 35.714285714285715], ["منطقة الرياض", "كويتي", 33.92857142857143], ["منطقة تبوك", "بريطاني", 37.77777777777778], ["منطقة تبوك", "صيني", 26.666666666666668], ["منطقة تبوك", "كويتي", 35.55555555555556], ["منطقة جازان", "بريطاني", 26.19047619047619], ["منطقة جازان", "صيني", 38.095238095238095], ["منطقة جازان", "كويتي", 35.714285714285715], ["منطقة مكة المكرمة", "بريطاني", 39.285714285714285], ["منطقة مكة المكرمة", "صيني", 33.92857142857143], ["منطقة مكة المكرمة", "كويتي", 26.785714285714285], ["منطقة نجران", "بريطاني", 27.77777777777778], ["منطقة نجران", "صيني", 27.77777777777778], ["منطقة نجران", "كويتي", 44.44444444444444]],
+    "intent": "compare", "suggested": null, "expected": ["grouped_bar"],
+    "why": "Analyst nationality_share_within_region, all 24 rows. Eight regions and three nationalities bind unambiguously; the long Mecca label favours horizontal grouped bars."
+  },
+  {
+    "name": "regional_nationalities_composition",
+    "columns": [
+      {"name": "region", "meaning": "Region", "kind": "geography"},
+      {"name": "nationality", "meaning": "Nationality", "kind": "category"},
+      {"name": "share", "meaning": "Nationality share within region", "kind": "share", "unit": "%", "aggregate": "share", "denominator": "Population of the same region"}
+    ],
+    "rows": [["الحدود الشمالية", "بريطاني", 34.375], ["الحدود الشمالية", "صيني", 34.375], ["الحدود الشمالية", "كويتي", 31.25], ["منطقة الباحة", "بريطاني", 27.45098039215686], ["منطقة الباحة", "صيني", 43.13725490196079], ["منطقة الباحة", "كويتي", 29.41176470588235], ["منطقة الجوف", "بريطاني", 34.21052631578947], ["منطقة الجوف", "صيني", 44.73684210526316], ["منطقة الجوف", "كويتي", 21.05263157894737], ["منطقة الرياض", "بريطاني", 30.357142857142858], ["منطقة الرياض", "صيني", 35.714285714285715], ["منطقة الرياض", "كويتي", 33.92857142857143], ["منطقة تبوك", "بريطاني", 37.77777777777778], ["منطقة تبوك", "صيني", 26.666666666666668], ["منطقة تبوك", "كويتي", 35.55555555555556], ["منطقة جازان", "بريطاني", 26.19047619047619], ["منطقة جازان", "صيني", 38.095238095238095], ["منطقة جازان", "كويتي", 35.714285714285715], ["منطقة مكة المكرمة", "بريطاني", 39.285714285714285], ["منطقة مكة المكرمة", "صيني", 33.92857142857143], ["منطقة مكة المكرمة", "كويتي", 26.785714285714285], ["منطقة نجران", "بريطاني", 27.77777777777778], ["منطقة نجران", "صيني", 27.77777777777778], ["منطقة نجران", "كويتي", 44.44444444444444]],
+    "intent": "composition", "suggested": null, "expected": ["stacked_bar"],
+    "why": "Same complete analyst table as regional_nationalities_compare. Shares form a whole within each region; S8 prefers stacks and S5 horizontal labels."
+  },
+  {
+    "name": "monthly_trend_3",
+    "columns": [
+      {"name": "month", "meaning": "Month of violation", "kind": "time"},
+      {"name": "violations", "meaning": "Number of violations", "kind": "measure", "aggregate": "count"}
+    ],
+    "rows": [["2025-11-01T00:00:00", 58], ["2025-12-01T00:00:00", 220], ["2026-01-01T00:00:00", 722]],
+    "intent": "trend", "suggested": null, "expected": ["line"],
+    "why": "Analyst violations_by_month, all three months. H7 permits a line at exactly three points; line wins the area tie by catalogue order."
+  },
+  {
+    "name": "monthly_gender_trends",
+    "columns": [
+      {"name": "month", "meaning": "Month", "kind": "time"},
+      {"name": "gender", "meaning": "Gender", "kind": "category"},
+      {"name": "deaths", "meaning": "Deaths", "kind": "measure", "aggregate": "sum"}
+    ],
+    "rows": [["2024-01", "M", 800], ["2024-01", "F", 687], ["2024-02", "M", 720], ["2024-02", "F", 650], ["2024-03", "M", 800], ["2024-03", "F", 690]],
+    "intent": "trend", "suggested": null, "expected": ["multi_line"],
+    "why": "Synthetic gender split of the first three analyst deaths_per_month totals. Multi-line preserves both time and group; single line loses a label under S9."
+  },
+  {
+    "name": "monthly_area_requested",
+    "columns": [
+      {"name": "month", "meaning": "Month of violation", "kind": "time"},
+      {"name": "violations", "meaning": "Number of violations", "kind": "measure", "aggregate": "count"}
+    ],
+    "rows": [["2025-11-01T00:00:00", 58], ["2025-12-01T00:00:00", 220], ["2026-01-01T00:00:00", 722]],
+    "intent": "trend", "suggested": "area chart", "expected": ["area"],
+    "why": "Analyst violations_by_month with a valid area preference. Additive counts permit area; S2 resolves the otherwise equal line/area scores."
+  },
+  {
+    "name": "monthly_gender_composition",
+    "columns": [
+      {"name": "month", "meaning": "Month", "kind": "time"},
+      {"name": "gender", "meaning": "Gender", "kind": "category"},
+      {"name": "deaths", "meaning": "Deaths", "kind": "measure", "aggregate": "sum"}
+    ],
+    "rows": [["2024-01", "M", 800], ["2024-01", "F", 687], ["2024-02", "M", 720], ["2024-02", "F", 650], ["2024-03", "M", 800], ["2024-03", "F", 690]],
+    "intent": "composition", "suggested": null, "expected": ["stacked_area"],
+    "why": "Same synthetic split as monthly_gender_trends; composition plus a time axis favours stacked area (S1, S7, S8)."
+  },
+  {
+    "name": "order_status_whole",
+    "columns": [
+      {"name": "status", "meaning": "Order status", "kind": "category"},
+      {"name": "orders", "meaning": "Orders in status", "kind": "measure", "aggregate": "count"}
+    ],
+    "rows": [["Executed", 83], ["Accepted", 7], ["Canceled", 6], ["Driver_Assigned", 3], ["Rejected", 1]],
+    "intent": "share", "suggested": null, "expected": ["pie", "donut"],
+    "why": "Analyst orders_by_status, all five mutually exclusive statuses. Unequal slices form one whole; pie precedes donut, and S14 penalizes a small treemap."
+  },
+  {
+    "name": "order_status_donut_requested",
+    "columns": [
+      {"name": "status", "meaning": "Order status", "kind": "category"},
+      {"name": "orders", "meaning": "Orders in status", "kind": "measure", "aggregate": "count"}
+    ],
+    "rows": [["Executed", 83], ["Accepted", 7], ["Canceled", 6], ["Driver_Assigned", 3], ["Rejected", 1]],
+    "intent": "share", "suggested": "doughnut", "expected": ["donut"],
+    "why": "Same analyst status whole with a valid doughnut alias. S2 selects donut over the equally suitable pie."
+  },
+  {
+    "name": "salary_birth_year_relation_40",
+    "columns": [
+      {"name": "birth_year", "meaning": "Numeric birth-year covariate", "kind": "measure", "unit": "year", "aggregate": "none"},
+      {"name": "average_salary", "meaning": "Average salary of birth cohort", "kind": "measure", "unit": "SAR", "aggregate": "avg"}
+    ],
+    "rows": [[1946, 24599.030000000002], [1947, 22488.8375], [1948, 24964.3], [1949, 22966.310000000005], [1950, 26271.35555555555], [1951, 23587.214285714286], [1952, 20546.5625], [1953, 25536.239999999998], [1954, 27385.266666666674], [1955, 20149.076923076922], [1956, 21519.17777777778], [1957, 25957.333333333332], [1958, 21526.0], [1959, 25225.989999999998], [1960, 24036.04], [1961, 21669.976923076923], [1962, 23300.777777777777], [1963, 21127.055555555555], [1964, 21666.283333333333], [1965, 26249.2], [1966, 26211.20833333334], [1967, 25317.18], [1968, 24099.957142857143], [1969, 25340.550000000003], [1970, 23758.66666666667], [1971, 25166.966666666664], [1972, 22480.291666666668], [1973, 26562.659999999996], [1974, 23372.41], [1975, 25259.471428571425], [1976, 28884.885714285716], [1977, 20121.025], [1978, 21731.4875], [1979, 23699.746153846154], [1980, 21481.199999999997], [1981, 21526.28], [1982, 25107.199999999997], [1983, 22587.399999999998], [1984, 28715.885714285712], [1985, 25921.95]],
+    "intent": "relation", "suggested": null, "expected": ["scatter"],
+    "why": "First forty of the analyst salary_vs_birth_year table's 63 rows, copied explicitly. Birth year is a quantitative cohort covariate for this relation question, not an observation-time axis."
+  },
+  {
+    "name": "raw_actual_fines_distribution",
+    "columns": [{"name": "actual_fine", "meaning": "Fine for one violation", "kind": "measure", "unit": "SAR", "aggregate": "none"}],
+    "rows": [[100], [150], [150], [200], [300], [500], [1000], [100], [150], [200], [300], [300], [500], [1200], [150], [150], [200], [300], [500], [1000], [100], [200], [300], [500], [1200], [150], [300], [500], [1000], [1200]],
+    "intent": "distribution", "suggested": null, "expected": ["histogram"],
+    "why": "Thirty hand-written raw fines using the analyst actual_fine source vocabulary. Synthetic observations, not repeated aggregate averages; H9 permits histogram at thirty rows."
+  },
+  {
+    "name": "raw_fines_by_district_distribution",
+    "columns": [
+      {"name": "district", "meaning": "District", "kind": "geography"},
+      {"name": "actual_fine", "meaning": "Fine for one violation", "kind": "measure", "unit": "SAR", "aggregate": "none"}
+    ],
+    "rows": [["السلي", 100], ["السلي", 150], ["السلي", 150], ["السلي", 200], ["السلي", 300], ["السلي", 500], ["السلي", 1000], ["السلي", 100], ["السلي", 150], ["السلي", 200], ["السلي", 300], ["السلي", 300], ["السلي", 500], ["السلي", 1200], ["السلي", 150], ["العليا", 150], ["العليا", 200], ["العليا", 300], ["العليا", 500], ["العليا", 1000], ["العليا", 100], ["العليا", 200], ["العليا", 300], ["العليا", 500], ["العليا", 1200], ["العليا", 150], ["العليا", 300], ["العليا", 500], ["العليا", 1000], ["العليا", 1200]],
+    "intent": "distribution", "suggested": null, "expected": ["boxplot"],
+    "why": "Thirty synthetic raw fines, fifteen per real analyst district label. Boxplot keeps the district grouping; histogram leaves that label unbound."
+  },
+  {
+    "name": "regional_population_whole",
+    "columns": [
+      {"name": "region", "meaning": "Region", "kind": "geography"},
+      {"name": "population", "meaning": "Total population", "kind": "measure", "aggregate": "sum"}
+    ],
+    "rows": [["منطقة الجوف", 739], ["الحدود الشمالية", 727], ["منطقة نجران", 701], ["منطقة تبوك", 696], ["منطقة الباحة", 694], ["منطقة مكة المكرمة", 679], ["منطقة جازان", 672], ["منطقة الرياض", 671]],
+    "intent": "share", "suggested": null, "expected": ["treemap"],
+    "why": "Analyst total_population_by_region, all eight regions, with a whole-population share intent. More than six parts excludes pie/donut and avoids S14."
+  },
+  {
+    "name": "radar_requested_same_scale",
+    "columns": [
+      {"name": "criterion", "meaning": "Service criterion scored on the same scale", "kind": "category"},
+      {"name": "score", "meaning": "Mean score from zero to five", "kind": "measure", "unit": "points", "aggregate": "avg"}
+    ],
+    "rows": [["Speed", 4.2], ["Quality", 3.8], ["Access", 4.6], ["Support", 3.5], ["Value", 4.0]],
+    "intent": "compare", "suggested": "spider", "expected": ["radar"],
+    "why": "Synthetic five-axis profile with comparable units and an explicit radar alias. Keep radar as expected even if S4 and S3 make ordinary bars tie and catalogue order defeats the preference."
+  },
+  {
+    "name": "two_units_requested",
+    "columns": [
+      {"name": "month", "meaning": "Month", "kind": "time"},
+      {"name": "orders", "meaning": "Order count", "kind": "measure", "unit": "orders", "aggregate": "count"},
+      {"name": "avg_price", "meaning": "Mean order price", "kind": "measure", "unit": "SAR", "aggregate": "avg"}
+    ],
+    "rows": [["2025-01", 120, 230], ["2025-02", 140, 210], ["2025-03", 160, 250]],
+    "intent": "trend", "suggested": "dual axis", "expected": ["dual_axes"],
+    "why": "Synthetic monthly extension of analyst orders and avg_price shapes, with two explicit units. Requested dual axes preserve both measures; do not accept line if S7 defeats the S2 preference."
+  },
+  {
+    "name": "word_cloud_requested_25",
+    "columns": [
+      {"name": "word", "meaning": "Word in feedback", "kind": "category"},
+      {"name": "mentions", "meaning": "Word mentions", "kind": "measure", "aggregate": "count"}
+    ],
+    "rows": [["خدمة", 90], ["سرعة", 85], ["جودة", 80], ["سعر", 76], ["توصيل", 72], ["طعام", 68], ["طلب", 65], ["تطبيق", 61], ["سائق", 58], ["مطعم", 54], ["دفع", 51], ["وقت", 48], ["دعم", 45], ["خصم", 42], ["عرض", 39], ["تجربة", 36], ["عميل", 33], ["موقع", 30], ["سهولة", 27], ["نظافة", 24], ["تغليف", 21], ["متابعة", 18], ["تواصل", 15], ["تنوع", 12], ["رضا", 9]],
+    "intent": "rank", "suggested": "word cloud", "expected": ["word_cloud"],
+    "why": "Twenty-five synthetic Arabic feedback words with explicit frequencies and a word-cloud preference. Enough words for the catalogue; S2 reinforces the valid request."
+  },
+  {
+    "name": "one_number",
+    "columns": [{"name": "average_violations", "meaning": "Average violations per violator", "kind": "measure", "aggregate": "avg"}],
+    "rows": [[4.089]],
+    "intent": "compare", "suggested": null, "expected": ["table"],
+    "why": "Analyst average_violations_per_violator, the one-number fallback. S13 rewards a directly readable table; the table must never receive S1."
+  },
+  {
+    "name": "empty_result",
+    "columns": [
+      {"name": "city", "meaning": "City", "kind": "geography"},
+      {"name": "population", "meaning": "Population", "kind": "measure", "aggregate": "sum"}
+    ],
+    "rows": [], "intent": "compare", "suggested": "bar", "expected": [],
+    "why": "Synthetic empty filtered analyst city/population result. H12 returns no candidates, even with a suggestion; table is not acceptable."
+  },
+  {
+    "name": "fifty_categories",
+    "columns": [
+      {"name": "district", "meaning": "Synthetic district code", "kind": "category"},
+      {"name": "avg_actual_fine", "meaning": "Mean actual fine", "kind": "measure", "unit": "SAR", "aggregate": "avg"}
+    ],
+    "rows": [["D01", 600], ["D02", 590], ["D03", 580], ["D04", 570], ["D05", 560], ["D06", 550], ["D07", 540], ["D08", 530], ["D09", 520], ["D10", 510], ["D11", 500], ["D12", 490], ["D13", 480], ["D14", 470], ["D15", 460], ["D16", 450], ["D17", 440], ["D18", 430], ["D19", 420], ["D20", 410], ["D21", 400], ["D22", 390], ["D23", 380], ["D24", 370], ["D25", 360], ["D26", 350], ["D27", 340], ["D28", 330], ["D29", 320], ["D30", 310], ["D31", 300], ["D32", 290], ["D33", 280], ["D34", 270], ["D35", 260], ["D36", 250], ["D37", 240], ["D38", 230], ["D39", 220], ["D40", 210], ["D41", 200], ["D42", 190], ["D43", 180], ["D44", 170], ["D45", 160], ["D46", 150], ["D47", 140], ["D48", 130], ["D49", 120], ["D50", 110]],
+    "intent": null, "suggested": null, "expected": ["table"],
+    "why": "Synthetic extension of analyst average-fine shapes at the design's fifty-category boundary. Bars remain eligible but S4 crowds them; averages cannot be a treemap whole. Unknown intent leaves table at zero."
+  },
+  {
+    "name": "fifty_one_categories",
+    "columns": [
+      {"name": "district", "meaning": "Synthetic district code", "kind": "category"},
+      {"name": "avg_actual_fine", "meaning": "Mean actual fine", "kind": "measure", "unit": "SAR", "aggregate": "avg"}
+    ],
+    "rows": [["D01", 600], ["D02", 590], ["D03", 580], ["D04", 570], ["D05", 560], ["D06", 550], ["D07", 540], ["D08", 530], ["D09", 520], ["D10", 510], ["D11", 500], ["D12", 490], ["D13", 480], ["D14", 470], ["D15", 460], ["D16", 450], ["D17", 440], ["D18", 430], ["D19", 420], ["D20", 410], ["D21", 400], ["D22", 390], ["D23", 380], ["D24", 370], ["D25", 360], ["D26", 350], ["D27", 340], ["D28", 330], ["D29", 320], ["D30", 310], ["D31", 300], ["D32", 290], ["D33", 280], ["D34", 270], ["D35", 260], ["D36", 250], ["D37", 240], ["D38", 230], ["D39", 220], ["D40", 210], ["D41", 200], ["D42", 190], ["D43", 180], ["D44", 170], ["D45", 160], ["D46", 150], ["D47", 140], ["D48", 130], ["D49", 120], ["D50", 110], ["D51", 100]],
+    "intent": null, "suggested": null, "expected": ["table"],
+    "why": "One additional explicit row beyond fifty_categories. H11 now rejects both bar and column; no intent or suggestion rewards word cloud. Keep the required table fallback."
+  },
+  {
+    "name": "seven_slices_share",
+    "columns": [
+      {"name": "registry_location", "meaning": "Traffic registry", "kind": "category"},
+      {"name": "violations", "meaning": "Registered violations", "kind": "measure", "aggregate": "count"}
+    ],
+    "rows": [["مرور الحاير", 168], ["مرور المدينة المنورة", 155], ["مرور الناصرية", 141], ["مرور حفرالباطن", 139], ["مرور مكه المكرمه", 137], ["مرور الخرج", 132], ["مرور شمال رياض", 128]],
+    "intent": "share", "suggested": null, "expected": ["bar"],
+    "why": "Analyst violations_by_registry, all seven rows, requested as shares of the total. The brief requires bar and H5 rejects pie/donut. Keep that answer even though S14 stops at six and treemap may win S1."
+  },
+  {
+    "name": "two_time_points",
+    "columns": [
+      {"name": "trip_year", "meaning": "Trip year", "kind": "time"},
+      {"name": "citizens", "meaning": "Citizens travelling", "kind": "measure", "aggregate": "sum"}
+    ],
+    "rows": [[2021, 2431], [2022, 629]],
+    "intent": "trend", "suggested": null, "expected": ["column", "bar"],
+    "why": "Analyst citizens_by_trip_year, all two years. H7 excludes line and area; column binds time, whereas bar's catalogue role excludes time."
+  },
+  {
+    "name": "two_units_without_suggestion",
+    "columns": [
+      {"name": "month", "meaning": "Month", "kind": "time"},
+      {"name": "orders", "meaning": "Order count", "kind": "measure", "unit": "orders", "aggregate": "count"},
+      {"name": "avg_price", "meaning": "Mean order price", "kind": "measure", "unit": "SAR", "aggregate": "avg"}
+    ],
+    "rows": [["2025-01", 120, 230], ["2025-02", 140, 210], ["2025-03", 160, 250]],
+    "intent": "trend", "suggested": null, "expected": ["line", "dual_axes"],
+    "why": "Same synthetic two-unit table as two_units_requested, without a preference. Follow the brief's corrected expectation: line or dual_axes; multi_line requires an absent group."
+  },
+  {
+    "name": "arabic_average_labels",
+    "columns": [
+      {"name": "violation_type_description", "meaning": "نوع المخالفة", "kind": "category"},
+      {"name": "avg_actual_fine", "meaning": "متوسط الغرامة الفعلية", "kind": "measure", "unit": "SAR", "aggregate": "avg"}
+    ],
+    "rows": [["دخول أو خروج الشاحنات في أوقات المنع", 1200.0], ["تجاوز السرعة المحددة بمقدار لا يزيد على 25 كم/س", 1000.0], ["عدم امتلاك لوحة أمامية أو خلفية", 300.0], ["عدم ربط حزام", 150.0], ["وقوف المركبة في اماكن غير مخصصة للوقوف", 100.0]],
+    "intent": "compare", "suggested": null, "expected": ["bar"],
+    "why": "Analyst average_fine_by_violation_type shape and Arabic labels. Averages are not additive and long descriptions favour horizontal bars."
+  },
+  {
+    "name": "gender_share_with_code_and_count",
+    "columns": [
+      {"name": "gender", "meaning": "Gender code", "kind": "category", "source": "gender"},
+      {"name": "الجنس", "meaning": "اسم الجنس", "kind": "category", "source": "gender"},
+      {"name": "count", "meaning": "عدد المواطنين الأثرياء", "kind": "measure", "aggregate": "count"},
+      {"name": "النسبة", "meaning": "نسبة المواطنين الأثرياء حسب الجنس", "kind": "share", "unit": "%", "aggregate": "share", "denominator": "All wealthy citizens"}
+    ],
+    "rows": [["M", "ذكر", 616, 61.6], ["F", "أنثى", 384, 38.4]],
+    "intent": "share", "suggested": null, "expected": ["pie", "donut"],
+    "why": "Design section 4's 61.6/38.4 whole, with synthetic counts, and analyst deaths_by_gender's code/label convention. Shared source exempts the redundant label from S9; pie prefers the share measure."
+  },
+  {
+    "name": "words_rank_25",
+    "columns": [
+      {"name": "word", "meaning": "Word in feedback", "kind": "category"},
+      {"name": "mentions", "meaning": "Word mentions", "kind": "measure", "aggregate": "count"}
+    ],
+    "rows": [["خدمة", 90], ["سرعة", 85], ["جودة", 80], ["سعر", 76], ["توصيل", 72], ["طعام", 68], ["طلب", 65], ["تطبيق", 61], ["سائق", 58], ["مطعم", 54], ["دفع", 51], ["وقت", 48], ["دعم", 45], ["خصم", 42], ["عرض", 39], ["تجربة", 36], ["عميل", 33], ["موقع", 30], ["سهولة", 27], ["نظافة", 24], ["تغليف", 21], ["متابعة", 18], ["تواصل", 15], ["تنوع", 12], ["رضا", 9]],
+    "intent": "rank", "suggested": null, "expected": ["bar", "word_cloud"],
+    "why": "Same twenty-five synthetic words without a suggestion. Bar is the brief's preferred answer for readable ranks; word_cloud is explicitly acceptable because S4 penalizes crowded bars."
+  },
+  {
+    "name": "monthly_trend_12",
+    "columns": [
+      {"name": "month", "meaning": "Month of death", "kind": "time"},
+      {"name": "deaths", "meaning": "Deaths in month", "kind": "measure", "aggregate": "sum"}
+    ],
+    "rows": [["2024-01-01T00:00:00", 1487], ["2024-02-01T00:00:00", 1370], ["2024-03-01T00:00:00", 1490], ["2024-04-01T00:00:00", 1452], ["2024-05-01T00:00:00", 1571], ["2024-06-01T00:00:00", 1444], ["2024-07-01T00:00:00", 1576], ["2024-08-01T00:00:00", 1611], ["2024-09-01T00:00:00", 1647], ["2024-10-01T00:00:00", 1730], ["2024-11-01T00:00:00", 1657], ["2024-12-01T00:00:00", 1746]],
+    "intent": "trend", "suggested": null, "expected": ["line"],
+    "why": "Analyst deaths_per_month, all twelve rows. A regular monthly series earns S7; line precedes area."
+  },
+  {
+    "name": "monthly_trend_24",
+    "columns": [
+      {"name": "month", "meaning": "Month of death", "kind": "time"},
+      {"name": "deaths", "meaning": "Deaths in month", "kind": "measure", "aggregate": "sum"}
+    ],
+    "rows": [["2024-01", 1487], ["2024-02", 1370], ["2024-03", 1490], ["2024-04", 1452], ["2024-05", 1571], ["2024-06", 1444], ["2024-07", 1576], ["2024-08", 1611], ["2024-09", 1647], ["2024-10", 1730], ["2024-11", 1657], ["2024-12", 1746], ["2025-01", 1500], ["2025-02", 1400], ["2025-03", 1510], ["2025-04", 1470], ["2025-05", 1600], ["2025-06", 1490], ["2025-07", 1620], ["2025-08", 1660], ["2025-09", 1690], ["2025-10", 1780], ["2025-11", 1720], ["2025-12", 1810]],
+    "intent": "trend", "suggested": null, "expected": ["line"],
+    "why": "Analyst deaths_per_month values with year-month strings plus twelve explicitly synthetic 2025 points. A longer monthly axis should remain a line."
+  },
+  {
+    "name": "average_rejects_pie_suggestion",
+    "columns": [
+      {"name": "city", "meaning": "City", "kind": "geography"},
+      {"name": "avg_price", "meaning": "Average order price", "kind": "measure", "unit": "SAR", "aggregate": "avg"}
+    ],
+    "rows": [["الأحساء", 810.5333333333333], ["الظهران", 718.9444444444445], ["جازان", 674.5652173913044]],
+    "intent": "rank", "suggested": "pie chart", "expected": ["column", "bar"],
+    "why": "Analyst top_cities_by_average_price, all three cities. H3 must override a misleading pie preference; averages are not parts of a whole."
+  },
+  {
+    "name": "negative_totals_reject_whole",
+    "columns": [
+      {"name": "city", "meaning": "City", "kind": "geography"},
+      {"name": "total_value", "meaning": "Net order value after refunds", "kind": "measure", "unit": "SAR", "aggregate": "sum"}
+    ],
+    "rows": [["الرياض", 350], ["جدة", -80], ["الطائف", 120]],
+    "intent": "share", "suggested": "pie", "expected": ["column", "bar"],
+    "why": "Synthetic signed extension of analyst order_value_by_customer_city. H4 excludes whole charts despite a pie suggestion; bars retain the negative value honestly."
+  },
+  {
+    "name": "balanced_two_slices",
+    "columns": [
+      {"name": "person_type", "meaning": "Person type", "kind": "category"},
+      {"name": "share", "meaning": "Share of violations", "kind": "share", "unit": "%", "aggregate": "share", "denominator": "All violations"}
+    ],
+    "rows": [["Alien", 51.05], ["Saudi", 48.95]],
+    "intent": "share", "suggested": null, "expected": ["column", "bar"],
+    "why": "Analyst person_type_share, both rows. S6 penalizes nearly equal slices and S14 a tiny treemap; a bar or column makes the small difference legible."
+  },
+  {
+    "name": "annual_arabic_average_trend",
+    "columns": [
+      {"name": "العام", "meaning": "السنة", "kind": "time"},
+      {"name": "متوسط المخالفات السنوية للسائقين فوق 25 سنة", "meaning": "متوسط المخالفات السنوية", "kind": "measure", "aggregate": "avg"}
+    ],
+    "rows": [[2021, 1.09], [2022, 1.09], [2023, 1.09], [2024, 1.09], [2025, 1.1]],
+    "intent": "trend", "suggested": null, "expected": ["line"],
+    "why": "Analyst annual_average_trend_arabic_column, all five rows and exact Arabic column names. Time is kept; nonadditive means exclude area while line preserves the small variation."
+  }
+]
