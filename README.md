@@ -193,6 +193,84 @@ You can also ask for a chart in the chat and the lead calls the designer.
 `PYDANTIC_AI_DESIGNER_MODEL` selects the designer model. When empty, it uses the profiler's
 default, `openrouter:google/gemma-4-31b-it:nitro`, pending the Phase 4 benchmark.
 
+## Evaluate at scale
+
+The Phase 4b set under `evals/designer/agent/scale/` targets two hundred cases, split by
+source dataset into train (120), dev (40), and heldout (40). Real questions from the
+Insightor dev corpus cover result shapes and Arabic data, with English Phase 4 cases
+reused for language coverage. Labelled derivatives add Hijri dates, Arabic-Indic digits,
+and Arabic label edge cases. Saved analyst reports are fixed inputs to the designer.
+The original thirty-one-case Phase 4 set remains the smoke set.
+
+From the repository root, install the optional dependencies and select and seed cases
+from the local, read-only corpus:
+
+```bash
+uv sync --group optimize
+uv run python -m evals.designer.agent.corpus_tools.select --corpus /path/to/corpus
+uv run python -m evals.designer.agent.corpus_tools.seed --corpus /path/to/corpus
+```
+
+Selection accepts `--count` (default 200); seeding accepts `--out` and `--seed` (default 7).
+Before capture, the controller reconciles selected and seeded cases to the two-hundred-case
+total and regenerates `splits.json` with `corpus_tools.select.splits`, including seeded
+names and keeping source datasets together. The two commands do not do that final step.
+Capture requires `OPENROUTER_API_KEY` and writes reports, `cases.json`, and provenance in
+`decisions.json`; it reuses existing valid reports:
+
+```bash
+uv run python -m evals.designer.agent.corpus_tools.capture --concurrency 4
+```
+
+Use `--only NAME [NAME ...]` to capture a subset. Insightor's chosen chart and requested
+type are metadata only, never acceptable-chart labels or suggestions to the designer.
+For cases with `charts: null`, the reference list uses the designer's declared intent:
+nonnegative recommendation candidates within one point of the top score, plus eligible
+bar/column, grouped and stacked orientation, and pie/donut swaps. Swaps must remain
+nonnegative candidates. `ChartAccepted` measures agreement with these rules, not human
+correctness. `IntentPlausible` separately compares intent with a saved orchestrator task.
+
+Run the saved cases with the configured designer model and API key:
+
+```bash
+uv run python -m evals.designer.agent.run --cases evals/designer/agent/scale/cases.json --split train
+uv run python -m evals.designer.agent.run --cases evals/designer/agent/scale/cases.json --split dev
+uv run python -m evals.designer.agent.run --cases evals/designer/agent/scale/cases.json --split heldout --render
+```
+
+Omit `--split` for the complete set. Rendering needs the setup above and writes an HTML
+review page beside the cases under `renders/<model>/<split>/`. A person judges the held-out
+forty for chart type, column roles, truthful title and language, units and formats, honest
+presentation, and explanation. Enter verdicts and notes on the page, then copy the exported
+JSON into the `judgments` key of `scale/judgments.json`, preserving its `rubric`.
+
+```bash
+uv run python -m evals.designer.agent.run --cases evals/designer/agent/scale/cases.json --split heldout --judgments
+```
+
+This reads saved judgments without a model call. The exit test is at least seven in ten
+judged correct, reported with and without seeded cases; a pass with a failed rubric
+criterion does not count. An optional `--judge MODEL` must use a different model from the
+designer and does not replace the person's judgment.
+
+DSPy GEPA optimizes instructions on train and validates on dev; it never loads heldout.
+Both commands below need `OPENROUTER_API_KEY`, including the four-example `check`:
+
+```bash
+uv run python -m evals.designer.agent.optimize_instructions check
+uv run python -m evals.designer.agent.optimize_instructions run light chart-optimization --split train
+```
+
+Start with `light`; `medium` is also supported. `PYDANTIC_AI_DESIGNER_MODEL` selects the
+task model and `OPTIMIZE_REFLECTION_MODEL` selects the reflection model (Sonnet 4.6 by
+default). The output directory holds the optimized program and `instructions-light.txt`,
+including the grammar and catalogue. This single-shot program cannot call the runtime
+agent's tools. The controller reviews the text, transfers instruction changes into
+`vis_agent/designer/rulebook.md` without duplicating the generated grammar and catalogue,
+and measures the real agent with its tools. Keep the changes only if automatic scores
+beat the seed rulebook on both dev and heldout without lowering the judged sample;
+otherwise keep the seed rulebook and record why.
+
 ## How profiling works
 
 Every statistic and every measurement label is a DuckDB query: counts, distinct values, numeric
@@ -403,6 +481,12 @@ The analyst runs with reasoning switched off and temperature zero.
 | `evals/profiler/` | Evaluation set and real-model runner |
 | `evals/analyst/` | Analyst evaluation set and real-model runner |
 | `evals/designer/agent/` | Designer model evaluation on saved analysis reports and chart judgments |
+| `evals/designer/agent/corpus_tools/select.py` | Deterministic corpus selection, coverage, and dataset-disjoint split assignment |
+| `evals/designer/agent/corpus_tools/seed.py` | Reproducible Hijri and Arabic transformations of real CSVs |
+| `evals/designer/agent/corpus_tools/capture.py` | Capture fixed analyst reports and record cases and provenance |
+| `evals/designer/agent/run.py` | Smoke and scale evaluation, split filtering, rule references, rendering, and judgments |
+| `evals/designer/agent/optimize_instructions.py` | DSPy GEPA instruction optimization on train and dev |
+| `evals/designer/agent/scale/` | Scale cases, saved reports, provenance, splits, seeded files, and human judgments |
 
 Run the tests without model API calls:
 
