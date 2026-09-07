@@ -55,14 +55,15 @@ an additive measure. The user asks, in Arabic, for the percentage of wealthy cit
 1. Code loads the profile, detects the language of the question, and builds the prompt: the semantic profile, the
    measurements the analyst needs, the row count, the question, the brief, the language.
 2. The model writes one SELECT that groups by gender, keeps the gender code in one column and its meaning in
-   another, filters the top wealth levels, and divides by the total per gender inside the SQL. It calls `run_query`.
+   another, filters the top wealth levels, and divides by the total per gender inside the SQL. It calls `run_query`
+   with the SQL and one description per result column.
 3. Code parses the statement, checks it is a single SELECT on the dataset's table, runs it with a timeout and a row
    cap, runs the result checks, and returns the rows, the row count, the column types, and the checks.
 4. If DuckDB returned an error or a check failed with severity error, the model repairs and calls `run_query`
    again. At most three query calls per run.
-5. The model submits the analysis through the output tool: the SQL it ran, one description per result column, the
-   two-sentence summary, and its assumptions. Code verifies that the SQL is the last query that ran and passed, and
-   that every number in the summary exists in the result. A failed verification is sent back once.
+5. The model delivers through the output tool: the two-sentence summary and its assumptions. Code attaches the
+   last query that passed its checks, with its column descriptions, and verifies that every number in the summary
+   exists in that result. A failed verification is sent back once.
 6. The caller receives the result table, the query, the descriptions, the summary, the checks, and the warnings.
 
 When the columns cannot answer the question, or the question uses a term with no definition ("recent", "top
@@ -82,12 +83,13 @@ result only inside an aggregate such as a count.
 
 ## 6. The output contract
 
-The analysis, written by the model:
+The analysis has four parts. The model writes `summary` and `assumptions` when it delivers; code attaches `sql`
+and `columns` from the `run_query` call that passed its checks, so the model writes nothing twice.
 
 | Field | Meaning |
 |---|---|
-| `sql` | The statement that produced the result. Must equal the last query that ran and passed. |
-| `columns` | One entry per result column: `name` as it appears in the result, `meaning` in plain words, `kind` (category, ordinal, time, measure, share, geography, identifier), `unit` for measures, `source` (the dataset column it comes from, or null when computed), `aggregate` (sum, avg, count, count_distinct, min, max, share, none), and `denominator` for shares: what the share is of. |
+| `sql` | The statement that produced the result: the last query that passed its checks. |
+| `columns` | Given to `run_query` with the SQL. One entry per result column: `name` as it appears in the result, `meaning` in plain words, `kind` (category, ordinal, time, measure, share, geography, identifier), `unit` for measures, `source` (the dataset column it comes from, or null when computed), `aggregate` (sum, avg, count, count_distinct, min, max, share, none), and `denominator` for shares: what the share is of. |
 | `summary` | Two sentences in the caller's language. Every number in it must exist in the result. |
 | `assumptions` | The choices the analyst made that the question did not state: the time bucket, the top N, how nulls were treated. Empty when there were none. |
 
@@ -100,23 +102,24 @@ warnings, the model name, and the time taken.
 
 ## 7. The query tool
 
-`run_query` takes one SQL string and does, in order:
+`run_query` takes one SQL string and one description per result column (section 6) and does, in order:
 
 1. Parse it with DuckDB. Exactly one statement, of type SELECT. Anything else is returned to the model as an error
    it can fix.
 2. Walk DuckDB's parsed tree for table references. The only table allowed is the dataset's own table. Other
    tables, including other datasets and the metadata table, are rejected by name.
-3. Run it on a connection with file access disabled and the configuration locked, so no query can read or write
-   files, with a 10 second timeout enforced by interrupting the query, and wrapped so that at most 1,001 rows are
-   fetched. More than 1,000 rows is an error telling the model to aggregate, bucket, or take a top N.
+3. Reject every table function (`read_csv`, `read_text`, `range`, and the rest) and every schema-qualified table,
+   so no query can reach files or system tables. Run it with a 10 second timeout enforced by interrupting the
+   query, fetching at most 1,001 rows. More than 1,000 rows is an error telling the model to aggregate, bucket, or
+   take a top N.
 4. Run the result checks (section 8).
 5. Return the rows with cells capped at 120 characters, the row count, the column names and types, the checks, and
    the time taken. A DuckDB error comes back word for word so the model can repair it.
 
-Why the guard is in code rather than in a read-only connection: the store keeps the database file open read-write
-in the same process, and DuckDB refuses to open the same file read-only while that is true (verified on 1.5.5).
-A SELECT-only parser check, a table allow-list, and disabled file access give the same protection before the
-statement runs.
+Why the guard is in code rather than in the connection: the store keeps the database file open read-write in the
+same process, and DuckDB refuses to open the same file read-only while that is true; disabling file access is a
+database-wide setting that would also break the store's own imports (both verified on 1.5.5). A SELECT-only parser
+check, a table allow-list, and a ban on table functions give the same protection before the statement runs.
 
 Errors the model can fix, such as a parse failure, a DuckDB error, a rejected table, or too many rows, are returned
 as tool results the model reads and repairs. Errors the model cannot fix, such as a missing dataset or a database
@@ -129,6 +132,7 @@ raw table.
 
 | Check | Rule | Severity |
 |---|---|---|
+| Descriptions match the result | Every result column is described exactly once, by its exact name. | error |
 | Labels are faithful | For a result column whose `source` is a category, ordinal, boolean, or geography column: its values are a subset of the source's distinct values, or the result also carries the source's codes in another column with the same `source`, and every code and label pair matches the profile's code meanings or the brief's. Anything else is a relabel the data does not support. | error |
 | Shares add up | A column of kind share sums to 100 or to 1, within half a point, over the rows that share the same first category. | error |
 | Aggregates stay in bounds | An avg, min, or max of a source column lies between the source's minimum and maximum. | error |
