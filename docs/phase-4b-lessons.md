@@ -250,6 +250,24 @@ check budget with nothing passed by a clarification that names the last violatio
 says so. Lesson: run one real question through the lead before a merge; the runners test the agents, not
 the conversation.
 
+### Ten corpus questions through the lead
+
+The owner saw the analyst asking back and forth in the web chat, so ten corpus files with their own
+questions (seed 11) went through the lead the way the UI runs them, and through the analyst alone. Through
+the lead: seven answered, two of them with charts; one clarification (a geometry-only file asked for "the
+path": list all hundred or one?); one honest "this file cannot answer that" (a one-cell count of customs
+records asked for yearly export growth); and one lead misfire, "no file uploaded" without calling
+find_dataset. The analyst alone answered nine and asked once, on the customs file. So the asking is not the
+analyst's habit; it is the corpus: each file is the result of a warehouse query with joins and filters, and
+a question that names a filter the result no longer holds (a city, a year, an age, "the largest five") can
+only be asked back. On the 220-case scale set that was 57 questions, and reading them all gives one pattern:
+"the table has only X; can you provide Y?". Two lead defects came out of the same ten and are fixed in the
+lead's instructions: it once rewrote the returned relative image path into an invented host, and it once
+declared nothing uploaded without looking. Two observations stay: the upload button sends the composer's
+text together with the attachment link, so typing the question first and then attaching is the intended
+flow; and on one-row files the lead sometimes answers from the profile's statistics without calling the
+analyst, which is right for a single number but skips the analyst's checks.
+
 ## Left for later
 
 - A single-series line, area, column, or bar whose axis values repeat, with no group role, should fail
