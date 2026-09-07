@@ -252,9 +252,11 @@ bounded and additive; every candidate keeps its breakdown for the explanation an
 | S11 words | Word cloud with fewer than twenty categories | −3 |
 | S12 fallback | Table is always a candidate at 0 before other rules | 0 |
 | S13 one number | A one-row, one-measure result: table +2, every chart −3 | as stated |
+| S14 few parts | A treemap whose category has six or fewer values | −2, fix "use a pie, a donut, or a bar" |
 
 Ranking: sum of the soft scores among the candidates that passed the hard rules, highest first, ties broken by
-catalogue order. Intent unknown means S1 scores nothing for everyone.
+catalogue order. Intent unknown means S1 scores nothing for everyone. The table never receives S1: its purposes
+list every intent so it is always eligible, and it stays the zero-score fallback.
 
 ### 7.3 Check rules, on a written spec
 
