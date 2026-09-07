@@ -225,7 +225,7 @@ def _contrast(color, background):
 def check_rules(
     entry: CatalogueEntry, spec: Spec, shape: ResultShape, binding: dict[str, ColumnShape],
 ) -> list[Violation]:
-    """Collect C4–C16 errors; syntax owns C17 and resolve owns its warning."""
+    """Collect semantic errors; syntax owns C17 and check records its warning."""
     violations = []
 
     def fail(rule, message, fix):
@@ -237,13 +237,28 @@ def check_rules(
     value = binding.get("value")
     if ordered and sort != "none":
         fail("C4", "Sort must be none on a time or ordinal axis.", "Remove the sort")
-    if spec.limit is not None and (sort not in ("value asc", "value desc") or not _additive(value)):
-        fail("C5", "A limit needs a value sort and an additive value for Other.", "Sort by value, or drop the limit")
+    if spec.sort and spec.sort != "none" and spec.sort.split()[0] not in binding:
+        fail("C18", "The sort target must be a bound role.", "Remove the sort")
+    if spec.limit is not None and spec.limit < 1:
+        fail("C19", "A limit must be at least 1.", "Use a limit of 1 or more")
+    valid_limit = (spec.limit is not None and spec.limit >= 1 and axis is not None and
+                   not ordered and sort in ("value asc", "value desc") and _additive(value) and
+                   ("value2" not in binding or _additive(binding["value2"])))
+    if spec.limit is not None and (axis is None or sort not in ("value asc", "value desc") or
+                                   not _additive(value) or
+                                   ("value2" in binding and not _additive(binding["value2"]))):
+        fail("C5", "A limit needs a category axis, a value sort, and additive values for Other.", "Sort by value, or drop the limit")
 
     category = binding.get("category")
+    displayed = shape.limited(axis.name, spec.limit) if valid_limit else shape
+    displayed_binding = {role: displayed.column(c.name) for role, c in binding.items()}
+    color = displayed_binding.get("group") if "group" in entry.roles else None
+    if color is None and entry.name in {"pie", "donut", "treemap", "word_cloud"}:
+        color = displayed_binding.get("category")
+    color_count = color.distinct if color else 2 if entry.name == "dual_axes" else 1
     if spec.palette and (any(not _HEX.fullmatch(c) for c in spec.palette) or
-                         (category is not None and len(spec.palette) < category.distinct)):
-        fail("C6", "Palette entries must be hex colors, with a color for every category.", "Add colors or drop the palette")
+                         len(spec.palette) < color_count):
+        fail("C6", "Palette entries must be hex colors, with a color for each coloured group, category, or series.", "Add colors or drop the palette")
     background = spec.background_color or THEME_BACKGROUNDS[spec.theme]
     colors = [c for c in spec.palette if _HEX.fullmatch(c)]
     if spec.emphasis:
@@ -262,7 +277,7 @@ def check_rules(
         target = "category or group" if group is not None else "category"
         fail("C9", f"Every emphasised value must exist in the bound {target}.", "Fix the spelling")
     for rule in HARD_RULES:
-        result = rule(entry, shape, binding, Context())
+        result = rule(entry, displayed, displayed_binding, Context())
         if result is not None:
             fail("C10", f"{result.rule}: {result.explanation}", result.fix)
 
@@ -293,7 +308,11 @@ def check_rules(
             for c in y_values
         ):
             fail("C14", "Log needs line, multi_line, or scatter with positive values spanning at least a factor of one hundred.", "Use linear")
-    if spec.labels == "on" and shape.rows > 50:
+    marks = shape.rows
+    if valid_limit and category is not None:
+        marks = min(marks, displayed_binding["category"].distinct *
+                    (binding["group"].distinct if "group" in binding else 1))
+    if spec.labels == "on" and marks > 50:
         fail("C15", "More than fifty marks crowd the data labels.", "Turn them off, or limit the rows")
     if spec.zero is True and spec.axis_y_min is not None and spec.axis_y_min != 0:
         fail("C16", "zero true contradicts a nonzero axisYMin.", "Drop one")

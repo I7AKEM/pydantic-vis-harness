@@ -1,6 +1,6 @@
 """Facts about the analyst's bounded result, computed without a model."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from vis_agent.analyst.models import Aggregate, ColumnKind, QueryResult, ResultColumn
 
@@ -31,6 +31,17 @@ class ResultShape:
     identifiers: list[ColumnShape]
     # C9 needs membership, which cannot be recovered from a distinct count.
     _label_values: dict[str, set[str]] = field(default_factory=dict, init=False, repr=False)
+
+    def limited(self, column_name: str, count: int) -> "ResultShape":
+        """Copy displayed cardinality, retaining every raw value statistic."""
+        def update(columns):
+            return [replace(c, distinct=min(c.distinct, count + 1))
+                    if c.name == column_name else c for c in columns]
+
+        limited = replace(self, **{name: update(getattr(self, name))
+                                  for name in ("columns", "labels", "measures", "times", "identifiers")})
+        limited._label_values = self._label_values
+        return limited
 
     def column(self, name: str) -> ColumnShape:
         for column in self.columns:

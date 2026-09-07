@@ -11,8 +11,8 @@ from .rules import ACCENT, ADDITIVE, BARS, COLUMNS
 from .syntax import parse_format
 
 LANGUAGE_DEFAULTS = {
-    "ar": {"other": "أخرى", "unknown": "غير معروف", "direction": "rtl"},
-    "en": {"other": "Other", "unknown": "Unknown", "direction": "ltr"},
+    "ar": {"other": "أخرى", "unknown": "غير معروف", "direction": "rtl", "count": "العدد"},
+    "en": {"other": "Other", "unknown": "Unknown", "direction": "ltr", "count": "Count"},
 }
 TRENDS = {"line", "multi_line", "area", "stacked_area"}
 MEASURES = {"value", "value2", "x", "y"}
@@ -124,7 +124,9 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
             "data": [dict(zip(result.columns, row)) for row in result.rows],
             "columns": list(result.columns), "width": width, "height": height,
         }
-        return Resolved(config, {}, number, [], len(result.rows), 0, 0, width, height)
+        compromises = [Compromise(key=key, message="tables are drawn as the package draws them")
+                       for key in ("labels", "legend") if getattr(spec, key) == "on"]
+        return Resolved(config, {}, number, compromises, len(result.rows), 0, 0, width, height)
 
     by_name = {column.name: column for column in columns}
     binding = {role: by_name[name] for role, name in spec.bind.items()}
@@ -136,6 +138,8 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
 
     ordered = axis is not None and binding[axis].kind in {"time", "ordinal"}
     order = spec.sort or ("none" if ordered or axis is None else "value desc")
+    if order != "none" and order.split()[0] not in binding:
+        raise ResolveError("The sort target must be a bound role; remove the sort.")
     records = _sort(records, order, axis, "group" in binding)
     folded = 0
     if spec.limit is not None:
@@ -172,6 +176,9 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
                                    ("axisYTitle", spec.axis_y_title, y_column)):
             if title is not None or column is not None:
                 config[key] = title if title is not None else column.name
+        if spec.type == "histogram":
+            config["axisXTitle"] = spec.axis_x_title if spec.axis_x_title is not None else binding["value"].name
+            config["axisYTitle"] = spec.axis_y_title if spec.axis_y_title is not None else defaults["count"]
         if spec.percent and spec.axis_y_title is None:
             config["axisYTitle"] = "%"
 
@@ -223,8 +230,21 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
         overrides["scale"] = scale
     if spec.labels == "off":
         overrides["labels"] = []
+    elif spec.labels == "on":
+        if spec.type in BARS | COLUMNS | {"pie", "donut", "scatter", "histogram", "boxplot", "treemap", "word_cloud"}:
+            field = {"scatter": "y", "histogram": "count"}.get(spec.type, "value")
+            overrides["labels"] = [{"text": field}]
+        else:
+            compromises.append(Compromise(
+                key="labels", message=f"labels on cannot reach the marks of {spec.type}; the package's labels are retained.",
+            ))
     if spec.legend == "off":
         overrides["legend"] = False
+    elif spec.legend == "on":
+        if spec.type in {"line", "area", "scatter", "histogram", "radar"} and "group" not in binding:
+            compromises.append(Compromise(key="legend", message="no legend: the chart has one series"))
+        else:
+            overrides["legend"] = True
 
     if spec.format is not None and number.unit == "%" and not spec.percent and any(
         column.kind != "share" for role, column in binding.items() if role in MEASURES

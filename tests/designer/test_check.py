@@ -194,3 +194,105 @@ def test_c17_percent_unit_on_measure_is_a_compromise():
     assert any(c.key == "format" and "share" in c.message for c in check.compromises)
     text = COLUMN.replace("city", "label").replace("violations", "share") + "format 0.0%\n"
     assert check_spec(text, *gender_share()).compromises == []
+
+
+@pytest.mark.parametrize("chart,bindings,builder,sort", [
+    ("scatter", "  x age\n  y amount", "scatter_points", "value desc"),
+    ("histogram", "  value amount", "raw_amounts", "category asc"),
+])
+def test_c18_sort_requires_bound_role(chart, bindings, builder, sort):
+    from . import conftest
+    from vis_agent.designer.resolve import ResolveError, resolve
+
+    data = getattr(conftest, builder)()
+    text = f"vis {chart}\ntitle Example\ndescription Example\nbind\n{bindings}\n"
+    rejected = check_spec(text + f"sort {sort}\n", *data)
+    assert [(v.rule, v.fix) for v in rejected.violations] == [("C18", "Remove the sort")]
+    with pytest.raises(ResolveError, match="sort target"):
+        resolve(parse(text + f"sort {sort}\n"), *data)
+    assert check_spec(text, *data).ok
+    assert resolve(parse(text), *data).drawn_rows > 0
+    assert check_spec(COLUMN + f"sort {sort}\n", *cities()).ok
+
+
+@pytest.mark.parametrize("limit,ok", [(0, False), (-2, False), (1, True)])
+def test_c19_limit_positive(limit, ok):
+    check = check_spec(COLUMN + f"limit {limit}\n", *cities())
+    assert check.ok is ok
+    assert [(v.rule, v.fix) for v in check.violations] == ([] if ok else [("C19", "Use a limit of 1 or more")])
+
+
+@pytest.mark.parametrize("chart,n,limit,ok", [
+    ("column", 60, None, False), ("column", 60, 20, True),
+    ("pie", 12, 5, True), ("pie", 12, 8, False),
+])
+def test_mark_counts_after_limit(chart, n, limit, ok):
+    text = COLUMN.replace("vis column", f"vis {chart}")
+    if limit is not None:
+        text += f"limit {limit}\n"
+    assert check_spec(text, *cities(n)).ok is ok
+
+
+def test_limit_keeps_raw_values_for_checks_and_shape_is_a_copy():
+    from dataclasses import asdict
+    from vis_agent.designer.shape import describe
+
+    columns, result = cities(60)
+    result.rows[-1][-1] = -1
+    shape = describe(columns, result)
+    limited = shape.limited("city", 20)
+    expected = asdict(shape)
+    for key in ("columns", "labels"):
+        expected[key][0]["distinct"] = 21
+    assert asdict(limited) == expected
+    assert shape.column("city").distinct == 60
+    check = check_spec(COLUMN.replace("column", "pie") + "limit 5\nemphasis\n  - City59\n", columns, result)
+    assert any("H4" in v.message for v in check.violations)
+    assert not any(v.rule == "C9" or "H5" in v.message for v in check.violations)
+
+
+@pytest.mark.parametrize("limit,ok", [(20, True), (25, False)])
+def test_c15_counts_grouped_marks_after_limit(limit, ok):
+    from .conftest import grouped
+
+    text = COLUMN.replace("vis column", "vis grouped_column").replace("value violations", "value n\n  group gender")
+    check = check_spec(text + f"limit {limit}\nlabels on\n", *grouped(60))
+    assert check.ok is ok
+    assert any(v.rule == "C15" for v in check.violations) is not ok
+
+
+@pytest.mark.parametrize("chart,colors,ok", [
+    ("grouped_column", 1, False), ("grouped_column", 2, True),
+    ("column", 1, True), ("pie", 4, False), ("pie", 5, True),
+    ("donut", 4, False), ("treemap", 4, False), ("word_cloud", 4, False),
+])
+def test_c6_palette_uses_colour_role(chart, colors, ok):
+    from .conftest import grouped
+    text = COLUMN.replace("vis column", f"vis {chart}")
+    data = cities()
+    if chart == "grouped_column":
+        text = text.replace("value violations", "value n\n  group gender")
+        data = grouped()
+    check = check_spec(text + "palette\n" + "  - #000000\n" * colors, *data)
+    assert check.ok is ok
+    assert any(v.rule == "C6" for v in check.violations) is not ok
+
+
+@pytest.mark.parametrize("colors,ok", [(1, False), (2, True)])
+def test_c6_dual_axes_needs_two_series_colours(colors, ok):
+    from .conftest import two_units
+    text = ("vis dual_axes\ntitle Measures\ndescription Two units\nbind\n"
+            "  category month\n  value visits\n  value2 revenue\npalette\n" + "  - #000000\n" * colors)
+    assert check_spec(text, *two_units()).ok is ok
+
+
+def test_c5_nonadditive_second_measure_cannot_be_folded():
+    from .conftest import two_units
+    columns, result = two_units()
+    columns[0].kind = "category"
+    columns[2].aggregate = "avg"
+    text = ("vis dual_axes\ntitle Measures\ndescription Two units\nbind\n"
+            "  category month\n  value visits\n  value2 revenue\nlimit 5\n")
+    assert any(v.rule == "C5" for v in check_spec(text, columns, result).violations)
+    columns[2].aggregate = "sum"
+    assert check_spec(text, columns, result).ok

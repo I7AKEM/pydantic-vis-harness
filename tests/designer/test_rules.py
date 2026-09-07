@@ -275,7 +275,7 @@ def test_c5_limit():
 
 def test_c6_colors():
     assert has(checked("column", palette=["red"] * 5), "C6")
-    assert has(checked("column", palette=["#000000"] * 4), "C6")
+    assert not has(checked("column", palette=["#000000"]), "C6")
     assert not has(checked("column", palette=["#000"] * 5), "C6")
     assert not has(checked("column"), "C6")
 

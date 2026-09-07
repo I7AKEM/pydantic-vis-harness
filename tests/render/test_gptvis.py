@@ -282,3 +282,56 @@ def test_script_accepts_output_path_from_stdin_or_command_line(tmp_path, command
 
 def test_smoke_test():
     assert gptvis.smoke_test() is None
+
+
+@pytest.mark.parametrize("chart,field", [
+    ("column", "value"), ("bar", "value"), ("grouped_column", "value"),
+    ("stacked_bar", "value"), ("scatter", "y"), ("histogram", "count"),
+    ("boxplot", "value"), ("treemap", "value"), ("word_cloud", "value"),
+])
+def test_labels_on_reaches_marks_and_formatter(chart, field, tmp_path):
+    text, builder = SPECS[chart]
+    if chart == "scatter":
+        builder = lambda: scatter_points(3)
+    rendered = gptvis.render(parse(text + "\nlabels on\nformat 0.0"), *builder(), tmp_path, trace=True)
+    options = json.loads(rendered.config.read_text())["g2"]
+    assert options["labels"] == [{"text": field, "formatter": {"$format": "value"}}]
+    assert any(text.endswith(".0") for text in rendered.texts)
+
+
+@pytest.mark.parametrize("switch", ["on", "off"])
+def test_legend_switch_overrides_package_false(switch, tmp_path):
+    spec = parse(SPECS["bar"][0] + f"\nlegend {switch}")
+    rendered = gptvis.render(spec, *cities(), tmp_path)
+    options = json.loads(rendered.config.read_text())["g2"]
+    assert options["encode"]["color"] == "category"
+    if switch == "on":
+        assert "legend" not in options
+    else:
+        assert options["legend"] is False
+
+
+def test_render_merges_compromises_in_order_without_duplicates(tmp_path):
+    from vis_agent.designer.models import Compromise
+
+    spec = parse(SPECS["column"][0])
+    duplicate = resolve(spec, *arabic_cities()).compromises[0]
+    first = Compromise(key="direction", message="A different check-time direction compromise")
+    incoming = [first, duplicate, duplicate]
+    rendered = gptvis.render(spec, *arabic_cities(), tmp_path, compromises=incoming)
+    assert rendered.compromises[:2] == [first, duplicate]
+    pairs = [(c.key, c.message) for c in rendered.compromises]
+    assert len(pairs) == len(set(pairs))
+    assert incoming == [first, duplicate, duplicate]
+
+
+@pytest.mark.parametrize("digits,tick", [("western", "10.0 SAR"), ("arabic", "١٠٫٠ SAR")])
+def test_radar_formats_every_position_axis_and_draws_ticks(digits, tick, tmp_path):
+    columns, result = radar_groups()
+    columns[-1].unit = "SAR"
+    spec = parse(SPECS["radar"][0] + f"\nformat 0.0\ndigits {digits}")
+    rendered = gptvis.render(spec, columns, result, tmp_path, trace=True)
+    options = json.loads(rendered.config.read_text())["g2"]
+    assert len(options["axis"]) == 8
+    assert all(axis["labelFormatter"] == {"$format": "value"} for axis in options["axis"].values())
+    assert tick in rendered.texts

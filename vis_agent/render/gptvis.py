@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+from collections.abc import Sequence
 from pathlib import Path
 
 from vis_agent.analyst.models import QueryResult, ResultColumn
@@ -79,7 +80,7 @@ def _page(spec: Spec, resolved, metrics: dict, png: Path) -> str:
 
 
 def render(spec: Spec, columns: list[ResultColumn], result: QueryResult, out_dir: Path,
-           *, trace: bool = False) -> Rendered:
+           *, trace: bool = False, compromises: Sequence[Compromise] = ()) -> Rendered:
     if reason := available():
         raise RendererUnavailable(reason)
     resolved = resolve(spec, columns, result)
@@ -109,12 +110,13 @@ def render(spec: Spec, columns: list[ResultColumn], result: QueryResult, out_dir
                                      "number2": payload["format2"],
                                      "functionPaths": metrics["functionPaths"]}, ensure_ascii=False, indent=2), encoding="utf-8")
         page.write_text(_page(spec, resolved, metrics, png), encoding="utf-8")
-        compromises = list(resolved.compromises)
+        merged_compromises = list(compromises) + resolved.compromises
         if metrics["functionPaths"]:
-            compromises.append(Compromise(key="page", message="the page shows the picture, not an interactive chart, because the package's configuration holds functions"))
+            merged_compromises.append(Compromise(key="page", message="the page shows the picture, not an interactive chart, because the package's configuration holds functions"))
         return Rendered(png=png, html=page, config=config, width=metrics["width"], height=metrics["height"],
                         seconds=metrics["renderMs"] / 1000, non_background_share=metrics["nonBackgroundShare"],
-                        compromises=compromises, drawn_rows=resolved.drawn_rows, folded_rows=resolved.folded_rows,
+                        compromises=list({(c.key, c.message): c for c in merged_compromises}.values()),
+                        drawn_rows=resolved.drawn_rows, folded_rows=resolved.folded_rows,
                         dropped_rows=resolved.dropped_rows, texts=metrics["texts"] if trace else None)
     except (ValueError, KeyError, TypeError, OSError) as error:
         raise RenderFailed(f"invalid renderer output: {error}") from error

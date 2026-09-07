@@ -266,8 +266,8 @@ list every intent so it is always eligible, and it stays the zero-score fallback
 | C2 bound | Every bound column exists in the result with a kind the role accepts; every required role is bound | Bind the missing role |
 | C3 keys | Every key is one the entry accepts | Remove the key |
 | C4 order | Sort is `none` on a time or ordinal axis | Remove the sort |
-| C5 limit | `limit` needs a sort by value and an additive value for the Other row | Sort by value, or drop the limit |
-| C6 colors | Palette entries are hex colors; the palette is at least as long as the categories when given | Add colors or drop the palette |
+| C5 limit | `limit` needs a category axis, a sort by value, and additive values (including `value2`) for Other | Sort by value, or drop the limit |
+| C6 colors | Palette entries are hex colors; cover the bound group when present, otherwise category for pie, donut, treemap, and word cloud; one colour suffices for single-series entries, two for dual axes | Add colors or drop the palette |
 | C7 contrast | Every palette color and the accent contrast with the theme background at least 3 to 1 | Pick a darker or lighter color |
 | C8 words | A title and a description are present | Write them |
 | C9 emphasis | Emphasised values exist in the bound category, or in the bound group on charts with a group role | Fix the spelling |
@@ -276,9 +276,11 @@ list every intent so it is always eligible, and it stays the zero-score fallback
 | C12 crop | A line's value axis may start above zero, through `zero false` or `axisYMin`, only when the values are narrow: the smallest is above half the largest. The start value is recorded as a compromise so the explanation states it | Start at zero |
 | C13 percent | `percent` only on the stacked entries, with an additive value and no negative values | Drop it, or use a share the analyst computed |
 | C14 log | `axisYScale log` only on line, multi_line, and scatter, every value positive, largest at least a hundred times the smallest | Use linear |
-| C15 labels | `labels on` with more than fifty marks | Turn them off, or limit the rows |
+| C15 labels | `labels on` with more than fifty displayed marks (category count times group count after a valid limit, capped by raw rows) | Turn them off, or limit the rows |
 | C16 contradiction | `zero true` together with an `axisYMin` other than zero | Drop one |
 | C17 format | `format` follows the pattern of section 5.2; `k` and decimals together are allowed, `%` as a unit on a value that is not a share is a warning-level compromise, not an error | Rewrite the pattern |
+| C18 sort target | An explicit `sort value …` requires a bound `value`; `sort category …` requires a bound `category`. A derived default sort does not trigger this rule | Remove the sort |
+| C19 limit positive | `limit` must be at least 1 | Use a limit of 1 or more |
 
 `check_spec` reports every violation at once, each with its fix, so a repair is one turn.
 
@@ -340,13 +342,16 @@ The renderer, not the spec, holds the rows. Resolving happens in code, once, bef
 2. Nulls: a row with a null value is dropped and counted in a compromise note. A null category is labelled with
    `unknown`.
 3. Sort: as the spec says, or the default for the axis kind.
-4. Limit: keep the first `limit` rows; when the value is additive, add one `other` row holding the sum of the
-   rest; when it is not, the limit is rejected by C5. Row counts reported to the reviewer include what was folded.
+4. Limit: keep the first `limit` categories after sorting, including every group record; add one `other` record
+   per group only when a tail exists. All folded measures must be additive (including `value2`); C5 rejects a
+   missing category axis or non-additive measure. Row counts include what was folded. Checks count displayed
+   categories as `min(distinct, limit + 1)` after a valid limit; all value statistics and label membership stay raw.
 5. Percent: on a stacked entry with `percent true`, each value is divided by its category's total and
    multiplied by 100, so the stack reads as shares. C13 has already required an additive value. The axis title
    becomes the percent sign unless the spec gives one, and the range checks run on the scaled values.
-6. Colors: `palette` by category order as given; `emphasis` builds the list in code, the accent for the named
-   categories and one muted grey for the rest, so the library's "palette by category order" draws the rule.
+6. Colors: `palette` follows the package's colour domain order: bound groups first, otherwise categories or
+   series as C6 specifies. A single colour can repeat across a single-series chart's categories. `emphasis`
+   builds the palette for the bound group when present, otherwise category, using the accent and muted grey.
 7. Direction: `rtl` puts the first category on the right on bar and column charts and right-aligns the title,
    through the renderer's overrides. Time axes are never reversed.
 8. Numbers: the format is written as a small description, the digit pattern, the decimals, compact or not, the
@@ -355,6 +360,8 @@ The renderer, not the spec, holds the rows. Resolving happens in code, once, bef
    formatting function from it, from one shared file, so the picture and the page write every number alike.
 9. Shape: rows become the library's records for the entry, `category`, `value`, `group`, `time`, `x`, `y`, or
    `name` and `value`, as the catalogue says.
+
+Histogram axis titles default to the bound value column on X and the language's count word on Y (`Count` / `العدد`); explicit titles override both.
 
 Every transformation here is arithmetic on the result's own cells, in line with rule 6 of the main design.
 
@@ -377,12 +384,19 @@ formatting function on the value axis and the data labels. The overrides are pla
 place in the script, and the package version is pinned so a change to its internals shows up as a failing render
 test rather than a silent loss. On request the script also lists every piece of text it drew, which is how the
 tests assert that a label reads "61.6%" without decoding pixels.
+`labels on` forces formatted value labels (`y` for scatter, `count` for histogram, `value` for bars, columns,
+pie/donut, boxplot, treemap, and word cloud); child-built line/area/dual-axis charts, pivoted radar, and tables
+report a compromise. `legend on` removes the package legend setting to allow G2's default colour legend;
+charts without a meaningful colour encoding report "no legend: the chart has one series". `off` suppresses both
+switches recursively. Radar tick formatting applies to every `position`, `position1`, … axis as well as `y`.
 
-**The Python side.** `render(spec, columns, result, out_dir) -> Rendered`: resolves the data, builds the
+**The Python side.** `render(spec, columns, result, out_dir, *, compromises=()) -> Rendered`: resolves the data, builds the
 configuration, spawns `node` with a 20 second timeout, and writes three files in `out_dir`: `chart.png`,
 `chart.html`, and `config.json`. `Rendered` carries the three paths, the pixel size, the compromises, the
 non-background share, and the seconds. A missing `node` or an uninstalled package raises a failure whose message
 holds the install command; a timeout kills the process and raises. Nothing is retried.
+The CLI passes check-time compromises; render combines them with resolve and page compromises, deduplicated
+by `(key, message)` in first-appearance order. A `ResolveError` is a spec error: CLI exit 2 with JSON `error`.
 
 **The page.** A standalone HTML file that draws the chart in a browser from the same G2 configuration the
 script captured after its overrides, with G2's browser build from a pinned CDN address, so the page and the PNG

@@ -16,6 +16,7 @@ from vis_agent.analyst.models import AnalysisReport
 from vis_agent.designer.check import check_spec
 from vis_agent.designer.models import SpecCheck, SpecError, Violation
 from vis_agent.designer.recommend import recommend_charts
+from vis_agent.designer.resolve import ResolveError
 from vis_agent.designer.syntax import parse, to_text
 from vis_agent.models import DataBrief, Intent
 from vis_agent.profiler.agent import profile_dataset
@@ -109,7 +110,7 @@ def render_command(args: argparse.Namespace) -> int:
     if out is None:
         digest = sha256(text.encode("utf-8") + report_bytes).hexdigest()[:12]
         out = resources()[2].directory / "renders" / digest
-    _print_json(gptvis.render(parse(text), report.analysis.columns, report.result, out))
+    _print_json(gptvis.render(parse(text), report.analysis.columns, report.result, out, compromises=check.compromises))
     return 0
 
 
@@ -138,7 +139,7 @@ def main(argv: list[str] | None = None) -> int:
         except (RendererUnavailable, RenderFailed) as error:
             _print_json({"error": str(error)})
             return 1
-        except (OSError, ValidationError, ValueError) as error:
+        except (OSError, ValidationError, ValueError, ResolveError) as error:
             _print_json({"error": str(error)})
             return 2
     if args.command == "chat":

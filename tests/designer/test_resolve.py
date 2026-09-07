@@ -428,3 +428,40 @@ def test_resolution_does_not_mutate_inputs_or_catalogue():
     resolved.config["style"]["palette"].append("#000000")
     resolved.config["data"][0]["value"] = -1
     assert (spec, columns, result, CATALOGUE) == before
+
+
+@pytest.mark.parametrize("language,count", [("en", "Count"), ("ar", "العدد")])
+@pytest.mark.parametrize("explicit", [False, True])
+def test_histogram_axis_titles(language, count, explicit):
+    spec = Spec(type="histogram", bind={"value": "amount"}, language=language,
+                axis_x_title="Amount" if explicit else None,
+                axis_y_title="Frequency" if explicit else None)
+    config = resolve(spec, *raw_amounts()).config
+    assert config["axisXTitle"] == ("Amount" if explicit else "amount")
+    assert config["axisYTitle"] == ("Frequency" if explicit else count)
+
+
+@pytest.mark.parametrize("chart", ["line", "area"])
+def test_switch_on_compromises_for_child_marks_and_single_series(chart):
+    resolved = resolve(line_spec(chart, labels="on", legend="on"), *monthly())
+    assert {c.key for c in resolved.compromises} == {"labels", "legend"}
+    assert any(c.message == "no legend: the chart has one series" for c in resolved.compromises)
+    assert "labels" not in resolved.overrides and "legend" not in resolved.overrides
+
+
+def test_group_palette_passes_through_in_group_order():
+    palette = ["#000000", "#123456"]
+    resolved = resolve(group_spec(palette=palette), *grouped())
+    assert resolved.config["style"]["palette"] == palette
+    assert list(dict.fromkeys(row["group"] for row in resolved.config["data"])) == ["F", "M"]
+
+
+@pytest.mark.parametrize("chart,builder,bindings", [
+    ("radar", grouped, {"category": "city", "group": "gender", "value": "n"}),
+    ("dual_axes", two_units, {"category": "month", "value": "visits", "value2": "revenue"}),
+    ("table", cities, {}),
+])
+def test_labels_on_reports_unsupported_mark_structure(chart, builder, bindings):
+    resolved = resolve(Spec(type=chart, bind=bindings, labels="on"), *builder())
+    assert any(c.key == "labels" for c in resolved.compromises)
+    assert "labels" not in resolved.overrides

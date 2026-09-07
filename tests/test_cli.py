@@ -214,3 +214,35 @@ def test_doctor_subcommand_reports_failure(monkeypatch, capsys, unavailable, smo
     monkeypatch.setattr(gptvis, "smoke_test", lambda: smoke)
     assert cli.main(["doctor"]) == 1
     assert smoke in capsys.readouterr().out
+
+
+def test_render_subcommand_reports_resolve_error(report_path, tmp_path, capsys):
+    report = AnalysisReport.model_validate_json(report_path.read_bytes())
+    report.result.rows[0][-1] = "not numeric"
+    report_path.write_text(report.model_dump_json())
+    spec = tmp_path / "donut.vis"
+    spec.write_text(DONUT)
+    assert cli.main(["render", str(spec), "--report", str(report_path), "--out", str(tmp_path / "out")]) == 2
+    assert "must be numeric" in json.loads(capsys.readouterr().out)["error"]
+
+
+@pytest.mark.skipif(gptvis.available() is not None, reason=gptvis.available() or "")
+@pytest.mark.parametrize("chart", ["line", "table"])
+def test_render_subcommand_preserves_check_compromises(report_path, tmp_path, capsys, chart):
+    from tests.designer.conftest import monthly
+
+    report = AnalysisReport.model_validate_json(report_path.read_bytes())
+    columns, result = monthly(3)
+    for i, row in enumerate(result.rows):
+        row[1] = 100 + i
+    report.analysis.columns, report.result = columns, result
+    report_path.write_text(report.model_dump_json())
+    text = ("vis line\nbind\n  time month\n  value visits\nzero false" if chart == "line"
+            else "vis table\nlabels on")
+    spec = tmp_path / "chart.vis"
+    spec.write_text(text + "\ntitle Visits\ndescription Monthly visits\n")
+    assert cli.main(["render", str(spec), "--report", str(report_path), "--out", str(tmp_path / "out")]) == 0
+    compromises = json.loads(capsys.readouterr().out)["compromises"]
+    expected = ("The value axis starts at 100 instead of zero." if chart == "line"
+                else "tables are drawn as the package draws them")
+    assert any(c["message"] == expected for c in compromises)

@@ -26,12 +26,15 @@ try {
   function applyFormat(options, path = '', activeFormatter = formatter) {
     if (overrides.labels?.length === 0) options.labels = [];
     if (overrides.legend === false) options.legend = false;
-    if (options.axis?.y) {
-      options.axis.y.labelFormatter = activeFormatter;
-      formatPaths.push(`${path}axis.y.labelFormatter`);
+    if (overrides.legend === true) delete options.legend;
+    for (const [key, axis] of Object.entries(options.axis || {})) {
+      if ((key === 'y' || /^position\d*$/.test(key)) && plain(axis)) {
+        axis.labelFormatter = activeFormatter;
+        formatPaths.push(`${path}axis.${key}.labelFormatter`);
+      }
     }
     for (const [i, label] of (options.labels || []).entries()) {
-      if (label.text === 'value' || (config.type === 'dual-axes' && typeof label.text === 'string' && label.text === options.encode?.y)) {
+      if (label.text === 'value' || (typeof label.text === 'string' && label.text === options.encode?.y)) {
         label.formatter = activeFormatter; formatPaths.push(`${path}labels.${i}.formatter`);
       }
     }
