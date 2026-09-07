@@ -223,11 +223,28 @@ arrangement.
   rulebook lines.
 - Analyst: the `hijri` and `arabic_digits` levels in the column facts, the Hijri and digit rules in
   `rulebook-localized.md` added per run only when a column carries one of those levels, the total check
-  translating digits before it sums text, placeholder units becoming null.
+  translating digits before it sums text, placeholder units becoming null, described column names accepted
+  with the SQL alias quotes around them, and a spent query budget with no passing query ending in a
+  clarification instead of a loop to the request limit.
 - Designer: resolving keeps non-Gregorian time text whole and in the analyst's order, draws Gregorian time in
   chronological order, and one rulebook line binds Hijri buckets to time.
 - Docs: README (scale set, levels, analyst rules), AGENTS (Phase 4b, Hijri conventions), the Phase 3
   design's resolving sentence, this document.
+
+## Testing through the web UI
+
+The eval runners call the analyst and the designer directly, so a last check went through the lead in the
+web chat: upload the ISO-form seeded Hijri file, ask for the monthly averages. The analyst asked which of
+four narrower views to draw, since the file holds over 700 Hijri months; the yearly view was chosen, and
+`make_chart` came back with the table and no picture. The cause was a loop the runners never see because
+their questions are short: the analyst described its result columns with the SQL alias quotes still around
+the Arabic names, the description check refused them, its repair dropped the quotes from the SQL and could
+not parse, the three-query budget ran out, and it then alternated a refused delivery with a refused query
+until the request limit. Two code guards close that class: a described name that differs from the result
+column only by surrounding quotes is accepted, and a spent budget with nothing passed returns a clarification
+that names the failed checks. The same question then delivers on the first query and the designer draws a
+line over the Hijri years. Lesson: run one real question through the lead before a merge; the runners test
+the agents, not the conversation.
 
 ## Left for later
 

@@ -274,3 +274,49 @@ def test_localized_rules_stay_out_of_ordinary_runs(store, people, agents):
         asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
     assert "Rules that hold in every shape" in seen["instructions"]
     assert "Rules for Hijri dates" not in seen["instructions"]
+
+
+def test_described_names_may_carry_the_alias_quotes(store, people, agents):
+    dataset, profile = people
+    _profiler, analyst = agents
+    prompt = build_prompt(store, profile, "Total amount by region", "English")
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+    sql = f'SELECT region, sum(amount) AS "total" FROM "{dataset}" GROUP BY 1 ORDER BY 1'
+    columns = [{"name": '"region"', "meaning": "The region", "kind": "geography", "source": "region"},
+               {"name": '"total"', "meaning": "Sum of amount", "kind": "measure", "source": "amount", "aggregate": "sum"}]
+
+    def drive(messages, info):
+        calls = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
+        if not calls:
+            return tool_call("run_query", sql=sql, columns=columns)
+        returned = last_return(messages).model_response_object()
+        assert all(check["passed"] for check in returned["checks"]), returned["checks"]
+        return tool_call("deliver_analysis", summary="Amounts are summed by region.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        result = asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
+    assert isinstance(result.output, Analysis)
+    assert [column.name for column in result.output.columns] == ["region", "total"]
+
+
+def test_a_spent_query_budget_with_no_pass_ends_in_a_clarification(store, people, agents):
+    dataset, profile = people
+    _profiler, analyst = agents
+    prompt = build_prompt(store, profile, "إجمالي المبلغ حسب المنطقة", "Arabic")
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+    sql = f'SELECT region, sum(amount) AS total FROM "{dataset}" GROUP BY 1'
+    wrong = [{"name": "somewhere", "meaning": "Wrong name", "kind": "geography", "source": "region"},
+             {"name": "total", "meaning": "Sum of amount", "kind": "measure", "source": "amount", "aggregate": "sum"}]
+
+    def drive(messages, info):
+        queries = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart) and p.tool_name == "run_query"]
+        if len(queries) < MAX_QUERY_CALLS:
+            return tool_call("run_query", sql=sql, columns=wrong)
+        return tool_call("deliver_analysis", summary="لن يصل هذا الملخص.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        result = asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
+    assert isinstance(result.output, Clarification)
+    assert result.output.question.startswith("لم أتمكن")
+    assert "Describe exactly the result columns" in result.output.reason
+    assert deps.query_calls == MAX_QUERY_CALLS

@@ -90,6 +90,7 @@ class AnalystDeps:
     query_calls: int = 0
     passed: PassedQuery | None = None
     delivery_attempts: int = 0
+    last_errors: list[str] = field(default_factory=list)
 
 
 def detect_language(question: str, brief: DataBrief | None, column_names: list[str]) -> str:
@@ -149,9 +150,19 @@ async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[Result
         omitted={c.name.casefold() for c in deps.profile.deterministic.columns if c.values_omitted},
     )
     if isinstance(result, QueryError):
+        deps.last_errors = [result.error]
         return result
+    # Models copy the SQL alias with its quotes into the description; the result column is the unquoted name.
+    columns = [
+        column.model_copy(update={"name": column.name[1:-1]})
+        if len(column.name) > 2 and column.name[0] == column.name[-1] == '"'
+        and column.name[1:-1] in result.columns and column.name not in result.columns else column
+        for column in columns
+    ]
     result.checks = await asyncio.to_thread(check_result, deps.store, deps.profile, columns, result)
-    if not failed_checks(result.checks, "error"):
+    errors = failed_checks(result.checks, "error")
+    deps.last_errors = [check.message for check in errors]
+    if not errors:
         deps.passed = PassedQuery(sql=sql, columns=columns, result=result)
     return result
 
@@ -162,12 +173,26 @@ def _context(deps: AnalystDeps) -> str:
     return " ".join([deps.prompt.question, *columns])
 
 
-def deliver_analysis(ctx: RunContext[AnalystDeps], summary: str, assumptions: list[str] | None = None) -> Analysis:
+DEAD_END = {
+    "ar": "لم أتمكن من إنتاج جدول يجتاز الفحوصات لهذا السؤال. هل يمكنك إعادة صياغته أو تسمية الأعمدة المطلوبة؟",
+    "en": "I could not produce a table that passes its checks for this question. Could you rephrase it or name the "
+          "columns you want?",
+}
+
+
+def deliver_analysis(
+    ctx: RunContext[AnalystDeps], summary: str, assumptions: list[str] | None = None,
+) -> Analysis | Clarification:
     """Deliver the answer: a two-sentence summary in the caller's language using only numbers from the result,
     and the assumptions you made. The last query that passed its checks is delivered with it.
     """
     deps = ctx.deps
     if deps.passed is None:
+        if deps.query_calls >= MAX_QUERY_CALLS:
+            # The query budget is spent and nothing passed: ask the caller instead of looping to the request limit.
+            language = "ar" if deps.prompt.language.lower().startswith("ar") else "en"
+            return Clarification(question=DEAD_END[language],
+                                 reason=" ".join(deps.last_errors) or "No query passed its checks.")
         raise ModelRetry("No query has passed its checks yet. Call run_query and fix every check with severity "
                          "error, or call ask_clarification when the columns cannot answer the question.")
     check = summary_numbers_exist(summary, deps.passed.result, _context(deps))
