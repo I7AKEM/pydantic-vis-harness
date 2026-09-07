@@ -31,6 +31,8 @@ DEFAULT_ANALYST_MODEL = DEFAULT_PROFILER_MODEL
 """The profiler's Gemma until the Phase 2 benchmark picks the analyst's default; see the Phase 2 design, section 12."""
 ANALYST_INSTRUCTIONS = Path(__file__).with_name("rulebook.md").read_text(encoding="utf-8")
 """The analyst's rulebook. Edit the file, not this module."""
+LOCALIZED_INSTRUCTIONS = Path(__file__).with_name("rulebook-localized.md").read_text(encoding="utf-8")
+"""Rules for Hijri dates and Arabic-Indic digits, added per run only when a column carries those levels."""
 ANALYSIS_TIMEOUT_SECONDS = 90
 MAX_QUERY_CALLS = 3
 MAX_REQUESTS = 8
@@ -195,6 +197,15 @@ def create_analyst(model: str) -> Agent[AnalystDeps, Analysis | Clarification]:
         model_settings={"thinking": False, "temperature": 0.0},
     )
     agent.tool(run_query)
+
+    @agent.instructions
+    def localized_rules(ctx: RunContext[AnalystDeps]) -> str | None:
+        # Long SQL recipes in the always-on rulebook cost accuracy on ordinary data (67 of 69 against 64);
+        # they reach the model only when a column needs them.
+        if any(column.measurement_levels for column in ctx.deps.prompt.columns):
+            return LOCALIZED_INSTRUCTIONS
+        return None
+
     return agent
 
 

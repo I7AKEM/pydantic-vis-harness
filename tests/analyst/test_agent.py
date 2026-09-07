@@ -239,6 +239,7 @@ def test_hijri_prompt_and_monthly_delivery(store, hijri, agents):
         if not calls:
             user_prompt = next(p.content for m in messages for p in m.parts if isinstance(p, UserPromptPart))
             facts = {c["name"]: c for c in json.loads(user_prompt)["columns"]}
+            assert "Rules for Hijri dates" in (messages[0].instructions or "")
             assert facts["day"]["physical_type"] == "VARCHAR"
             assert facts["day"]["measurement_levels"] == ["hijri"]
             assert facts["named_day"]["measurement_levels"] == ["hijri"]
@@ -256,3 +257,20 @@ def test_hijri_prompt_and_monthly_delivery(store, hijri, agents):
     assert result.output.columns[0].kind == "time" and result.output.columns[0].unit is None
     assert deps.query_calls == 1 and deps.passed is not None
     assert all(check.passed for check in deps.passed.result.checks)
+
+
+def test_localized_rules_stay_out_of_ordinary_runs(store, people, agents):
+    dataset, profile = people
+    _profiler, analyst = agents
+    prompt = build_prompt(store, profile, "Total amount by region", "English")
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+    seen = {}
+
+    def drive(messages, info):
+        seen["instructions"] = messages[0].instructions or ""
+        return tool_call("ask_clarification", question="Which amount?", reason="Checking the instructions.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
+    assert "Rules that hold in every shape" in seen["instructions"]
+    assert "Rules for Hijri dates" not in seen["instructions"]
