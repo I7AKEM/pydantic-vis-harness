@@ -1,0 +1,308 @@
+[
+  {
+    "name": "seeded-01-hijri-date",
+    "csv": "seeded-01-hijri-date.csv",
+    "source_dataset_id": "vizcsv-061a265236a642ce",
+    "transformation": {
+      "kind": "hijri_date",
+      "column": "violation_date",
+      "format": "iso",
+      "bucket": "month"
+    },
+    "question": "اعرض متوسط «paid_violations» حسب الأشهر الهجرية باستخدام «violation_date».",
+    "language": "ar",
+    "intent": "trend",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-02-hijri-date",
+    "csv": "seeded-02-hijri-date.csv",
+    "source_dataset_id": "vizcsv-7f0bd5a88227073a",
+    "transformation": {
+      "kind": "hijri_date",
+      "column": "death_date",
+      "format": "arabic_digits",
+      "bucket": "year"
+    },
+    "question": "اعرض متوسط «death_count» حسب السنوات الهجرية باستخدام «death_date».",
+    "language": "ar",
+    "intent": "trend",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-03-hijri-date",
+    "csv": "seeded-03-hijri-date.csv",
+    "source_dataset_id": "vizcsv-80a01cf24f45faee",
+    "transformation": {
+      "kind": "hijri_date",
+      "column": "violation_date",
+      "format": "month_name",
+      "bucket": "month"
+    },
+    "question": "اعرض متوسط «paid_violations» حسب الأشهر الهجرية باستخدام «violation_date».",
+    "language": "ar",
+    "intent": "trend",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-04-hijri-date",
+    "csv": "seeded-04-hijri-date.csv",
+    "source_dataset_id": "vizcsv-7f0bd5a88227073a",
+    "transformation": {
+      "kind": "hijri_date",
+      "column": "death_date",
+      "format": "iso",
+      "bucket": "year"
+    },
+    "question": "اعرض متوسط «death_count» حسب السنوات الهجرية باستخدام «death_date».",
+    "language": "ar",
+    "intent": "trend",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-05-hijri-date",
+    "csv": "seeded-05-hijri-date.csv",
+    "source_dataset_id": "vizcsv-80a01cf24f45faee",
+    "transformation": {
+      "kind": "hijri_date",
+      "column": "violation_date",
+      "format": "arabic_digits",
+      "bucket": "month"
+    },
+    "question": "اعرض متوسط «paid_violations» حسب الأشهر الهجرية باستخدام «violation_date».",
+    "language": "ar",
+    "intent": "trend",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-06-hijri-date",
+    "csv": "seeded-06-hijri-date.csv",
+    "source_dataset_id": "vizcsv-061a265236a642ce",
+    "transformation": {
+      "kind": "hijri_date",
+      "column": "violation_date",
+      "format": "month_name",
+      "bucket": "year"
+    },
+    "question": "اعرض متوسط «paid_violations» حسب السنوات الهجرية باستخدام «violation_date».",
+    "language": "ar",
+    "intent": "trend",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-07-hijri-date",
+    "csv": "seeded-07-hijri-date.csv",
+    "source_dataset_id": "vizcsv-80a01cf24f45faee",
+    "transformation": {
+      "kind": "hijri_date",
+      "column": "violation_date",
+      "format": "iso",
+      "bucket": "month"
+    },
+    "question": "اعرض متوسط «paid_violations» حسب الأشهر الهجرية باستخدام «violation_date».",
+    "language": "ar",
+    "intent": "trend",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-08-hijri-date",
+    "csv": "seeded-08-hijri-date.csv",
+    "source_dataset_id": "vizcsv-061a265236a642ce",
+    "transformation": {
+      "kind": "hijri_date",
+      "column": "violation_date",
+      "format": "arabic_digits",
+      "bucket": "year"
+    },
+    "question": "اعرض متوسط «paid_violations» حسب السنوات الهجرية باستخدام «violation_date».",
+    "language": "ar",
+    "intent": "trend",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-09-arabic-digits",
+    "csv": "seeded-09-arabic-digits.csv",
+    "source_dataset_id": "vizcsv-8be738ba6fdc3e77",
+    "transformation": {
+      "kind": "arabic_digits",
+      "column": "population_count"
+    },
+    "question": "اعرض قيم «population_count» حسب «region».",
+    "language": "ar",
+    "intent": "compare",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-10-arabic-digits",
+    "csv": "seeded-10-arabic-digits.csv",
+    "source_dataset_id": "vizcsv-59e3e21219b8a91c",
+    "transformation": {
+      "kind": "arabic_digits",
+      "column": "total_violations"
+    },
+    "question": "اعرض قيم «total_violations» حسب «education_group».",
+    "language": "ar",
+    "intent": "compare",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-11-arabic-digits",
+    "csv": "seeded-11-arabic-digits.csv",
+    "source_dataset_id": "vizcsv-7eac934220a9ecc2",
+    "transformation": {
+      "kind": "arabic_digits",
+      "column": "count"
+    },
+    "question": "اعرض قيم «count» حسب «age_group».",
+    "language": "ar",
+    "intent": "compare",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-12-arabic-digits",
+    "csv": "seeded-12-arabic-digits.csv",
+    "source_dataset_id": "vizcsv-34c1bd07e9e8dda4",
+    "transformation": {
+      "kind": "arabic_digits",
+      "column": "avg_days_to_graduate"
+    },
+    "question": "اعرض قيم «avg_days_to_graduate» حسب «university_name».",
+    "language": "ar",
+    "intent": "compare",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-13-arabic-categories",
+    "csv": "seeded-13-arabic-categories.csv",
+    "source_dataset_id": "vizcsv-8be738ba6fdc3e77",
+    "transformation": {
+      "kind": "arabic_categories",
+      "column": "region",
+      "style": "diacritics"
+    },
+    "question": "اعرض قيم «population_count» حسب «region».",
+    "language": "ar",
+    "intent": "compare",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-14-arabic-categories",
+    "csv": "seeded-14-arabic-categories.csv",
+    "source_dataset_id": "vizcsv-59e3e21219b8a91c",
+    "transformation": {
+      "kind": "arabic_categories",
+      "column": "education_group",
+      "style": "tatweel"
+    },
+    "question": "اعرض قيم «total_violations» حسب «education_group».",
+    "language": "ar",
+    "intent": "compare",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-15-arabic-categories",
+    "csv": "seeded-15-arabic-categories.csv",
+    "source_dataset_id": "vizcsv-7eac934220a9ecc2",
+    "transformation": {
+      "kind": "arabic_categories",
+      "column": "age_group",
+      "style": "mixed_direction"
+    },
+    "question": "اعرض قيم «count» حسب «age_group».",
+    "language": "ar",
+    "intent": "compare",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-16-arabic-categories",
+    "csv": "seeded-16-arabic-categories.csv",
+    "source_dataset_id": "vizcsv-34c1bd07e9e8dda4",
+    "transformation": {
+      "kind": "arabic_categories",
+      "column": "university_name",
+      "style": "arabic_digits"
+    },
+    "question": "اعرض قيم «avg_days_to_graduate» حسب «university_name».",
+    "language": "ar",
+    "intent": "compare",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-17-arabic-categories",
+    "csv": "seeded-17-arabic-categories.csv",
+    "source_dataset_id": "vizcsv-fec875ba65e1153f",
+    "transformation": {
+      "kind": "arabic_categories",
+      "column": "city",
+      "style": "long_label"
+    },
+    "question": "اعرض قيم «count» حسب «city».",
+    "language": "ar",
+    "intent": "compare",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-18-arabic-categories",
+    "csv": "seeded-18-arabic-categories.csv",
+    "source_dataset_id": "vizcsv-5de6c178d0e7d8bb",
+    "transformation": {
+      "kind": "arabic_categories",
+      "column": "violation_type_description",
+      "style": "long_label"
+    },
+    "question": "اعرض قيم «actual_fine» حسب «violation_type_description».",
+    "language": "ar",
+    "intent": "compare",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-19-hijri-year",
+    "csv": "seeded-19-hijri-year.csv",
+    "source_dataset_id": "vizcsv-061a265236a642ce",
+    "transformation": {
+      "kind": "hijri_year",
+      "column": "violation_date",
+      "added_column": "hijri_year",
+      "bucket": "year"
+    },
+    "question": "اعرض متوسط «paid_violations» حسب السنوات الهجرية باستخدام «hijri_year».",
+    "language": "ar",
+    "intent": "trend",
+    "expect": "design",
+    "seeded": true
+  },
+  {
+    "name": "seeded-20-hijri-year",
+    "csv": "seeded-20-hijri-year.csv",
+    "source_dataset_id": "vizcsv-7f0bd5a88227073a",
+    "transformation": {
+      "kind": "hijri_year",
+      "column": "death_date",
+      "added_column": "hijri_year",
+      "bucket": "year"
+    },
+    "question": "اعرض متوسط «death_count» حسب السنوات الهجرية باستخدام «hijri_year».",
+    "language": "ar",
+    "intent": "trend",
+    "expect": "design",
+    "seeded": true
+  }
+]
