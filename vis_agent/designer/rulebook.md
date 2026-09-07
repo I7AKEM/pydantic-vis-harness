@@ -51,7 +51,7 @@ Filling the spec:
 - title: in the caller's language; say what is shown, where, and when; no numbers.
 - description: one sentence saying what the picture shows, for a person who cannot see it.
 - language: ar for an Arabic caller, en otherwise.
-- axisXTitle and axisYTitle: the column's meaning, with its unit in brackets when it has one.
+- axisXTitle names the category axis and axisYTitle the value axis on every chart, each as the column's meaning with its unit in brackets; on a bar the category axis runs vertically, so do not swap them.
 - sort: value desc for comparisons and ranks; none over time and ordinals; category asc when the order
   of the labels carries meaning.
 - limit with the Other row when a comparison has more than about twenty categories, and the number the

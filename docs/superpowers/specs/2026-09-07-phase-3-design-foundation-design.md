@@ -362,8 +362,10 @@ The renderer, not the spec, holds the rows. Resolving happens in code, once, bef
 6. Colors: `palette` follows the package's colour domain order: bound groups first, otherwise categories or
    series as C6 specifies. A single colour can repeat across a single-series chart's categories. `emphasis`
    builds the palette for the bound group when present, otherwise category, using the accent and muted grey.
-7. Direction: `rtl` puts the first category on the right on bar and column charts and right-aligns the title,
-   through the renderer's overrides. Time axes are never reversed.
+7. Direction: `rtl` reverses the category domain only for `column`, `grouped_column`, and `stacked_column`,
+   putting the first category on the right. Bars keep the sorted category order top to bottom. The title is
+   right-aligned through the renderer's overrides; the legend stays where the package puts it. Time axes are
+   never reversed.
 8. Numbers: the format is written as a small description, the digit pattern, the decimals, compact or not, the
    unit and its side, and the digit shapes, taken from `format` and `digits` or from the defaults and the bound
    column's unit. It travels in the configuration as data; the Node script and the page each build the same

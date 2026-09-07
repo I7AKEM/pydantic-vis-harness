@@ -218,7 +218,7 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
             scale["x"] = x_scale
     title = {}
     if (spec.direction or defaults["direction"]) == "rtl":
-        if spec.type in BARS | COLUMNS and axis is not None and binding[axis].kind != "time":
+        if spec.type in COLUMNS and axis is not None and binding[axis].kind != "time":
             scale["x"] = {"domain": categories[::-1]}
         title["align"] = "right"
         compromises.append(Compromise(key="direction", message="the legend stays where the package puts it"))

@@ -249,13 +249,32 @@ def test_explicit_palette_wins_and_style_background_passes_through():
     assert resolved.config["style"] == {"backgroundColor": "#000000", "palette": spec.palette}
 
 
-@pytest.mark.parametrize("chart", ["column", "bar", "grouped_column", "grouped_bar", "stacked_column", "stacked_bar"])
-def test_arabic_direction_reverses_final_category_domain_and_aligns_title(chart):
+@pytest.mark.parametrize("chart", ["column", "grouped_column", "stacked_column"])
+def test_arabic_columns_reverse_final_category_domain_and_align_title(chart):
     spec, data = (group_spec(chart, language="ar", limit=2), grouped(3)) if "_" in chart else (
         city_spec(chart, language="ar", limit=2), cities(3))
     resolved = resolve(spec, *data)
     categories = list(dict.fromkeys(r["category"] for r in resolved.config["data"]))
     assert resolved.overrides["scale"]["x"]["domain"] == categories[::-1]
+    assert resolved.overrides["title"]["align"] == "right"
+    assert any(c.key == "direction" and "legend" in c.message for c in resolved.compromises)
+
+
+@pytest.mark.parametrize("chart", ["bar", "grouped_bar", "stacked_bar"])
+def test_arabic_bars_keep_value_desc_order_and_align_title(chart):
+    if chart == "bar":
+        spec = city_spec(chart, language="ar", sort="value desc")
+        columns, result = cities(3)
+        result.rows.reverse()
+        expected = [{"category": f"City{i}", "value": (3 - i) * 10} for i in range(3)]
+    else:
+        spec = group_spec(chart, language="ar", sort="value desc")
+        columns, result = grouped(3)
+        expected = [{"category": f"City{i}", "group": group, "value": 10 + i}
+                    for i in [2, 1, 0] for group in ["F", "M"]]
+    resolved = resolve(spec, columns, result)
+    assert "domain" not in resolved.overrides.get("scale", {}).get("x", {})
+    assert resolved.config["data"] == expected
     assert resolved.overrides["title"]["align"] == "right"
     assert any(c.key == "direction" and "legend" in c.message for c in resolved.compromises)
 

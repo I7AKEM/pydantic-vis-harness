@@ -147,6 +147,10 @@ def grammar() -> str:
                            + ", ".join(models.ROLES))
         elif key == "style":
             description = "section; backgroundColor <hex>"
+        elif key == "axisXTitle":
+            description = "text; the category axis title (vertical on a bar)"
+        elif key == "axisYTitle":
+            description = "text; the value axis title (horizontal on a bar)"
         elif kind == "section:list":
             description = 'section; lines "- <hex>"' if key == "palette" else 'section; lines "- <value>"'
         else:
