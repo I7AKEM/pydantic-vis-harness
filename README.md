@@ -195,8 +195,8 @@ default, `openrouter:google/gemma-4-31b-it:nitro`, pending the Phase 4 benchmark
 
 ## Evaluate at scale
 
-The Phase 4b set under `evals/designer/agent/scale/` targets two hundred cases, split by
-source dataset into train (120), dev (40), and heldout (40). Real questions from the
+The Phase 4b set under `evals/designer/agent/scale/` holds two hundred corpus cases plus twenty
+seeded ones, split by source dataset into train (132), dev (44), and heldout (44). Real questions from the
 Insightor dev corpus cover result shapes and Arabic data, with English Phase 4 cases
 reused for language coverage. Labelled derivatives add Hijri dates, Arabic-Indic digits,
 and Arabic label edge cases. Saved analyst reports are fixed inputs to the designer.
