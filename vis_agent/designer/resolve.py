@@ -61,15 +61,21 @@ def _shorten_time(records: list[dict], role: str) -> None:
         dates = [datetime.fromisoformat(value) for value in values]
     except ValueError:
         return
-    pattern = "%Y-%m-%d %H:%M"
+    patterns = ["%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M:%S.%f"]
     if all((date.hour, date.minute, date.second, date.microsecond) == (0, 0, 0, 0) for date in dates):
-        pattern = "%Y-%m-%d"
+        patterns.insert(0, "%Y-%m-%d")
         if all(date.day == 1 for date in dates):
-            pattern = "%Y-%m"
+            patterns.insert(0, "%Y-%m")
             if all(date.month == 1 for date in dates):
-                pattern = "%Y"
-    for record, date in zip(records, dates):
-        record[role] = date.strftime(pattern)
+                patterns.insert(0, "%Y")
+    distinct = len(set(values))
+    for pattern in patterns:
+        labels = [date.strftime(pattern) for date in dates]
+        if len(set(labels)) == distinct:
+            for record, label in zip(records, labels):
+                record[role] = label
+            return
+    # Zones or source precision beyond microseconds may require the original text.
 
 
 def _column_unit(column: ResultColumn | None) -> str | None:
@@ -179,13 +185,20 @@ def _histogram(records: list[dict], bins: int, digits: str) -> list[dict]:
                 FROM bounds, range(CASE WHEN minimum = maximum THEN 1 ELSE ? END) AS slots(i)
                 WHERE minimum IS NOT NULL
             )
-            SELECT low, high, count(value)
+            SELECT low, high, count(value),
+                   (SELECT (maximum - minimum) / ? FROM bounds) AS width
             FROM bins LEFT JOIN cells
               ON value >= low AND (value < high OR (high = maximum AND value = maximum))
             GROUP BY i, low, high ORDER BY i
-        """, [[r["value"] for r in records], bins, bins, bins, bins]).fetchall()
+        """, [[r["value"] for r in records], bins, bins, bins, bins, bins]).fetchall()
 
-    # Match the shared NumberFormat defaults: grouped, up to two decimals, no unit.
+    if not measured:
+        return []
+    if len({(low, high) for low, high, _, _ in measured}) != len(measured):
+        raise ResolveError("Bin boundaries coincide at numeric precision; reduce binNumber.")
+    width = measured[0][3]
+    decimals = max(2, 1 - Decimal(str(width)).adjusted()) if width > 0 else 2
+    # Keep shared grouping, rounding, digit shapes, and trimming with finer precision as needed.
     number = NumberFormat(digits=digits)
 
     def label(value):
@@ -193,14 +206,18 @@ def _histogram(records: list[dict], bins: int, digits: str) -> list[dict]:
         if value.is_integer():
             text = f"{int(value):,}"
         else:
-            rounded = Decimal(value).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            rounded = Decimal(value).quantize(Decimal(1).scaleb(-decimals), rounding=ROUND_HALF_UP)
             text = f"{rounded:,f}".rstrip("0").rstrip(".")
         if number.digits == "arabic":
             text = text.translate(str.maketrans("0123456789,.", "٠١٢٣٤٥٦٧٨٩٬٫"))
         return text
 
-    return [{"category": f"{label(low)}–{label(high)}", "value": count}
-            for low, high, count in measured]
+    while True:
+        labelled = [{"category": f"{label(low)}–{label(high)}", "value": count}
+                    for low, high, count, _ in measured]
+        if len({row["category"] for row in labelled}) == len(labelled):
+            return labelled
+        decimals += 1
 
 
 def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Resolved:

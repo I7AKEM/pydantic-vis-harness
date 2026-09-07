@@ -383,12 +383,18 @@ The renderer, not the spec, holds the rows. Resolving happens in code, once, bef
    buckets, `YYYY-MM` for first-of-month midnight buckets, `YYYY-MM-DD` for other midnight dates, and
    `YYYY-MM-DD HH:MM` otherwise. Keep local clock values without converting zones; an unparseable value
    leaves the whole column as text. Conversion precedes sorting, folding, emphasis matching, and RTL domains.
+   Choose the coarsest pattern satisfying those zero-unit conditions that preserves the number of distinct
+   source values, increasing to `YYYY-MM-DD HH:MM:SS` and then `YYYY-MM-DD HH:MM:SS.ffffff` when needed,
+   or retaining the original text if none preserves distinctness.
    Histogram resolution measures `binNumber` equal-width bins (default 10) over the bound value's minimum
    and maximum in DuckDB, using the result's own cells. Bins include their lower bound and exclude their
    upper bound, except the last includes the maximum. Empty bins retain zero counts. Python writes each
-   `category` as `<low>–<high>` with the shared default number description (thousands separators, up to two
+   `category` as `<low>–<high>` with the shared default number description (thousands separators, initially up to two
    decimals with trailing zeros trimmed, the spec's digit shapes, no unit or compact notation); `value` is
-   the measured count. These records go to the package's `column` type in ascending numeric bin order,
+   the measured count. Boundary precision shows the bin width's first significant digit plus one (at least two decimal
+   places), increasing one place at a time until all bin labels are unique while trimming trailing zeros
+   and keeping integer boundaries as integers, or raising a resolve error if numeric boundaries coincide.
+   These records go to the package's `column` type in ascending numeric bin order,
    never reversed by RTL. `binNumber` remains a histogram spec key and is consumed by resolve. A constant
    range becomes one `<value>–<value>` bin; no non-null values produces no bins; a nonpositive bin count
    raises a resolve error. Drawn-row accounting retains the number of non-null source observations.

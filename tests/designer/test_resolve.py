@@ -104,6 +104,39 @@ def test_histogram_bin_labels_match_shared_default_rounding():
     assert [row["value"] for row in resolved.config["data"]] == [30, 0, 0, 0, 0, 0, 0, 30]
 
 
+@pytest.mark.parametrize("digits", ["western", "arabic"])
+def test_histogram_small_range_keeps_ten_distinct_labels(digits):
+    columns, _ = raw_amounts()
+    result = table(columns, [[i / 100000] for i in range(30)])
+    spec = Spec(type="histogram", bind={"value": "amount"}, digits=digits)
+    resolved = resolve(spec, columns, result)
+    labels = [row["category"] for row in resolved.config["data"]]
+    assert len(labels) == len(set(labels)) == 10
+    expected = ["0–0.000029", "0.000261–0.00029"]
+    if digits == "arabic":
+        expected = [label.translate(str.maketrans("0123456789.", "٠١٢٣٤٥٦٧٨٩٫")) for label in expected]
+    assert [labels[0], labels[-1]] == expected
+    assert [row["value"] for row in resolved.config["data"]] == [3] * 10
+    assert resolved.drawn_rows == 30
+
+
+def test_histogram_half_unit_width_trims_trailing_zeros():
+    columns, _ = raw_amounts()
+    result = table(columns, [[1], [2]])
+    spec = Spec(type="histogram", bind={"value": "amount"}, bin_number=2)
+    assert resolve(spec, columns, result).config["data"] == [
+        {"category": "1–1.5", "value": 1}, {"category": "1.5–2", "value": 1},
+    ]
+
+
+def test_histogram_rejects_boundaries_that_precision_cannot_distinguish():
+    columns, _ = raw_amounts()
+    result = table(columns, [[1], [1.0000000000000002]])
+    spec = Spec(type="histogram", bind={"value": "amount"})
+    with pytest.raises(ResolveError, match="reduce binNumber"):
+        resolve(spec, columns, result)
+
+
 def test_histogram_constant_values_have_one_degenerate_bin():
     columns, _ = raw_amounts()
     result = table(columns, [[-2.5]] * 30)
@@ -548,6 +581,14 @@ def test_group_palette_passes_through_in_group_order():
     (["2024-01-01", "2024-01-02T00:00:00Z"], ["2024-01-01", "2024-01-02"]),
     (["2024-01-01T00:00:00", "2024-01-02 12:30:45+03:00"],
      ["2024-01-01 00:00", "2024-01-02 12:30"]),
+    (["2024-01-01T12:00:10", "2024-01-01T12:00:20", "2024-01-01T12:00:30"],
+     ["2024-01-01 12:00:10", "2024-01-01 12:00:20", "2024-01-01 12:00:30"]),
+    (["2024-01-01T12:00:10.000001", "2024-01-01T12:00:10.000002"],
+     ["2024-01-01 12:00:10.000001", "2024-01-01 12:00:10.000002"]),
+    (["2024-01-01T12:00:10", "2024-01-01T12:00:10", "2024-01-01T12:01:20"],
+     ["2024-01-01 12:00", "2024-01-01 12:00", "2024-01-01 12:01"]),
+    (["2024-01-01T12:00:00+03:00", "2024-01-01T12:00:00+04:00"],
+     ["2024-01-01T12:00:00+03:00", "2024-01-01T12:00:00+04:00"]),
     (["2024-01-01T00:00:00", "2024-02-30T00:00:00"],
      ["2024-01-01T00:00:00", "2024-02-30T00:00:00"]),
     (["2024-01-01T00:00:00", "Not a date"], ["2024-01-01T00:00:00", "Not a date"]),
@@ -563,6 +604,7 @@ def test_time_labels_are_text_with_consistent_precision(values, expected, chart)
     resolved = resolve(spec, columns, result)
     labels = resolved.config["categories"] if chart == "dual_axes" else [r[role] for r in resolved.config["data"]]
     assert labels == expected
+    assert len(set(labels)) == len(set(values))
     assert "domain" not in resolved.overrides.get("scale", {}).get("x", {})
     assert [row[0] for row in result.rows] == values
 
