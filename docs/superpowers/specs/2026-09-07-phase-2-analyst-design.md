@@ -272,7 +272,9 @@ it. Phase 2 adds:
 1. **Package layout.** Decided: the application moves into the `vis_agent` package before Phase 2 starts, one
    subpackage per agent, tests and evaluations mirroring it. Done on branch `phase-2-prep`.
 2. **Analyst default model.** Decided: the profiler's Gemma until the Phase 2 benchmark on the evaluation set picks
-   the default; the model stays selectable through `PYDANTIC_AI_ANALYST_MODEL`.
+   the default; the model stays selectable through `PYDANTIC_AI_ANALYST_MODEL`. Outcome: the benchmark on the
+   thirty-case set kept Gemma (30 of 30 tables right, 6.5 s per question) over GPT-5.4 mini (29, 8.7 s), Claude
+   Sonnet 4.6 (29, 16.1 s), and Mistral Small (18, 7.4 s); see `docs/phase-2-lessons.md`.
 3. **Keeping results.** Recommended and assumed: no new table in Phase 2; the trace holds every run. Say so if you
    want a small `analyses` table now.
 
