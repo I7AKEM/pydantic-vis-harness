@@ -210,9 +210,9 @@ def test_word_scales_need_no_repeats_and_cover_education(store):
 @pytest.mark.parametrize("values,earliest,latest", [
     (["1447-03-12", "1446-12-30"], "1446-12-30", "1447-03-12"),
     (["١٤٤٧/٠٣/١٢", "١٤٤٦/١٢/٣٠"], "1446/12/30", "1447/03/12"),
-    (["12 ربيع الأول 1447", "٣٠ رمضان ١٤٤٦"], "12 ربيع الأول 1447", "30 رمضان 1446"),
+    (["12 ربيع الأول 1447", "٣٠ رمضان ١٤٤٦"], None, None),
     (["١٤٤٧", "١٣٨٣"], "1383", "1447"),
-    (["1447-03", "1446/12"], "1446/12", "1447-03"),
+    (["1447-03", "1446/12"], None, None),
 ])
 def test_hijri_forms_have_translated_text_ranges(store, values, earliest, latest):
     columns = profile_of(store, "hijri.csv", ("day\n" + "\n".join(values) + "\n").encode())
@@ -261,6 +261,12 @@ def test_hijri_integer_years_with_gregorian_companion_in_either_order(store, hea
     columns = profile_of(store, "companion.csv", f"{header}\n{rows}\n".encode())
     assert "hijri" in columns["year"].measurement_levels
     assert (columns["year"].earliest, columns["year"].latest) == ("1383", "1447")
+
+
+def test_a_measure_beside_a_gregorian_date_is_not_a_hijri_year(store):
+    columns = profile_of(store, "amounts.csv", b"day,amount\n2026-01-01,1400\n2026-02-01,1447\n")
+    assert "hijri" not in columns["amount"].measurement_levels
+    assert columns["amount"].measurement_levels == ["interval", "discrete"]
 
 
 @pytest.mark.parametrize("content", [

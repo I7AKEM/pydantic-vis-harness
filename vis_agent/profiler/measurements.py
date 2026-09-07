@@ -74,6 +74,11 @@ HIJRI_SQL_PATTERN = (
     r"(محرم|صفر|ربيع الأول|ربيع الآخر|ربيع الثاني|جمادى الأولى|جمادى الآخرة|جمادى الثانية|"
     r"رجب|شعبان|رمضان|شوال|ذو القعدة|ذي القعدة|ذو الحجة|ذي الحجة) 1[34]\d{2}$"
 )
+# One zero-padded numeric form sorts as text in date order; bounds are reported only then.
+HIJRI_PADDED_SQL_PATTERNS = {
+    separator: rf"^1[34][0-9]{{2}}({separator}(0[1-9]|1[0-2])({separator}(0[1-9]|[12][0-9]|30))?)?$"
+    for separator in ("-", "/")
+}
 BOOLEAN_PAIRS = [
     {"true", "false"}, {"yes", "no"}, {"y", "n"}, {"t", "f"}, {"on", "off"}, {"نعم", "لا"},
 ]
@@ -225,10 +230,12 @@ def _localized_labels(connection, table, column, stats, row_count, warnings) -> 
     if not non_null:
         return
     translated = f"translate(CAST({column} AS VARCHAR), '٠١٢٣٤٥٦٧٨٩', '0123456789')"
-    hijri_count, earliest, latest = connection.execute(
-        f"SELECT count(*) FILTER (WHERE regexp_matches(v, ?)), min(v), max(v) "
-        f"FROM (SELECT {translated} AS v FROM {table})",
-        [HIJRI_SQL_PATTERN],
+    padded = list(HIJRI_PADDED_SQL_PATTERNS.values())
+    hijri_count, hyphen_count, slash_count, earliest, latest = connection.execute(
+        f"SELECT count(*) FILTER (WHERE hijri), count(*) FILTER (WHERE regexp_matches(v, ?)), "
+        f"count(*) FILTER (WHERE regexp_matches(v, ?)), min(v) FILTER (WHERE hijri), max(v) FILTER (WHERE hijri) "
+        f"FROM (SELECT v, regexp_matches(v, ?) AS hijri FROM (SELECT {translated} AS v FROM {table}))",
+        [*padded, HIJRI_SQL_PATTERN],
     ).fetchone()
     if stats.physical_type == "VARCHAR":
         number = f"TRY_CAST(replace(translate({translated}, '٫٬', '.,'), ',', '') AS DOUBLE)"
@@ -242,7 +249,9 @@ def _localized_labels(connection, table, column, stats, row_count, warnings) -> 
             stats.measurement_levels.append("arabic_digits")
     if hijri_count >= LOCALIZED_TEXT_SHARE * non_null:
         stats.measurement_levels.append("hijri")
-        stats.earliest, stats.latest = preview(earliest), preview(latest)
+        # Month names and unpadded or mixed separators do not sort as text; leave those bounds unset.
+        if hijri_count in (hyphen_count, slash_count):
+            stats.earliest, stats.latest = preview(earliest), preview(latest)
 
 
 def _hijri_year_labels(connection, table, columns) -> None:
@@ -261,7 +270,10 @@ def _hijri_year_labels(connection, table, columns) -> None:
         if stats.values_omitted or not stats.physical_type.startswith(INTEGER_TYPES):
             continue
         name = stats.name.lower()
-        if not (gregorian_companion or "hijri" in name or "هجري" in name or name.endswith("_h")):
+        named_hijri = "hijri" in name or "هجري" in name or name.endswith("_h")
+        named_year = "year" in name or "سنة" in name or "عام" in name
+        # A Gregorian date beside the column is evidence only for a column that is called a year.
+        if not (named_hijri or (gregorian_companion and named_year)):
             continue
         column = quote_identifier(stats.name)
         count, in_range, earliest, latest = connection.execute(

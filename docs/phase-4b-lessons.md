@@ -194,6 +194,12 @@ and the year into two ordinal columns instead of one year-month bucket; the desi
 repeated months, a tangle, and no rule stopped it (see Left for later). Arabic-Indic digits: all four are
 measures now and all four render. Hijri years beside a Gregorian date were never dropped and are unchanged.
 
+A whole-branch Codex review then found three gaps in the round, all fixed: an integer column beside a
+Gregorian date was taken for Hijri years whatever its name (now only a column called a year, or hijri,
+qualifies); the analyst's rule prescribed text functions that fail on a DATE or integer column (it now casts
+to text first); and the Hijri bounds were lexical (now reported only for one zero-padded numeric form, where
+text order is date order).
+
 ## What changed
 
 - Evaluation: `corpus_tools` (select, seed, capture); the scale set under `evals/designer/agent/scale/`
