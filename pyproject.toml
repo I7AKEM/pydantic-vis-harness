@@ -21,6 +21,7 @@ dev = [
 ]
 optimize = [
     "dspy>=3.3.1",
+    "hijridate>=2.6.0",
 ]
 
 [tool.pytest.ini_options]

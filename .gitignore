@@ -12,3 +12,4 @@ data/
 node_modules/
 tests/render/images/*.png
 evals/designer/agent/renders/
+.worktrees/
