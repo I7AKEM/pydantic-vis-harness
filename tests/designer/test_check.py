@@ -7,7 +7,7 @@ from vis_agent.designer.models import Compromise
 from vis_agent.designer.syntax import KEYS, STYLE_KEYS, parse, to_text
 from vis_agent.render.base import Capability, RENDERERS, Rendered, capability_for
 
-from .conftest import cities, gender_share, monthly
+from .conftest import cities, gender_code_and_label, gender_share, monthly, own_share_by_region
 
 
 COLUMN = "vis column\ntitle Cities\ndescription Counts by city\nbind\n  category city\n  value violations\n"
@@ -88,6 +88,29 @@ def test_c10_hard_failure_is_reported_once():
     check = check_spec(COLUMN.replace("vis column", "vis pie"), *cities(7))
     assert [v.rule for v in check.violations] == ["C10"]
     assert "H5" in check.violations[0].message
+
+
+@pytest.mark.parametrize("chart", ["grouped_column", "stacked_column"])
+def test_c10_rejects_alias_group(chart):
+    text = (f"vis {chart}\ntitle Deaths\ndescription Deaths by gender\nbind\n"
+            "  category gender_label\n  group gender\n  value total_deaths\n")
+    check = check_spec(text, *gender_code_and_label())
+    assert not check.ok
+    assert [(v.rule, v.message) for v in check.violations] == [
+        ("C10", "H13: The group is a label of the category."),
+    ]
+
+
+@pytest.mark.parametrize("value", ["share_under_15", "pop_under_15"])
+@pytest.mark.parametrize("limit", ["", "limit 5\n"])
+def test_c10_rejects_shares_of_different_wholes_even_after_limit(value, limit):
+    columns, result = own_share_by_region()
+    columns[1].aggregate = "sum"
+    text = ("vis pie\ntitle Population\ndescription Under 15 by region\nbind\n"
+            f"  category region\n  value {value}\n{limit}")
+    check = check_spec(text, columns, result)
+    assert not check.ok
+    assert any(v.rule == "C10" and v.message.startswith("H14:") for v in check.violations)
 
 
 def test_check_rules_run_once_and_other_rules_are_preserved(monkeypatch):

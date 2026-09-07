@@ -4,7 +4,8 @@ from vis_agent.designer.catalogue import CATALOGUE
 from vis_agent.designer.recommend import default_binding, recommend_charts
 from vis_agent.designer.shape import describe
 
-from .conftest import cities, column, gender_share, grouped, monthly, single_number, table, two_units
+from .conftest import (cities, column, gender_code_and_label, gender_share, grouped, monthly,
+                       own_share_by_region, single_number, table, two_units)
 
 
 def test_cities_ranking_and_binding():
@@ -19,6 +20,47 @@ def test_cities_ranking_and_binding():
 
 def test_monthly_ranking():
     assert recommend_charts(*monthly()).candidates[0].name == "line"
+
+
+def test_alias_binding_uses_readable_label_and_drops_redundant_groups():
+    data = gender_code_and_label()
+    shape = describe(*data)
+    assert default_binding(CATALOGUE.get("column"), shape)["category"].name == "gender_label"
+    for name in ("grouped_column", "grouped_bar", "stacked_column", "stacked_bar"):
+        assert default_binding(CATALOGUE.get(name), shape) is None
+    answer = recommend_charts(*data, intent="compare")
+    assert [c.name for c in answer.candidates[:2]] == ["column", "bar"]
+    assert all("group" not in c.binding for c in answer.candidates)
+
+
+def test_alias_preference_keeps_unrelated_cardinality_ties_stable():
+    columns = [column("code", "category"), column("label", "category"), column("group", "category"),
+               column("value", "measure", aggregate="sum")]
+    data = columns, table(columns, [[c, label, g, 1] for c, label in [("F", "Female"), ("M", "Male")]
+                                   for g in ["A much longer group A", "A much longer group B"]])
+    binding = default_binding(CATALOGUE.get("grouped_column"), describe(*data))
+    assert binding["category"].name == "label"
+    assert binding["group"].name == "group"
+
+
+@pytest.mark.parametrize("name", ["pie", "donut", "treemap"])
+def test_whole_value_binding_preference(name):
+    columns, result = gender_share()
+    columns.insert(2, column("average", "measure", aggregate="avg"))
+    result = table(columns, [row[:2] + [10] + row[2:] for row in result.rows])
+    entry = CATALOGUE.get(name)
+    assert default_binding(entry, describe(columns, result))["value"].name == "share"
+    result.rows[0][-1] = 20
+    assert default_binding(entry, describe(columns, result))["value"].name == "n"
+    columns[3].aggregate = "avg"
+    assert default_binding(entry, describe(columns, result))["value"].name == "share"
+
+
+def test_own_shares_reject_whole_charts_and_rank_bars():
+    answer = recommend_charts(*own_share_by_region(), intent="share")
+    assert answer.candidates[0].name == "bar"
+    assert "column" in {c.name for c in answer.candidates}
+    assert {"pie", "donut", "treemap"} <= {r.name for r in answer.rejected}
 
 
 def test_share_ranking_obeys_catalogue_and_scores():

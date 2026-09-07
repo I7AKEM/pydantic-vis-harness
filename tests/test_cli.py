@@ -329,14 +329,20 @@ def test_doctor_subcommand_reports_failure(monkeypatch, capsys, unavailable, smo
     assert smoke in capsys.readouterr().out
 
 
-def test_render_subcommand_reports_resolve_error(report_path, tmp_path, capsys):
+@pytest.mark.parametrize("chart", ["column", "donut"])
+def test_render_subcommand_reports_invalid_numeric_value(report_path, tmp_path, capsys, chart):
     report = AnalysisReport.model_validate_json(report_path.read_bytes())
     report.result.rows[0][-1] = "not numeric"
     report_path.write_text(report.model_dump_json())
     spec = tmp_path / "donut.vis"
-    spec.write_text(DONUT)
+    spec.write_text(DONUT.replace("vis donut", f"vis {chart}"))
     assert cli.main(["render", str(spec), "--report", str(report_path), "--out", str(tmp_path / "out")]) == 2
-    assert "must be numeric" in json.loads(capsys.readouterr().out)["error"]
+    printed = json.loads(capsys.readouterr().out)
+    if chart == "column":
+        assert "must be numeric" in printed["error"]
+    else:
+        assert not printed["ok"]
+        assert any(v["rule"] == "C10" and v["message"].startswith("H14:") for v in printed["violations"])
 
 
 @pytest.mark.skipif(gptvis.available() is not None, reason=gptvis.available() or "")

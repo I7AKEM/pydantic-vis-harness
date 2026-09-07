@@ -5,7 +5,7 @@ from vis_agent.models import Intent
 
 from .catalogue import CATALOGUE, CatalogueEntry
 from .models import Candidate, Recommendation, Rejection, RuleScore
-from .rules import Context, HARD_RULES, SOFT_RULES
+from .rules import ADDITIVE, Context, HARD_RULES, SOFT_RULES
 from .shape import ColumnShape, ResultShape, describe
 
 
@@ -24,12 +24,22 @@ def default_binding(entry: CatalogueEntry, shape: ResultShape) -> dict[str, Colu
             choices = shape.times or [c for c in shape.labels if c.kind == "ordinal"]
         elif role == "group":
             choices = sorted(shape.labels, key=lambda c: c.distinct)
+            if "category" in binding:
+                choices = [c for c in choices if not shape.is_alias(c.name, binding["category"].name)]
         else:
             choices = shape.measures
             if role == "value" and entry.name in ("pie", "donut", "treemap"):
-                choices = sorted(choices, key=lambda c: c.kind != "share")
+                choices = sorted(choices, key=lambda c: (
+                    0 if c.kind == "share" and c.sums_to_whole is True else
+                    1 if c.kind == "measure" and c.aggregate in ADDITIVE else
+                    2 if c.kind == "share" else 3
+                ))
         used = {c.name for c in binding.values()}
         match = next((c for c in choices if c.name not in used and c.kind in entry.roles[role].kinds), None)
+        if role == "category" and match is not None:
+            match = max((c for c in choices if c.kind in entry.roles[role].kinds and
+                         (c.name == match.name or shape.is_alias(c.name, match.name))),
+                        key=lambda c: c.longest_label)
         if match is not None:
             binding[role] = match
         elif entry.roles[role].required:

@@ -4,8 +4,8 @@ from vis_agent.designer.recommend import default_binding, recommend_charts
 from vis_agent.designer.rules import Context, HARD_RULES, SOFT_RULES, check_rules
 from vis_agent.designer.shape import describe
 
-from .conftest import (cities, column, gender_share, grouped, monthly, raw_amounts,
-                       scatter_points, single_number, table, two_units)
+from .conftest import (cities, column, gender_code_and_label, gender_share, grouped, monthly,
+                       own_share_by_region, raw_amounts, scatter_points, single_number, table, two_units)
 
 
 def candidate(data, name, **context):
@@ -159,6 +159,44 @@ def test_s1_intent():
         assert score(cities(), "table", "S1", intent=intent) == 0
 
 
+def test_h13_alias():
+    binding = {"category": "gender_label", "group": "gender", "value": "total_deaths"}
+    for name in ("grouped_column", "stacked_column"):
+        failure = direct("H13", name, gender_code_and_label(), binding=binding)
+        assert failure.hard
+        assert failure.explanation == "The group is a label of the category."
+        assert failure.fix == "Bind the label as category and drop the group"
+        assert direct("H13", name, grouped()) is None
+        candidate(grouped(), name)
+
+
+def test_h14_whole():
+    for name in ("pie", "donut", "treemap"):
+        failure = direct("H14", name, own_share_by_region())
+        assert failure.hard
+        assert failure.explanation == "The shares are of different wholes; they do not add up to one."
+        assert failure.fix == "Use a bar"
+        assert direct("H14", name, gender_share()) is None
+        candidate(gender_share(), name)
+    # H5 is the first rejection for eight slices; H14 removes treemap too.
+    rejected(own_share_by_region(), "treemap", "H14")
+
+
+def test_h14_checks_unbound_shares_even_when_binding_an_additive_measure():
+    columns, result = own_share_by_region()
+    columns[1].aggregate = "sum"
+    for name in ("pie", "donut", "treemap"):
+        assert direct("H14", name, (columns, result),
+                      binding={"category": "region", "value": "pop_under_15"}).hard
+
+
+def test_five_shares_summing_to_100_keep_pie():
+    columns = [column("category", "category"), column("share", "share", denominator="all")]
+    data = columns, table(columns, [[name, value] for name, value in zip("ABCDE", [40, 25, 20, 10, 5])])
+    assert direct("H14", "pie", data) is None
+    assert recommend_charts(*data, intent="share").candidates[0].name == "pie"
+
+
 def test_s2_suggested():
     assert score(cities(), "bar", "S2", suggested="Horizontal Bar") == 3
     assert score(cities(), "bar", "S2", suggested="missing") == 0
@@ -207,7 +245,7 @@ def test_s8_composition():
 
 def test_s9_unbound():
     data = gender_share()
-    assert candidate(data, "column").binding == {"category": "gender", "value": "n"}
+    assert candidate(data, "column").binding == {"category": "label", "value": "n"}
     assert score(data, "column", "S9") == -1  # share unbound; code twin exempt
     assert direct("S9", "column", data, binding={"category": "label", "value": "share"}).score == -1
     assert score(cities(), "column", "S9") == 0
@@ -219,6 +257,14 @@ def test_s9_unbound():
     columns = [column("city", "category"), *[column(f"m{i}", "measure") for i in range(6)]]
     data = columns, table(columns, [["A", 1, 2, 3, 4, 5, 6], ["B", 6, 5, 4, 3, 2, 1]])
     assert score(data, "column", "S9") == -5  # One penalty per unbound measure, without a cap.
+
+
+def test_s9_alias_is_exempt_without_a_shared_source():
+    columns, result = gender_code_and_label()
+    columns[0].source = columns[1].source = None
+    assert score((columns, result), "column", "S9") == 0
+    assert direct("S9", "column", (columns, result),
+                  binding={"category": "gender", "value": "total_deaths"}).score == 0
 
 
 def test_s10_few_points():

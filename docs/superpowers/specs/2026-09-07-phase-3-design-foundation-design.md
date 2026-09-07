@@ -234,6 +234,8 @@ bounded and additive; every candidate keeps its breakdown for the explanation an
 | H10 units | Dual axes need two measures with different units | Use a grouped column |
 | H11 many | More than fifty categories on a bar or column | Keep the top twenty with Other, or a table |
 | H12 empty | An empty result has no candidates | Ask, do not draw |
+| H13 alias | On an entry with a group role, reject when the bound group and category are one-to-one label aliases: "The group is a label of the category." | Bind the label as category and drop the group |
+| H14 whole | Pie, donut, and treemap reject when any share column in the result does not sum to one whole, even if unbound: "The shares are of different wholes; they do not add up to one." | Use a bar |
 
 ### 7.2 Soft rules, which score
 
@@ -247,7 +249,7 @@ bounded and additive; every candidate keeps its breakdown for the explanation an
 | S6 balance | Pie or donut slices within ten percent of each other in size | −2, fix "use a sorted bar" |
 | S7 time reads | A time axis on a line or area +2; on a bar −2 | as stated |
 | S8 composition | Stacked variants +1 when the intent is composition; grouped variants +1 when it is comparison | as stated |
-| S9 unbound | A measure or share left unbound −1 each; a label column left unbound −1, except a code column whose source is the bound label's source, and identifiers | as stated |
+| S9 unbound | A measure or share left unbound −1 each; a label column left unbound −1, except an alias of any bound column, a code column whose source is the bound label's source, and identifiers | as stated |
 | S10 few points | Scatter with fewer than ten rows | −2 |
 | S11 words | Word cloud with fewer than twenty categories | −3 |
 | S12 fallback | Table is always a candidate at 0 before other rules | 0 |
@@ -332,6 +334,14 @@ every key and value. It returns the violations with fixes, the compromises (the 
 only partly, each with what it will do instead), and the canonical text when the spec passed.
 
 Both run in milliseconds and call no model.
+
+`describe` retains raw alias and share-whole facts on `ResultShape`, including after a display limit.
+New pair counts and share sums are DuckDB queries over the bounded result; Python assigns the flags.
+
+| Binding fact | Measurement and default binding |
+|---|---|
+| Label aliases | For every pair of category, ordinal, or geography columns, the distinct pair count must equal both columns' distinct counts and be nonzero. Counts of individual labels exclude nulls; pairs containing nulls do not establish an alias. `ResultShape.aliases` stores unordered pairs and `is_alias(a, b)` tests membership. Keep the existing cardinality and column-order preference between independent labels; among aliases, prefer the longest longest label as category, retaining column order on a tie. Never bind an alias of category as group. If a required group is unavailable, recommendation rejects via H1; explicit alias-group bindings fail H13 through C10. |
+| Share wholes | `ColumnShape.sums_to_whole` is true for numeric share columns whose non-null sum is in inclusive [99, 101] or [0.99, 1.01], false otherwise (including empty, all-null, or nonnumeric shares), and null for other kinds. Either scale is accepted without guessing from unit text. Pie, donut, and treemap prefer a share summing to a whole, then an additive measure (`sum`, `count`, `count_distinct`), then any share, then remaining measures subject to H3. H14 still checks every share in the raw result, so binding a count or applying a limit cannot hide shares of different wholes. |
 
 ## 9. Resolving the data
 

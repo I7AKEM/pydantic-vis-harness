@@ -105,6 +105,21 @@ def h12_empty(entry, shape, binding, context):
         return RuleResult("H12", 0, "The result is empty.", "Ask, do not draw", True)
 
 
+def h13_alias(entry, shape, binding, context):
+    category, group = binding.get("category"), binding.get("group")
+    if "group" in entry.roles and category and group and shape.is_alias(category.name, group.name):
+        return RuleResult("H13", 0, "The group is a label of the category.",
+                          "Bind the label as category and drop the group", True)
+
+
+def h14_whole(entry, shape, binding, context):
+    if entry.name in {"pie", "donut", "treemap"} and any(
+        c.kind == "share" and c.sums_to_whole is False for c in shape.measures
+    ):
+        return RuleResult("H14", 0, "The shares are of different wholes; they do not add up to one.",
+                          "Use a bar", True)
+
+
 def s1_intent(entry, shape, binding, context):
     if entry.name != "table" and context.intent in entry.purposes:
         return RuleResult("S1", 3, f"This chart serves the {context.intent} intent.", "")
@@ -165,6 +180,7 @@ def s9_unbound(entry, shape, binding, context):
     sources = {c.source for c in binding.values() if c.kind in ("category", "ordinal", "geography") and c.source is not None}
     unbound = [c.name for c in shape.measures if c.name not in bound]
     unbound += [c.name for c in shape.labels if c.name not in bound and (c.source is None or c.source not in sources)]
+    unbound = [name for name in unbound if not any(shape.is_alias(name, other) for other in bound)]
     return RuleResult("S9", -len(unbound),
                       f"Unbound columns: {', '.join(unbound)}." if unbound else "Every measure and independent label is bound.", "")
 
@@ -196,7 +212,7 @@ def s14_few_parts(entry, shape, binding, context):
 
 
 HARD_RULES = [h1_shape, h2_time_kept, h3_whole, h4_sign, h5_slices, h6_colors,
-              h7_points, h8_order, h9_raw, h10_units, h11_many, h12_empty]
+              h7_points, h8_order, h9_raw, h10_units, h11_many, h12_empty, h13_alias, h14_whole]
 SOFT_RULES = [s1_intent, s2_suggested, s3_caution, s4_count, s5_long_labels, s6_balance,
               s7_time_reads, s8_composition, s9_unbound, s10_few_points, s11_words,
               s12_fallback, s13_one_number, s14_few_parts]
