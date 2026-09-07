@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_9625d1a3ac864ec7b2dd8f0f6efdfd6b",
+  "question": "كم تمثل نسبة المقيمين الباكستانيين  من اجمالي المقيمين في منطقة الرياض؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage FROM \"ds_9625d1a3ac864ec7b2dd8f0f6efdfd6b\"",
+    "columns": [
+      {
+        "name": "percentage",
+        "meaning": "نسبة المقيمين الباكستانيين من إجمالي المقيمين",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "total_residents"
+      }
+    ],
+    "summary": "تمثل نسبة المقيمين الباكستانيين 3.9% من إجمالي المقيمين في منطقة الرياض.",
+    "assumptions": [
+      "تم استخدام العمود percentage كما هو موضح في البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage FROM \"ds_9625d1a3ac864ec7b2dd8f0f6efdfd6b\"",
+    "columns": [
+      "percentage"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        3.9
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "percentage",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "percentage: shares sum to 3.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.006514874999993481
+  },
+  "checks": [
+    {
+      "column": "percentage",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "percentage: shares sum to 3.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "percentage: shares sum to 3.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.88542945800873,
+  "created_at": "2026-09-07T19:28:23.034058Z"
+}

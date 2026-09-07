@@ -1,0 +1,80 @@
+{
+  "dataset_id": "ds_070cb20b06cf499497903c85ae13fcd0",
+  "question": "ما هو التوزيع العمري للسكان (متوسط العمر، والتقسيم النسبي للشباب والبالغين وكبار السن) في أحدث شهر متوفر؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT children_percentage AS \"نسبة الأطفال\", working_age_percentage AS \"نسبة سن العمل\", seniors_percentage AS \"نسبة كبار السن\" FROM \"ds_070cb20b06cf499497903c85ae13fcd0\"",
+    "columns": [
+      {
+        "name": "نسبة الأطفال",
+        "meaning": "نسبة الأطفال في السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "children_percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي السكان"
+      },
+      {
+        "name": "نسبة سن العمل",
+        "meaning": "نسبة السكان في سن العمل",
+        "kind": "measure",
+        "unit": null,
+        "source": "working_age_percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي السكان"
+      },
+      {
+        "name": "نسبة كبار السن",
+        "meaning": "نسبة كبار السن في السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "seniors_percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي السكان"
+      }
+    ],
+    "summary": "يبلغ التوزيع العمري للسكان نسبة 32.31% للأطفال، و56.55% لمن هم في سن العمل، و11.14% لكبار السن. لا تتوفر بيانات عن متوسط العمر أو تحديد دقيق للشهر في مجموعة البيانات.",
+    "assumptions": [
+      "تم اعتبار نسبة الأطفال كتمثيل للشباب، ونسبة سن العمل كتمثيل للبالغين.",
+      "بما أن الجدول يحتوي على صف واحد فقط، فقد تم اعتباره كأحدث بيانات متوفرة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT children_percentage AS \"نسبة الأطفال\", working_age_percentage AS \"نسبة سن العمل\", seniors_percentage AS \"نسبة كبار السن\" FROM \"ds_070cb20b06cf499497903c85ae13fcd0\"",
+    "columns": [
+      "نسبة الأطفال",
+      "نسبة سن العمل",
+      "نسبة كبار السن"
+    ],
+    "types": [
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        32.31,
+        56.55,
+        11.14
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.011255834004259668
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.255988333010464,
+  "created_at": "2026-09-07T19:33:37.967656Z"
+}

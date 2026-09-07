@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_9749cac08de140e3962c9c0281120376",
+  "question": "ما هو متوسط الوزن لكل بيان جمركي من الدولة الأولى؟ رد كالتالي: \"متوسط الوزن (الرقم)\"",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT AVG(CAST(متوسط_الوزن AS DOUBLE)) AS \"متوسط الوزن\" FROM \"ds_9749cac08de140e3962c9c0281120376\"",
+    "columns": [
+      {
+        "name": "متوسط الوزن",
+        "meaning": "متوسط الوزن لكل بيان جمركي",
+        "kind": "measure",
+        "unit": null,
+        "source": "متوسط_الوزن",
+        "aggregate": "avg",
+        "denominator": null
+      }
+    ],
+    "summary": "لا توجد بيانات متاحة لحساب متوسط الوزن، حيث أن جميع القيم في العمود فارغة.",
+    "assumptions": [
+      "تم اعتبار جميع القيم الفارغة (null) كقيم غير موجودة في الحساب."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT AVG(CAST(متوسط_الوزن AS DOUBLE)) AS \"متوسط الوزن\" FROM \"ds_9749cac08de140e3962c9c0281120376\"",
+    "columns": [
+      "متوسط الوزن"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        null
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.011244291992625222
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.116907125004218,
+  "created_at": "2026-09-07T19:33:14.957901Z"
+}

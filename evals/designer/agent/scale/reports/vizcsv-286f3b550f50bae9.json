@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_31d57248e73e4a0884ced5a4a9ffdcdf",
+  "question": "وماذا عن جدة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك توضيح ما الذي تود معرفته عن مدينة جدة؟ (مثلاً: عدد السكان)",
+    "reason": "The user asked \"What about Jeddah?\" but the dataset contains only one column ('total_population') and only one row. There is no column for city names or geography to filter for Jeddah."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.9283019169961335,
+  "created_at": "2026-09-07T19:32:50.193067Z"
+}

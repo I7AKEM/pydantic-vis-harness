@@ -1,0 +1,91 @@
+{
+  "dataset_id": "ds_09a3e28cd40241c882bf954f2478f75d",
+  "question": "اعرض قيم «count» حسب «age_group».",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT age_group, count FROM \"ds_09a3e28cd40241c882bf954f2478f75d\"",
+    "columns": [
+      {
+        "name": "age_group",
+        "meaning": "الفئة العمرية",
+        "kind": "category",
+        "unit": null,
+        "source": "age_group",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "count",
+        "meaning": "العدد",
+        "kind": "measure",
+        "unit": null,
+        "source": "count",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "تظهر البيانات قيم «count» لكل فئة عمرية، حيث سجلت الفئة «غير محدد» أعلى قيمة (١٢٨٩٣) تليها الفئة «65+» (١٢٥٤٨). تم عرض جميع الفئات العمرية السبع الموجودة في الجدول.",
+    "assumptions": [
+      "تم اعتبار عمود count كقيمة نصية كما ورد في تعريف الجدول."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT age_group, count FROM \"ds_09a3e28cd40241c882bf954f2478f75d\"",
+    "columns": [
+      "age_group",
+      "count"
+    ],
+    "types": [
+      "VARCHAR",
+      "VARCHAR"
+    ],
+    "rows": [
+      [
+        "15-24",
+        "٨٧٤٨"
+      ],
+      [
+        "25-34",
+        "٨٧٥٤"
+      ],
+      [
+        "35-44",
+        "٨٦٤٤"
+      ],
+      [
+        "45-54",
+        "٨٧٠٥"
+      ],
+      [
+        "55-64",
+        "٨٦٤٢"
+      ],
+      [
+        "65+",
+        "١٢٥٤٨"
+      ],
+      [
+        "غير محدد",
+        "١٢٨٩٣"
+      ]
+    ],
+    "row_count": 7,
+    "checks": [],
+    "seconds": 0.02600933299981989
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.5190887920034584,
+  "created_at": "2026-09-07T19:34:07.314472Z"
+}

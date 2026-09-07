@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_3cbd4b769cc846daa8aa91757b00d676",
+  "question": "السلام عليكم. كم صار عدد الذكور؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT sum(male_population) AS \"إجمالي عدد الذكور\" FROM \"ds_3cbd4b769cc846daa8aa91757b00d676\"",
+    "columns": [
+      {
+        "name": "إجمالي عدد الذكور",
+        "meaning": "إجمالي عدد الذكور في السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "male_population",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "وعليكم السلام. يبلغ عدد الذكور 2,768 شخصاً.",
+    "assumptions": [
+      "تم حساب إجمالي عدد الذكور بناءً على جميع السجلات المتاحة في مجموعة البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT sum(male_population) AS \"إجمالي عدد الذكور\" FROM \"ds_3cbd4b769cc846daa8aa91757b00d676\"",
+    "columns": [
+      "إجمالي عدد الذكور"
+    ],
+    "types": [
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        2768
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.009931541004334576
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.0850312919938006,
+  "created_at": "2026-09-07T19:27:50.748392Z"
+}

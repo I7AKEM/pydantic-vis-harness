@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_13df4bfb25994bb68f270d8513d7016b",
+  "question": "ماهو وسيط الأعمار للإناث الأجانب في شهر يوليو 2025؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات إضافية؟ الجدول الحالي يحتوي على عمود واحد فقط (وسيط الأعمار) وهو فارغ تماماً، ولا توجد أعمدة للجنس أو الجنسية أو التاريخ لتصفية البيانات حسب الإناث والأجانب وشهر يوليو 2025.",
+    "reason": "The dataset contains only one column ('median_age') which is 100% null, and lacks the necessary columns for filtering by gender (females), nationality (foreigners), and date (July 2025)."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.1084227499959525,
+  "created_at": "2026-09-07T19:33:07.088058Z"
+}

@@ -1,0 +1,75 @@
+{
+  "dataset_id": "ds_1b98b1cbd09748548ee508df807a115a",
+  "question": "Which are the top three birthplaces for expatriate residents?",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT birth_country, expat_count FROM \"ds_1b98b1cbd09748548ee508df807a115a\" ORDER BY expat_count DESC LIMIT 3",
+    "columns": [
+      {
+        "name": "birth_country",
+        "meaning": "Birthplace",
+        "kind": "category",
+        "unit": null,
+        "source": "birth_country",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "expat_count",
+        "meaning": "Number of expatriates",
+        "kind": "measure",
+        "unit": null,
+        "source": "expat_count",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "The top three birthplaces for expatriate residents are China (الصين) with 142, Kuwait (الكويت) with 132, and the United Kingdom (المملكة المتحدة) with 129.",
+    "assumptions": [
+      "The top three are determined by the highest expat_count."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT birth_country, expat_count FROM \"ds_1b98b1cbd09748548ee508df807a115a\" ORDER BY expat_count DESC LIMIT 3",
+    "columns": [
+      "birth_country",
+      "expat_count"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "الصين",
+        142
+      ],
+      [
+        "الكويت",
+        132
+      ],
+      [
+        "المملكة المتحدة",
+        129
+      ]
+    ],
+    "row_count": 3,
+    "checks": [],
+    "seconds": 0.016697458006092347
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.330600833010976,
+  "created_at": "2026-09-07T19:33:47.968475Z"
+}

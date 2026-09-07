@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_cb13e2efa9fb4fb9be69b1cd8ee46c50",
+  "question": "كم نسبة خريجين الحاسب من الجامعات خلال ال5 سنوات الماضيه",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage FROM \"ds_cb13e2efa9fb4fb9be69b1cd8ee46c50\"",
+    "columns": [
+      {
+        "name": "percentage",
+        "meaning": "نسبة خريجي الحاسب",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي الخريجين"
+      }
+    ],
+    "summary": "نسبة خريجي الحاسب من الجامعات خلال السنوات الخمس الماضية هي 13.37%.",
+    "assumptions": [
+      "تم الاعتماد على القيمة الوحيدة المتوفرة في مجموعة البيانات كنسبة مئوية إجمالية."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage FROM \"ds_cb13e2efa9fb4fb9be69b1cd8ee46c50\"",
+    "columns": [
+      "percentage"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        13.371319515171534
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "percentage",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "percentage: shares sum to 13.4, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.009771375000127591
+  },
+  "checks": [
+    {
+      "column": "percentage",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "percentage: shares sum to 13.4, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "percentage: shares sum to 13.4, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.1140946249943227,
+  "created_at": "2026-09-07T19:33:10.217379Z"
+}

@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_cd98180f269b4088b29aa1206f8c6766",
+  "question": "كم عدد المدن في السعودية؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT count(DISTINCT city) AS \"عدد المدن\" FROM \"ds_cd98180f269b4088b29aa1206f8c6766\"",
+    "columns": [
+      {
+        "name": "عدد المدن",
+        "meaning": "عدد المدن الفريدة في السعودية",
+        "kind": "measure",
+        "unit": null,
+        "source": "city",
+        "aggregate": "count_distinct",
+        "denominator": "all cities in the dataset"
+      }
+    ],
+    "summary": "يوجد 17 مدينة في السعودية بناءً على البيانات المتوفرة.",
+    "assumptions": [
+      "تم حساب عدد المدن الفريدة الموجودة في عمود المدينة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT count(DISTINCT city) AS \"عدد المدن\" FROM \"ds_cd98180f269b4088b29aa1206f8c6766\"",
+    "columns": [
+      "عدد المدن"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        17
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.01276066699938383
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.88103666700772,
+  "created_at": "2026-09-07T19:27:57.984277Z"
+}

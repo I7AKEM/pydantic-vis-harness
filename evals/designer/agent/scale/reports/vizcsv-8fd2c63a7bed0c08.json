@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_b5e61a29cb8a44b1a05df85a888ecdb3",
+  "question": "ما نسبة الطلاب الذين عادوا الى الجامعات التي تخرجوا منها في مرحلة البكالوريوس للحصول على الماجستير أو الدكتوراه أو الزمالة، من اجمالي الحاصلين على شهادات الماجستير أو الدكتوراه أو الزمالة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    CAST(returned_count AS DOUBLE) * 100.0 / total_postgrad AS \"نسبة الطلاب العائدين\"\nFROM \"ds_b5e61a29cb8a44b1a05df85a888ecdb3\"",
+    "columns": [
+      {
+        "name": "نسبة الطلاب العائدين",
+        "meaning": "نسبة الطلاب الذين عادوا إلى جامعاتهم السابقة للحصول على دراسات عليا من إجمالي الحاصلين على هذه الشهادات",
+        "kind": "share",
+        "unit": null,
+        "source": null,
+        "aggregate": "share",
+        "denominator": "إجمالي عدد طلاب الدراسات العليا"
+      }
+    ],
+    "summary": "تبلغ نسبة الطلاب الذين عادوا إلى جامعاتهم السابقة للحصول على درجات الماجستير أو الدكتوراه أو الزمالة حوالي 0.00054% من إجمالي الحاصلين على هذه الشهادات.",
+    "assumptions": [
+      "تم حساب النسبة المئوية بقسمة عدد العائدين على إجمالي عدد طلاب الدراسات العليا."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    CAST(returned_count AS DOUBLE) * 100.0 / total_postgrad AS \"نسبة الطلاب العائدين\"\nFROM \"ds_b5e61a29cb8a44b1a05df85a888ecdb3\"",
+    "columns": [
+      "نسبة الطلاب العائدين"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        0.0005393990555122538
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة الطلاب العائدين",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة الطلاب العائدين: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.016377624997403473
+  },
+  "checks": [
+    {
+      "column": "نسبة الطلاب العائدين",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة الطلاب العائدين: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة الطلاب العائدين: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.368853333988227,
+  "created_at": "2026-09-07T19:32:52.865043Z"
+}

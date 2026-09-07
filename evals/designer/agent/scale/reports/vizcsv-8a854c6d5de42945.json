@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_2066cd76adc446c9b09e8a2457ef9042",
+  "question": "هل ارتكب المواطنون الحاملون على شهادات عليا (ماجستير - دكتوراه) مخالفات اقل مقارنة بالخريجين الغير حاصلين على شهادات عليا خلال الفترة (٢٠٢٣-٢٠٢٥)؟ فقط للاعمار بين ٣٠ و ٥٠",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT highly_educated_violations AS \"مخالفات الحاصلين على شهادات عليا\", other_educated_violations AS \"مخالفات الخريجين الآخرين\" FROM \"ds_2066cd76adc446c9b09e8a2457ef9042\"",
+    "columns": [
+      {
+        "name": "مخالفات الحاصلين على شهادات عليا",
+        "meaning": "عدد المخالفات التي ارتكبها الأفراد الحاصلون على شهادات عليا",
+        "kind": "measure",
+        "unit": null,
+        "source": "highly_educated_violations",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "مخالفات الخريجين الآخرين",
+        "meaning": "عدد المخالفات التي ارتكبها الأفراد من مستويات تعليمية أخرى",
+        "kind": "measure",
+        "unit": null,
+        "source": "other_educated_violations",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "لا، ارتكب المواطنون الحاصلون على شهادات عليا مخالفات أكثر (9,916 مخالفة) مقارنة بالخريجين الآخرين (9,693 مخالفة). تم تحليل البيانات المتاحة في الجدول دون تطبيق فلاتر إضافية للتاريخ أو العمر لعدم توفر أعمدة مخصصة لذلك في مجموعة البيانات.",
+    "assumptions": [
+      "تم استخدام البيانات المتاحة في الجدول كما هي، حيث لا توجد أعمدة للتاريخ أو العمر لتطبيق الفلاتر المطلوبة في السؤال."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT highly_educated_violations AS \"مخالفات الحاصلين على شهادات عليا\", other_educated_violations AS \"مخالفات الخريجين الآخرين\" FROM \"ds_2066cd76adc446c9b09e8a2457ef9042\"",
+    "columns": [
+      "مخالفات الحاصلين على شهادات عليا",
+      "مخالفات الخريجين الآخرين"
+    ],
+    "types": [
+      "BIGINT",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        9916,
+        9693
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.00920675000816118
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.866140666999854,
+  "created_at": "2026-09-07T19:28:02.454728Z"
+}

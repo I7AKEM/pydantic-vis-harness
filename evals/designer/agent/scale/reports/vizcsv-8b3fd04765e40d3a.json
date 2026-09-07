@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_fa570acb5f40488997f3c92453e967c3",
+  "question": "ما هو المنفذ الأكثر استخدامًا من قبل الموردين من سكان مدينة الرياض خلال الفترة من 2022 الى 2024؟ احسب الواردات بناء على عدد الشحنات (وليس حجم الشحنة او القيمة) وحدد المنفذ الأكثر استخدامًا اجمالا، وكذلك لكل نوع نقل (بر، بحر، جو)",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي بالبيانات أو الجدول الذي يحتوي على تفاصيل الشحنات، الموردين، مدنهم، والمنافذ المستخدمة؟ الجدول الحالي يحتوي فقط على عمود واحد للعدد الإجمالي.",
+    "reason": "The provided table contains only one column ('total_count') and one row, which does not contain any information about suppliers, cities (Riyadh), ports, transport types, or dates. I cannot answer the question without the actual shipment and supplier data."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.8744851249939529,
+  "created_at": "2026-09-07T19:33:29.949551Z"
+}

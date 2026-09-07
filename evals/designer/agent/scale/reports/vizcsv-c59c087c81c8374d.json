@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_81e22d84035c40e8bce77925b6d71911",
+  "question": "ما هي نسبة السكان في كل منطقة الذين تبلغ أعمارهم بين 25-54 سنة (الprime working age) مقارنة بإجمالي السكان في تلك المنطقة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل عمود \"نسبة_السكان_في_سن_العمل\" يمثل الفئة العمرية من 25 إلى 54 سنة (prime working age) التي طلبتها؟",
+    "reason": "The user is asking for the percentage of the population aged 25-54 (prime working age), but the dataset only provides \"عدد_السكان_في_سن_العمل\" (working age population) and its percentage. I need to confirm if \"working age\" in this dataset corresponds to the specific 25-54 range requested."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.1977660829870729,
+  "created_at": "2026-09-07T19:30:42.599444Z"
+}

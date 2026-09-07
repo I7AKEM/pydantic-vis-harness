@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_b3c361b5919c496f8562f8bb08e8632c",
+  "question": "اعرض متوسط «paid_violations» حسب الأشهر الهجرية باستخدام «violation_date».",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي بتنسيق التاريخ الهجري المستخدم في عمود «violation_date» أو طريقة تحويله إلى تاريخ ميلادي؟",
+    "reason": "The 'violation_date' column contains Hijri dates as strings (e.g., '1 جمادى الآخرة 1384'), which DuckDB cannot cast directly to a DATE type for date_trunc operations. I need to know how to handle these Hijri date strings to perform monthly grouping."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.413634207987343,
+  "created_at": "2026-09-07T19:33:57.201980Z"
+}

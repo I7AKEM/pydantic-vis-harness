@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_2adf31893ffd442e910b44492f3eeea2",
+  "question": "كم عدد الموظفين الحاليين في الهيئة السعودية للبيانات والذكاء الاصطناعي؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT sum(employee_count) AS \"إجمالي الموظفين\" FROM \"ds_2adf31893ffd442e910b44492f3eeea2\"",
+    "columns": [
+      {
+        "name": "إجمالي الموظفين",
+        "meaning": "إجمالي عدد الموظفين في الهيئة السعودية للبيانات والذكاء الاصطناعي",
+        "kind": "measure",
+        "unit": null,
+        "source": "employee_count",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "يبلغ عدد الموظفين الحاليين في الهيئة السعودية للبيانات والذكاء الاصطناعي 2,011 موظفاً.",
+    "assumptions": [
+      "تم حساب إجمالي عدد الموظفين بناءً على البيانات المتاحة في الجدول."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT sum(employee_count) AS \"إجمالي الموظفين\" FROM \"ds_2adf31893ffd442e910b44492f3eeea2\"",
+    "columns": [
+      "إجمالي الموظفين"
+    ],
+    "types": [
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        2011
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.022869291991810314
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.605176124998252,
+  "created_at": "2026-09-07T19:31:43.137122Z"
+}

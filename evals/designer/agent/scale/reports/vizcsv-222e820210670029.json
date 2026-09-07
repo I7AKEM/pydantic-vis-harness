@@ -1,0 +1,143 @@
+{
+  "dataset_id": "ds_a07d00ad4fd249fda0bae62058768638",
+  "question": "معدل نمو معتمرين الخارج لكل سنه في آخر 20 سنه مكتملة",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT year, growth_rate_percent FROM \"ds_a07d00ad4fd249fda0bae62058768638\" ORDER BY year ASC",
+    "columns": [
+      {
+        "name": "year",
+        "meaning": "السنة",
+        "kind": "ordinal",
+        "unit": null,
+        "source": "year",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "growth_rate_percent",
+        "meaning": "معدل النمو المئوي",
+        "kind": "measure",
+        "unit": null,
+        "source": "growth_rate_percent",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "يوضح الجدول معدل نمو المعتمرين من عام 2005 إلى 2024، حيث تراوح معدل النمو بين أعلى قيمة 11.04% في عام 2022 وأدنى قيمة -8.54% في عام 2009. تم عرض البيانات لجميع السنوات العشرين المتاحة في مجموعة البيانات.",
+    "assumptions": [
+      "تم اعتبار جميع السنوات المتاحة في الجدول (2005-2024) كآخر 20 سنة مكتملة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT year, growth_rate_percent FROM \"ds_a07d00ad4fd249fda0bae62058768638\" ORDER BY year ASC",
+    "columns": [
+      "year",
+      "growth_rate_percent"
+    ],
+    "types": [
+      "BIGINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        2005,
+        null
+      ],
+      [
+        2006,
+        2.95
+      ],
+      [
+        2007,
+        -2.06
+      ],
+      [
+        2008,
+        4.09
+      ],
+      [
+        2009,
+        -8.54
+      ],
+      [
+        2010,
+        6.76
+      ],
+      [
+        2011,
+        2.53
+      ],
+      [
+        2012,
+        -2.69
+      ],
+      [
+        2013,
+        -1.61
+      ],
+      [
+        2014,
+        -0.12
+      ],
+      [
+        2015,
+        -2.7
+      ],
+      [
+        2016,
+        0.48
+      ],
+      [
+        2017,
+        4.92
+      ],
+      [
+        2018,
+        2.86
+      ],
+      [
+        2019,
+        -2.56
+      ],
+      [
+        2020,
+        1.03
+      ],
+      [
+        2021,
+        -6.89
+      ],
+      [
+        2022,
+        11.04
+      ],
+      [
+        2023,
+        -8.31
+      ],
+      [
+        2024,
+        1.31
+      ]
+    ],
+    "row_count": 20,
+    "checks": [],
+    "seconds": 0.015806833005626686
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 8.611118417000398,
+  "created_at": "2026-09-07T19:27:45.258351Z"
+}

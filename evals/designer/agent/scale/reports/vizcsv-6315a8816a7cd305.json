@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_bb9a70a30c1f448da8ea06496ae2ea2c",
+  "question": "هذا الرسم ليس الافضل لتوضيح الصورة بوضوح ممكن تغيره لي",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "ما هو الرسم البياني الذي تقصده، وما هي المعلومات المحددة التي تود إبرازها أو مقارنتها في البيانات؟",
+    "reason": "The user is asking to change a chart (\"this chart is not the best\"), but no chart has been generated yet, and there is no specific analytical question or goal provided. I need to know what they want to visualize or analyze."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.8524678749963641,
+  "created_at": "2026-09-07T19:33:02.729399Z"
+}

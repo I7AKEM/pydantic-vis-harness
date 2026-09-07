@@ -1,0 +1,79 @@
+{
+  "dataset_id": "ds_5eb3c73961804250b7e0b7082031cf75",
+  "question": "كم نسبة الاسر السعودية الذين لديهم عاملة منزلية مقارنة بالعوائل الذين لا يملكون عمالة منزلية حسب اخر تاريخ اسناد؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    percentage_with_domestic_workers AS \"نسبة الأسر التي لديها عمالة منزلية\",\n    households_with_domestic_workers AS \"عدد الأسر التي لديها عمالة منزلية\",\n    households_without_domestic_workers AS \"عدد الأسر التي ليس لديها عمالة منزلية\"\nFROM \"ds_5eb3c73961804250b7e0b7082031cf75\"",
+    "columns": [
+      {
+        "name": "نسبة الأسر التي لديها عمالة منزلية",
+        "meaning": "نسبة الأسر التي لديها عمالة منزلية",
+        "kind": "measure",
+        "unit": null,
+        "source": "percentage_with_domestic_workers",
+        "aggregate": "none",
+        "denominator": "إجمالي الأسر"
+      },
+      {
+        "name": "عدد الأسر التي لديها عمالة منزلية",
+        "meaning": "عدد الأسر التي لديها عمالة منزلية",
+        "kind": "measure",
+        "unit": null,
+        "source": "households_with_domestic_workers",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "عدد الأسر التي ليس لديها عمالة منزلية",
+        "meaning": "عدد الأسر التي ليس لديها عمالة منزلية",
+        "kind": "measure",
+        "unit": null,
+        "source": "households_without_domestic_workers",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "تبلغ نسبة الأسر التي لديها عمالة منزلية 7.4%، حيث يوجد 412 أسرة لديها عمالة منزلية مقابل 5153 أسرة ليس لديها عمالة منزلية.",
+    "assumptions": [
+      "تم استخدام البيانات المتاحة في الجدول كأحدث بيانات متوفرة لعدم وجود عمود للتاريخ."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    percentage_with_domestic_workers AS \"نسبة الأسر التي لديها عمالة منزلية\",\n    households_with_domestic_workers AS \"عدد الأسر التي لديها عمالة منزلية\",\n    households_without_domestic_workers AS \"عدد الأسر التي ليس لديها عمالة منزلية\"\nFROM \"ds_5eb3c73961804250b7e0b7082031cf75\"",
+    "columns": [
+      "نسبة الأسر التي لديها عمالة منزلية",
+      "عدد الأسر التي لديها عمالة منزلية",
+      "عدد الأسر التي ليس لديها عمالة منزلية"
+    ],
+    "types": [
+      "DOUBLE",
+      "BIGINT",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        7.4,
+        412,
+        5153
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.009080457995878533
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.4333030419948045,
+  "created_at": "2026-09-07T19:30:56.875180Z"
+}

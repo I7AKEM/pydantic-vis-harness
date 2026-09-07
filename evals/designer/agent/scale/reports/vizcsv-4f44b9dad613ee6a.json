@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_231a17392dea4017a973a5d48e79fcf8",
+  "question": "كم عدد المواليد الأجانب في المملكة خلال شهر يوليو 2025؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات تحتوي على تواريخ الميلاد وجنسية المواليد؟ الجدول الحالي يحتوي على عمود واحد فقط بقيمة صفرية ولا يتضمن أي معلومات عن التواريخ أو الجنسيات.",
+    "reason": "The provided table contains only one column ('expr_0') with a single row of value 0, and no columns for dates or nationality, making it impossible to answer the question about foreign births in July 2025."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.9874022919975687,
+  "created_at": "2026-09-07T19:31:31.001783Z"
+}

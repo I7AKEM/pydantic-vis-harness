@@ -1,0 +1,127 @@
+{
+  "dataset_id": "ds_2326abe3e30a457db1d2945cb38ad09f",
+  "question": "What share of deaths were married people, for each gender?",
+  "language": "English",
+  "brief_fingerprint": "55f17d3d71118ca3",
+  "analysis": {
+    "sql": "SELECT \n    gender, \n    CASE gender WHEN 'F' THEN 'Female' WHEN 'M' THEN 'Male' END as gender_label,\n    SUM(CASE WHEN marital_status_group = 'Married' THEN death_count ELSE 0 END) as married_deaths,\n    100.0 * SUM(CASE WHEN marital_status_group = 'Married' THEN death_count ELSE 0 END) / SUM(death_count) as married_share\nFROM \"ds_2326abe3e30a457db1d2945cb38ad09f\"\nGROUP BY gender\n",
+    "columns": [
+      {
+        "name": "gender",
+        "meaning": "Gender code",
+        "kind": "category",
+        "unit": null,
+        "source": "gender",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "gender_label",
+        "meaning": "Gender label",
+        "kind": "category",
+        "unit": null,
+        "source": "gender",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "married_deaths",
+        "meaning": "Number of deaths for married people",
+        "kind": "measure",
+        "unit": "count",
+        "source": "death_count",
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "married_share",
+        "meaning": "Share of deaths that were married people",
+        "kind": "share",
+        "unit": "%",
+        "source": "death_count",
+        "aggregate": "share",
+        "denominator": "total deaths for that gender"
+      }
+    ],
+    "summary": "Among females, married people accounted for 19.87% of deaths, while among males, they accounted for 58.70% of deaths.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    gender, \n    CASE gender WHEN 'F' THEN 'Female' WHEN 'M' THEN 'Male' END as gender_label,\n    SUM(CASE WHEN marital_status_group = 'Married' THEN death_count ELSE 0 END) as married_deaths,\n    100.0 * SUM(CASE WHEN marital_status_group = 'Married' THEN death_count ELSE 0 END) / SUM(death_count) as married_share\nFROM \"ds_2326abe3e30a457db1d2945cb38ad09f\"\nGROUP BY gender\n",
+    "columns": [
+      "gender",
+      "gender_label",
+      "married_deaths",
+      "married_share"
+    ],
+    "types": [
+      "VARCHAR",
+      "VARCHAR",
+      "HUGEINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "F",
+        "Female",
+        10291,
+        19.870247726438958
+      ],
+      [
+        "M",
+        "Male",
+        31238,
+        58.69818482468338
+      ]
+    ],
+    "row_count": 2,
+    "checks": [
+      {
+        "column": "married_deaths",
+        "check": "total_explained",
+        "severity": "warning",
+        "passed": false,
+        "message": "married_deaths: the result sums to 41529; the column's total is 105009. The query filtered or excluded rows."
+      },
+      {
+        "column": "married_share",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "married_share: shares sum to 19.9 for 'F', not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.01623266699607484
+  },
+  "checks": [
+    {
+      "column": "married_deaths",
+      "check": "total_explained",
+      "severity": "warning",
+      "passed": false,
+      "message": "married_deaths: the result sums to 41529; the column's total is 105009. The query filtered or excluded rows."
+    },
+    {
+      "column": "married_share",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "married_share: shares sum to 19.9 for 'F', not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "married_deaths: the result sums to 41529; the column's total is 105009. The query filtered or excluded rows.",
+    "married_share: shares sum to 19.9 for 'F', not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.487147040999844,
+  "created_at": "2026-09-07T17:47:35.607972Z"
+}

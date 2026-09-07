@@ -1,0 +1,154 @@
+{
+  "dataset_id": "ds_0adfc49b31ec4da496f5d7defd2c18a5",
+  "question": "طيب هذه الاعداد لكل جنس اريد النسبة لهم لكل منطقة",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT region, gender, percentage FROM \"ds_0adfc49b31ec4da496f5d7defd2c18a5\"",
+    "columns": [
+      {
+        "name": "region",
+        "meaning": "المنطقة الإدارية",
+        "kind": "category",
+        "unit": null,
+        "source": "region",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "gender",
+        "meaning": "الجنس",
+        "kind": "category",
+        "unit": null,
+        "source": "gender",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "percentage",
+        "meaning": "النسبة المئوية",
+        "kind": "measure",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "total_region"
+      }
+    ],
+    "summary": "توضح البيانات النسب المئوية لكل جنس حسب المنطقة، حيث تتراوح النسب بين 48.17% في منطقة الجوف (للذكور) و 51.83% في منطقة الجوف (للإناث). تظهر النتائج توزيعاً متقارباً بين الجنسين في جميع المناطق المذكورة.",
+    "assumptions": [
+      "تم استخدام عمود النسبة المئوية الموجود مسبقاً في البيانات والذي يمثل نسبة كل جنس من إجمالي سكان المنطقة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT region, gender, percentage FROM \"ds_0adfc49b31ec4da496f5d7defd2c18a5\"",
+    "columns": [
+      "region",
+      "gender",
+      "percentage"
+    ],
+    "types": [
+      "VARCHAR",
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "الحدود الشمالية",
+        "F",
+        49.79
+      ],
+      [
+        "الحدود الشمالية",
+        "M",
+        50.21
+      ],
+      [
+        "منطقة الباحة",
+        "F",
+        51.73
+      ],
+      [
+        "منطقة الباحة",
+        "M",
+        48.27
+      ],
+      [
+        "منطقة الجوف",
+        "F",
+        51.83
+      ],
+      [
+        "منطقة الجوف",
+        "M",
+        48.17
+      ],
+      [
+        "منطقة الرياض",
+        "F",
+        51.12
+      ],
+      [
+        "منطقة الرياض",
+        "M",
+        48.88
+      ],
+      [
+        "منطقة تبوك",
+        "F",
+        49.71
+      ],
+      [
+        "منطقة تبوك",
+        "M",
+        50.29
+      ],
+      [
+        "منطقة جازان",
+        "F",
+        49.11
+      ],
+      [
+        "منطقة جازان",
+        "M",
+        50.89
+      ],
+      [
+        "منطقة مكة المكرمة",
+        "F",
+        48.31
+      ],
+      [
+        "منطقة مكة المكرمة",
+        "M",
+        51.69
+      ],
+      [
+        "منطقة نجران",
+        "F",
+        50.21
+      ],
+      [
+        "منطقة نجران",
+        "M",
+        49.79
+      ]
+    ],
+    "row_count": 16,
+    "checks": [],
+    "seconds": 0.008684625005116686
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 9.548567709003692,
+  "created_at": "2026-09-07T19:27:46.190629Z"
+}

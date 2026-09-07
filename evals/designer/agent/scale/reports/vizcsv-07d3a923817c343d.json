@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_78f0abbeb5b24e6f8061d1cc79d547b7",
+  "question": "كم عدد المخالفات المرورية المسجلة في منطقة الرياض خلال العام الماضي؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل تتوفر بيانات محددة لمنطقة الرياض أو تواريخ للمخالفات في مجموعة البيانات هذه؟",
+    "reason": "The dataset contains only violation types, average age, and violation counts. It does not have a column for the region (e.g., Riyadh) or a date/time column to filter for the \"last year\"."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.020196625002427,
+  "created_at": "2026-09-07T19:27:49.244933Z"
+}

@@ -1,0 +1,144 @@
+{
+  "dataset_id": "ds_196a92c36f284e7db6511cd89cb3002e",
+  "question": "معدل نمو معتمرين الخارج لكل سنه في آخر 20 سنه مكتملة",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    year AS \"السنة\", \n    growth_rate AS \"معدل النمو\" \nFROM \"ds_196a92c36f284e7db6511cd89cb3002e\" \nWHERE growth_rate IS NOT NULL \nORDER BY year DESC \nLIMIT 20",
+    "columns": [
+      {
+        "name": "السنة",
+        "meaning": "السنة",
+        "kind": "ordinal",
+        "unit": null,
+        "source": "year",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "معدل النمو",
+        "meaning": "معدل نمو المعتمرين مقارنة بالسنة السابقة",
+        "kind": "measure",
+        "unit": null,
+        "source": "growth_rate",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "يوضح الجدول معدل نمو المعتمرين لكل سنة خلال آخر 20 سنة مكتملة تتوفر لها بيانات نمو، حيث تراوح النمو بين أعلى قيمة 109.09% في عام 2009 وأقل قيمة -84.62% في عام 2026.",
+    "assumptions": [
+      "تم اعتبار السنوات التي تحتوي على قيمة لمعدل النمو كسنوات مكتملة.",
+      ""
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    year AS \"السنة\", \n    growth_rate AS \"معدل النمو\" \nFROM \"ds_196a92c36f284e7db6511cd89cb3002e\" \nWHERE growth_rate IS NOT NULL \nORDER BY year DESC \nLIMIT 20",
+    "columns": [
+      "السنة",
+      "معدل النمو"
+    ],
+    "types": [
+      "BIGINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        2026,
+        -84.62
+      ],
+      [
+        2025,
+        30.0
+      ],
+      [
+        2024,
+        -44.44
+      ],
+      [
+        2023,
+        -33.33
+      ],
+      [
+        2022,
+        58.82
+      ],
+      [
+        2021,
+        -29.17
+      ],
+      [
+        2020,
+        33.33
+      ],
+      [
+        2019,
+        28.57
+      ],
+      [
+        2018,
+        27.27
+      ],
+      [
+        2017,
+        -21.43
+      ],
+      [
+        2016,
+        0.0
+      ],
+      [
+        2015,
+        -22.22
+      ],
+      [
+        2014,
+        50.0
+      ],
+      [
+        2013,
+        -20.0
+      ],
+      [
+        2012,
+        0.0
+      ],
+      [
+        2011,
+        -11.76
+      ],
+      [
+        2010,
+        -26.09
+      ],
+      [
+        2009,
+        109.09
+      ],
+      [
+        2008,
+        -31.25
+      ],
+      [
+        2007,
+        -20.0
+      ]
+    ],
+    "row_count": 20,
+    "checks": [],
+    "seconds": 0.018286417005583644
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.454721875008545,
+  "created_at": "2026-09-07T19:33:00.298698Z"
+}

@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_fa8a1ed0a9874a568b4ed1da6c2f80f7",
+  "question": "ما هي اعلى المخالفات في مدينة الرياض الاسبوع الماضي",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات التاريخ للمخالفات، وهل البيانات المتاحة تخص مدينة الرياض فقط؟",
+    "reason": "The dataset does not contain a date column to filter for \"last week\" and does not contain a city or location column to filter for \"Riyadh\"."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.8369149999925867,
+  "created_at": "2026-09-07T19:27:57.449064Z"
+}

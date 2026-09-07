@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_76fe477d98dd4a4a8a6121255481e04f",
+  "question": "ما هي السنة التي حققت فيها الجامعات الاهلية اعلى نسبة نمو سنوي في عدد الخريجين؟ قارن السنوات من (2010 وحتى 2025)",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT grad_year, growth_rate_pct FROM \"ds_76fe477d98dd4a4a8a6121255481e04f\" WHERE grad_year BETWEEN 2010 AND 2025 ORDER BY growth_rate_pct DESC LIMIT 1",
+    "columns": [
+      {
+        "name": "grad_year",
+        "meaning": "سنة التخرج",
+        "kind": "ordinal",
+        "unit": null,
+        "source": "grad_year",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "growth_rate_pct",
+        "meaning": "نسبة النمو السنوي في عدد الخريجين",
+        "kind": "measure",
+        "unit": null,
+        "source": "growth_rate_pct",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "السنة التي حققت فيها الجامعات الأهلية أعلى نسبة نمو سنوي في عدد الخريجين هي عام 2025، حيث بلغت نسبة النمو 28.89%.",
+    "assumptions": [
+      "تم اعتبار السنوات من 2010 إلى 2025 كما هو مطلوب في السؤال."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT grad_year, growth_rate_pct FROM \"ds_76fe477d98dd4a4a8a6121255481e04f\" WHERE grad_year BETWEEN 2010 AND 2025 ORDER BY growth_rate_pct DESC LIMIT 1",
+    "columns": [
+      "grad_year",
+      "growth_rate_pct"
+    ],
+    "types": [
+      "BIGINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        2025,
+        28.89
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.010273791005602106
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.8369296669989126,
+  "created_at": "2026-09-07T19:31:59.901894Z"
+}

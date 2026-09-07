@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_062a9cb39f69476faaa4152970712cce",
+  "question": "ما هي نسبة المواطنين من إجمالي السكان في كل منطقة إدارية في أحدث شهر متاح؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات عدد المواطنين لكل منطقة، حيث أن الجدول الحالي يحتوي فقط على إجمالي عدد السكان؟",
+    "reason": "The dataset only contains 'population_count' (total population) and does not have a column for the number of citizens, making it impossible to calculate the percentage of citizens."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.9351878750021569,
+  "created_at": "2026-09-07T19:33:28.872810Z"
+}

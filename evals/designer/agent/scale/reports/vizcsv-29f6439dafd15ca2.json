@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_42b3a1a20aaf4c18926dae8fdbd5e392",
+  "question": "ما هي الحالة الاجتماعية الأكثر شيوعاً بين الرجال المقيمين في جدة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات إضافية تتضمن الجنس والمدينة، حيث أن الجدول الحالي يحتوي فقط على عمود الحالة الاجتماعية؟",
+    "reason": "The dataset only contains one column ('marital_status'), but the question asks for a filter by gender ('men') and city ('Jeddah'), which are not available in the provided schema."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.6778515419864561,
+  "created_at": "2026-09-07T19:33:46.930991Z"
+}

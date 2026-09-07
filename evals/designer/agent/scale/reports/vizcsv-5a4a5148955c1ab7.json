@@ -1,0 +1,70 @@
+{
+  "dataset_id": "ds_b150c391e51445e88acd9456ea24e2fb",
+  "question": "ما نسبة الموظفين الذين لا تتوافق مدن عملهم مع مدن سكنهم وفقًـا لأحدث اسناد؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT النسبة_المئوية AS \"النسبة\" FROM \"ds_b150c391e51445e88acd9456ea24e2fb\"",
+    "columns": [
+      {
+        "name": "النسبة",
+        "meaning": "النسبة المئوية للموظفين الذين لا تتوافق مدن عملهم مع مدن سكنهم",
+        "kind": "share",
+        "unit": "%",
+        "source": "النسبة_المئوية",
+        "aggregate": "none",
+        "denominator": "إجمالي عدد الموظفين"
+      }
+    ],
+    "summary": "تبلغ نسبة الموظفين الذين لا تتوافق مدن عملهم مع مدن سكنهم 50.13%. تم استخراج هذه القيمة مباشرة من البيانات المتاحة.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT النسبة_المئوية AS \"النسبة\" FROM \"ds_b150c391e51445e88acd9456ea24e2fb\"",
+    "columns": [
+      "النسبة"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        50.13
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "النسبة",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "النسبة: shares sum to 50.1, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.010393333999672905
+  },
+  "checks": [
+    {
+      "column": "النسبة",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "النسبة: shares sum to 50.1, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "النسبة: shares sum to 50.1, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.210541167005431,
+  "created_at": "2026-09-07T19:33:12.975738Z"
+}

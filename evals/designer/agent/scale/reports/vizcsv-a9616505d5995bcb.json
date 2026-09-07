@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_963a50f438a24fc4969cfbadda40f3b3",
+  "question": "في أي حي يتمركز المقيمين العاملين بمهنة عامل منزلي من الجنسية الفلبينية في كل من مدينة (جدة، والدمام، والرياض) وفقًا لأحدث اسناد؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "لا تتوفر بيانات عن الجنسية الفلبينية في مجموعة البيانات الحالية؛ هل تود البحث عن جنسية أخرى من المتاحة (مثل: سوداني، عماني، لبناني، باكستاني، عراقي، تونسي، ليبي، بريطاني، فرنسي، مصري، قطري، بحريني، هندي، ألماني، ياباني، إيطالي، كويتي، صيني، سوري)؟",
+    "reason": "The user asked for 'Filipino' (فلبينية) nationality, but the distinct values in the 'nationality' column do not contain 'فلبيني' or any variation of it."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.738578290998703,
+  "created_at": "2026-09-07T19:33:12.550091Z"
+}

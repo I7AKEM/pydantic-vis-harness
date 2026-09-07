@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_0dddd00608e04be48d41e07d4168e0bd",
+  "question": "قارن متوسط اعداد المخالفات المرورية في سنة 2025 بين الأثرياء الحاصلين على شهادات دراسات عليا (ماجستير ودكتوراه) وبين الأثرياء الغير حاصلين على شهادات عليا",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT group_name, avg_violations_per_person FROM \"ds_0dddd00608e04be48d41e07d4168e0bd\"",
+    "columns": [
+      {
+        "name": "group_name",
+        "meaning": "اسم المجموعة",
+        "kind": "category",
+        "unit": null,
+        "source": "group_name",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "avg_violations_per_person",
+        "meaning": "متوسط عدد المخالفات لكل شخص",
+        "kind": "measure",
+        "unit": null,
+        "source": "avg_violations_per_person",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "بلغ متوسط عدد المخالفات المرورية للأثرياء الحاصلين على دراسات عليا (ماجستير/دكتوراه) 0.0002 مخالفة لكل شخص، بينما بلغ للأثرياء غير الحاصلين على دراسات عليا 0.0001 مخالفة لكل شخص.",
+    "assumptions": [
+      "تم استخدام البيانات المتاحة في الجدول دون وجود فلتر زمني محدد لسنة 2025 في البيانات الأصلية."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT group_name, avg_violations_per_person FROM \"ds_0dddd00608e04be48d41e07d4168e0bd\"",
+    "columns": [
+      "group_name",
+      "avg_violations_per_person"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "أثرياء غير حاصلين على دراسات عليا",
+        0.0001
+      ],
+      [
+        "أثرياء حاصلون على دراسات عليا (ماجستير/دكتوراه)",
+        0.0002
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.01366591700934805
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 7.981941083999118,
+  "created_at": "2026-09-07T19:31:10.886072Z"
+}

@@ -1,0 +1,83 @@
+{
+  "dataset_id": "ds_5e0136ba264c41368d52656071dfd6cf",
+  "question": "ما هي قيمة الغرامات المخصصة لكل فئة من المخالفات المرورية؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT violation_type_description, SUM(actual_fine) AS \"إجمالي الغرامات\" FROM \"ds_5e0136ba264c41368d52656071dfd6cf\" GROUP BY violation_type_description",
+    "columns": [
+      {
+        "name": "violation_type_description",
+        "meaning": "وصف نوع المخالفة",
+        "kind": "category",
+        "unit": null,
+        "source": "violation_type_description",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "إجمالي الغرامات",
+        "meaning": "مجموع قيم الغرامات لكل فئة",
+        "kind": "measure",
+        "unit": null,
+        "source": "actual_fine",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "تتفاوت قيم الغرامات حسب نوع المخالفة، حيث بلغت أعلى قيمة لمخالفة دخول أو خروج الشاحنات في أوقات المنع بـ 1200، بينما كانت الأقل لمخالفة وقوف المركبة في أماكن غير مخصصة بـ 100. تشمل الفئات الأخرى تجاوز السرعة (1000)، وعدم امتلاك لوحة (300)، وعدم ربط الحزام (150).",
+    "assumptions": [
+      "تم حساب مجموع الغرامات لكل فئة من فئات المخالفات المذكورة في البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT violation_type_description, SUM(actual_fine) AS \"إجمالي الغرامات\" FROM \"ds_5e0136ba264c41368d52656071dfd6cf\" GROUP BY violation_type_description",
+    "columns": [
+      "violation_type_description",
+      "إجمالي الغرامات"
+    ],
+    "types": [
+      "VARCHAR",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        "دخول أو خروج الشاحنات في أوقات المنع",
+        1200
+      ],
+      [
+        "عدم امتلاك لوحة أمامية أو خلفية",
+        300
+      ],
+      [
+        "عدم ربط حزام",
+        150
+      ],
+      [
+        "وقوف المركبة في اماكن غير مخصصة للوقوف",
+        100
+      ],
+      [
+        "تجاوز السرعة المحددة بمقدار لا يزيد على 25 كم/س",
+        1000
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.01599920800072141
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.794796125002904,
+  "created_at": "2026-09-07T19:29:08.087595Z"
+}

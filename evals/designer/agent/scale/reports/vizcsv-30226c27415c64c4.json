@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_89bfc36b8d7c47c09aa9a894838ecad7",
+  "question": "للمواطنين فقط وخلال سنة (2025) قارن استخدام مطار الملك خالد ومطار الملك عبدالعزيز للسفر الدولي، وحدد اعلى خمس وجهات لكل مطار، مع مقارنة عدد الرحلات لكل وجهة",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل تتوفر بيانات محددة للمواطنين فقط أو بيانات زمنية لسنة 2025 في مجموعة البيانات هذه؟",
+    "reason": "The user is asking for data filtered by \"citizens only\" and for the year \"2025\", but the dataset columns only contain airport, destination, trip_count, and rank. There are no columns for citizenship or date."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.7171385410038056,
+  "created_at": "2026-09-07T19:28:44.714728Z"
+}

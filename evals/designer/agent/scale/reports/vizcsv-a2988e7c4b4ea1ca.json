@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_4d2460a555a649caa9e773c33ee03abb",
+  "question": "هل تختلف المستويات التعليمية الشائعة بين فئات الثروة باختلاف المناطق؟ قارن بين سكان الرياض، والدمام، وجدة، وضح اعلى مستوى تعليمي سائد لدى غالبية السكان ممن تزيد اعمارهم عن 25 عام وذلك حسب فئة الثروة",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك توضيح كيف يمكنني تحديد السكان الذين تزيد أعمارهم عن 25 عاماً، حيث لا تتوفر بيانات العمر في الجدول الحالي؟ كما أرجو تأكيد المدن المطلوب مقارنتها، حيث أن البيانات تحتوي فقط على الرياض وجدة، بينما ذكرت في سؤالك مدينة الدمام.",
+    "reason": "The dataset lacks an 'age' column to filter for people over 25, and the 'city' column only contains 'الرياض' and 'جدة', while the user asked for 'الدمام' as well."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.11819504199957,
+  "created_at": "2026-09-07T19:27:56.019891Z"
+}

@@ -1,0 +1,83 @@
+{
+  "dataset_id": "ds_5965e8c160924ab287814f723d1fbd5f",
+  "question": "ما هو متوسط عدد الأطفال في الأسر السعودية حسب مستوى الثروة خلال آخر سنة متوفرة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT wealth_level, avg_children_per_household FROM \"ds_5965e8c160924ab287814f723d1fbd5f\"",
+    "columns": [
+      {
+        "name": "wealth_level",
+        "meaning": "مستوى الثروة",
+        "kind": "category",
+        "unit": null,
+        "source": "wealth_level",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "avg_children_per_household",
+        "meaning": "متوسط عدد الأطفال لكل أسرة",
+        "kind": "measure",
+        "unit": null,
+        "source": "avg_children_per_household",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "يبلغ متوسط عدد الأطفال في الأسر السعودية 1.0 طفل لكل أسرة عبر جميع مستويات الثروة (الفقيرة، والفقيرة المتوسطة، والمتوسطة، والمتوسطة العليا، والغنية).",
+    "assumptions": [
+      "تم استخدام البيانات المتاحة في الجدول كآخر سنة متوفرة لعدم وجود عمود للتاريخ."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT wealth_level, avg_children_per_household FROM \"ds_5965e8c160924ab287814f723d1fbd5f\"",
+    "columns": [
+      "wealth_level",
+      "avg_children_per_household"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "Poor",
+        1.0
+      ],
+      [
+        "Lower Middle",
+        1.0
+      ],
+      [
+        "Middle",
+        1.0
+      ],
+      [
+        "Upper Middle",
+        1.0
+      ],
+      [
+        "Rich",
+        1.0
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.008426291999057867
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.024668208003277,
+  "created_at": "2026-09-07T19:31:01.912992Z"
+}

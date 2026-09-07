@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_063aeb73d5a842a5b9cc4891f6b6fd42",
+  "question": "ما هو الحجم الإجمالي للواردات الجمركية غير النفطية إلى المملكة العربية السعودية خلال السنة الماضية؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT SUM(CAST(total_import_value AS DOUBLE)) AS \"إجمالي قيمة الواردات\" FROM \"ds_063aeb73d5a842a5b9cc4891f6b6fd42\"",
+    "columns": [
+      {
+        "name": "إجمالي قيمة الواردات",
+        "meaning": "إجمالي قيمة الواردات الجمركية غير النفطية",
+        "kind": "measure",
+        "unit": null,
+        "source": "total_import_value",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "لا تتوفر بيانات عن إجمالي قيمة الواردات الجمركية غير النفطية في مجموعة البيانات المقدمة، حيث أن جميع القيم في العمود المعني فارغة.",
+    "assumptions": [
+      "تم اعتبار جميع القيم الفارغة كقيم مفقودة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT SUM(CAST(total_import_value AS DOUBLE)) AS \"إجمالي قيمة الواردات\" FROM \"ds_063aeb73d5a842a5b9cc4891f6b6fd42\"",
+    "columns": [
+      "إجمالي قيمة الواردات"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        null
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.010857959001441486
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.8751346670032945,
+  "created_at": "2026-09-07T19:33:18.751920Z"
+}

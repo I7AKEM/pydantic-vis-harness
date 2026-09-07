@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_68a3b960e71b4444bc74987610a9597b",
+  "question": "ما هي نسبة الشباب في تلك البلدية؟ رد بالنسبة فقط مثل: \"35%\"",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT youth_percentage FROM \"ds_68a3b960e71b4444bc74987610a9597b\"",
+    "columns": [
+      {
+        "name": "youth_percentage",
+        "meaning": "نسبة الشباب",
+        "kind": "measure",
+        "unit": null,
+        "source": "youth_percentage",
+        "aggregate": "none",
+        "denominator": "total population"
+      }
+    ],
+    "summary": "نسبة الشباب في هذه البلدية هي 20.85%.",
+    "assumptions": [
+      "تم تقريب النسبة المئوية إلى أقرب منزلتين عشريتين."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT youth_percentage FROM \"ds_68a3b960e71b4444bc74987610a9597b\"",
+    "columns": [
+      "youth_percentage"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        20.845070422535212
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.01857745900633745
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.0440472080081236,
+  "created_at": "2026-09-07T19:29:07.673588Z"
+}

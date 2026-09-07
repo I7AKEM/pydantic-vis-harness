@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_00d1a2523b8e4509bcca486eb2e091bd",
+  "question": "قارن متوسط اعداد المخالفات المرورية في سنة 2025 بين الأثرياء الحاصلين على شهادات دراسات عليا (ماجستير ودكتوراه) وبين الأثرياء الغير حاصلين على شهادات عليا",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT category, avg_violations_per_person AS avg_violations FROM \"ds_00d1a2523b8e4509bcca486eb2e091bd\"",
+    "columns": [
+      {
+        "name": "category",
+        "meaning": "فئة الأثرياء بناءً على التحصيل العلمي",
+        "kind": "category",
+        "unit": null,
+        "source": "category",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "avg_violations",
+        "meaning": "متوسط المخالفات لكل شخص",
+        "kind": "measure",
+        "unit": "مخالفة/شخص",
+        "source": "avg_violations_per_person",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "يبلغ متوسط المخالفات المرورية للأثرياء غير الحاصلين على شهادات عليا 1.6 مخالفة لكل شخص، بينما يبلغ 1.1 مخالفة لكل شخص للأثرياء الحاصلين على شهادات عليا.",
+    "assumptions": [
+      "تم استخدام البيانات المتاحة في الجدول دون وجود فلتر زمني لسنة 2025 لأن البيانات لا تحتوي على عمود للتاريخ."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT category, avg_violations_per_person AS avg_violations FROM \"ds_00d1a2523b8e4509bcca486eb2e091bd\"",
+    "columns": [
+      "category",
+      "avg_violations"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "الأثرياء الحاصلين على شهادات عليا (ماجستير ودكتوراه)",
+        1.1
+      ],
+      [
+        "الأثرياء الغير حاصلين على شهادات عليا",
+        1.6
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.013155166991055012
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.5605977499944856,
+  "created_at": "2026-09-07T19:33:40.546118Z"
+}

@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_f3705a7486f44d7f88fa157141c63156",
+  "question": "ما هي النسبة المئوية للسكان الذين تتراوح أعمارهم بين 25-40 سنة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage AS \"النسبة المئوية\" FROM \"ds_f3705a7486f44d7f88fa157141c63156\"",
+    "columns": [
+      {
+        "name": "النسبة المئوية",
+        "meaning": "النسبة المئوية للسكان الذين تتراوح أعمارهم بين 25-40 سنة",
+        "kind": "measure",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي السكان"
+      }
+    ],
+    "summary": "النسبة المئوية للسكان الذين تتراوح أعمارهم بين 25-40 سنة هي 19.17%.",
+    "assumptions": [
+      "تم استخدام القيمة المتاحة في العمود percentage مباشرة كإجابة على السؤال."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage AS \"النسبة المئوية\" FROM \"ds_f3705a7486f44d7f88fa157141c63156\"",
+    "columns": [
+      "النسبة المئوية"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        19.17340521114106
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.01745200000004843
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.064549000002444,
+  "created_at": "2026-09-07T19:29:15.608457Z"
+}

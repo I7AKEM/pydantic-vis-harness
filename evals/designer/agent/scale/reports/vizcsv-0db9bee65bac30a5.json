@@ -1,0 +1,83 @@
+{
+  "dataset_id": "ds_2abcf4fd6cf84cc9bc0a352534249431",
+  "question": "كم عدد الخريجين حسب مستوى التعليم (دبلوم - بكالوريوس -دبلوم عالي - ماجستير -دكتوراه - زمالة - غيرها)؟ غير السعوديين",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT education_level, sum(graduate_count) AS \"إجمالي الخريجين\" FROM \"ds_2abcf4fd6cf84cc9bc0a352534249431\" GROUP BY education_level",
+    "columns": [
+      {
+        "name": "education_level",
+        "meaning": "المستوى التعليمي",
+        "kind": "category",
+        "unit": null,
+        "source": "education_level",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "إجمالي الخريجين",
+        "meaning": "إجمالي عدد الخريجين",
+        "kind": "measure",
+        "unit": null,
+        "source": "graduate_count",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "يبلغ عدد الخريجين حسب المستوى التعليمي: 175,116 لبكالوريوس، 110,369 لماجستير، 89,642 لدكتوراه، 52,572 لدبلوم، و 43,129 لغيرها. تم حساب الإجمالي بناءً على البيانات المتاحة في الجدول دون تطبيق أي فلاتر إضافية لعدم وجود عمود للجنسية.",
+    "assumptions": [
+      "تم اعتبار جميع السجلات في الجدول كغير سعوديين لعدم توفر عمود للجنسية في البيانات المقدمة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT education_level, sum(graduate_count) AS \"إجمالي الخريجين\" FROM \"ds_2abcf4fd6cf84cc9bc0a352534249431\" GROUP BY education_level",
+    "columns": [
+      "education_level",
+      "إجمالي الخريجين"
+    ],
+    "types": [
+      "VARCHAR",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        "بكالوريوس",
+        175116
+      ],
+      [
+        "دبلوم",
+        52572
+      ],
+      [
+        "دكتوراه",
+        89642
+      ],
+      [
+        "غيرها",
+        43129
+      ],
+      [
+        "ماجستير",
+        110369
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.017173750005895272
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 7.889982083012001,
+  "created_at": "2026-09-07T19:30:07.626485Z"
+}

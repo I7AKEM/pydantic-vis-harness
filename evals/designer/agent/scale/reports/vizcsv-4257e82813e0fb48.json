@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_4bf4905f8e3a43e18e7403533c14f790",
+  "question": "لكل فئة ثراء ماهو حجم العائلة الأكثر تكراراً؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تأكيد ما إذا كانت البيانات تحتوي على قيم أخرى لحجم العائلة غير القيمة 1؟",
+    "reason": "The query results consistently show that for every wealth level, the family size is 1 with a frequency of 1. The system is flagging an error because the 'frequency' column is a computed aggregate and not a source column from the dataset, which is preventing the analysis from being delivered. I need to verify if the dataset is truly this limited or if there's a misunderstanding of the data structure."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 7.25881191699591,
+  "created_at": "2026-09-07T19:29:59.718921Z"
+}

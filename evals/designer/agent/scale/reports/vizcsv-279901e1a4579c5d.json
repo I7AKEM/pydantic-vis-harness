@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_ca6c35b6c38544e8931db4f8554e9a10",
+  "question": "كم عدد الأشخاص الذين تقاعدوا من سوق العمل خلال 5 سنوات الماضية؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT total_retired FROM \"ds_ca6c35b6c38544e8931db4f8554e9a10\"",
+    "columns": [
+      {
+        "name": "total_retired",
+        "meaning": "إجمالي عدد المتقاعدين",
+        "kind": "measure",
+        "unit": null,
+        "source": "total_retired",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "بلغ عدد الأشخاص الذين تقاعدوا من سوق العمل 10,193 شخصاً. تم افتراض أن البيانات المتاحة في الجدول تمثل الفترة الزمنية المطلوبة.",
+    "assumptions": [
+      "تم افتراض أن البيانات المتاحة في الجدول تمثل الفترة الزمنية المطلوبة (السنوات الخمس الماضية) لعدم وجود أعمدة زمنية للتصفية."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT total_retired FROM \"ds_ca6c35b6c38544e8931db4f8554e9a10\"",
+    "columns": [
+      "total_retired"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        10193
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.02436720801051706
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.336511875008,
+  "created_at": "2026-09-07T19:33:03.657430Z"
+}

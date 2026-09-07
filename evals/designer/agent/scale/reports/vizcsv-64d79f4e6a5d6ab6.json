@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_805be5a0992240759fafd07472adc801",
+  "question": "عطني نسبة السكان لهذه المناطق من حيث اجمالي السكان",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage AS \"النسبة المئوية\" FROM \"ds_805be5a0992240759fafd07472adc801\"",
+    "columns": [
+      {
+        "name": "النسبة المئوية",
+        "meaning": "نسبة السكان لأعلى 3 كيانات من إجمالي السكان",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي السكان"
+      }
+    ],
+    "summary": "تبلغ نسبة السكان لهذه المناطق 38.94% من إجمالي السكان.",
+    "assumptions": [
+      "تم استخدام العمود percentage كما هو موضح في وصف البيانات لتمثيل النسبة المئوية المطلوبة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage AS \"النسبة المئوية\" FROM \"ds_805be5a0992240759fafd07472adc801\"",
+    "columns": [
+      "النسبة المئوية"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        38.94
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "النسبة المئوية",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "النسبة المئوية: shares sum to 38.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.008544084004824981
+  },
+  "checks": [
+    {
+      "column": "النسبة المئوية",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "النسبة المئوية: shares sum to 38.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "النسبة المئوية: shares sum to 38.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.172276166995289,
+  "created_at": "2026-09-07T19:30:06.002679Z"
+}

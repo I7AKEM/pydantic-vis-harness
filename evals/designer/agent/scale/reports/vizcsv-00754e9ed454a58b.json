@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_5512a6c84924463883bd7f7fd9e86180",
+  "question": "ما هي نسبة كبار السن من إجمالي السكان؟ رد بالنسبة فقط مثل: \"10%\"",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage FROM \"ds_5512a6c84924463883bd7f7fd9e86180\"",
+    "columns": [
+      {
+        "name": "percentage",
+        "meaning": "نسبة كبار السن من إجمالي السكان",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي السكان"
+      }
+    ],
+    "summary": "نسبة كبار السن من إجمالي السكان هي 13.93%.",
+    "assumptions": [
+      "تم استخدام القيمة المتاحة في العمود percentage مباشرة كنسبة مئوية."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage FROM \"ds_5512a6c84924463883bd7f7fd9e86180\"",
+    "columns": [
+      "percentage"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        13.926325247079964
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "percentage",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "percentage: shares sum to 13.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.010666707996279001
+  },
+  "checks": [
+    {
+      "column": "percentage",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "percentage: shares sum to 13.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "percentage: shares sum to 13.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.919659583989414,
+  "created_at": "2026-09-07T19:27:41.551553Z"
+}

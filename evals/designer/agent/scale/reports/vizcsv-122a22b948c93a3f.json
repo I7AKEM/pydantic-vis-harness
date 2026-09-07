@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_f46ae97290444c509ae95a96d9186501",
+  "question": "هل ارتكب المواطنون الحاصلون على شهادات عليا (ماجستير-دكتوراة) مخالفات اقل مقارنة بالغير حاصلين على شهادات عليا خلال الفترة (2023-2025)؟ فقط للأعمار بين 30 و 50",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT education_group, total_infringements_30_50 FROM \"ds_f46ae97290444c509ae95a96d9186501\"",
+    "columns": [
+      {
+        "name": "education_group",
+        "meaning": "المستوى التعليمي",
+        "kind": "category",
+        "unit": null,
+        "source": "education_group",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "total_infringements_30_50",
+        "meaning": "إجمالي عدد المخالفات (الفئة العمرية 30-50)",
+        "kind": "measure",
+        "unit": null,
+        "source": "total_infringements_30_50",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "لا، ارتكب المواطنون الحاصلون على شهادات عليا (ماجستير-دكتوراه) عدد مخالفات أكثر (9,111 مخالفة) مقارنة بغير الحاصلين على شهادات عليا (8,905 مخالفة) للفئة العمرية بين 30 و 50 عاماً.",
+    "assumptions": [
+      "تم استخدام إجمالي عدد المخالفات للمقارنة بين المجموعتين."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT education_group, total_infringements_30_50 FROM \"ds_f46ae97290444c509ae95a96d9186501\"",
+    "columns": [
+      "education_group",
+      "total_infringements_30_50"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "حاصلين على شهادات عليا (ماجستير-دكتوراه)",
+        9111
+      ],
+      [
+        "غير حاصلين على شهادات عليا",
+        8905
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.018780667000100948
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.378725749993464,
+  "created_at": "2026-09-07T19:30:34.234315Z"
+}

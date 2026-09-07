@@ -1,0 +1,75 @@
+{
+  "dataset_id": "ds_da59f5933aa74277954a44bedf6512a1",
+  "question": "قائمة كل مستوى ثروة مع النسبة المئوية التراكمية للأسر عندما تُرتّب من الأغنى إلى الأفقر. أعد فقط الصفوف التي يتجاوز فيها مجموع النسبة التراكمية 50 ٪.",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT wealth_level, cumulative_percentage FROM \"ds_da59f5933aa74277954a44bedf6512a1\" WHERE cumulative_percentage > 50 ORDER BY \n  CASE wealth_level \n    WHEN 'Middle' THEN 1 \n    WHEN 'Lower Middle' THEN 2 \n    WHEN 'Poor' THEN 3 \n  END",
+    "columns": [
+      {
+        "name": "wealth_level",
+        "meaning": "مستوى الثروة",
+        "kind": "category",
+        "unit": null,
+        "source": "wealth_level",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "cumulative_percentage",
+        "meaning": "النسبة المئوية التراكمية",
+        "kind": "measure",
+        "unit": null,
+        "source": "cumulative_percentage",
+        "aggregate": "none",
+        "denominator": "total households"
+      }
+    ],
+    "summary": "تتضمن القائمة مستويات الثروة \"Middle\" بنسبة تراكمية 60.06%، و\"Lower Middle\" بنسبة 79.98%، و\"Poor\" بنسبة 100.0%. تم ترتيب البيانات من الأغنى إلى الأفقر بناءً على التصنيف الترتيبي المتاح.",
+    "assumptions": [
+      "تم ترتيب المستويات بناءً على النمط الترتيبي: Poor < Lower Middle < Middle"
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT wealth_level, cumulative_percentage FROM \"ds_da59f5933aa74277954a44bedf6512a1\" WHERE cumulative_percentage > 50 ORDER BY \n  CASE wealth_level \n    WHEN 'Middle' THEN 1 \n    WHEN 'Lower Middle' THEN 2 \n    WHEN 'Poor' THEN 3 \n  END",
+    "columns": [
+      "wealth_level",
+      "cumulative_percentage"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "Middle",
+        60.06
+      ],
+      [
+        "Lower Middle",
+        79.98
+      ],
+      [
+        "Poor",
+        100.0
+      ]
+    ],
+    "row_count": 3,
+    "checks": [],
+    "seconds": 0.025156499992590398
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.5134394580090884,
+  "created_at": "2026-09-07T19:33:01.785532Z"
+}

@@ -1,0 +1,93 @@
+{
+  "dataset_id": "ds_6cb01b4817ce488794141fb21aa0c64c",
+  "question": "كم عدد السكان الذكور لكل منطقة ؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT region, male_population FROM \"ds_6cb01b4817ce488794141fb21aa0c64c\"",
+    "columns": [
+      {
+        "name": "region",
+        "meaning": "اسم المنطقة الإدارية",
+        "kind": "category",
+        "unit": null,
+        "source": "region",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "male_population",
+        "meaning": "عدد السكان من الذكور",
+        "kind": "measure",
+        "unit": null,
+        "source": "male_population",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "يبلغ عدد السكان الذكور في منطقة الحدود الشمالية 365 شخصاً، وفي منطقة الجوف 356 شخصاً، وفي منطقة مكة المكرمة 351 شخصاً، وفي منطقة تبوك 350 شخصاً، وفي منطقة نجران 349 شخصاً، وفي منطقة جازان 342 شخصاً، وفي منطقة الباحة 335 شخصاً، وفي منطقة الرياض 328 شخصاً.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT region, male_population FROM \"ds_6cb01b4817ce488794141fb21aa0c64c\"",
+    "columns": [
+      "region",
+      "male_population"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "الحدود الشمالية",
+        365
+      ],
+      [
+        "منطقة الجوف",
+        356
+      ],
+      [
+        "منطقة مكة المكرمة",
+        351
+      ],
+      [
+        "منطقة تبوك",
+        350
+      ],
+      [
+        "منطقة نجران",
+        349
+      ],
+      [
+        "منطقة جازان",
+        342
+      ],
+      [
+        "منطقة الباحة",
+        335
+      ],
+      [
+        "منطقة الرياض",
+        328
+      ]
+    ],
+    "row_count": 8,
+    "checks": [],
+    "seconds": 0.011984374999883585
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.2227737920038635,
+  "created_at": "2026-09-07T19:30:59.139220Z"
+}

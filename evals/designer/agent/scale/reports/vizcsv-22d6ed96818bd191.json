@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_59ece469a14f4d228cddc8cd67ba98d0",
+  "question": "كم نسبة الافراد أصحاب مؤشر الثروة المنخفض (Poor) الحاصلين على شهادات عليا (ماجستير ودكتوراه) مقارنة بمجموع الافراد منخفضي الثروة حسب احدث بيانات متوفرة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage AS \"نسبة الحاصلين على شهادات عليا\" FROM \"ds_59ece469a14f4d228cddc8cd67ba98d0\"",
+    "columns": [
+      {
+        "name": "نسبة الحاصلين على شهادات عليا",
+        "meaning": "نسبة الأفراد الفقراء الحاصلين على شهادات عليا من إجمالي الفقراء",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "total_poor_individuals"
+      }
+    ],
+    "summary": "تبلغ نسبة الأفراد منخفضي الثروة الحاصلين على شهادات عليا 35.68% من إجمالي عدد الأفراد الفقراء.",
+    "assumptions": [
+      "تم استخدام العمود percentage الذي يمثل النسبة المئوية المباشرة للأفراد الفقراء الحاصلين على شهادات عليا مقارنة بالمجموع."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage AS \"نسبة الحاصلين على شهادات عليا\" FROM \"ds_59ece469a14f4d228cddc8cd67ba98d0\"",
+    "columns": [
+      "نسبة الحاصلين على شهادات عليا"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        35.68
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة الحاصلين على شهادات عليا",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة الحاصلين على شهادات عليا: shares sum to 35.7, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.014903708011843264
+  },
+  "checks": [
+    {
+      "column": "نسبة الحاصلين على شهادات عليا",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة الحاصلين على شهادات عليا: shares sum to 35.7, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة الحاصلين على شهادات عليا: shares sum to 35.7, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.0142114169866545,
+  "created_at": "2026-09-07T19:28:06.477696Z"
+}

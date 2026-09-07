@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_f0d377e717c541b287affaee370ddfe4",
+  "question": "كم نسبة السعوديين الذكور المعددين مقارنة بعدد السعوديين الذكور المتزوجين؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage AS \"نسبة المعددين\" FROM \"ds_f0d377e717c541b287affaee370ddfe4\"",
+    "columns": [
+      {
+        "name": "نسبة المعددين",
+        "meaning": "نسبة السعوديين الذكور المعددين مقارنة بالمتزوجين",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "total_married_count"
+      }
+    ],
+    "summary": "تبلغ نسبة السعوديين الذكور المعددين مقارنة بعدد السعوديين الذكور المتزوجين حوالي 33.58%.",
+    "assumptions": [
+      "تم استخدام العمود percentage الذي يمثل النسبة المئوية للمعددين من إجمالي المتزوجين مباشرة من البيانات المتاحة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage AS \"نسبة المعددين\" FROM \"ds_f0d377e717c541b287affaee370ddfe4\"",
+    "columns": [
+      "نسبة المعددين"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        33.57990065941595
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة المعددين",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة المعددين: shares sum to 33.6, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.023748708990751766
+  },
+  "checks": [
+    {
+      "column": "نسبة المعددين",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة المعددين: shares sum to 33.6, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة المعددين: shares sum to 33.6, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.0221770829957677,
+  "created_at": "2026-09-07T19:32:10.633671Z"
+}

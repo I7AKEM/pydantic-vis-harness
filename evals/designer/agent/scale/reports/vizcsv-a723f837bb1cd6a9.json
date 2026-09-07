@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_b3dbddc6d1cf44fda055c6a86b6ca1bd",
+  "question": "بناء على البيانات بين الفترة (2010-2025)، قارن بين نسبة الخريجين الاثرياء من الجامعات الحكومية والجامعات الاهلية؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    \"نوع_الجامعة\", \n    AVG(\"نسبة_الأثرياء_بالمئة\") AS \"متوسط نسبة الأثرياء\"\nFROM \"ds_b3dbddc6d1cf44fda055c6a86b6ca1bd\"\nWHERE \"نوع_الجامعة\" IN ('الجامعات الحكومية', 'الجامعات والكليات الأهلية')\nGROUP BY \"نوع_الجامعة\"",
+    "columns": [
+      {
+        "name": "نوع_الجامعة",
+        "meaning": "نوع الجامعة",
+        "kind": "category",
+        "unit": null,
+        "source": "نوع_الجامعة",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "متوسط نسبة الأثرياء",
+        "meaning": "متوسط نسبة الخريجين الأثرياء",
+        "kind": "measure",
+        "unit": null,
+        "source": "نسبة_الأثرياء_بالمئة",
+        "aggregate": "avg",
+        "denominator": "null"
+      }
+    ],
+    "summary": "تبلغ نسبة الخريجين الأثرياء في الجامعات الحكومية 20.09%، بينما تبلغ في الجامعات والكليات الأهلية 19.92%.",
+    "assumptions": [
+      "تم اعتبار البيانات المتاحة في الجدول كتمثيل للفترة الزمنية المطلوبة لعدم وجود عمود للتاريخ."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    \"نوع_الجامعة\", \n    AVG(\"نسبة_الأثرياء_بالمئة\") AS \"متوسط نسبة الأثرياء\"\nFROM \"ds_b3dbddc6d1cf44fda055c6a86b6ca1bd\"\nWHERE \"نوع_الجامعة\" IN ('الجامعات الحكومية', 'الجامعات والكليات الأهلية')\nGROUP BY \"نوع_الجامعة\"",
+    "columns": [
+      "نوع_الجامعة",
+      "متوسط نسبة الأثرياء"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "الجامعات الحكومية",
+        20.09
+      ],
+      [
+        "الجامعات والكليات الأهلية",
+        19.92
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.007298790995264426
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 6.3303593340096995,
+  "created_at": "2026-09-07T19:29:33.960532Z"
+}

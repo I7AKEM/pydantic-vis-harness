@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_adc9a634fd7d46f79dbab7e9757b1c35",
+  "question": "ما هي اكثر خمسة مهن شيوعًا في الوقت الراهن بين المواطنين الذين يصنفون ضمن طبقة الثروة الدنيا؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك توضيح كيف يتم تحديد \"المواطنين الذين يصنفون ضمن طبقة الثروة الدنيا\"؟ لا تتوفر في البيانات الحالية أعمدة تتعلق بالثروة أو الجنسية.",
+    "reason": "The dataset only contains 'job_title' and 'employee_count'. There is no information about wealth/income levels or citizenship to filter for \"citizens in the lower wealth class\"."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.3513130829960573,
+  "created_at": "2026-09-07T19:28:53.729126Z"
+}

@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_06aba9f8dcbd4797a70f0391980a76bd",
+  "question": "كم سكان المملكة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT sum(population_count) AS \"إجمالي السكان\" FROM \"ds_06aba9f8dcbd4797a70f0391980a76bd\"",
+    "columns": [
+      {
+        "name": "إجمالي السكان",
+        "meaning": "إجمالي عدد السكان في المملكة",
+        "kind": "measure",
+        "unit": null,
+        "source": "population_count",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "يبلغ إجمالي عدد سكان المملكة 5,565 شخصاً. تم حساب هذا الرقم بناءً على مجموع كافة أنواع الأشخاص المذكورة في البيانات.",
+    "assumptions": [
+      "تم حساب إجمالي السكان كجمع لجميع القيم في عمود population_count"
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT sum(population_count) AS \"إجمالي السكان\" FROM \"ds_06aba9f8dcbd4797a70f0391980a76bd\"",
+    "columns": [
+      "إجمالي السكان"
+    ],
+    "types": [
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        5565
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.006613750010728836
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.8623776659951545,
+  "created_at": "2026-09-07T19:27:47.643727Z"
+}

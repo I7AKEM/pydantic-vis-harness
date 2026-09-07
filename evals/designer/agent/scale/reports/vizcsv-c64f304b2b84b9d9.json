@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_4afedfc233f341ecb041bacb859fec89",
+  "question": "كم عدد سكان المملكة؟ وما أعلى ثلاث مناطق في عدد السكان؟ وقارن بين الذكور والإناث في منطقة الرياض؟ وما أفضل مطعم في جدة؟ وما الذي تستطيع مساعدتي فيه؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تحديد أي من هذه الأسئلة تود الإجابة عليه أولاً؟ كما أرجو ملاحظة أن البيانات المتاحة تحتوي فقط على عدد السكان لكل منطقة، ولا تتوفر معلومات عن الجنس (ذكور وإناث) أو المطاعم في جدة.",
+    "reason": "The user asked multiple unrelated questions. Some (gender distribution, best restaurant) cannot be answered with the provided columns (region, population). I need to clarify which question to prioritize and inform them about the data limitations."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.3742436669999734,
+  "created_at": "2026-09-07T19:28:15.458318Z"
+}

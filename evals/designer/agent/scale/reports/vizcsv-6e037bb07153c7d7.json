@@ -1,0 +1,83 @@
+{
+  "dataset_id": "ds_6c38f45fd353480aaa6a779e78bbda52",
+  "question": "عطني نسبة السكان لكل مدينة لاعلى خمس مدن",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT city, percentage FROM \"ds_6c38f45fd353480aaa6a779e78bbda52\" ORDER BY percentage DESC LIMIT 5",
+    "columns": [
+      {
+        "name": "city",
+        "meaning": "اسم المدينة",
+        "kind": "category",
+        "unit": null,
+        "source": "city",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "percentage",
+        "meaning": "النسبة المئوية للسكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "total population"
+      }
+    ],
+    "summary": "نسبة السكان لأعلى خمس مدن هي: نجران بنسبة 12.56%، دومة الجندل بنسبة 6.99%، عرعر بنسبة 6.88%، جدة بنسبة 6.36%، وسكاكا بنسبة 6.26%.",
+    "assumptions": [
+      "تم ترتيب المدن بناءً على قيمة عمود النسبة المئوية تنازلياً."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT city, percentage FROM \"ds_6c38f45fd353480aaa6a779e78bbda52\" ORDER BY percentage DESC LIMIT 5",
+    "columns": [
+      "city",
+      "percentage"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "نجران",
+        12.56
+      ],
+      [
+        "دومة الجندل",
+        6.99
+      ],
+      [
+        "عرعر",
+        6.88
+      ],
+      [
+        "جدة",
+        6.36
+      ],
+      [
+        "سكاكا",
+        6.26
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.016234666996751912
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.771236875007162,
+  "created_at": "2026-09-07T19:32:41.904139Z"
+}

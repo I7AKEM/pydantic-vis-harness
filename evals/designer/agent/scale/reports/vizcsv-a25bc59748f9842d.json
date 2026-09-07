@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_b0d5d1916f0c41b7a8187651635a5cb3",
+  "question": "ما هي نسبة الخريجين من تخصص اللغة العربية الذين تم توظيفهم خلال اول سنة من تخرجهم برواتب تزيد عن 6000 ريال في الخمسة سنوات الماضية (2021-2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات تتضمن تخصصات الخريجين، وتاريخ التخرج، وتاريخ التوظيف، وقيمة الرواتب؟ حيث أن البيانات الحالية تحتوي فقط على معدل التوظيف والعدد الإجمالي.",
+    "reason": "The available columns (employment_rate_percentage, employed_count, total_count) do not contain information about the major (Arabic language), the time since graduation (first year), the salary amount (over 6000 SAR), or the specific years (2021-2025)."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.6276568339962978,
+  "created_at": "2026-09-07T19:33:37.543427Z"
+}

@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_5b393f847ef040dd9ebe31ac74e1e0bc",
+  "question": "اعرض متوسط «death_count» حسب السنوات الهجرية باستخدام «death_date».",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT substr(death_date, 1, 4) AS \"السنة\", AVG(death_count) AS \"متوسط الوفيات\" FROM \"ds_5b393f847ef040dd9ebe31ac74e1e0bc\" GROUP BY 1 ORDER BY 1",
+    "columns": [
+      {
+        "name": "السنة",
+        "meaning": "السنة الهجرية",
+        "kind": "time",
+        "unit": null,
+        "source": "death_date",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "متوسط الوفيات",
+        "meaning": "متوسط عدد الوفيات",
+        "kind": "measure",
+        "unit": null,
+        "source": "death_count",
+        "aggregate": "avg",
+        "denominator": null
+      }
+    ],
+    "summary": "بلغ متوسط عدد الوفيات في عام 1445 حوالي 48.51، بينما ارتفع في عام 1446 ليصل إلى حوالي 54.28. تم استخراج السنة من خلال أول أربعة رموز من تاريخ الوفاة.",
+    "assumptions": [
+      "تم اعتبار أول أربعة رموز من عمود death_date كالسنة الهجرية."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT substr(death_date, 1, 4) AS \"السنة\", AVG(death_count) AS \"متوسط الوفيات\" FROM \"ds_5b393f847ef040dd9ebe31ac74e1e0bc\" GROUP BY 1 ORDER BY 1",
+    "columns": [
+      "السنة",
+      "متوسط الوفيات"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "1445",
+        48.505319148936174
+      ],
+      [
+        "1446",
+        54.28089887640449
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.025935040990589187
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.131211333005922,
+  "created_at": "2026-09-07T19:33:54.684408Z"
+}

@@ -1,0 +1,83 @@
+{
+  "dataset_id": "ds_404d93f767d14f39b2ad416e5f21209f",
+  "question": "اعرض قيم «actual_fine» حسب «violation_type_description».",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT violation_type_description, actual_fine FROM \"ds_404d93f767d14f39b2ad416e5f21209f\"",
+    "columns": [
+      {
+        "name": "violation_type_description",
+        "meaning": "وصف نوع المخالفة المرورية",
+        "kind": "category",
+        "unit": null,
+        "source": "violation_type_description",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "actual_fine",
+        "meaning": "قيمة الغرامة الفعلية",
+        "kind": "measure",
+        "unit": null,
+        "source": "actual_fine",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "توضح البيانات قيم الغرامات الفعلية لكل نوع من أنواع المخالفات المرورية، حيث تتراوح القيم بين 100 و 1200. أعلى غرامة هي 1200 لدخول أو خروج الشاحنات في أوقات المنع.",
+    "assumptions": [
+      "تم عرض جميع السجلات الموجودة في الجدول دون أي تجميع أو تصفية."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT violation_type_description, actual_fine FROM \"ds_404d93f767d14f39b2ad416e5f21209f\"",
+    "columns": [
+      "violation_type_description",
+      "actual_fine"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "دخول أو خروج الشاحنات في أوقات المنع — تسمية عربية مطولة لاختبار وضوح عرض الفئات في الرسم البياني",
+        1200
+      ],
+      [
+        "عدم امتلاك لوحة أمامية أو خلفية — تسمية عربية مطولة لاختبار وضوح عرض الفئات في الرسم البياني",
+        300
+      ],
+      [
+        "عدم ربط حزام — تسمية عربية مطولة لاختبار وضوح عرض الفئات في الرسم البياني",
+        150
+      ],
+      [
+        "وقوف المركبة في اماكن غير مخصصة للوقوف — تسمية عربية مطولة لاختبار وضوح عرض الفئات في الرسم البياني",
+        100
+      ],
+      [
+        "تجاوز السرعة المحددة بمقدار لا يزيد على 25 كم/س — تسمية عربية مطولة لاختبار وضوح عرض الفئات في الرسم البياني",
+        1000
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.0282389170024544
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.718515708998893,
+  "created_at": "2026-09-07T19:34:16.555733Z"
+}

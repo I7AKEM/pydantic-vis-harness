@@ -1,0 +1,134 @@
+{
+  "dataset_id": "ds_0679d15102da46a78ec01cdad4247b01",
+  "question": "عطني عدد السكان في منطقه الرياض وحدد لي الذكور و الاناث منهم مع الاعمار ",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT gender, age_group, sum(population_count) AS population_count FROM \"ds_0679d15102da46a78ec01cdad4247b01\" GROUP BY gender, age_group ORDER BY age_group, gender",
+    "columns": [
+      {
+        "name": "gender",
+        "meaning": "الجنس",
+        "kind": "category",
+        "unit": null,
+        "source": "gender",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "age_group",
+        "meaning": "الفئة العمرية",
+        "kind": "ordinal",
+        "unit": null,
+        "source": "age_group",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "population_count",
+        "meaning": "عدد السكان",
+        "kind": "measure",
+        "unit": "شخص",
+        "source": "population_count",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "يبلغ إجمالي عدد السكان الموزعين حسب الجنس والفئة العمرية كما هو موضح في النتائج، حيث تتراوح الأعداد من 36 إلى 79 شخصاً لكل مجموعة. تم تجميع البيانات بناءً على الجنس والفئة العمرية المتاحة في الجدول.",
+    "assumptions": [
+      "تم اعتبار جميع البيانات الموجودة في الجدول على أنها تخص منطقة الرياض بناءً على سؤال المستخدم، حيث لا يوجد عمود محدد للمنطقة في البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT gender, age_group, sum(population_count) AS population_count FROM \"ds_0679d15102da46a78ec01cdad4247b01\" GROUP BY gender, age_group ORDER BY age_group, gender",
+    "columns": [
+      "gender",
+      "age_group",
+      "population_count"
+    ],
+    "types": [
+      "VARCHAR",
+      "VARCHAR",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        "F",
+        "0-4",
+        37
+      ],
+      [
+        "M",
+        "0-4",
+        37
+      ],
+      [
+        "F",
+        "15-24",
+        49
+      ],
+      [
+        "M",
+        "15-24",
+        44
+      ],
+      [
+        "F",
+        "25-44",
+        79
+      ],
+      [
+        "M",
+        "25-44",
+        75
+      ],
+      [
+        "F",
+        "45-64",
+        69
+      ],
+      [
+        "M",
+        "45-64",
+        72
+      ],
+      [
+        "F",
+        "5-14",
+        65
+      ],
+      [
+        "M",
+        "5-14",
+        64
+      ],
+      [
+        "F",
+        "65+",
+        44
+      ],
+      [
+        "M",
+        "65+",
+        36
+      ]
+    ],
+    "row_count": 12,
+    "checks": [],
+    "seconds": 0.01046150000183843
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.078964749991428,
+  "created_at": "2026-09-07T19:33:08.750047Z"
+}

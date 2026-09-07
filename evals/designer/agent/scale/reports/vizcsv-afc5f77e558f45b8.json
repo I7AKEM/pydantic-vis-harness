@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_2e6f63afdcfc4184b9eb0f1e7071b464",
+  "question": "ما هو التوزيع العمري للسكان (نفس الفئات العمرية) في كل منطقة إدارية مع إبراز المناطق ذات التركيبة العمرية الأصغر والأكبر في أحدث شهر متاح؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات المناطق الإدارية والتاريخ، حيث أن الجدول الحالي يحتوي فقط على الفئات العمرية وعدد السكان والنسب المئوية دون تحديد للمناطق أو التواريخ؟",
+    "reason": "The user is asking for a distribution by administrative region and for the latest available month, but the dataset provided only contains age groups, population counts, and percentages. There are no columns for 'administrative region' or 'date/month'."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.7829020829958608,
+  "created_at": "2026-09-07T19:33:04.206027Z"
+}

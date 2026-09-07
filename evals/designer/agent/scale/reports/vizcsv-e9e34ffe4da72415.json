@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_4e239229bfa444559a4f31412d20b924",
+  "question": "كم تمثل نسبة المواطنين من أصحاب الثروة المتوسطة (lower middle, middle, upper middle) الى اجمالي المواطنين حسب احدث بيانات متوفرة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage AS \"نسبة الثروة المتوسطة\" FROM \"ds_4e239229bfa444559a4f31412d20b924\"",
+    "columns": [
+      {
+        "name": "نسبة الثروة المتوسطة",
+        "meaning": "نسبة المواطنين من أصحاب الثروة المتوسطة",
+        "kind": "share",
+        "unit": "%",
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي المواطنين"
+      }
+    ],
+    "summary": "تمثل نسبة المواطنين من أصحاب الثروة المتوسطة 59.93% من إجمالي المواطنين. تم الاعتماد على البيانات المتاحة في الجدول كأحدث بيانات متوفرة.",
+    "assumptions": [
+      "تم اعتبار العمود percentage كنسبة مئوية مباشرة للمواطنين من أصحاب الثروة المتوسطة بالنسبة لإجمالي المواطنين."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage AS \"نسبة الثروة المتوسطة\" FROM \"ds_4e239229bfa444559a4f31412d20b924\"",
+    "columns": [
+      "نسبة الثروة المتوسطة"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        59.93
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة الثروة المتوسطة",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة الثروة المتوسطة: shares sum to 59.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.017421500000637025
+  },
+  "checks": [
+    {
+      "column": "نسبة الثروة المتوسطة",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة الثروة المتوسطة: shares sum to 59.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة الثروة المتوسطة: shares sum to 59.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.058018916999572,
+  "created_at": "2026-09-07T19:32:56.827265Z"
+}

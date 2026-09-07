@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_2f56cb60ea914668be748642b4f18b56",
+  "question": "كم تبلغ نسبة المخالفات التي لم يتم سدادها مقارنة بإجمالي عدد مخالفات الزوار لعام 2025؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage_unpaid AS \"نسبة المخالفات غير المسددة\" FROM \"ds_2f56cb60ea914668be748642b4f18b56\"",
+    "columns": [
+      {
+        "name": "نسبة المخالفات غير المسددة",
+        "meaning": "نسبة المخالفات التي لم يتم سدادها",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage_unpaid",
+        "aggregate": "none",
+        "denominator": "إجمالي عدد مخالفات الزوار"
+      }
+    ],
+    "summary": "تبلغ نسبة المخالفات التي لم يتم سدادها 79.18%.",
+    "assumptions": [
+      "تم اعتبار القيمة الموجودة في العمود percentage_unpaid كنسبة مئوية للمخالفات غير المسددة لعام 2025 بناءً على البيانات المتاحة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage_unpaid AS \"نسبة المخالفات غير المسددة\" FROM \"ds_2f56cb60ea914668be748642b4f18b56\"",
+    "columns": [
+      "نسبة المخالفات غير المسددة"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        79.18
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة المخالفات غير المسددة",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة المخالفات غير المسددة: shares sum to 79.2, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.014031958009582013
+  },
+  "checks": [
+    {
+      "column": "نسبة المخالفات غير المسددة",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة المخالفات غير المسددة: shares sum to 79.2, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة المخالفات غير المسددة: shares sum to 79.2, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.7535952090111095,
+  "created_at": "2026-09-07T19:28:01.220608Z"
+}

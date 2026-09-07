@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_ea1e85610e644672810c52c46e1a214f",
+  "question": "كم عدد الاشخاص “الاثرياء” وفقًا لمؤشر الثروة ورواتبهم تقل عن 10 الاف ريال سعودي حسب احدث اسناد",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي بالبيانات المتعلقة بالرواتب؟ الجدول الحالي يحتوي فقط على عدد الأشخاص الأثرياء ولا يتضمن معلومات عن الرواتب.",
+    "reason": "The dataset only contains a single column 'rich_people_count'. The question asks for the number of rich people whose salaries are less than 10,000 SAR, but there is no salary column available to filter by."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.7995739170000888,
+  "created_at": "2026-09-07T19:32:21.361520Z"
+}

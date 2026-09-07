@@ -1,0 +1,96 @@
+{
+  "dataset_id": "ds_d56d68ded05a45ae9f0141c9af3d6195",
+  "question": "ما نسبة الطلاب الذين عادوا الى الجامعات التي تخرجوا منها في مرحلة البكالوريوس للحصول على الماجستير أو الدكتوراه أو الزمالة، من اجمالي الحاصلين على هذه الشهادات؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    same_university_count AS \"عدد الطلاب العائدين\", \n    total_postgrad_count AS \"إجمالي طلاب الدراسات العليا\", \n    (CAST(same_university_count AS DOUBLE) / total_postgrad_count) * 100 AS \"النسبة المئوية\" \nFROM \"ds_d56d68ded05a45ae9f0141c9af3d6195\"",
+    "columns": [
+      {
+        "name": "عدد الطلاب العائدين",
+        "meaning": "عدد الطلاب الذين عادوا إلى جامعاتهم السابقة",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "إجمالي طلاب الدراسات العليا",
+        "meaning": "إجمالي عدد الحاصلين على شهادات الدراسات العليا",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "النسبة المئوية",
+        "meaning": "نسبة الطلاب العائدين من الإجمالي",
+        "kind": "share",
+        "unit": null,
+        "source": null,
+        "aggregate": "share",
+        "denominator": "total_postgrad_count"
+      }
+    ],
+    "summary": "تبلغ نسبة الطلاب الذين عادوا إلى جامعاتهم السابقة للحصول على شهادات الدراسات العليا حوالي 0.0013%، حيث عاد 5 طلاب فقط من إجمالي 370,783 طالباً.",
+    "assumptions": [
+      "تم حساب النسبة المئوية بناءً على عدد الطلاب العائدين مقسوماً على إجمالي عدد طلاب الدراسات العليا المتاحين في البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    same_university_count AS \"عدد الطلاب العائدين\", \n    total_postgrad_count AS \"إجمالي طلاب الدراسات العليا\", \n    (CAST(same_university_count AS DOUBLE) / total_postgrad_count) * 100 AS \"النسبة المئوية\" \nFROM \"ds_d56d68ded05a45ae9f0141c9af3d6195\"",
+    "columns": [
+      "عدد الطلاب العائدين",
+      "إجمالي طلاب الدراسات العليا",
+      "النسبة المئوية"
+    ],
+    "types": [
+      "BIGINT",
+      "BIGINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        5,
+        370783,
+        0.0013484976387806344
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "النسبة المئوية",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "النسبة المئوية: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.01994204100628849
+  },
+  "checks": [
+    {
+      "column": "النسبة المئوية",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "النسبة المئوية: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "النسبة المئوية: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 7.226419958999031,
+  "created_at": "2026-09-07T19:30:28.079038Z"
+}

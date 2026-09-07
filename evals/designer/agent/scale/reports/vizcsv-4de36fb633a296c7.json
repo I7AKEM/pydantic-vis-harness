@@ -1,0 +1,99 @@
+{
+  "dataset_id": "ds_2f20cfc0749940bfb0ec1fbec9f2ba23",
+  "question": "عطني عدد السكان لكل مدينة مع نسبتها لاعلى خمس مدن",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    city, \n    population_count, \n    (population_count * 100.0 / SUM(population_count) OVER()) AS \"النسبة المئوية من المجموع\"\nFROM \"ds_2f20cfc0749940bfb0ec1fbec9f2ba23\"\nORDER BY population_count DESC\nLIMIT 5",
+    "columns": [
+      {
+        "name": "city",
+        "meaning": "اسم المدينة",
+        "kind": "category",
+        "unit": null,
+        "source": "city",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "population_count",
+        "meaning": "عدد السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "population_count",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "النسبة المئوية من المجموع",
+        "meaning": "نسبة سكان المدينة من إجمالي سكان أعلى 5 مدن",
+        "kind": "share",
+        "unit": null,
+        "source": null,
+        "aggregate": "share",
+        "denominator": "إجمالي سكان أعلى 5 مدن"
+      }
+    ],
+    "summary": "تتصدر مدينة نجران القائمة بعدد سكان يبلغ 701 نسمة وبنسبة 32.17%، تليها دومة الجندل بـ 390 نسمة وبنسبة 17.9%.",
+    "assumptions": [
+      "تم حساب النسبة المئوية بناءً على إجمالي عدد السكان للمدن الخمس المذكورة في البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    city, \n    population_count, \n    (population_count * 100.0 / SUM(population_count) OVER()) AS \"النسبة المئوية من المجموع\"\nFROM \"ds_2f20cfc0749940bfb0ec1fbec9f2ba23\"\nORDER BY population_count DESC\nLIMIT 5",
+    "columns": [
+      "city",
+      "population_count",
+      "النسبة المئوية من المجموع"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "نجران",
+        701,
+        32.170720513997246
+      ],
+      [
+        "دومة الجندل",
+        390,
+        17.898118402937126
+      ],
+      [
+        "عرعر",
+        384,
+        17.622762735199633
+      ],
+      [
+        "جدة",
+        355,
+        16.291877007801745
+      ],
+      [
+        "بلجرشي",
+        349,
+        16.016521340064248
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.009526541995001025
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 7.680877624996356,
+  "created_at": "2026-09-07T19:30:56.355789Z"
+}

@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_c9a85b71603141d39c7526d2cf695020",
+  "question": "كم عدد المقيمين الذين دخلوا البلاد لأول مرة في عام 2020 وما زالوا هنا؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي بمزيد من البيانات أو الأعمدة التي تحتوي على تواريخ الدخول إلى البلاد وحالة الإقامة الحالية؟",
+    "reason": "The dataset only contains a single column 'resident_count' with a single value. It lacks columns for entry dates or current residency status, making it impossible to filter for people who entered in 2020 and are still present."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.4674338749900926,
+  "created_at": "2026-09-07T19:29:01.743649Z"
+}

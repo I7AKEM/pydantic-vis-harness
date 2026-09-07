@@ -1,0 +1,114 @@
+{
+  "dataset_id": "ds_a03a147da4a84d458f0be1bbdf131ca0",
+  "question": "ما هي النسبة المئوية لسكان كل منطقة مقارنة بإجمالي سكان المملكة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT region, population, 100.0 * population / SUM(population) OVER () AS \"النسبة المئوية\" FROM \"ds_a03a147da4a84d458f0be1bbdf131ca0\"",
+    "columns": [
+      {
+        "name": "region",
+        "meaning": "المنطقة الإدارية",
+        "kind": "category",
+        "unit": null,
+        "source": "region",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "population",
+        "meaning": "عدد السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "population",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "النسبة المئوية",
+        "meaning": "النسبة المئوية لسكان المنطقة من إجمالي السكان",
+        "kind": "share",
+        "unit": null,
+        "source": "population",
+        "aggregate": "none",
+        "denominator": "إجمالي سكان المملكة"
+      }
+    ],
+    "summary": "تتراوح النسبة المئوية لسكان المناطق بين 12.03% لمنطقة الرياض و 13.25% لمنطقة الجوف من إجمالي سكان المملكة. تظهر النتائج توزيع السكان على ثماني مناطق إدارية.",
+    "assumptions": [
+      "تم حساب النسبة المئوية بناءً على مجموع عدد السكان في جميع المناطق الواردة في الجدول."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT region, population, 100.0 * population / SUM(population) OVER () AS \"النسبة المئوية\" FROM \"ds_a03a147da4a84d458f0be1bbdf131ca0\"",
+    "columns": [
+      "region",
+      "population",
+      "النسبة المئوية"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "منطقة الجوف",
+        739,
+        13.246101451873095
+      ],
+      [
+        "الحدود الشمالية",
+        727,
+        13.031009141423194
+      ],
+      [
+        "منطقة نجران",
+        701,
+        12.564975802115075
+      ],
+      [
+        "منطقة تبوك",
+        696,
+        12.475354006094282
+      ],
+      [
+        "منطقة الباحة",
+        694,
+        12.439505287685964
+      ],
+      [
+        "منطقة مكة المكرمة",
+        679,
+        12.170639899623588
+      ],
+      [
+        "منطقة جازان",
+        672,
+        12.045169385194479
+      ],
+      [
+        "منطقة الرياض",
+        671,
+        12.027245025990322
+      ]
+    ],
+    "row_count": 8,
+    "checks": [],
+    "seconds": 0.00890395900933072
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.969443250010954,
+  "created_at": "2026-09-07T19:30:10.990189Z"
+}

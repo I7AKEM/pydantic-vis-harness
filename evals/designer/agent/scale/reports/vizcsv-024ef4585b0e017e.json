@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_c6a2749b132f4d9c814aebaf560e1fde",
+  "question": "كم عدد الوظائف الحالية التي تغلب فيها نسبة الموظفين المقيمين على نسبة الموظفين السعوديين؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT jobs_with_more_residents FROM \"ds_c6a2749b132f4d9c814aebaf560e1fde\"",
+    "columns": [
+      {
+        "name": "jobs_with_more_residents",
+        "meaning": "عدد الوظائف التي يكون فيها عدد المقيمين أكثر من السعوديين",
+        "kind": "measure",
+        "unit": null,
+        "source": "jobs_with_more_residents",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "عدد الوظائف الحالية التي تغلب فيها نسبة الموظفين المقيمين على نسبة الموظفين السعوديين هو 0.",
+    "assumptions": [
+      "تم الاعتماد على العمود jobs_with_more_residents كقيمة مباشرة للإجابة على السؤال."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT jobs_with_more_residents FROM \"ds_c6a2749b132f4d9c814aebaf560e1fde\"",
+    "columns": [
+      "jobs_with_more_residents"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.008723374994588085
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.206906583000091,
+  "created_at": "2026-09-07T19:31:14.106988Z"
+}

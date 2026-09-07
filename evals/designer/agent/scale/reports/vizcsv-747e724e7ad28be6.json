@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_207eddbfe7244868bf77fdb29205485a",
+  "question": "كم نسبة الاناث؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT female_percentage AS \"نسبة الإناث\" FROM \"ds_207eddbfe7244868bf77fdb29205485a\"",
+    "columns": [
+      {
+        "name": "نسبة الإناث",
+        "meaning": "نسبة الإناث من إجمالي العدد",
+        "kind": "share",
+        "unit": "%",
+        "source": "female_percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي عدد الأفراد"
+      }
+    ],
+    "summary": "نسبة الإناث هي 50.39% تقريباً.",
+    "assumptions": [
+      "تم استخدام العمود female_percentage مباشرة من البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT female_percentage AS \"نسبة الإناث\" FROM \"ds_207eddbfe7244868bf77fdb29205485a\"",
+    "columns": [
+      "نسبة الإناث"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        50.3863432165319
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة الإناث",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة الإناث: shares sum to 50.4, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.0194569169980241
+  },
+  "checks": [
+    {
+      "column": "نسبة الإناث",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة الإناث: shares sum to 50.4, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة الإناث: shares sum to 50.4, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.416324791003717,
+  "created_at": "2026-09-07T19:29:20.050631Z"
+}

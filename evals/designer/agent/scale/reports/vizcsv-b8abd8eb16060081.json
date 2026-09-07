@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_d348d95a0eec4bac8b3cc8a9f96bdd84",
+  "question": "كم عدد المخالفات المرورية الغير المسددة ",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT sum(unpaid_violations) AS total_unpaid_violations FROM \"ds_d348d95a0eec4bac8b3cc8a9f96bdd84\"",
+    "columns": [
+      {
+        "name": "total_unpaid_violations",
+        "meaning": "إجمالي عدد المخالفات المرورية غير المسددة",
+        "kind": "measure",
+        "unit": null,
+        "source": "unpaid_violations",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "إجمالي عدد المخالفات المرورية غير المسددة هو 0.",
+    "assumptions": [
+      "تم حساب المجموع الكلي لجميع السجلات في الجدول."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT sum(unpaid_violations) AS total_unpaid_violations FROM \"ds_d348d95a0eec4bac8b3cc8a9f96bdd84\"",
+    "columns": [
+      "total_unpaid_violations"
+    ],
+    "types": [
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.010654583005816676
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.1766314580017934,
+  "created_at": "2026-09-07T19:33:26.301837Z"
+}

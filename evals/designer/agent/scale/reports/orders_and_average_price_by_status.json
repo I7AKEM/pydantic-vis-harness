@@ -1,0 +1,99 @@
+{
+  "dataset_id": "ds_28e59188a3964b8390fb7865c264ac8a",
+  "question": "For each order status, how many orders were there and what was the average price?",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT status, count(*) AS order_count, avg(price) AS avg_price FROM \"ds_28e59188a3964b8390fb7865c264ac8a\" GROUP BY status",
+    "columns": [
+      {
+        "name": "status",
+        "meaning": "Order status",
+        "kind": "category",
+        "unit": null,
+        "source": "status",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "order_count",
+        "meaning": "Number of orders",
+        "kind": "measure",
+        "unit": null,
+        "source": "pk_id",
+        "aggregate": "count",
+        "denominator": null
+      },
+      {
+        "name": "avg_price",
+        "meaning": "Average order price",
+        "kind": "measure",
+        "unit": null,
+        "source": "price",
+        "aggregate": "avg",
+        "denominator": null
+      }
+    ],
+    "summary": "The majority of orders were 'Executed' with 83 orders and an average price of 533.30. Other statuses including 'Accepted' (7), 'Canceled' (6), 'Driver_Assigned' (3), and 'Rejected' (1) had no price data available.",
+    "assumptions": [
+      "Null prices were excluded from the average calculation."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT status, count(*) AS order_count, avg(price) AS avg_price FROM \"ds_28e59188a3964b8390fb7865c264ac8a\" GROUP BY status",
+    "columns": [
+      "status",
+      "order_count",
+      "avg_price"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "Executed",
+        83,
+        533.2985542168675
+      ],
+      [
+        "Accepted",
+        7,
+        null
+      ],
+      [
+        "Canceled",
+        6,
+        null
+      ],
+      [
+        "Driver_Assigned",
+        3,
+        null
+      ],
+      [
+        "Rejected",
+        1,
+        null
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.01882041699718684
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.735755165995215,
+  "created_at": "2026-09-07T17:47:49.083671Z"
+}

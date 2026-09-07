@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_9dec95a1aba044e3bdf27d42553f2a32",
+  "question": "ما هو أكثر نوع مخالفة مرورية مسجلة في المملكة لعامي 2023 و2024؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT normalized_type, SUM(violation_count) AS \"إجمالي المخالفات\" FROM \"ds_9dec95a1aba044e3bdf27d42553f2a32\" GROUP BY normalized_type ORDER BY \"إجمالي المخالفات\" DESC LIMIT 1",
+    "columns": [
+      {
+        "name": "normalized_type",
+        "meaning": "نوع المخالفة الموحد",
+        "kind": "category",
+        "unit": null,
+        "source": "normalized_type",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "إجمالي المخالفات",
+        "meaning": "إجمالي عدد المخالفات",
+        "kind": "measure",
+        "unit": null,
+        "source": "violation_count",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "أكثر نوع مخالفة مرورية مسجلة هو \"دخول أو خروج الشاحنات في أوقات المنع\" بإجمالي 19,117 مخالفة.",
+    "assumptions": [
+      "تم اعتبار جميع البيانات المتاحة في الجدول على أنها تخص عامي 2023 و2024 لعدم وجود عمود للتاريخ في مجموعة البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT normalized_type, SUM(violation_count) AS \"إجمالي المخالفات\" FROM \"ds_9dec95a1aba044e3bdf27d42553f2a32\" GROUP BY normalized_type ORDER BY \"إجمالي المخالفات\" DESC LIMIT 1",
+    "columns": [
+      "normalized_type",
+      "إجمالي المخالفات"
+    ],
+    "types": [
+      "VARCHAR",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        "دخول أو خروج الشاحنات في أوقات المنع",
+        19117
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.02173166700231377
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.898192958004074,
+  "created_at": "2026-09-07T19:32:02.812971Z"
+}

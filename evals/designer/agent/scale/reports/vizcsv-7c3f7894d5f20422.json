@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_44ebeffa71064d44914f0c86c58c2ec3",
+  "question": "كم عدد إجمالي خريجي الجامعات في المملكة لسنة 2024؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT total_graduates_2024 AS \"إجمالي الخريجين\" FROM \"ds_44ebeffa71064d44914f0c86c58c2ec3\"",
+    "columns": [
+      {
+        "name": "إجمالي الخريجين",
+        "meaning": "إجمالي عدد خريجي الجامعات في المملكة لسنة 2024",
+        "kind": "measure",
+        "unit": null,
+        "source": "total_graduates_2024",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "بلغ إجمالي عدد خريجي الجامعات في المملكة لسنة 2024 نحو 23,082 خريجاً.",
+    "assumptions": [
+      "تم استخدام القيمة المتاحة في العمود total_graduates_2024 مباشرة دون أي تعديلات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT total_graduates_2024 AS \"إجمالي الخريجين\" FROM \"ds_44ebeffa71064d44914f0c86c58c2ec3\"",
+    "columns": [
+      "إجمالي الخريجين"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        23082
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.018442000000504777
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.402920874999836,
+  "created_at": "2026-09-07T19:29:11.502564Z"
+}

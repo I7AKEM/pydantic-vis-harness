@@ -1,0 +1,181 @@
+{
+  "dataset_id": "ds_84941c70cc0e41638b67649eef29a8cf",
+  "question": "كم نسبة السكان حسب الجنس لكل منطقة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    region, \n    gender, \n    SUM(population_count) AS \"عدد السكان\", \n    100.0 * SUM(population_count) / SUM(SUM(population_count)) OVER (PARTITION BY region) AS \"النسبة المئوية\"\nFROM \"ds_84941c70cc0e41638b67649eef29a8cf\"\nGROUP BY region, gender",
+    "columns": [
+      {
+        "name": "region",
+        "meaning": "المنطقة",
+        "kind": "category",
+        "unit": null,
+        "source": "region",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "gender",
+        "meaning": "الجنس",
+        "kind": "category",
+        "unit": null,
+        "source": "gender",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "عدد السكان",
+        "meaning": "إجمالي عدد السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "population_count",
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "النسبة المئوية",
+        "meaning": "نسبة السكان من إجمالي المنطقة",
+        "kind": "share",
+        "unit": null,
+        "source": "population_count",
+        "aggregate": "share",
+        "denominator": "إجمالي سكان المنطقة"
+      }
+    ],
+    "summary": "توضح البيانات نسبة السكان حسب الجنس لكل منطقة، حيث تتراوح النسب المئوية للإناث (F) والذكور (M) في مختلف المناطق بين 48% و 52% تقريباً. على سبيل المثال، في منطقة الجوف، بلغت نسبة الإناث 51.83% بينما بلغت نسبة الذكور 48.17%.",
+    "assumptions": [
+      "تم حساب النسبة المئوية بناءً على إجمالي عدد السكان لكل منطقة على حدة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    region, \n    gender, \n    SUM(population_count) AS \"عدد السكان\", \n    100.0 * SUM(population_count) / SUM(SUM(population_count)) OVER (PARTITION BY region) AS \"النسبة المئوية\"\nFROM \"ds_84941c70cc0e41638b67649eef29a8cf\"\nGROUP BY region, gender",
+    "columns": [
+      "region",
+      "gender",
+      "عدد السكان",
+      "النسبة المئوية"
+    ],
+    "types": [
+      "VARCHAR",
+      "VARCHAR",
+      "HUGEINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "الحدود الشمالية",
+        "F",
+        362,
+        49.79367262723521
+      ],
+      [
+        "الحدود الشمالية",
+        "M",
+        365,
+        50.20632737276479
+      ],
+      [
+        "منطقة الباحة",
+        "F",
+        359,
+        51.72910662824207
+      ],
+      [
+        "منطقة الباحة",
+        "M",
+        335,
+        48.27089337175793
+      ],
+      [
+        "منطقة الجوف",
+        "F",
+        383,
+        51.82679296346414
+      ],
+      [
+        "منطقة الجوف",
+        "M",
+        356,
+        48.17320703653586
+      ],
+      [
+        "منطقة الرياض",
+        "F",
+        343,
+        51.1177347242921
+      ],
+      [
+        "منطقة الرياض",
+        "M",
+        328,
+        48.8822652757079
+      ],
+      [
+        "منطقة تبوك",
+        "F",
+        346,
+        49.71264367816092
+      ],
+      [
+        "منطقة تبوك",
+        "M",
+        350,
+        50.28735632183908
+      ],
+      [
+        "منطقة جازان",
+        "F",
+        330,
+        49.107142857142854
+      ],
+      [
+        "منطقة جازان",
+        "M",
+        342,
+        50.892857142857146
+      ],
+      [
+        "منطقة مكة المكرمة",
+        "F",
+        328,
+        48.306332842415316
+      ],
+      [
+        "منطقة مكة المكرمة",
+        "M",
+        351,
+        51.693667157584684
+      ],
+      [
+        "منطقة نجران",
+        "F",
+        352,
+        50.21398002853067
+      ],
+      [
+        "منطقة نجران",
+        "M",
+        349,
+        49.78601997146933
+      ]
+    ],
+    "row_count": 16,
+    "checks": [],
+    "seconds": 0.012481249999837019
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.782986542006256,
+  "created_at": "2026-09-07T19:33:44.694054Z"
+}

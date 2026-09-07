@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_38d1d661acf64ec08305d61f00ac2859",
+  "question": "في أي حي يتمركز المقيمين العاملين بمهنة عامل منزلي من الجنسية الفلبينية في كل من مدينة (جدة، والدمام، والرياض) وفقًا لأحدث اسناد؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات إضافية حول الجنسية والمهنة، حيث أن الجدول الحالي يحتوي فقط على اسم المدينة، والحي، وعدد العمال؟",
+    "reason": "The user is asking for the district with the highest concentration of Filipino domestic workers in Jeddah, Dammam, and Riyadh, but the dataset only contains 'city', 'district', and 'worker_count'. There are no columns for nationality or profession."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.1339470410021022,
+  "created_at": "2026-09-07T19:30:48.525888Z"
+}

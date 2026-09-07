@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_9bf23272933b4872bf6f22eac8dd5b04",
+  "question": "ما هي نسبة السكان العاملين في القطاع الزراعي في المناطق الريفية مقارنةً بالمناطق الحضرية؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تحديد أي من الفئات (احياء تكميلية غير معتمدة، احياء معتمدة، مركز / قرية) تعتبر مناطق ريفية وأيها تعتبر مناطق حضرية؟",
+    "reason": "The question asks for a comparison between rural and urban areas, but the 'category' column contains labels like 'approved neighborhoods', 'unapproved complementary neighborhoods', and 'center/village' without a clear mapping to 'rural' or 'urban'."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.9196778339974117,
+  "created_at": "2026-09-07T19:31:20.513330Z"
+}

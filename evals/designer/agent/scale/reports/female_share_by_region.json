@@ -1,0 +1,93 @@
+{
+  "dataset_id": "ds_53b47fb7a9a34a9091938c8258d11f9b",
+  "question": "What percentage of the population is female in each region?",
+  "language": "English",
+  "brief_fingerprint": "20648d4607d87e2d",
+  "analysis": {
+    "sql": "SELECT region, AVG(percentage) AS female_percentage FROM \"ds_53b47fb7a9a34a9091938c8258d11f9b\" WHERE gender = 'F' GROUP BY region",
+    "columns": [
+      {
+        "name": "region",
+        "meaning": "Administrative Region",
+        "kind": "geography",
+        "unit": null,
+        "source": "region",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "female_percentage",
+        "meaning": "Percentage of population that is female",
+        "kind": "measure",
+        "unit": "%",
+        "source": "percentage",
+        "aggregate": "avg",
+        "denominator": null
+      }
+    ],
+    "summary": "The percentage of the female population varies by region, ranging from a low of 48.31% in Makkah (منطقة مكة المكرمة) to a high of 51.83% in Al-Jawf (منطقة الجوف). Other regions such as Riyadh (منطقة الرياض) and Al-Baha (منطقة الباحة) show female population percentages of 51.12% and 51.73% respectively.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT region, AVG(percentage) AS female_percentage FROM \"ds_53b47fb7a9a34a9091938c8258d11f9b\" WHERE gender = 'F' GROUP BY region",
+    "columns": [
+      "region",
+      "female_percentage"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "منطقة مكة المكرمة",
+        48.31
+      ],
+      [
+        "منطقة جازان",
+        49.11
+      ],
+      [
+        "منطقة تبوك",
+        49.71
+      ],
+      [
+        "الحدود الشمالية",
+        49.79
+      ],
+      [
+        "منطقة نجران",
+        50.21
+      ],
+      [
+        "منطقة الرياض",
+        51.12
+      ],
+      [
+        "منطقة الباحة",
+        51.73
+      ],
+      [
+        "منطقة الجوف",
+        51.83
+      ]
+    ],
+    "row_count": 8,
+    "checks": [],
+    "seconds": 0.013394333000178449
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.2906019170040963,
+  "created_at": "2026-09-07T17:47:38.638479Z"
+}

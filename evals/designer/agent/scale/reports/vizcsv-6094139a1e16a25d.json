@@ -1,0 +1,84 @@
+{
+  "dataset_id": "ds_6e4bb354977a47bc920e55c130b99714",
+  "question": "ماهي نسبة المواطنين الأثرياء من كل المواطنين السكان حسب الجنس؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    gender, \n    CASE \n        WHEN gender = 'F' THEN 'Female' \n        WHEN gender = 'M' THEN 'Male' \n        ELSE gender \n    END AS \"الجنس\",\n    percentage AS \"نسبة الأثرياء\"\nFROM \"ds_6e4bb354977a47bc920e55c130b99714\"",
+    "columns": [
+      {
+        "name": "gender",
+        "meaning": "رمز الجنس",
+        "kind": "category",
+        "unit": null,
+        "source": "gender",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "الجنس",
+        "meaning": "الجنس",
+        "kind": "category",
+        "unit": null,
+        "source": "gender",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "نسبة الأثرياء",
+        "meaning": "نسبة المواطنين الأثرياء من إجمالي السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "none",
+        "denominator": "total_count"
+      }
+    ],
+    "summary": "تبلغ نسبة المواطنين الأثرياء من الإناث 19.94%، بينما تبلغ نسبة الذكور الأثرياء 20.02%.",
+    "assumptions": [
+      "تم استخدام عمود النسبة المئوية الموجود مسبقاً في البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    gender, \n    CASE \n        WHEN gender = 'F' THEN 'Female' \n        WHEN gender = 'M' THEN 'Male' \n        ELSE gender \n    END AS \"الجنس\",\n    percentage AS \"نسبة الأثرياء\"\nFROM \"ds_6e4bb354977a47bc920e55c130b99714\"",
+    "columns": [
+      "gender",
+      "الجنس",
+      "نسبة الأثرياء"
+    ],
+    "types": [
+      "VARCHAR",
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "F",
+        "Female",
+        19.94
+      ],
+      [
+        "M",
+        "Male",
+        20.02
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.02030041700345464
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 8.354195040999912,
+  "created_at": "2026-09-07T19:30:24.692341Z"
+}

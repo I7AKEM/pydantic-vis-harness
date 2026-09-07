@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_2490ad0181f045ea8c87646095467a57",
+  "question": "ما هي النسبة المئوية للسكان في منطقة الرياض مقارنة بإجمالي سكان المملكة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage AS \"النسبة المئوية\" FROM \"ds_2490ad0181f045ea8c87646095467a57\"",
+    "columns": [
+      {
+        "name": "النسبة المئوية",
+        "meaning": "النسبة المئوية لسكان منطقة الرياض مقارنة بإجمالي سكان المملكة",
+        "kind": "measure",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي سكان المملكة"
+      }
+    ],
+    "summary": "النسبة المئوية للسكان في منطقة الرياض مقارنة بإجمالي سكان المملكة هي 12.06%.",
+    "assumptions": [
+      "تم اعتبار القيمة الوحيدة الموجودة في الجدول كإجابة مباشرة على السؤال."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage AS \"النسبة المئوية\" FROM \"ds_2490ad0181f045ea8c87646095467a57\"",
+    "columns": [
+      "النسبة المئوية"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        12.06
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.01609129100688733
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.0977490420045797,
+  "created_at": "2026-09-07T19:28:04.344237Z"
+}

@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_337e2d9c69d24b89b8ddabfe6ff3c329",
+  "question": "كم تمثل نسبة المواطنين من أصحاب الثروة المتوسطة الى اجمالي المواطنين حسب احدث بيانات متوفرة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage FROM \"ds_337e2d9c69d24b89b8ddabfe6ff3c329\"",
+    "columns": [
+      {
+        "name": "percentage",
+        "meaning": "نسبة المواطنين من أصحاب الثروة المتوسطة إلى إجمالي المواطنين",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "total_count"
+      }
+    ],
+    "summary": "تمثل نسبة المواطنين من أصحاب الثروة المتوسطة 19.89% من إجمالي المواطنين وفقاً لأحدث البيانات المتوفرة.",
+    "assumptions": [
+      "تم استخدام العمود percentage مباشرة كونه يمثل النسبة المطلوبة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage FROM \"ds_337e2d9c69d24b89b8ddabfe6ff3c329\"",
+    "columns": [
+      "percentage"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        19.89
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "percentage",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "percentage: shares sum to 19.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.014885083000990562
+  },
+  "checks": [
+    {
+      "column": "percentage",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "percentage: shares sum to 19.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "percentage: shares sum to 19.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.995066208008211,
+  "created_at": "2026-09-07T19:28:08.359610Z"
+}

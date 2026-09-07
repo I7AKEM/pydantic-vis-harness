@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_b86caf24903546238cc9ff346043fc11",
+  "question": "ما هي اكثر خمسة مهن شيوعًا في الوقت الراهن بين المواطنين الذين يصنفون ضمن فئة الثروة المنخفضة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات إضافية حول فئات الثروة للمواطنين، حيث أن الجدول الحالي يحتوي فقط على المهنة وعدد الموظفين؟",
+    "reason": "The dataset only contains 'profession' and 'employee_count'. There is no column representing 'wealth category' or 'citizenship' to filter for 'low wealth category citizens' as requested in the question."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.0371867079957156,
+  "created_at": "2026-09-07T19:32:28.382027Z"
+}

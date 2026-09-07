@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_083b57e5d8244665aa674597abaacca4",
+  "question": "كم عدد الذكور والإناث في التخصص الأول؟ رد كالتالي: \"ذكور: (الرقم) إناث: (الرقم)\"",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT gender, count FROM \"ds_083b57e5d8244665aa674597abaacca4\"",
+    "columns": [
+      {
+        "name": "gender",
+        "meaning": "الجنس",
+        "kind": "category",
+        "unit": null,
+        "source": "gender",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "count",
+        "meaning": "العدد",
+        "kind": "measure",
+        "unit": null,
+        "source": "count",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "ذكور: 10714 إناث: 10886",
+    "assumptions": [
+      "تم اعتبار 'M' كذكور و 'F' كإناث بناءً على القيم الشائعة في البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT gender, count FROM \"ds_083b57e5d8244665aa674597abaacca4\"",
+    "columns": [
+      "gender",
+      "count"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "M",
+        10714
+      ],
+      [
+        "F",
+        10886
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.00610087500535883
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.4989672080118908,
+  "created_at": "2026-09-07T19:28:18.766155Z"
+}

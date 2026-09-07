@@ -1,0 +1,141 @@
+{
+  "dataset_id": "ds_0078f184d633432298b9152b209fdcf3",
+  "question": "بالنسبة لأكثر 10 جنسيات من المقيمين السكان الحاليين، ما هو منفذ الدخول الأكثر استخداماً لكل جنسية كنسبة مئوية من مجموع استخداماتهم للمنافذ؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT nationality, entry_port, percentage FROM \"ds_0078f184d633432298b9152b209fdcf3\" ORDER BY entry_count DESC LIMIT 10",
+    "columns": [
+      {
+        "name": "nationality",
+        "meaning": "الجنسية",
+        "kind": "category",
+        "unit": null,
+        "source": "nationality",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "entry_port",
+        "meaning": "منفذ الدخول",
+        "kind": "geography",
+        "unit": null,
+        "source": "entry_port",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "percentage",
+        "meaning": "النسبة المئوية من مجموع استخداماتهم للمنافذ",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "total entries per nationality"
+      }
+    ],
+    "summary": "بالنسبة لأكثر 10 جنسيات، فإن منفذ الدخول الأكثر استخداماً لجميع هذه الجنسيات هو مطار الملك خالد الدولي (الرياض)، وتتراوح نسب استخدامهم لهذا المنفذ ما بين 49.91% للصينيين و 51.51% لليبيين.",
+    "assumptions": [
+      "تم اعتبار \"أكثر 10 جنسيات\" بناءً على عدد المداخلات (entry_count) الأعلى."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT nationality, entry_port, percentage FROM \"ds_0078f184d633432298b9152b209fdcf3\" ORDER BY entry_count DESC LIMIT 10",
+    "columns": [
+      "nationality",
+      "entry_port",
+      "percentage"
+    ],
+    "types": [
+      "VARCHAR",
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "ياباني",
+        "مطار الملك خالد الدولي (الرياض)",
+        50.9
+      ],
+      [
+        "ألماني",
+        "مطار الملك خالد الدولي (الرياض)",
+        50.86
+      ],
+      [
+        "بحريني",
+        "مطار الملك خالد الدولي (الرياض)",
+        50.86
+      ],
+      [
+        "كويتي",
+        "مطار الملك خالد الدولي (الرياض)",
+        50.64
+      ],
+      [
+        "ليبي",
+        "مطار الملك خالد الدولي (الرياض)",
+        51.51
+      ],
+      [
+        "إيطالي",
+        "مطار الملك خالد الدولي (الرياض)",
+        51.49
+      ],
+      [
+        "عماني",
+        "مطار الملك خالد الدولي (الرياض)",
+        50.69
+      ],
+      [
+        "صيني",
+        "مطار الملك خالد الدولي (الرياض)",
+        49.91
+      ],
+      [
+        "بريطاني",
+        "مطار الملك خالد الدولي (الرياض)",
+        50.75
+      ],
+      [
+        "اردني",
+        "مطار الملك خالد الدولي (الرياض)",
+        50.51
+      ]
+    ],
+    "row_count": 10,
+    "checks": [
+      {
+        "column": "percentage",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "percentage: shares sum to 50.9 for 'ياباني', not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.020229250003467314
+  },
+  "checks": [
+    {
+      "column": "percentage",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "percentage: shares sum to 50.9 for 'ياباني', not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "percentage: shares sum to 50.9 for 'ياباني', not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 7.5983137500006706,
+  "created_at": "2026-09-07T19:30:21.741863Z"
+}

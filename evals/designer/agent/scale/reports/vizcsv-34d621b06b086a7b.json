@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_be861cff083f4bb8aa8b71116974f741",
+  "question": "ما هو متوسط المخالفات للأشخاص العاملين بمهنة سائق مقارنة بالأشخاص الغير عاملين بالمهنة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT job_category, avg_violations FROM \"ds_be861cff083f4bb8aa8b71116974f741\"",
+    "columns": [
+      {
+        "name": "job_category",
+        "meaning": "فئة الوظيفة",
+        "kind": "category",
+        "unit": null,
+        "source": "job_category",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "avg_violations",
+        "meaning": "متوسط المخالفات",
+        "kind": "measure",
+        "unit": null,
+        "source": "avg_violations",
+        "aggregate": "none",
+        "denominator": "violation"
+      }
+    ],
+    "summary": "يبلغ متوسط المخالفات للأشخاص العاملين بمهنة سائق حوالي 2.70، بينما يبلغ متوسط المخالفات للأشخاص غير العاملين بهذه المهنة حوالي 2.71.",
+    "assumptions": [
+      "تم استخدام القيم المباشرة لمتوسط المخالفات كما وردت في البيانات لكل فئة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT job_category, avg_violations FROM \"ds_be861cff083f4bb8aa8b71116974f741\"",
+    "columns": [
+      "job_category",
+      "avg_violations"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "سائق",
+        2.698442661632846
+      ],
+      [
+        "غير سائق",
+        2.7103036712494335
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.012310375008382834
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 7.015639624994947,
+  "created_at": "2026-09-07T19:32:28.397896Z"
+}

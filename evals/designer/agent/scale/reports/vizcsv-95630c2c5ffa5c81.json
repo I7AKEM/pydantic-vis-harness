@@ -1,0 +1,95 @@
+{
+  "dataset_id": "ds_7212fed27888425dacbc01f479597ef7",
+  "question": "رتبها من الاقل الى الاعلى",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT region, total_population FROM \"ds_7212fed27888425dacbc01f479597ef7\" ORDER BY total_population ASC",
+    "columns": [
+      {
+        "name": "region",
+        "meaning": "المنطقة الإدارية",
+        "kind": "category",
+        "unit": null,
+        "source": "region",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "total_population",
+        "meaning": "إجمالي السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "total_population",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "تم ترتيب المناطق من الأقل إلى الأعلى من حيث إجمالي السكان، حيث سجلت منطقة الرياض أقل عدد سكان بـ 671، بينما سجلت منطقة الجوف أعلى عدد سكان بـ 739.",
+    "assumptions": [
+      "تم ترتيب البيانات بناءً على عمود إجمالي السكان (total_population) تصاعدياً."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT region, total_population FROM \"ds_7212fed27888425dacbc01f479597ef7\" ORDER BY total_population ASC",
+    "columns": [
+      "region",
+      "total_population"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "منطقة الرياض",
+        671
+      ],
+      [
+        "منطقة جازان",
+        672
+      ],
+      [
+        "منطقة مكة المكرمة",
+        679
+      ],
+      [
+        "منطقة الباحة",
+        694
+      ],
+      [
+        "منطقة تبوك",
+        696
+      ],
+      [
+        "منطقة نجران",
+        701
+      ],
+      [
+        "الحدود الشمالية",
+        727
+      ],
+      [
+        "منطقة الجوف",
+        739
+      ]
+    ],
+    "row_count": 8,
+    "checks": [],
+    "seconds": 0.02424333299859427
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.6133576249994803,
+  "created_at": "2026-09-07T19:32:58.252926Z"
+}

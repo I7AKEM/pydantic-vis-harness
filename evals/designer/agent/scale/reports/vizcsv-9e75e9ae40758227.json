@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_86d122ab1f2241efbc07938949c0ddf3",
+  "question": "اكتب تقرير عن السكان",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT person_type, SUM(population_count) AS \"إجمالي السكان\" FROM \"ds_86d122ab1f2241efbc07938949c0ddf3\" GROUP BY person_type",
+    "columns": [
+      {
+        "name": "person_type",
+        "meaning": "الجنسية أو حالة الإقامة",
+        "kind": "category",
+        "unit": null,
+        "source": "person_type",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "إجمالي السكان",
+        "meaning": "إجمالي عدد السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "population_count",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "يتكون السكان من 2,815 من غير السعوديين (Alien) و 2,750 من السعوديين (Saudi).",
+    "assumptions": [
+      "تم تجميع البيانات بناءً على الجنسية/حالة الإقامة فقط لتقديم نظرة عامة عن السكان."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT person_type, SUM(population_count) AS \"إجمالي السكان\" FROM \"ds_86d122ab1f2241efbc07938949c0ddf3\" GROUP BY person_type",
+    "columns": [
+      "person_type",
+      "إجمالي السكان"
+    ],
+    "types": [
+      "VARCHAR",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        "Saudi",
+        2750
+      ],
+      [
+        "Alien",
+        2815
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.024114917003316805
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.7425499169912655,
+  "created_at": "2026-09-07T19:32:07.583436Z"
+}

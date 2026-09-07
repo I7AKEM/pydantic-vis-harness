@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_cdcaad379e4e44f782eb7efae9eb09fa",
+  "question": "في أي المدن يقطن المواطنون الذين يغادرون المملكة اكثر من ثلاث مرات في كل سنة من الخمسة سنوات الماضية (2021-2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل تتوفر بيانات حول عدد مرات مغادرة المواطنين للمملكة أو تواريخ سفرهم في مجموعة البيانات هذه؟",
+    "reason": "The dataset only contains 'city' and 'citizen_count'. There are no columns indicating the number of times citizens left the country or any date/year information to filter for the period 2021-2025."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.8609345000004396,
+  "created_at": "2026-09-07T19:33:17.273681Z"
+}

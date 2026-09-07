@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_02459ded08d14ac485673f01fcd4ff7a",
+  "question": "ما هو العدد الإجمالي للمواطنين الذين غادروا المملكة أكثر من ثلاث مرات في السنة خلال الفترة 2021-2025؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT total_frequent_travelers AS \"إجمالي المسافرين الدائمين\" FROM \"ds_02459ded08d14ac485673f01fcd4ff7a\"",
+    "columns": [
+      {
+        "name": "إجمالي المسافرين الدائمين",
+        "meaning": "إجمالي عدد المسافرين الدائمين الذين غادروا المملكة أكثر من ثلاث مرات في السنة",
+        "kind": "measure",
+        "unit": null,
+        "source": "total_frequent_travelers",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "العدد الإجمالي للمواطنين الذين غادروا المملكة أكثر من ثلاث مرات في السنة خلال الفترة 2021-2025 هو 0.",
+    "assumptions": [
+      "تم اعتبار العمود total_frequent_travelers كمؤشر للمسافرين الذين غادروا المملكة أكثر من ثلاث مرات في السنة وفقاً لوصف العمود."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT total_frequent_travelers AS \"إجمالي المسافرين الدائمين\" FROM \"ds_02459ded08d14ac485673f01fcd4ff7a\"",
+    "columns": [
+      "إجمالي المسافرين الدائمين"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.019663209008285776
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.6549768330005463,
+  "created_at": "2026-09-07T19:30:20.824395Z"
+}

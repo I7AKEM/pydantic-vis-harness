@@ -1,0 +1,95 @@
+{
+  "dataset_id": "ds_87cbb1d161024c4c991b09ce103f09c5",
+  "question": "ما هو عدد المدن الصغيرة (أقل من 5000 نسمة) لكل منطقة في المملكة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT region, small_city_count FROM \"ds_87cbb1d161024c4c991b09ce103f09c5\"",
+    "columns": [
+      {
+        "name": "region",
+        "meaning": "اسم المنطقة الإدارية",
+        "kind": "category",
+        "unit": null,
+        "source": "region",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "small_city_count",
+        "meaning": "عدد المدن الصغيرة",
+        "kind": "measure",
+        "unit": null,
+        "source": "small_city_count",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "يختلف عدد المدن الصغيرة في المناطق، حيث سجلت منطقتي تبوك والرياض أعلى عدد بـ 3 مدن لكل منهما، بينما سجلت منطقة نجران أقل عدد بمدينة واحدة فقط. وتتراوح بقية المناطق بين مدينتين إلى ثلاث مدن صغيرة.",
+    "assumptions": [
+      "تم اعتبار تعريف \"المدن الصغيرة\" (أقل من 5000 نسمة) كما هو محدد مسبقاً في العمود small_city_count في مجموعة البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT region, small_city_count FROM \"ds_87cbb1d161024c4c991b09ce103f09c5\"",
+    "columns": [
+      "region",
+      "small_city_count"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "منطقة تبوك",
+        3
+      ],
+      [
+        "منطقة الرياض",
+        3
+      ],
+      [
+        "منطقة مكة المكرمة",
+        2
+      ],
+      [
+        "منطقة الباحة",
+        2
+      ],
+      [
+        "منطقة الجوف",
+        2
+      ],
+      [
+        "منطقة جازان",
+        2
+      ],
+      [
+        "الحدود الشمالية",
+        2
+      ],
+      [
+        "منطقة نجران",
+        1
+      ]
+    ],
+    "row_count": 8,
+    "checks": [],
+    "seconds": 0.008808874990791082
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.4928864579997025,
+  "created_at": "2026-09-07T19:31:07.305399Z"
+}

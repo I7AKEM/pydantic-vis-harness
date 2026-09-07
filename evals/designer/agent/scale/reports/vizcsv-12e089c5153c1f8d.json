@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_5dbef3906ef647e68b1f1c292b7af784",
+  "question": "•\tWhich field of study saw the highest increase in graduates from 2022 to 2024?",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT major_classification_parent_name, growth FROM \"ds_5dbef3906ef647e68b1f1c292b7af784\" ORDER BY growth DESC LIMIT 1",
+    "columns": [
+      {
+        "name": "major_classification_parent_name",
+        "meaning": "Field of study",
+        "kind": "category",
+        "unit": null,
+        "source": "major_classification_parent_name",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "growth",
+        "meaning": "Growth in graduates",
+        "kind": "measure",
+        "unit": null,
+        "source": "growth",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "The field of study with the highest increase in graduates is 'تخصصات الآداب والعلوم الاجتماعية والإنسانية' (Arts, Social Sciences and Humanities) with a growth of 854.",
+    "assumptions": [
+      "The 'growth' column represents the increase in graduates from 2022 to 2024 as requested."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT major_classification_parent_name, growth FROM \"ds_5dbef3906ef647e68b1f1c292b7af784\" ORDER BY growth DESC LIMIT 1",
+    "columns": [
+      "major_classification_parent_name",
+      "growth"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "تخصصات الآداب والعلوم الاجتماعية والإنسانية",
+        854
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.0136595420044614
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.588436042002286,
+  "created_at": "2026-09-07T19:33:49.535542Z"
+}

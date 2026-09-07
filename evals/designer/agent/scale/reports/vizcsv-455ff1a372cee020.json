@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_7c3d8591c3804258b3e5ca4c0bbb2752",
+  "question": "رتب لي اعلى خمس مدن من حيث عدد الأثرياء بين عمر 25 و 40 سنة الذين لا يملكون شهادات جامعية حسب احدث بيانات",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل تتوفر بيانات عن أعمار الأثرياء أو مؤهلاتهم التعليمية أو تاريخ تحديث البيانات في مجموعة البيانات هذه؟",
+    "reason": "The user is asking for a ranking based on age (25-40), education (no university degree), and the most recent data, but the dataset only contains 'city' and 'wealthy_count'."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.178699541997048,
+  "created_at": "2026-09-07T19:29:04.612896Z"
+}

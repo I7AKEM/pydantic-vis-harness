@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_0df42d4898564f60ba574397897b84ed",
+  "question": "أريد تقرير عن توزيع الثروة وعدم المساواة مع الرسوم البيانية",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تحديد ما الذي تود رؤيته بالضبط في تقرير توزيع الثروة وعدم المساواة؟ على سبيل المثال، هل تريد مقارنة عدد الخريجين أو إجمالي الأسر عبر مستويات الثروة المختلفة؟",
+    "reason": "The user is asking for a general \"report on wealth distribution and inequality with charts,\" which is too broad. I need to know which specific metrics (e.g., total households, graduate count, or percentage) they want to analyze across the wealth levels to provide a meaningful SQL query."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.484881416996359,
+  "created_at": "2026-09-07T19:30:06.547331Z"
+}

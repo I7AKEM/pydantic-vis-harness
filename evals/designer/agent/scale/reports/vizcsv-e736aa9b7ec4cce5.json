@@ -1,0 +1,114 @@
+{
+  "dataset_id": "ds_85ff8f8a1151433e82f6bb3559bc1592",
+  "question": "قارن بين نسبة النساء الأثرياء الى اجمالي عدد النساء ونسبة الذكور الأثرياء الى اجمالي عدد الذكور حسب احدث اسناد",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    gender, \n    wealthy_count, \n    total_count, \n    (CAST(wealthy_count AS DOUBLE) / total_count) * 100 AS \"نسبة الأثرياء\"\nFROM \"ds_85ff8f8a1151433e82f6bb3559bc1592\"",
+    "columns": [
+      {
+        "name": "gender",
+        "meaning": "الجنس",
+        "kind": "category",
+        "unit": null,
+        "source": "gender",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "wealthy_count",
+        "meaning": "عدد الأثرياء",
+        "kind": "measure",
+        "unit": null,
+        "source": "wealthy_count",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "total_count",
+        "meaning": "إجمالي العدد",
+        "kind": "measure",
+        "unit": null,
+        "source": "total_count",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "نسبة الأثرياء",
+        "meaning": "نسبة الأثرياء من الإجمالي",
+        "kind": "share",
+        "unit": null,
+        "source": "wealthy_percentage",
+        "aggregate": "none",
+        "denominator": "total_count"
+      }
+    ],
+    "summary": "تبلغ نسبة النساء الأثرياء حوالي 19.94% من إجمالي عدد النساء (37,438 من أصل 187,772)، بينما تبلغ نسبة الذكور الأثرياء حوالي 20.02% من إجمالي عدد الذكور (37,439 من أصل 187,012).",
+    "assumptions": [
+      "تم حساب النسبة المئوية بقسمة عدد الأثرياء على إجمالي العدد لكل جنس."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    gender, \n    wealthy_count, \n    total_count, \n    (CAST(wealthy_count AS DOUBLE) / total_count) * 100 AS \"نسبة الأثرياء\"\nFROM \"ds_85ff8f8a1151433e82f6bb3559bc1592\"",
+    "columns": [
+      "gender",
+      "wealthy_count",
+      "total_count",
+      "نسبة الأثرياء"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT",
+      "BIGINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "F",
+        37438,
+        187772,
+        19.93800992693266
+      ],
+      [
+        "M",
+        37439,
+        187012,
+        20.019570936624387
+      ]
+    ],
+    "row_count": 2,
+    "checks": [
+      {
+        "column": "نسبة الأثرياء",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة الأثرياء: shares sum to 40.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.018271250010002404
+  },
+  "checks": [
+    {
+      "column": "نسبة الأثرياء",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة الأثرياء: shares sum to 40.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة الأثرياء: shares sum to 40.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 6.282063708000351,
+  "created_at": "2026-09-07T19:31:40.504909Z"
+}

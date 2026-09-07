@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_5f3398757146440bafffe9570e07e88d",
+  "question": "اعرض متوسط «death_count» حسب السنوات الهجرية باستخدام «death_date».",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    split_part(death_date, '/', 1) AS \"السنة الهجرية\", \n    AVG(death_count) AS \"متوسط الوفيات\" \nFROM \"ds_5f3398757146440bafffe9570e07e88d\" \nGROUP BY 1 \nORDER BY 1",
+    "columns": [
+      {
+        "name": "السنة الهجرية",
+        "meaning": "السنة الهجرية",
+        "kind": "category",
+        "unit": null,
+        "source": "death_date",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "متوسط الوفيات",
+        "meaning": "متوسط عدد الوفيات",
+        "kind": "measure",
+        "unit": null,
+        "source": "death_count",
+        "aggregate": "avg",
+        "denominator": null
+      }
+    ],
+    "summary": "بلغ متوسط عدد الوفيات في عام ١٤٤٥ حوالي 48.51، بينما ارتفع في عام ١٤٤٦ ليصل إلى 54.28. تم استخراج السنة من تاريخ الوفاة عبر تقسيم النص بناءً على الفاصلة المائلة.",
+    "assumptions": [
+      "تم استخراج السنة الهجرية من الجزء الأول من عمود death_date"
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    split_part(death_date, '/', 1) AS \"السنة الهجرية\", \n    AVG(death_count) AS \"متوسط الوفيات\" \nFROM \"ds_5f3398757146440bafffe9570e07e88d\" \nGROUP BY 1 \nORDER BY 1",
+    "columns": [
+      "السنة الهجرية",
+      "متوسط الوفيات"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "١٤٤٥",
+        48.505319148936174
+      ],
+      [
+        "١٤٤٦",
+        54.28089887640449
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.011244249995797873
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.2682896659971448,
+  "created_at": "2026-09-07T19:33:51.950254Z"
+}

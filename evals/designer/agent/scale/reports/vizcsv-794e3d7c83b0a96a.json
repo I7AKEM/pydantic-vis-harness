@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_d87748ecedad40b79fb682fb96b43741",
+  "question": "قارن الأعداد",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT person_type, count FROM \"ds_d87748ecedad40b79fb682fb96b43741\"",
+    "columns": [
+      {
+        "name": "person_type",
+        "meaning": "نوع الشخص",
+        "kind": "category",
+        "unit": null,
+        "source": "person_type",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "count",
+        "meaning": "العدد",
+        "kind": "measure",
+        "unit": null,
+        "source": "count",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "يبلغ عدد المقيمين (Alien) 2815 شخصاً، بينما يبلغ عدد السعوديين (Saudi) 2750 شخصاً. يظهر التحليل مقارنة مباشرة بين الفئتين بناءً على البيانات المتاحة.",
+    "assumptions": [
+      "تم اعتبار جميع السجلات في الجدول كبيانات نهائية للمقارنة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT person_type, count FROM \"ds_d87748ecedad40b79fb682fb96b43741\"",
+    "columns": [
+      "person_type",
+      "count"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "Alien",
+        2815
+      ],
+      [
+        "Saudi",
+        2750
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.01605270800064318
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.486959208006738,
+  "created_at": "2026-09-07T19:30:30.828501Z"
+}

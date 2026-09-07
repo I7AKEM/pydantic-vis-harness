@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_69e123452c264bc0a516415500b242d8",
+  "question": "ما نسبة خريجين جامعة الملك سعود الذين يعيشون حاليًا في مدن غير الرياض من اجمالي الخريجين للخمسة سنوات الماضية (2021-2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \"النسبة_المئوية\" AS \"النسبة المئوية\" FROM \"ds_69e123452c264bc0a516415500b242d8\"",
+    "columns": [
+      {
+        "name": "النسبة المئوية",
+        "meaning": "النسبة المئوية للخريجين من خارج الرياض بالنسبة للإجمالي",
+        "kind": "share",
+        "unit": "%",
+        "source": "النسبة_المئوية",
+        "aggregate": "none",
+        "denominator": "إجمالي عدد الخريجين"
+      }
+    ],
+    "summary": "تبلغ نسبة خريجي جامعة الملك سعود الذين يعيشون في مدن خارج الرياض 33.32% من إجمالي الخريجين. تم استخراج هذه النسبة مباشرة من البيانات المتاحة دون الحاجة لتقسيم زمني إضافي لعدم توفر أعمدة للتواريخ.",
+    "assumptions": [
+      "تم استخدام القيمة المتاحة في عمود النسبة المئوية كتمثيل للفترة المطلوبة لعدم وجود تفصيل زمني في الجدول."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \"النسبة_المئوية\" AS \"النسبة المئوية\" FROM \"ds_69e123452c264bc0a516415500b242d8\"",
+    "columns": [
+      "النسبة المئوية"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        33.32
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "النسبة المئوية",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "النسبة المئوية: shares sum to 33.3, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.016180457998416387
+  },
+  "checks": [
+    {
+      "column": "النسبة المئوية",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "النسبة المئوية: shares sum to 33.3, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "النسبة المئوية: shares sum to 33.3, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.6065043339913245,
+  "created_at": "2026-09-07T19:30:17.148934Z"
+}

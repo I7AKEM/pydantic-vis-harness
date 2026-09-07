@@ -1,0 +1,83 @@
+{
+  "dataset_id": "ds_52cca69aaff540aebcdf6f8d4e79bb09",
+  "question": "اعرض قيم «avg_days_to_graduate» حسب «university_name».",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT university_name, avg_days_to_graduate FROM \"ds_52cca69aaff540aebcdf6f8d4e79bb09\"",
+    "columns": [
+      {
+        "name": "university_name",
+        "meaning": "اسم الجامعة",
+        "kind": "category",
+        "unit": null,
+        "source": "university_name",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "avg_days_to_graduate",
+        "meaning": "متوسط عدد أيام التخرج",
+        "kind": "category",
+        "unit": null,
+        "source": "avg_days_to_graduate",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "تظهر البيانات متوسط عدد أيام التخرج لكل جامعة، حيث سجلت جامعة الفيصل ١٣٨٩٫٠ يوماً، بينما سجلت بقية الجامعات (أم القرى، الإمام محمد بن سعود الإسلامية، الملك عبدالعزيز، والملك سعود) ١٣٨٧٫٠ يوماً.",
+    "assumptions": [
+      "تم عرض البيانات كما هي واردة في العمود دون إجراء أي عمليات حسابية."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT university_name, avg_days_to_graduate FROM \"ds_52cca69aaff540aebcdf6f8d4e79bb09\"",
+    "columns": [
+      "university_name",
+      "avg_days_to_graduate"
+    ],
+    "types": [
+      "VARCHAR",
+      "VARCHAR"
+    ],
+    "rows": [
+      [
+        "جامعة أم القرى",
+        "١٣٨٧٫٠"
+      ],
+      [
+        "جامعة الإمام محمد بن سعود الإسلامية",
+        "١٣٨٧٫٠"
+      ],
+      [
+        "جامعة الملك عبدالعزيز",
+        "١٣٨٧٫٠"
+      ],
+      [
+        "جامعة الملك سعود",
+        "١٣٨٧٫٠"
+      ],
+      [
+        "جامعة الفيصل",
+        "١٣٨٩٫٠"
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.018154000004869886
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.999659666995285,
+  "created_at": "2026-09-07T19:34:10.176949Z"
+}

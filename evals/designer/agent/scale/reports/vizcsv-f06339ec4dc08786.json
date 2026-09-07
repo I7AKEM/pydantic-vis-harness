@@ -1,0 +1,84 @@
+{
+  "dataset_id": "ds_9687813a967742d8b23b4f4b91b9e199",
+  "question": "كم نسبة الاسر السعودية الذين لديهم عاملة منزلية مقارنة بالعوائل الذين لا يملكون عمالة منزلية حسب اخر تاريخ اسناد؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage_with_worker AS \"نسبة الأسر التي لديها عاملة\", percentage_without_worker AS \"نسبة الأسر التي ليس لديها عاملة\" FROM \"ds_9687813a967742d8b23b4f4b91b9e199\"",
+    "columns": [
+      {
+        "name": "نسبة الأسر التي لديها عاملة",
+        "meaning": "نسبة الأسر السعودية التي لديها عاملة منزلية",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage_with_worker",
+        "aggregate": "none",
+        "denominator": "إجمالي الأسر السعودية"
+      },
+      {
+        "name": "نسبة الأسر التي ليس لديها عاملة",
+        "meaning": "نسبة الأسر السعودية التي ليس لديها عاملة منزلية",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage_without_worker",
+        "aggregate": "none",
+        "denominator": "إجمالي الأسر السعودية"
+      }
+    ],
+    "summary": "تبلغ نسبة الأسر السعودية التي لديها عاملة منزلية 0.11%، بينما تبلغ نسبة الأسر التي ليس لديها عاملة منزلية 99.89%.",
+    "assumptions": [
+      "تم استخدام البيانات المتاحة في السجل الوحيد المتاح في الجدول."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage_with_worker AS \"نسبة الأسر التي لديها عاملة\", percentage_without_worker AS \"نسبة الأسر التي ليس لديها عاملة\" FROM \"ds_9687813a967742d8b23b4f4b91b9e199\"",
+    "columns": [
+      "نسبة الأسر التي لديها عاملة",
+      "نسبة الأسر التي ليس لديها عاملة"
+    ],
+    "types": [
+      "DOUBLE",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        0.11,
+        99.89
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة الأسر التي لديها عاملة",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة الأسر التي لديها عاملة: shares sum to 0.1, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.0074087910033995286
+  },
+  "checks": [
+    {
+      "column": "نسبة الأسر التي لديها عاملة",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة الأسر التي لديها عاملة: shares sum to 0.1, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة الأسر التي لديها عاملة: shares sum to 0.1, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.8418731249985285,
+  "created_at": "2026-09-07T19:28:49.290519Z"
+}

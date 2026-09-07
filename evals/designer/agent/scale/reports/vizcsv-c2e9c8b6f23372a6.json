@@ -1,0 +1,96 @@
+{
+  "dataset_id": "ds_fb5031afd0b04a33a57081f29e0a9374",
+  "question": "ماهي نسبة المخالفات الملغاة من اجمالي المخالفات المرورية المرتكبة خلال الخمسة سنوات الماضية (2021-2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    cancelled_infringements AS \"المخالفات الملغاة\", \n    total_infringements AS \"إجمالي المخالفات\", \n    (CAST(cancelled_infringements AS DOUBLE) / total_infringements) * 100 AS \"نسبة الإلغاء\" \nFROM \"ds_fb5031afd0b04a33a57081f29e0a9374\"",
+    "columns": [
+      {
+        "name": "المخالفات الملغاة",
+        "meaning": "عدد المخالفات التي تم إلغاؤها",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "إجمالي المخالفات",
+        "meaning": "إجمالي عدد المخالفات المرورية المرتكبة",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "نسبة الإلغاء",
+        "meaning": "نسبة المخالفات الملغاة من الإجمالي",
+        "kind": "share",
+        "unit": null,
+        "source": null,
+        "aggregate": "share",
+        "denominator": "total_infringements"
+      }
+    ],
+    "summary": "تبلغ نسبة المخالفات الملغاة 3.36% تقريباً من إجمالي المخالفات المرورية، حيث تم إلغاء 7,924 مخالفة من أصل 235,562 مخالفة. تم تحليل البيانات المتاحة في الجدول دون وجود فلاتر زمنية إضافية لعدم توفر أعمدة التاريخ.",
+    "assumptions": [
+      "تم حساب النسبة بناءً على إجمالي القيم المتاحة في الجدول لعدم وجود أعمدة تاريخ لتحديد الفترة بين 2021 و 2025."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    cancelled_infringements AS \"المخالفات الملغاة\", \n    total_infringements AS \"إجمالي المخالفات\", \n    (CAST(cancelled_infringements AS DOUBLE) / total_infringements) * 100 AS \"نسبة الإلغاء\" \nFROM \"ds_fb5031afd0b04a33a57081f29e0a9374\"",
+    "columns": [
+      "المخالفات الملغاة",
+      "إجمالي المخالفات",
+      "نسبة الإلغاء"
+    ],
+    "types": [
+      "BIGINT",
+      "BIGINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        7924,
+        235562,
+        3.363870233738888
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة الإلغاء",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة الإلغاء: shares sum to 3.4, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.010303250004653819
+  },
+  "checks": [
+    {
+      "column": "نسبة الإلغاء",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة الإلغاء: shares sum to 3.4, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة الإلغاء: shares sum to 3.4, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 6.881210999999894,
+  "created_at": "2026-09-07T19:33:25.545596Z"
+}

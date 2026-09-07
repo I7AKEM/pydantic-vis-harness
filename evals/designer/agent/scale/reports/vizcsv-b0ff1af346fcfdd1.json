@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_2ae7156682954d72a61675158d11e2ac",
+  "question": "ما هي الدول المصدرة الرئيسية التي تؤثر على الاتجاه الشهري للواردات غير النفطية في المملكة العربية السعودية خلال العام الماضي؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات تتضمن تواريخ أو فترات زمنية (مثل الشهر والسنة) للواردات، حيث أن الجدول الحالي يحتوي فقط على إجمالي الأعداد لكل بلد منشأ دون تفاصيل زمنية؟",
+    "reason": "The user is asking for a \"monthly trend\" (الاتجاه الشهري) and \"during the last year\" (خلال العام الماضي), but the dataset only contains two columns: 'origin' (country) and 'count' (total quantity). There are no date or time columns available to perform a time-series analysis or filter by the last year."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.2700092919985764,
+  "created_at": "2026-09-07T19:33:07.910914Z"
+}

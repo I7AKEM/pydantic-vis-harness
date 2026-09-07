@@ -1,0 +1,83 @@
+{
+  "dataset_id": "ds_7c92c8b2e3b7467183053339a66f8b03",
+  "question": "هل يميل  النساء السعوديات الثريات الى اكمال الدراسات العليا (ماجستير - دكتوراة - زمالة) مقارنة مع النساء السعوديات غير الاثرياء؟ احسبها كنسبة من نفس طبقة الثراء",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT wealth_level, postgrad_percentage FROM \"ds_7c92c8b2e3b7467183053339a66f8b03\" ORDER BY CASE wealth_level WHEN 'Poor' THEN 1 WHEN 'Lower Middle' THEN 2 WHEN 'Middle' THEN 3 WHEN 'Upper Middle' THEN 4 WHEN 'Rich' THEN 5 END",
+    "columns": [
+      {
+        "name": "wealth_level",
+        "meaning": "مستوى الثراء",
+        "kind": "category",
+        "unit": null,
+        "source": "wealth_level",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "postgrad_percentage",
+        "meaning": "نسبة النساء الحاصلات على دراسات عليا",
+        "kind": "measure",
+        "unit": null,
+        "source": "postgrad_percentage",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "لا يظهر ميل واضح للنساء الثريات لإكمال الدراسات العليا مقارنة بغيرهن، حيث بلغت نسبة الحاصلات على دراسات عليا في طبقة \"Rich\" 33.82%، وهي أقل من نسبة طبقة \"Poor\" التي بلغت 34.07%.",
+    "assumptions": [
+      "تم استخدام عمود postgrad_percentage كقياس لنسبة إكمال الدراسات العليا لكل طبقة ثراء."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT wealth_level, postgrad_percentage FROM \"ds_7c92c8b2e3b7467183053339a66f8b03\" ORDER BY CASE wealth_level WHEN 'Poor' THEN 1 WHEN 'Lower Middle' THEN 2 WHEN 'Middle' THEN 3 WHEN 'Upper Middle' THEN 4 WHEN 'Rich' THEN 5 END",
+    "columns": [
+      "wealth_level",
+      "postgrad_percentage"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "Poor",
+        34.07
+      ],
+      [
+        "Lower Middle",
+        33.99
+      ],
+      [
+        "Middle",
+        33.86
+      ],
+      [
+        "Upper Middle",
+        34.19
+      ],
+      [
+        "Rich",
+        33.82
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.009055959002580494
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 6.739658166989102,
+  "created_at": "2026-09-07T19:30:01.815700Z"
+}

@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_dd6d32f6bc66457596557445a68ca7de",
+  "question": "ما هي النسبة المئوية للذكور الذين تقل أعمارهم عن 30 عاماً مقارنة بالإناث في المملكة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT gender, percentage FROM \"ds_dd6d32f6bc66457596557445a68ca7de\"",
+    "columns": [
+      {
+        "name": "gender",
+        "meaning": "الجنس",
+        "kind": "category",
+        "unit": null,
+        "source": "gender",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "percentage",
+        "meaning": "النسبة المئوية لمن هم دون 30 عاماً",
+        "kind": "measure",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "تبلغ النسبة المئوية للذكور الذين تقل أعمارهم عن 30 عاماً حوالي 49.56%، بينما تبلغ نسبة الإناث في نفس الفئة العمرية حوالي 50.44%.",
+    "assumptions": [
+      "تم استخدام القيم المباشرة من عمود النسبة المئوية لكل جنس."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT gender, percentage FROM \"ds_dd6d32f6bc66457596557445a68ca7de\"",
+    "columns": [
+      "gender",
+      "percentage"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "F",
+        50.4421768707483
+      ],
+      [
+        "M",
+        49.5578231292517
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.010870291996980086
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 6.995311959006358,
+  "created_at": "2026-09-07T19:28:38.072506Z"
+}

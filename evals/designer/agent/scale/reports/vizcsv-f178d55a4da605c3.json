@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_938d47fd4f634300bb3eaeafc59adef1",
+  "question": "كم نسبة الافراد الاحياء أصحاب طبقة الثروة الدنيا الحاصلين على شهادات عليا (ماجستير ودكتوراه) مقارنة بمجموع الافراد من نفس الطبقة حسب احدث بيانات متوفرة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage AS \"النسبة المئوية\" FROM \"ds_938d47fd4f634300bb3eaeafc59adef1\"",
+    "columns": [
+      {
+        "name": "النسبة المئوية",
+        "meaning": "نسبة الفقراء الحاصلين على شهادات عليا",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "total_poor_living"
+      }
+    ],
+    "summary": "تبلغ نسبة الأفراد من طبقة الثروة الدنيا الحاصلين على شهادات عليا 35.68% مقارنة بمجموع الأفراد من نفس الطبقة. تم الاعتماد على البيانات المتاحة في الجدول كأحدث بيانات متوفرة.",
+    "assumptions": [
+      "تم استخدام عمود percentage الذي يمثل نسبة الفقراء الحاصلين على شهادات عليا من إجمالي عدد الفقراء."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage AS \"النسبة المئوية\" FROM \"ds_938d47fd4f634300bb3eaeafc59adef1\"",
+    "columns": [
+      "النسبة المئوية"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        35.68
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "النسبة المئوية",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "النسبة المئوية: shares sum to 35.7, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.008314165999763645
+  },
+  "checks": [
+    {
+      "column": "النسبة المئوية",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "النسبة المئوية: shares sum to 35.7, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "النسبة المئوية: shares sum to 35.7, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.015509499993641,
+  "created_at": "2026-09-07T19:29:50.819614Z"
+}

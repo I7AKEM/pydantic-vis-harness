@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_f6bc5512c58c45209b3adce470988b14",
+  "question": "ما هو متوسط عدد المخالفات من المخالفات (المسددة والغير مسددة) في منطقة الرياض للمواطنين حتى نهاية يوليو 2025؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT avg_violation_per_person FROM \"ds_f6bc5512c58c45209b3adce470988b14\"",
+    "columns": [
+      {
+        "name": "avg_violation_per_person",
+        "meaning": "متوسط عدد المخالفات للشخص الواحد",
+        "kind": "measure",
+        "unit": null,
+        "source": "avg_violation_per_person",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "متوسط عدد المخالفات للشخص الواحد هو 3 مخالفات. تم استخراج هذه القيمة مباشرة من البيانات المتاحة في الجدول.",
+    "assumptions": [
+      "تم افتراض أن البيانات الموجودة في الجدول تمثل بالفعل الفئة المطلوبة (منطقة الرياض، المواطنين، وحتى نهاية يوليو 2025) نظراً لعدم وجود أعمدة تصفية في الجدول."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT avg_violation_per_person FROM \"ds_f6bc5512c58c45209b3adce470988b14\"",
+    "columns": [
+      "avg_violation_per_person"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        3
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.007010500004980713
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.744052999987616,
+  "created_at": "2026-09-07T19:29:37.114446Z"
+}

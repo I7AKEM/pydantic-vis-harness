@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_b2182c266f9d4128aff2438b17d9ec2e",
+  "question": "أريد تقرير كامل عن المخالفات المرورية يتضمن إحصائيات ورسوم بيانية",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تحديد الإحصائيات المحددة التي ترغب في رؤيتها في التقرير (مثل إجمالي المخالفات لكل سنة أو مقارنة بين السنوات)؟",
+    "reason": "The user is asking for a \"full report\" with \"statistics and graphs,\" which is too broad. I need to know which specific metrics or trends they want to analyze from the available columns (year, total_infringements, unique_events)."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.9665467500017257,
+  "created_at": "2026-09-07T19:30:35.451769Z"
+}

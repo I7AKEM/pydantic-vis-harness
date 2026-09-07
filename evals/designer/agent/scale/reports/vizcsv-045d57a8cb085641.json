@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_d2077f185ca0447c989dd35913c9c416",
+  "question": "كيف يتوزع السكان حسب الجنس داخل أكبر 5 مدن في المملكة في آخر شهر متوفر؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تحديد المدن الخمس الأكبر التي تقصدها، أو هل أعتمد على أكبر 5 مدن من حيث إجمالي عدد السكان الموجودة في البيانات؟ كما أرجو توضيح التاريخ المقصود بـ \"آخر شهر متوفر\" حيث لا تتوفر أعمدة للتاريخ في البيانات الحالية.",
+    "reason": "The user asks for the \"top 5 cities\" and \"the last available month\", but the dataset does not contain a date column to determine the month, and \"top 5\" needs a definition (though I can assume population size, it's safer to clarify given the date issue)."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.1366939170111436,
+  "created_at": "2026-09-07T19:27:42.766397Z"
+}

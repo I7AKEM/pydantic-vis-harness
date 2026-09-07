@@ -1,0 +1,69 @@
+{
+  "dataset_id": "ds_046e2bdaf3f44f938e5decca01635fc9",
+  "question": "اعرض قيم «total_violations» حسب «education_group».",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT education_group, total_violations FROM \"ds_046e2bdaf3f44f938e5decca01635fc9\"",
+    "columns": [
+      {
+        "name": "education_group",
+        "meaning": "المستوى التعليمي",
+        "kind": "category",
+        "unit": null,
+        "source": "education_group",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "total_violations",
+        "meaning": "إجمالي عدد المخالفات",
+        "kind": "category",
+        "unit": null,
+        "source": "total_violations",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "بلغ إجمالي عدد المخالفات للحاصلين على شهادات عليا (ماجستير/دكتوراه) ٩٦٦٣ مخالفة، بينما بلغ للخريجين بدون شهادات عليا (بكالوريوس/دبلوم) ٩٤٣٥ مخالفة.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT education_group, total_violations FROM \"ds_046e2bdaf3f44f938e5decca01635fc9\"",
+    "columns": [
+      "education_group",
+      "total_violations"
+    ],
+    "types": [
+      "VARCHAR",
+      "VARCHAR"
+    ],
+    "rows": [
+      [
+        "حاصلون على شهادات عليا (ماجستير/دكتوراه)",
+        "٩٦٦٣"
+      ],
+      [
+        "خريجون بدون شهادات عليا (بكالوريوس/دبلوم)",
+        "٩٤٣٥"
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.026582542006508447
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.04306829199777,
+  "created_at": "2026-09-07T19:34:05.904261Z"
+}

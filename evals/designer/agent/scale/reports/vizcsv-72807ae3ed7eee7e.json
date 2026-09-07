@@ -1,0 +1,79 @@
+{
+  "dataset_id": "ds_bc2e52e08c8642a3965e13233c90247a",
+  "question": "كم عدد السعوديين حسب الفئة العمرية؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT age_group, count FROM \"ds_bc2e52e08c8642a3965e13233c90247a\"",
+    "columns": [
+      {
+        "name": "age_group",
+        "meaning": "الفئة العمرية",
+        "kind": "ordinal",
+        "unit": null,
+        "source": "age_group",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "count",
+        "meaning": "عدد الأشخاص",
+        "kind": "measure",
+        "unit": null,
+        "source": "count",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "يتوزع عدد السعوديين حسب الفئات العمرية كالتالي: 1182 شخصاً في الفئة 25-64، و863 شخصاً في الفئة 0-14، و402 شخصاً في الفئة 15-24، و303 أشخاص في الفئة 65+.",
+    "assumptions": [
+      "تم اعتبار جميع السجلات في الجدول على أنها تمثل السعوديين بناءً على سؤال المستخدم."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT age_group, count FROM \"ds_bc2e52e08c8642a3965e13233c90247a\"",
+    "columns": [
+      "age_group",
+      "count"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "0-14",
+        863
+      ],
+      [
+        "15-24",
+        402
+      ],
+      [
+        "25-64",
+        1182
+      ],
+      [
+        "65+",
+        303
+      ]
+    ],
+    "row_count": 4,
+    "checks": [],
+    "seconds": 0.010705791995860636
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.415886374990805,
+  "created_at": "2026-09-07T19:33:23.219745Z"
+}

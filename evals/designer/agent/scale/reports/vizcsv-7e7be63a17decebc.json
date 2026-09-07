@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_89945a7f97764b95ae445438091f215b",
+  "question": "قارن متوسط اعداد المخالفات المرورية في سنة 2025 بين الأثرياء الحاصلين على شهادات دراسات عليا (ماجستير ودكتوراه) وبين الأثرياء الغير حاصلين على شهادات عليا",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT category, avg_violations_per_person FROM \"ds_89945a7f97764b95ae445438091f215b\" WHERE category IN ('الأثرياء الحاصلين على شهادات عليا', 'الأثرياء غير الحاصلين على شهادات عليا')",
+    "columns": [
+      {
+        "name": "category",
+        "meaning": "الفئة",
+        "kind": "category",
+        "unit": null,
+        "source": "category",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "avg_violations_per_person",
+        "meaning": "متوسط المخالفات للشخص الواحد",
+        "kind": "measure",
+        "unit": null,
+        "source": "avg_violations_per_person",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "بلغ متوسط عدد المخالفات المرورية للأثرياء غير الحاصلين على شهادات عليا 1.6 مخالفة، بينما بلغ للأثرياء الحاصلين على شهادات عليا 1.1 مخالفة.",
+    "assumptions": [
+      "تم افتراض أن البيانات المتاحة في الجدول تمثل سنة 2025 نظراً لعدم وجود عمود للتاريخ في مجموعة البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT category, avg_violations_per_person FROM \"ds_89945a7f97764b95ae445438091f215b\" WHERE category IN ('الأثرياء الحاصلين على شهادات عليا', 'الأثرياء غير الحاصلين على شهادات عليا')",
+    "columns": [
+      "category",
+      "avg_violations_per_person"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "الأثرياء الحاصلين على شهادات عليا",
+        1.1
+      ],
+      [
+        "الأثرياء غير الحاصلين على شهادات عليا",
+        1.6
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.02130545800901018
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 92.90825470800337,
+  "created_at": "2026-09-07T19:32:47.028765Z"
+}

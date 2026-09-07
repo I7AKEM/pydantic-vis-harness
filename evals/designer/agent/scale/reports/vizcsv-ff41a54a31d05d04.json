@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_81448c6392e24f75889fb078d774286b",
+  "question": "ما نسبة خريجين جامعة الملك سعود الذين يعيشون حاليًا في مدن غير الرياض من اجمالي الخريجين للخمسة سنوات الماضية (2021-2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage_non_riyadh AS \"نسبة خريجي خارج الرياض\" FROM \"ds_81448c6392e24f75889fb078d774286b\"",
+    "columns": [
+      {
+        "name": "نسبة خريجي خارج الرياض",
+        "meaning": "نسبة خريجي جامعة الملك سعود من خارج مدينة الرياض",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage_non_riyadh",
+        "aggregate": "none",
+        "denominator": "إجمالي الخريجين"
+      }
+    ],
+    "summary": "تبلغ نسبة خريجي جامعة الملك سعود الذين يعيشون في مدن غير الرياض 33.32% من إجمالي الخريجين. تم افتراض أن البيانات المتاحة في الجدول تمثل الفترة الزمنية المطلوبة (2021-2025).",
+    "assumptions": [
+      "تم افتراض أن البيانات المتاحة في الجدول تمثل الفترة الزمنية المطلوبة (2021-2025) نظراً لعدم وجود أعمدة زمنية في مجموعة البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage_non_riyadh AS \"نسبة خريجي خارج الرياض\" FROM \"ds_81448c6392e24f75889fb078d774286b\"",
+    "columns": [
+      "نسبة خريجي خارج الرياض"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        33.32
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة خريجي خارج الرياض",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة خريجي خارج الرياض: shares sum to 33.3, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.012855207998654805
+  },
+  "checks": [
+    {
+      "column": "نسبة خريجي خارج الرياض",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة خريجي خارج الرياض: shares sum to 33.3, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة خريجي خارج الرياض: shares sum to 33.3, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.99444012499589,
+  "created_at": "2026-09-07T19:29:41.118782Z"
+}

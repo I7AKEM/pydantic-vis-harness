@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_70ccd5c6e7a9416f8a0a854e5419973b",
+  "question": "عطني خريطة لمسارات طلبات التوصيل ف",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تحديد ما الذي ترغب في معرفته عن مسارات التوصيل (مثل عدد المسارات لكل تطبيق) بدلاً من طلب الخريطة نفسها، حيث أن بيانات المسارات الجغرافية غير متاحة للاستعلام المباشر؟",
+    "reason": "The column 'path_wkt' is marked as values_omitted=true, meaning it cannot be queried. I cannot provide a map or the raw WKT data."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.31520295800874,
+  "created_at": "2026-09-07T19:27:54.052479Z"
+}

@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_08ee0435c5ad497a9afe5cc36229b5c4",
+  "question": "كم عدد الاشخاص “الاثرياء” وفقًا لمؤشر الثروة ورواتبهم تقل عن 10 الاف ريال سعودي حسب احدث اسناد",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT rich_people_with_low_salary AS \"عدد الأشخاص\" FROM \"ds_08ee0435c5ad497a9afe5cc36229b5c4\"",
+    "columns": [
+      {
+        "name": "عدد الأشخاص",
+        "meaning": "عدد الأشخاص الأثرياء الذين تقل رواتبهم عن 10 آلاف ريال سعودي",
+        "kind": "measure",
+        "unit": null,
+        "source": "rich_people_with_low_salary",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "يبلغ عدد الأشخاص الأثرياء الذين تقل رواتبهم عن 10 آلاف ريال سعودي 7,633 شخصاً.",
+    "assumptions": [
+      "تم الاعتماد على العمود rich_people_with_low_salary كونه يمثل القيمة المطلوبة مباشرة وفقاً لوصف البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT rich_people_with_low_salary AS \"عدد الأشخاص\" FROM \"ds_08ee0435c5ad497a9afe5cc36229b5c4\"",
+    "columns": [
+      "عدد الأشخاص"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        7633
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.00914129200100433
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.5457216249924386,
+  "created_at": "2026-09-07T19:28:56.285424Z"
+}

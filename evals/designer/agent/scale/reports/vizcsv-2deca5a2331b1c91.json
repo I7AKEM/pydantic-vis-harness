@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_e4410af0090f4cd7924f84a550169358",
+  "question": "كم تبلغ نسبة المخالفات التي لم يتم سدادها مقارنة بإجمالي عدد مخالفات الزوار لعام 2025؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT unpaid_percentage FROM \"ds_e4410af0090f4cd7924f84a550169358\"",
+    "columns": [
+      {
+        "name": "unpaid_percentage",
+        "meaning": "نسبة المخالفات غير المسددة",
+        "kind": "share",
+        "unit": null,
+        "source": "unpaid_percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي عدد المخالفات"
+      }
+    ],
+    "summary": "تبلغ نسبة المخالفات التي لم يتم سدادها 78.8% من إجمالي عدد مخالفات الزوار لعام 2025.",
+    "assumptions": [
+      "تم استخدام العمود المخصص للنسبة المئوية مباشرة من البيانات المتاحة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT unpaid_percentage FROM \"ds_e4410af0090f4cd7924f84a550169358\"",
+    "columns": [
+      "unpaid_percentage"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        78.8
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "unpaid_percentage",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "unpaid_percentage: shares sum to 78.8, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.010466749998158775
+  },
+  "checks": [
+    {
+      "column": "unpaid_percentage",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "unpaid_percentage: shares sum to 78.8, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "unpaid_percentage: shares sum to 78.8, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.7353781670099124,
+  "created_at": "2026-09-07T19:31:02.887842Z"
+}

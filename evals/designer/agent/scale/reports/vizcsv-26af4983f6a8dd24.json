@@ -1,0 +1,124 @@
+{
+  "dataset_id": "ds_36e1a82a28d343f99d70f08f7b8c3e21",
+  "question": "ما هي التوزيعات السكانية للمواطنين والمقيمين في أكبر 5 مدن سعودية وفقاً لبيانات الموقع السكني؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    city, \n    person_type, \n    SUM(population) AS \"السكان\"\nFROM \"ds_36e1a82a28d343f99d70f08f7b8c3e21\"\nWHERE city IN (\n    SELECT city \n    FROM \"ds_36e1a82a28d343f99d70f08f7b8c3e21\" \n    GROUP BY city \n    ORDER BY SUM(population) DESC \n    LIMIT 5\n)\nGROUP BY city, person_type\nORDER BY SUM(population) DESC, city;",
+    "columns": [
+      {
+        "name": "city",
+        "meaning": "المدينة",
+        "kind": "category",
+        "unit": null,
+        "source": "city",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "person_type",
+        "meaning": "نوع الشخص (مواطن أو مقيم)",
+        "kind": "category",
+        "unit": null,
+        "source": "person_type",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "السكان",
+        "meaning": "عدد السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "population",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "تظهر البيانات أن مدينة نجران هي الأكبر من حيث عدد السكان، حيث يبلغ عدد المواطنين 292,034 نسمة والمقيمين 291,584 نسمة. تليها المدن الأخرى مثل صبيا ورفحاء وجدة وجازان بتوزيعات سكانية تتراوح بين 145,653 و 146,196 نسمة لكل فئة.",
+    "assumptions": [
+      "تم تحديد أكبر 5 مدن بناءً على مجموع السكان (مواطنين ومقيمين) في كل مدينة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    city, \n    person_type, \n    SUM(population) AS \"السكان\"\nFROM \"ds_36e1a82a28d343f99d70f08f7b8c3e21\"\nWHERE city IN (\n    SELECT city \n    FROM \"ds_36e1a82a28d343f99d70f08f7b8c3e21\" \n    GROUP BY city \n    ORDER BY SUM(population) DESC \n    LIMIT 5\n)\nGROUP BY city, person_type\nORDER BY SUM(population) DESC, city;",
+    "columns": [
+      "city",
+      "person_type",
+      "السكان"
+    ],
+    "types": [
+      "VARCHAR",
+      "VARCHAR",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        "نجران",
+        "Saudi",
+        292034
+      ],
+      [
+        "نجران",
+        "Alien",
+        291584
+      ],
+      [
+        "صبيا",
+        "Saudi",
+        146196
+      ],
+      [
+        "رفحاء",
+        "Saudi",
+        146028
+      ],
+      [
+        "جدة",
+        "Alien",
+        146026
+      ],
+      [
+        "رفحاء",
+        "Alien",
+        145872
+      ],
+      [
+        "جازان",
+        "Alien",
+        145852
+      ],
+      [
+        "جدة",
+        "Saudi",
+        145800
+      ],
+      [
+        "صبيا",
+        "Alien",
+        145760
+      ],
+      [
+        "جازان",
+        "Saudi",
+        145653
+      ]
+    ],
+    "row_count": 10,
+    "checks": [],
+    "seconds": 0.0209024590003537
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 7.572782750008628,
+  "created_at": "2026-09-07T19:28:56.872257Z"
+}

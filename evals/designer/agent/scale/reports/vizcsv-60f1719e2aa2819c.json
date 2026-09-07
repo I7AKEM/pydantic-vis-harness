@@ -1,0 +1,83 @@
+{
+  "dataset_id": "ds_7ff4044d10b5423eac355758acea1c11",
+  "question": "عدد الأجانب المغادرين من سوق العمل في 2025م مقسمة حسب الفئة العمرية (20-25، 26-30، 31-40، 41-50، 51+)",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT age_group, count FROM \"ds_7ff4044d10b5423eac355758acea1c11\"",
+    "columns": [
+      {
+        "name": "age_group",
+        "meaning": "الفئة العمرية",
+        "kind": "ordinal",
+        "unit": null,
+        "source": "age_group",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "count",
+        "meaning": "عدد الأجانب المغادرين",
+        "kind": "measure",
+        "unit": null,
+        "source": "count",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "بلغ عدد الأجانب المغادرين من سوق العمل في عام 2025م موزعين حسب الفئات العمرية: 75,686 شخصاً للفئة (51+)، و26,210 شخصاً للفئة (31-40)، و26,194 شخصاً للفئة (41-50)، و15,534 شخصاً للفئة (20-25)، و13,125 شخصاً للفئة (26-30).",
+    "assumptions": [
+      "تم اعتبار البيانات الموجودة في الجدول على أنها تمثل عام 2025م كما ورد في السؤال."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT age_group, count FROM \"ds_7ff4044d10b5423eac355758acea1c11\"",
+    "columns": [
+      "age_group",
+      "count"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "20-25",
+        15534
+      ],
+      [
+        "26-30",
+        13125
+      ],
+      [
+        "31-40",
+        26210
+      ],
+      [
+        "41-50",
+        26194
+      ],
+      [
+        "51+",
+        75686
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.00699120901117567
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.308257416996639,
+  "created_at": "2026-09-07T19:28:32.636241Z"
+}

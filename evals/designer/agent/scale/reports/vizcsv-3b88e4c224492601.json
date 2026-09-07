@@ -1,0 +1,99 @@
+{
+  "dataset_id": "ds_4c78fb8a86204a22947d83da0c160168",
+  "question": "كيف يرتبط مستوى الثراء بحجم الأسرة ونوع السكان (مواطن/مقيم) في أحدث فترة زمنية متوفرة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT wealth_level, population_type, avg_household_size FROM \"ds_4c78fb8a86204a22947d83da0c160168\"",
+    "columns": [
+      {
+        "name": "wealth_level",
+        "meaning": "مستوى الثراء",
+        "kind": "category",
+        "unit": null,
+        "source": "wealth_level",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "population_type",
+        "meaning": "نوع السكان",
+        "kind": "category",
+        "unit": null,
+        "source": "population_type",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "avg_household_size",
+        "meaning": "متوسط حجم الأسرة",
+        "kind": "measure",
+        "unit": null,
+        "source": "avg_household_size",
+        "aggregate": "none",
+        "denominator": "people per household"
+      }
+    ],
+    "summary": "تظهر البيانات أن جميع الفئات السكانية المسجلة هي من \"مواطن\"، حيث يتراوح متوسط حجم الأسرة بين 1.0 و 1.0038 شخصاً لكل أسرة عبر مختلف مستويات الثراء. يلاحظ وجود زيادة طفيفة جداً في حجم الأسرة مع ارتفاع مستوى الثراء، خاصة في الفئات \"Upper Middle\" و \"Rich\".",
+    "assumptions": [
+      "تم اعتبار جميع البيانات المتوفرة في الجدول كأحدث فترة زمنية نظراً لعدم وجود أعمدة زمنية."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT wealth_level, population_type, avg_household_size FROM \"ds_4c78fb8a86204a22947d83da0c160168\"",
+    "columns": [
+      "wealth_level",
+      "population_type",
+      "avg_household_size"
+    ],
+    "types": [
+      "VARCHAR",
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "Poor",
+        "مواطن",
+        1.0
+      ],
+      [
+        "Lower Middle",
+        "مواطن",
+        1.0
+      ],
+      [
+        "Middle",
+        "مواطن",
+        1.0
+      ],
+      [
+        "Upper Middle",
+        "مواطن",
+        1.0035211267605635
+      ],
+      [
+        "Rich",
+        "مواطن",
+        1.0038022813688212
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.02233412500936538
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.8544331670127576,
+  "created_at": "2026-09-07T19:32:53.078191Z"
+}

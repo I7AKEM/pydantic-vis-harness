@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_9cc9d9487709435c8e94eb88f0e1a18e",
+  "question": "كم عدد العاملين مقارنة بعدد السكان في المدينة الرئيسية؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "ما هي المدينة التي تقصدها بـ \"المدينة الرئيسية\"؟",
+    "reason": "The question asks for the \"main city\" (المدينة الرئيسية), but the dataset does not specify which city is the main one, and there is no column indicating city importance or rank."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.9902672500029439,
+  "created_at": "2026-09-07T19:32:18.240193Z"
+}

@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_bd1103135e0f4c3d803b9c5142b9f92d",
+  "question": "هل ارتكب المواطنون الحاصلون على شهادات عليا (ماجستير-دكتوراة) مخالفات اقل مقارنة بالغير حاصلين على شهادات عليا خلال الفترة (2023-2025)؟ فقط للأعمار بين 30 و 50",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل تتوفر بيانات عن العمر أو تاريخ المخالفات في مجموعة البيانات هذه؟",
+    "reason": "The user is asking for a comparison filtered by a specific time period (2023-2025) and a specific age range (30 to 50), but the available columns only include 'category', 'unique_violators', and 'total_violations'. There are no columns for age or date."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.345725292005227,
+  "created_at": "2026-09-07T19:31:47.800651Z"
+}

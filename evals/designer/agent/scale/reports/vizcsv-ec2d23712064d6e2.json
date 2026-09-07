@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_ec4d92eea4b74c069b7a0bdbbd6f8d93",
+  "question": "حدد اكبر خمسين مورد من حيث قيمة الواردات، واكبر خمسين مصدر من حيث قيمة الصادرات (بالريال السعودي) وذلك بناء على مجموع القيم للسنوات الخمسة الماضية (2021-2025) ثم اوجد توزيعهم حسب العمر",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات الموردين والمصدرين وقيم التجارة وأعمارهم؟ الجدول الحالي يحتوي فقط على إجمالي عدد السجلات.",
+    "reason": "The provided table only contains a single column 'total_records' with a total count. It does not contain information about importers, exporters, import/export values, dates, or ages, which are necessary to answer the question."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.0576747499872,
+  "created_at": "2026-09-07T19:29:06.206342Z"
+}

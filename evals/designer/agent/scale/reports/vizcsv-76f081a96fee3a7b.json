@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_48dd823cf8974d368f3c5363fe605d85",
+  "question": "هل للمعدل التراكمي اثر على ثروة الأشخاص؟ اجمع جميع خريجي الجامعات التي تعتمد نظام الخمسة نقاط ثم اقسم خريجين عام 2015  الى مجموعتين حسب المعدل التراكمي اعلى من 4 واقل من 4 ومن ثم وزع كل مجموعة على مؤشرات الثروة المختلفة",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك توضيح أين يمكنني العثور على بيانات \"سنة التخرج\" أو \"نظام النقاط\" في مجموعة البيانات، حيث أن الجدول الحالي يحتوي فقط على مجموعات المعدل التراكمي ومستويات الثروة؟",
+    "reason": "The user is asking to filter by graduation year (2015) and university grading system (5-point system), but these columns are not present in the provided dataset schema."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.256176584007335,
+  "created_at": "2026-09-07T19:32:36.232367Z"
+}

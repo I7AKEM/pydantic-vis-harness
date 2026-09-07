@@ -1,0 +1,83 @@
+{
+  "dataset_id": "ds_783527e04cf34ddd9f94379540f474f5",
+  "question": "ما هو الفرق بالنسبة المئوية في متوسط عدد المخالفات السنوية بين السائقين تحت عمر 25 سنة والذين تزيد أعمارهم عن 25 سنة لكل عام من أعوام 2021-2025؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT year, percentage_difference FROM \"ds_783527e04cf34ddd9f94379540f474f5\" WHERE year BETWEEN 2021 AND 2025 ORDER BY year",
+    "columns": [
+      {
+        "name": "year",
+        "meaning": "السنة",
+        "kind": "ordinal",
+        "unit": null,
+        "source": "year",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "percentage_difference",
+        "meaning": "الفرق بالنسبة المئوية في متوسط عدد المخالفات",
+        "kind": "measure",
+        "unit": null,
+        "source": "percentage_difference",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "تراوح الفرق بالنسبة المئوية في متوسط عدد المخالفات السنوية بين السائقين تحت سن 25 وسن فوق 25 من 17.69% في عام 2021 إلى 33.33% في عام 2024، قبل أن ينخفض قليلاً إلى 30.84% في عام 2025.",
+    "assumptions": [
+      "تم استخدام البيانات المتاحة لكل عام من 2021 إلى 2025 مباشرة دون إجراء عمليات حسابية إضافية."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT year, percentage_difference FROM \"ds_783527e04cf34ddd9f94379540f474f5\" WHERE year BETWEEN 2021 AND 2025 ORDER BY year",
+    "columns": [
+      "year",
+      "percentage_difference"
+    ],
+    "types": [
+      "BIGINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        2021,
+        17.694299876460082
+      ],
+      [
+        2022,
+        22.538534018774957
+      ],
+      [
+        2023,
+        32.33414079294643
+      ],
+      [
+        2024,
+        33.32976679345252
+      ],
+      [
+        2025,
+        30.83956194139614
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.013860624996596016
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 6.030371041997569,
+  "created_at": "2026-09-07T19:29:13.724214Z"
+}

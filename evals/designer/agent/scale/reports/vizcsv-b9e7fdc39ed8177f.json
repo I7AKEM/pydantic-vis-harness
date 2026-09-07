@@ -1,0 +1,99 @@
+{
+  "dataset_id": "ds_cffec8ae1de94498af978c94b79a39bd",
+  "question": "عطني تقرير موجز عن سكان مدينة الرياض",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT نوع_الفرد, SUM(إجمالي_السكان) AS إجمالي_السكان, SUM(سكان_فئة_15_25) AS سكان_فئة_15_25, AVG(النسبة_المئوية) AS النسبة_المئوية FROM \"ds_cffec8ae1de94498af978c94b79a39bd\" GROUP BY نوع_الفرد",
+    "columns": [
+      {
+        "name": "نوع_الفرد",
+        "meaning": "نوع الفرد",
+        "kind": "category",
+        "unit": null,
+        "source": "نوع_الفرد",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "إجمالي_السكان",
+        "meaning": "إجمالي السكان",
+        "kind": "measure",
+        "unit": "شخص",
+        "source": "إجمالي_السكان",
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "سكان_فئة_15_25",
+        "meaning": "سكان الفئة العمرية 15-25",
+        "kind": "measure",
+        "unit": "شخص",
+        "source": "سكان_فئة_15_25",
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "النسبة_المئوية",
+        "meaning": "النسبة المئوية للفئة العمرية 15-25",
+        "kind": "measure",
+        "unit": "%",
+        "source": "النسبة_المئوية",
+        "aggregate": "avg",
+        "denominator": null
+      }
+    ],
+    "summary": "يبلغ عدد السكان من المقيمين 127 شخصاً بنسبة 13.39% للفئة العمرية 15-25، بينما يبلغ عدد المواطنين 105 أشخاص بنسبة 11.43% للفئة العمرية ذاتها. يبلغ عدد السكان في الفئة العمرية 15-25 سنة 17 شخصاً للمقيمين و12 شخصاً للمواطنين.",
+    "assumptions": [
+      "تم تجميع البيانات بناءً على نوع الفرد (مواطن أو مقيم) لتقديم التقرير الموجز."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT نوع_الفرد, SUM(إجمالي_السكان) AS إجمالي_السكان, SUM(سكان_فئة_15_25) AS سكان_فئة_15_25, AVG(النسبة_المئوية) AS النسبة_المئوية FROM \"ds_cffec8ae1de94498af978c94b79a39bd\" GROUP BY نوع_الفرد",
+    "columns": [
+      "نوع_الفرد",
+      "إجمالي_السكان",
+      "سكان_فئة_15_25",
+      "النسبة_المئوية"
+    ],
+    "types": [
+      "VARCHAR",
+      "HUGEINT",
+      "HUGEINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "مقيم",
+        127,
+        17,
+        13.39
+      ],
+      [
+        "مواطن",
+        105,
+        12,
+        11.43
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.011420292008551769
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": false,
+      "message": "The summary mentions -25, which is not in the result. Use only numbers from the result."
+    }
+  ],
+  "warnings": [
+    "The summary mentions -25, which is not in the result. Use only numbers from the result."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.405375041998923,
+  "created_at": "2026-09-07T19:33:44.210308Z"
+}

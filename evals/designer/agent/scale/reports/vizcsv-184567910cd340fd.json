@@ -1,0 +1,83 @@
+{
+  "dataset_id": "ds_65a5c4a26c6e4439b308b1f7d38e03f4",
+  "question": "ما هي أكثر 5 جنسيات تسببت في المخالفات المرورية لعام 2024 ؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT nationality AS \"الجنسية\", SUM(violation_count) AS \"إجمالي المخالفات\" FROM \"ds_65a5c4a26c6e4439b308b1f7d38e03f4\" GROUP BY nationality ORDER BY \"إجمالي المخالفات\" DESC LIMIT 5",
+    "columns": [
+      {
+        "name": "الجنسية",
+        "meaning": "الجنسية",
+        "kind": "category",
+        "unit": null,
+        "source": "nationality",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "إجمالي المخالفات",
+        "meaning": "إجمالي عدد المخالفات المرورية",
+        "kind": "measure",
+        "unit": null,
+        "source": "violation_count",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "أكثر 5 جنسيات تسببت في مخالفات مرورية هي السعودية بـ 25,206 مخالفة، تليها البحرينية بـ 1,137 مخالفة، ثم اللبنانية بـ 1,102 مخالفة، والألمانية بـ 1,096 مخالفة، واليابانية بـ 1,089 مخالفة.",
+    "assumptions": [
+      "تم اعتبار جميع البيانات المتاحة في الجدول على أنها تخص عام 2024 لعدم وجود عمود للتاريخ."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT nationality AS \"الجنسية\", SUM(violation_count) AS \"إجمالي المخالفات\" FROM \"ds_65a5c4a26c6e4439b308b1f7d38e03f4\" GROUP BY nationality ORDER BY \"إجمالي المخالفات\" DESC LIMIT 5",
+    "columns": [
+      "الجنسية",
+      "إجمالي المخالفات"
+    ],
+    "types": [
+      "VARCHAR",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        "سعودي",
+        25206
+      ],
+      [
+        "بحريني",
+        1137
+      ],
+      [
+        "لبناني",
+        1102
+      ],
+      [
+        "ألماني",
+        1096
+      ],
+      [
+        "ياباني",
+        1089
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.008167042004060932
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.716949707988533,
+  "created_at": "2026-09-07T19:30:43.015497Z"
+}

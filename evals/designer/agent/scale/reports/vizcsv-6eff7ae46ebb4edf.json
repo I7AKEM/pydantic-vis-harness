@@ -1,0 +1,84 @@
+{
+  "dataset_id": "ds_8e516a835ace408d84a0ba82f45bb56a",
+  "question": "عطني رسم بياني على شكل donut يمثل السكان على شكل مواطن او مقيم",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT نوع_السكان, SUM(العدد) AS إجمالي_السكان, 100.0 * SUM(العدد) / SUM(SUM(العدد)) OVER () AS النسبة FROM \"ds_8e516a835ace408d84a0ba82f45bb56a\" GROUP BY نوع_السكان",
+    "columns": [
+      {
+        "name": "نوع_السكان",
+        "meaning": "نوع السكان",
+        "kind": "category",
+        "unit": null,
+        "source": "نوع_السكان",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "إجمالي_السكان",
+        "meaning": "إجمالي عدد السكان",
+        "kind": "measure",
+        "unit": "شخص",
+        "source": "العدد",
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "النسبة",
+        "meaning": "نسبة السكان",
+        "kind": "share",
+        "unit": "%",
+        "source": "العدد",
+        "aggregate": "share",
+        "denominator": "إجمالي عدد السكان لجميع الفئات"
+      }
+    ],
+    "summary": "يبلغ عدد المواطنين 373,877 شخصاً بنسبة 49.91%، بينما يبلغ عدد الوافدين 375,161 شخصاً بنسبة 50.09%.",
+    "assumptions": [
+      "تم حساب النسب المئوية بناءً على إجمالي عدد السكان المذكورين في البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT نوع_السكان, SUM(العدد) AS إجمالي_السكان, 100.0 * SUM(العدد) / SUM(SUM(العدد)) OVER () AS النسبة FROM \"ds_8e516a835ace408d84a0ba82f45bb56a\" GROUP BY نوع_السكان",
+    "columns": [
+      "نوع_السكان",
+      "إجمالي_السكان",
+      "النسبة"
+    ],
+    "types": [
+      "VARCHAR",
+      "HUGEINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "مواطن",
+        373877,
+        49.91429006272045
+      ],
+      [
+        "وافد",
+        375161,
+        50.08570993727955
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.011273625001194887
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.648572582998895,
+  "created_at": "2026-09-07T19:32:48.172080Z"
+}

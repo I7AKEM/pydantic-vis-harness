@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_32c14e2b26a04f05b9a6b2d449aabf95",
+  "question": "ما هي اكثر  خمسة مجموعات تخصصات جامعية (حسب احدث مؤهل) تكرارًا للموردين الذين زادت قيمة وارداتهم عن 10 مليون ريال في العام الماضي (2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي بالجدول الذي يحتوي على بيانات الموردين، تخصصاتهم الجامعية، وقيم وارداتهم؟ الجدول الحالي يحتوي فقط على إجمالي عدد السجلات.",
+    "reason": "The provided table only contains a single column 'total_records' with a single row, which is insufficient to answer the question about supplier specializations and import values."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.9274615419999463,
+  "created_at": "2026-09-07T19:31:14.010511Z"
+}

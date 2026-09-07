@@ -1,0 +1,73 @@
+{
+  "dataset_id": "ds_dab9255d92b24be1b8cf1624014cfee2",
+  "question": "ما نسبة خريجين جامعة الملك سعود الذين يعيشون حاليًا في مدن غير الرياض من اجمالي الخريجين للخمسة سنوات الماضية (2021-2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    CAST(outside_riyadh_region AS DOUBLE) / total_graduates * 100 AS \"نسبة الخريجين خارج الرياض\"\nFROM \"ds_dab9255d92b24be1b8cf1624014cfee2\"",
+    "columns": [
+      {
+        "name": "نسبة الخريجين خارج الرياض",
+        "meaning": "نسبة الخريجين الذين يعيشون خارج منطقة الرياض من إجمالي الخريجين",
+        "kind": "share",
+        "unit": null,
+        "source": "outside_riyadh_region",
+        "aggregate": "share",
+        "denominator": "total_graduates"
+      }
+    ],
+    "summary": "نسبة الخريجين الذين يعيشون خارج منطقة الرياض هي 0.27% تقريبًا من إجمالي الخريجين. تم حساب هذه النسبة بناءً على البيانات المتاحة في الجدول دون تحديد فترات زمنية إضافية.",
+    "assumptions": [
+      "تم استخدام إجمالي عدد الخريجين كقاعدة للحساب (denominator) بدلاً من عدد الخريجين الذين تتوفر بيانات مواقعهم فقط.",
+      "البيانات في الجدول تمثل الفترة المطلوبة (2021-2025) حيث لا توجد أعمدة للتاريخ في مجموعة البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    CAST(outside_riyadh_region AS DOUBLE) / total_graduates * 100 AS \"نسبة الخريجين خارج الرياض\"\nFROM \"ds_dab9255d92b24be1b8cf1624014cfee2\"",
+    "columns": [
+      "نسبة الخريجين خارج الرياض"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        0.26532041124663747
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة الخريجين خارج الرياض",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة الخريجين خارج الرياض: shares sum to 0.3, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.008053124998696148
+  },
+  "checks": [
+    {
+      "column": "نسبة الخريجين خارج الرياض",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة الخريجين خارج الرياض: shares sum to 0.3, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة الخريجين خارج الرياض: shares sum to 0.3, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.355756582997856,
+  "created_at": "2026-09-07T19:30:53.896291Z"
+}

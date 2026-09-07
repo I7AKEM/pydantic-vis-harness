@@ -1,0 +1,134 @@
+{
+  "dataset_id": "ds_e3f7140a17cf4779afd15627ac7504a3",
+  "question": "ما هو توزيع المقيمين الخليجيين حسب الجنس والجنسية في العشرة سنوات الماضية (2016-2026) ؟ قارن بين السنوات باستخدام تاريخ 31-12 من كل سنة",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    year, \n    nationality, \n    gender, \n    SUM(count) AS \"العدد\"\nFROM \"ds_e3f7140a17cf4779afd15627ac7504a3\"\nWHERE year BETWEEN 2016 AND 2026\nGROUP BY year, nationality, gender\nORDER BY year DESC, nationality, gender",
+    "columns": [
+      {
+        "name": "year",
+        "meaning": "السنة",
+        "kind": "time",
+        "unit": null,
+        "source": "year",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "nationality",
+        "meaning": "الجنسية",
+        "kind": "category",
+        "unit": null,
+        "source": "nationality",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "gender",
+        "meaning": "الجنس",
+        "kind": "category",
+        "unit": null,
+        "source": "gender",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "العدد",
+        "meaning": "عدد الأفراد",
+        "kind": "measure",
+        "unit": null,
+        "source": "count",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "يظهر توزيع المقيمين الخليجيين لعام 2026، حيث يتصدر الكويتيون (إناث 67، ذكور 65) يليهم العمانيون (إناث 65، ذكور 59). تتوفر البيانات فقط لعام 2026 من بين الفترة المطلوبة (2016-2026).",
+    "assumptions": [
+      "تم اعتبار تاريخ 31-12 من كل سنة كتمثيل للبيانات السنوية المتاحة في الجدول.",
+      "تم تجميع البيانات بناءً على السنة والجنسية والجنس."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    year, \n    nationality, \n    gender, \n    SUM(count) AS \"العدد\"\nFROM \"ds_e3f7140a17cf4779afd15627ac7504a3\"\nWHERE year BETWEEN 2016 AND 2026\nGROUP BY year, nationality, gender\nORDER BY year DESC, nationality, gender",
+    "columns": [
+      "year",
+      "nationality",
+      "gender",
+      "العدد"
+    ],
+    "types": [
+      "BIGINT",
+      "VARCHAR",
+      "VARCHAR",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        2026,
+        "اماراتي",
+        "F",
+        55
+      ],
+      [
+        2026,
+        "اماراتي",
+        "M",
+        60
+      ],
+      [
+        2026,
+        "عماني",
+        "F",
+        65
+      ],
+      [
+        2026,
+        "عماني",
+        "M",
+        59
+      ],
+      [
+        2026,
+        "قطري",
+        "F",
+        40
+      ],
+      [
+        2026,
+        "قطري",
+        "M",
+        57
+      ],
+      [
+        2026,
+        "كويتي",
+        "F",
+        67
+      ],
+      [
+        2026,
+        "كويتي",
+        "M",
+        65
+      ]
+    ],
+    "row_count": 8,
+    "checks": [],
+    "seconds": 0.020273874994018115
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 7.547262583000702,
+  "created_at": "2026-09-07T19:29:27.620442Z"
+}

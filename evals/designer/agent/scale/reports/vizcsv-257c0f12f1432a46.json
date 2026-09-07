@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_206d8b7d02c14a8eb2941e1825fd3ab9",
+  "question": "ما هي نسبة الخريجين من تخصص اللغة العربية الذين تم توظيفهم خلال اول سنة من تخرجهم برواتب تزيد عن 6000 ريال في الخمسة سنوات الماضية (2021-2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage AS \"النسبة المئوية\" FROM \"ds_206d8b7d02c14a8eb2941e1825fd3ab9\"",
+    "columns": [
+      {
+        "name": "النسبة المئوية",
+        "meaning": "نسبة الخريجين الذين تم توظيفهم برواتب عالية",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "total_graduates"
+      }
+    ],
+    "summary": "نسبة الخريجين من تخصص اللغة العربية الذين تم توظيفهم برواتب تزيد عن 6000 ريال هي 0.12%.",
+    "assumptions": [
+      "تم اعتبار العمود percentage في مجموعة البيانات كتمثيل للنسبة المطلوبة للفترة المذكورة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage AS \"النسبة المئوية\" FROM \"ds_206d8b7d02c14a8eb2941e1825fd3ab9\"",
+    "columns": [
+      "النسبة المئوية"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        0.12
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "النسبة المئوية",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "النسبة المئوية: shares sum to 0.1, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.009274749987525865
+  },
+  "checks": [
+    {
+      "column": "النسبة المئوية",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "النسبة المئوية: shares sum to 0.1, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "النسبة المئوية: shares sum to 0.1, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.5347539169888478,
+  "created_at": "2026-09-07T19:27:58.571540Z"
+}

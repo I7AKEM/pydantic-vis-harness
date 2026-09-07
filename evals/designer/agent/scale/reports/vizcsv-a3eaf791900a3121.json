@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_486d9c123a7848f39cf5984cde47cd0f",
+  "question": "كم عدد السعوديين الذين تكبر اعمارهم عن 18 سنة ولم يسبق لهم مغادرة المملكة حسب احدث اسناد؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT saudi_adults_never_left AS \"عدد السعوديين البالغين الذين لم يغادروا المملكة\" FROM \"ds_486d9c123a7848f39cf5984cde47cd0f\"",
+    "columns": [
+      {
+        "name": "عدد السعوديين البالغين الذين لم يغادروا المملكة",
+        "meaning": "عدد السعوديين البالغين الذين لم يسبق لهم مغادرة المملكة",
+        "kind": "measure",
+        "unit": null,
+        "source": "saudi_adults_never_left",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "عدد السعوديين البالغين الذين لم يسبق لهم مغادرة المملكة هو 1,713 شخصاً. تم استخراج هذه القيمة من السجل المتاح في مجموعة البيانات.",
+    "assumptions": [
+      "تم اعتبار \"البالغين\" على أنهم الأشخاص الذين تزيد أعمارهم عن 18 عاماً بناءً على تعريف العمود saudi_adults_never_left."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT saudi_adults_never_left AS \"عدد السعوديين البالغين الذين لم يغادروا المملكة\" FROM \"ds_486d9c123a7848f39cf5984cde47cd0f\"",
+    "columns": [
+      "عدد السعوديين البالغين الذين لم يغادروا المملكة"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        1713
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.007197667000582442
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.923385041998699,
+  "created_at": "2026-09-07T19:28:27.966224Z"
+}

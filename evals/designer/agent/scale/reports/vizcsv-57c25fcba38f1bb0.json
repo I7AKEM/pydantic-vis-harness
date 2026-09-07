@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_229ae58d519f40fab9a0f13361108210",
+  "question": "كم تبلغ نسبة المواليد الأجانب هذا العام من اجمالي المواليد حسب احدث بيانات؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT foreign_birth_percentage FROM \"ds_229ae58d519f40fab9a0f13361108210\"",
+    "columns": [
+      {
+        "name": "foreign_birth_percentage",
+        "meaning": "نسبة المواليد الأجانب من إجمالي المواليد",
+        "kind": "share",
+        "unit": null,
+        "source": "foreign_birth_percentage",
+        "aggregate": "none",
+        "denominator": "total_births"
+      }
+    ],
+    "summary": "تبلغ نسبة المواليد الأجانب 48.5% من إجمالي المواليد وفقاً لأحدث البيانات المتاحة.",
+    "assumptions": [
+      "تم استخدام القيمة المتاحة في العمود foreign_birth_percentage كأحدث بيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT foreign_birth_percentage FROM \"ds_229ae58d519f40fab9a0f13361108210\"",
+    "columns": [
+      "foreign_birth_percentage"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        48.5
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "foreign_birth_percentage",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "foreign_birth_percentage: shares sum to 48.5, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.00988862500526011
+  },
+  "checks": [
+    {
+      "column": "foreign_birth_percentage",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "foreign_birth_percentage: shares sum to 48.5, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "foreign_birth_percentage: shares sum to 48.5, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.235304625006393,
+  "created_at": "2026-09-07T19:29:58.672752Z"
+}

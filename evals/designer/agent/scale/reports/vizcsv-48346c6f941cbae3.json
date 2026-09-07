@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_43161692fb834bac861cd1fbdb28539f",
+  "question": "ما هي اكثر عشرة وظائف شائعة لخريجي التخصصات ذات معدلات التوظيف المنخفضة (اقل من 50% من الخريجين يتم توظيفهم خلال اول سنة من التخرج ) في الخمس سنوات الماضية (2021-2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات التخصصات ومعدلات التوظيف وسنة التخرج، حيث أن الجدول الحالي يحتوي فقط على المسميات الوظيفية وأعداد الموظفين؟",
+    "reason": "The available table only contains job titles and counts. It does not contain information about majors, employment rates, or graduation years, which are necessary to answer the question."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.1165264589944854,
+  "created_at": "2026-09-07T19:28:04.483852Z"
+}

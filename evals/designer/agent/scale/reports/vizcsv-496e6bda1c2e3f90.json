@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_e117252f68d040e18c07ba2623448bb8",
+  "question": "ما هو تطور عدد السكان عبر السنوات؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT year, sum(total_population) AS total_population FROM \"ds_e117252f68d040e18c07ba2623448bb8\" GROUP BY year ORDER BY year",
+    "columns": [
+      {
+        "name": "year",
+        "meaning": "السنة",
+        "kind": "time",
+        "unit": null,
+        "source": "year",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "total_population",
+        "meaning": "إجمالي عدد السكان",
+        "kind": "measure",
+        "unit": "شخص",
+        "source": "total_population",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "يوجد بيانات لسنة واحدة فقط وهي عام 2026، حيث بلغ إجمالي عدد السكان 749,038 شخصاً. لا يمكن تحديد تطور السكان لعدم توفر بيانات لسنوات أخرى.",
+    "assumptions": [
+      "تم تجميع البيانات حسب السنة المتاحة في مجموعة البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT year, sum(total_population) AS total_population FROM \"ds_e117252f68d040e18c07ba2623448bb8\" GROUP BY year ORDER BY year",
+    "columns": [
+      "year",
+      "total_population"
+    ],
+    "types": [
+      "BIGINT",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        2026,
+        749038
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.015611458002240397
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.323809583002003,
+  "created_at": "2026-09-07T19:33:24.110283Z"
+}

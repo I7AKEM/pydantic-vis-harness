@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_ae28cbad80cf4402b4aab43f2402e084",
+  "question": "قارن متوسط اعداد المخالفات المرورية في سنة 2025 بين الأثرياء الحاصلين على شهادات دراسات عليا (ماجستير ودكتوراه) وبين الأثرياء الغير حاصلين على شهادات عليا",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT education_status, avg_violations_per_person FROM \"ds_ae28cbad80cf4402b4aab43f2402e084\"",
+    "columns": [
+      {
+        "name": "education_status",
+        "meaning": "الحالة التعليمية",
+        "kind": "category",
+        "unit": null,
+        "source": "education_status",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "avg_violations_per_person",
+        "meaning": "متوسط عدد المخالفات لكل شخص",
+        "kind": "measure",
+        "unit": null,
+        "source": "avg_violations_per_person",
+        "aggregate": "none",
+        "denominator": "null"
+      }
+    ],
+    "summary": "بلغ متوسط عدد المخالفات المرورية للأثرياء غير الحاصلين على شهادات عليا 1.63 مخالفة لكل شخص، بينما كان المتوسط للأثرياء الحاصلين على شهادات عليا 1.12 مخالفة لكل شخص.",
+    "assumptions": [
+      "تم اعتبار البيانات المتاحة في الجدول على أنها تمثل سنة 2025 كما ورد في السؤال."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT education_status, avg_violations_per_person FROM \"ds_ae28cbad80cf4402b4aab43f2402e084\"",
+    "columns": [
+      "education_status",
+      "avg_violations_per_person"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "with_higher_education",
+        1.12
+      ],
+      [
+        "without_higher_education",
+        1.63
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.012083041001460515
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 6.4679422920016805,
+  "created_at": "2026-09-07T19:30:14.112646Z"
+}

@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_4d8f623f24b143478b6c4cf1a9a98dd1",
+  "question": "كم تبلغ نسبة المواليد الأجانب هذا العام من اجمالي المواليد حسب احدث بيانات؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT alien_percentage AS \"نسبة المواليد الأجانب\" FROM \"ds_4d8f623f24b143478b6c4cf1a9a98dd1\"",
+    "columns": [
+      {
+        "name": "نسبة المواليد الأجانب",
+        "meaning": "نسبة المواليد من غير المواطنين (الأجانب) من إجمالي المواليد",
+        "kind": "share",
+        "unit": null,
+        "source": "alien_percentage",
+        "aggregate": "none",
+        "denominator": "total_births"
+      }
+    ],
+    "summary": "تبلغ نسبة المواليد الأجانب 48.5% من إجمالي المواليد وفقاً لأحدث البيانات المتاحة.",
+    "assumptions": [
+      "تم استخدام العمود alien_percentage مباشرة كونه يمثل النسبة المئوية المطلوبة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT alien_percentage AS \"نسبة المواليد الأجانب\" FROM \"ds_4d8f623f24b143478b6c4cf1a9a98dd1\"",
+    "columns": [
+      "نسبة المواليد الأجانب"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        48.5
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة المواليد الأجانب",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة المواليد الأجانب: shares sum to 48.5, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.00834562499949243
+  },
+  "checks": [
+    {
+      "column": "نسبة المواليد الأجانب",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة المواليد الأجانب: shares sum to 48.5, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة المواليد الأجانب: shares sum to 48.5, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.229732790990965,
+  "created_at": "2026-09-07T19:28:11.901779Z"
+}

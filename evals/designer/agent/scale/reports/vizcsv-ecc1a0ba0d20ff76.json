@@ -1,0 +1,83 @@
+{
+  "dataset_id": "ds_fca82d1e1f254d0dbc581c3989c08305",
+  "question": "ما هي نسبة حاملي الشهادات الجامعية (البكالوريوس فأعلى) في كل مستوى من مستويات الثروة خلال عام 2025؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT wealth_level, graduate_percentage FROM \"ds_fca82d1e1f254d0dbc581c3989c08305\"",
+    "columns": [
+      {
+        "name": "wealth_level",
+        "meaning": "مستوى الثروة",
+        "kind": "category",
+        "unit": null,
+        "source": "wealth_level",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "graduate_percentage",
+        "meaning": "نسبة حاملي الشهادات الجامعية",
+        "kind": "measure",
+        "unit": "%",
+        "source": "graduate_percentage",
+        "aggregate": "avg",
+        "denominator": null
+      }
+    ],
+    "summary": "تتراوح نسبة حاملي الشهادات الجامعية بين 1.62% في مستوى الثروة \"Upper Middle\" و 1.68% في مستوى \"Rich\"، بينما بلغت النسبة 1.66% لكل من المستويات \"Poor\" و \"Lower Middle\" و \"Middle\".",
+    "assumptions": [
+      "تم استخدام البيانات المتاحة في الجدول دون تصفية زمنية لعدم وجود عمود للتاريخ، بافتراض أنها تمثل عام 2025."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT wealth_level, graduate_percentage FROM \"ds_fca82d1e1f254d0dbc581c3989c08305\"",
+    "columns": [
+      "wealth_level",
+      "graduate_percentage"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "Poor",
+        1.66
+      ],
+      [
+        "Lower Middle",
+        1.66
+      ],
+      [
+        "Middle",
+        1.66
+      ],
+      [
+        "Upper Middle",
+        1.62
+      ],
+      [
+        "Rich",
+        1.68
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.011329875007504597
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.6566211250028573,
+  "created_at": "2026-09-07T19:33:26.386740Z"
+}

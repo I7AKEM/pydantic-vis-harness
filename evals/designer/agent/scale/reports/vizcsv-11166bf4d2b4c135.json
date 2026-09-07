@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_06a0581b424c40e6a5f06e38c83b1d73",
+  "question": "كم عدد الاشخاص الذين مسجل نوعهم كزائر ولديهم وظائف مسجلة قائمة وفقًا لأحدث اسناد؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT visitor_count_with_active_jobs AS \"عدد الزوار بوظائف نشطة\" FROM \"ds_06a0581b424c40e6a5f06e38c83b1d73\"",
+    "columns": [
+      {
+        "name": "عدد الزوار بوظائف نشطة",
+        "meaning": "عدد الزوار الذين لديهم وظائف نشطة",
+        "kind": "measure",
+        "unit": null,
+        "source": "visitor_count_with_active_jobs",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "عدد الأشخاص المسجلين كزوار ولديهم وظائف قائمة هو 0. تم استخراج هذه القيمة مباشرة من العمود المخصص لهذا القياس في مجموعة البيانات.",
+    "assumptions": [
+      "تم اعتبار القيمة الموجودة في العمود visitor_count_with_active_jobs كتمثيل لأحدث إسناد."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT visitor_count_with_active_jobs AS \"عدد الزوار بوظائف نشطة\" FROM \"ds_06a0581b424c40e6a5f06e38c83b1d73\"",
+    "columns": [
+      "عدد الزوار بوظائف نشطة"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.02201670799695421
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.0416184589994373,
+  "created_at": "2026-09-07T19:30:37.375369Z"
+}

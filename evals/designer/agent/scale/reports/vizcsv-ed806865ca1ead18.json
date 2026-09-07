@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_ed0e213c13464516b17bbaf181abddee",
+  "question": "كم عدد المغادرين من المملكة خلال شهر مارس 2026؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT exit_count_march_2026 AS \"عدد المغادرين\" FROM \"ds_ed0e213c13464516b17bbaf181abddee\"",
+    "columns": [
+      {
+        "name": "عدد المغادرين",
+        "meaning": "عدد المغادرين من المملكة خلال شهر مارس 2026",
+        "kind": "measure",
+        "unit": null,
+        "source": "exit_count_march_2026",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "عدد المغادرين من المملكة خلال شهر مارس 2026 هو 0.",
+    "assumptions": [
+      "تم استخدام العمود exit_count_march_2026 مباشرة للحصول على العدد."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT exit_count_march_2026 AS \"عدد المغادرين\" FROM \"ds_ed0e213c13464516b17bbaf181abddee\"",
+    "columns": [
+      "عدد المغادرين"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.020782457999303006
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.018487666005967,
+  "created_at": "2026-09-07T19:33:26.255336Z"
+}

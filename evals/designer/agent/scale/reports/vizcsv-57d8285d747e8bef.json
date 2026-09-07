@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_a0a48860aa9a494a87154499e98bf3d7",
+  "question": "والاناث طيب؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT female_population AS \"عدد الإناث\" FROM \"ds_a0a48860aa9a494a87154499e98bf3d7\"",
+    "columns": [
+      {
+        "name": "عدد الإناث",
+        "meaning": "عدد الإناث في السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "female_population",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "عدد الإناث هو 2,797 شخصاً.",
+    "assumptions": [
+      "تم حساب المجموع الكلي لعمود عدد الإناث في البيانات المتاحة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT female_population AS \"عدد الإناث\" FROM \"ds_a0a48860aa9a494a87154499e98bf3d7\"",
+    "columns": [
+      "عدد الإناث"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        2797
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.01572591598960571
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.80845379200764,
+  "created_at": "2026-09-07T19:30:38.274699Z"
+}

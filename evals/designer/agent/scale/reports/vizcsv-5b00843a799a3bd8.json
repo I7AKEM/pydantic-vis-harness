@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_09a40a27290f4bbebe80796d6d16f298",
+  "question": "ما هو عدد المخالفات المرورية المسجلة في مدينة الرياض خلال الأسبوع الماضي موزعة حسب نوع المخالفة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات إضافية تتضمن المدينة وتاريخ المخالفات؟ البيانات الحالية تحتوي فقط على نوع المخالفة وعددها.",
+    "reason": "The dataset only contains 'violation_type' and 'violation_count'. It lacks columns for 'city' (to filter for Riyadh) and 'date' (to filter for last week)."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.0821333749918267,
+  "created_at": "2026-09-07T19:29:21.194325Z"
+}

@@ -1,0 +1,68 @@
+{
+  "dataset_id": "ds_56c95ab3a33549648fae4d3b87495e2a",
+  "question": "أي مدينة لديها أكبر متوسط لعدد الأشخاص في كل حي حسب احدث تاريخ اسناد؟ (لا يجب تضمين \"خارج حدود الاحياء\")",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT city, avg_population_per_district FROM \"ds_56c95ab3a33549648fae4d3b87495e2a\" WHERE city != 'خارج حدود الاحياء' ORDER BY avg_population_per_district DESC LIMIT 1",
+    "columns": [
+      {
+        "name": "city",
+        "meaning": "اسم المدينة",
+        "kind": "category",
+        "unit": null,
+        "source": "city",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "avg_population_per_district",
+        "meaning": "متوسط عدد السكان لكل حي",
+        "kind": "measure",
+        "unit": null,
+        "source": "avg_population_per_district",
+        "aggregate": "none",
+        "denominator": "person"
+      }
+    ],
+    "summary": "المدينة التي لديها أكبر متوسط لعدد السكان في كل حي هي صبيا، بمتوسط يبلغ 329 شخصاً.",
+    "assumptions": [
+      "تم استبعاد \"خارج حدود الاحياء\" من التحليل.",
+      "بما أن البيانات تحتوي على سجل واحد فقط، فقد تم اعتباره كأحدث تاريخ إسناد متاح."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT city, avg_population_per_district FROM \"ds_56c95ab3a33549648fae4d3b87495e2a\" WHERE city != 'خارج حدود الاحياء' ORDER BY avg_population_per_district DESC LIMIT 1",
+    "columns": [
+      "city",
+      "avg_population_per_district"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "صبيا",
+        329.0
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.009279999998398125
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.427336249995278,
+  "created_at": "2026-09-07T19:31:01.799170Z"
+}

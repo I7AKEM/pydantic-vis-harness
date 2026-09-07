@@ -1,0 +1,88 @@
+{
+  "dataset_id": "ds_b18c922b5036463b8a7cb4788563769c",
+  "question": "ماهي نسبة المواطنين الأثرياء من كل المواطنين السكان حسب الجنس؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT gender, wealthy_percentage FROM \"ds_b18c922b5036463b8a7cb4788563769c\"",
+    "columns": [
+      {
+        "name": "gender",
+        "meaning": "الجنس",
+        "kind": "category",
+        "unit": null,
+        "source": "gender",
+        "aggregate": "none",
+        "denominator": "null"
+      },
+      {
+        "name": "wealthy_percentage",
+        "meaning": "نسبة المواطنين الأثرياء",
+        "kind": "share",
+        "unit": null,
+        "source": "wealthy_percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي عدد السكان لكل جنس"
+      }
+    ],
+    "summary": "تبلغ نسبة المواطنين الأثرياء من الإناث 19.94%، بينما تبلغ نسبة الذكور 20.02%.",
+    "assumptions": [
+      "تم استخدام عمود النسبة المئوية الجاهز في البيانات لكل جنس على حدة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT gender, wealthy_percentage FROM \"ds_b18c922b5036463b8a7cb4788563769c\"",
+    "columns": [
+      "gender",
+      "wealthy_percentage"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "F",
+        19.94
+      ],
+      [
+        "M",
+        20.02
+      ]
+    ],
+    "row_count": 2,
+    "checks": [
+      {
+        "column": "wealthy_percentage",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "wealthy_percentage: shares sum to 40.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.010997583987773396
+  },
+  "checks": [
+    {
+      "column": "wealthy_percentage",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "wealthy_percentage: shares sum to 40.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "wealthy_percentage: shares sum to 40.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.5519534580089385,
+  "created_at": "2026-09-07T19:33:13.785753Z"
+}

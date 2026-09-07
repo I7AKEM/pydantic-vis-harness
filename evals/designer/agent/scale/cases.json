@@ -1,0 +1,4762 @@
+[
+  {
+    "name": "vizcsv-00754e9ed454a58b",
+    "report": "reports/vizcsv-00754e9ed454a58b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "coverage:task=None"
+  },
+  {
+    "name": "vizcsv-045d57a8cb085641",
+    "report": "reports/vizcsv-045d57a8cb085641.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "stacked_bar"
+    },
+    "why": "coverage:shape=category_group_measure"
+  },
+  {
+    "name": "vizcsv-137293bf6f449b0d",
+    "report": "reports/vizcsv-137293bf6f449b0d.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "coverage:rows_bucket=11-50"
+  },
+  {
+    "name": "vizcsv-222e820210670029",
+    "report": "reports/vizcsv-222e820210670029.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "line"
+    },
+    "why": "coverage:temporal=True"
+  },
+  {
+    "name": "vizcsv-07d3a923817c343d",
+    "report": "reports/vizcsv-07d3a923817c343d.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "grouped_bar"
+    },
+    "why": "coverage:long_text=True"
+  },
+  {
+    "name": "vizcsv-099ca8ed3f245957",
+    "report": "reports/vizcsv-099ca8ed3f245957.json",
+    "brief": {
+      "intent": "composition",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": "composition",
+      "requested_type": "donut",
+      "chosen_chart": "table"
+    },
+    "why": "coverage:task=composition"
+  },
+  {
+    "name": "vizcsv-240b6a3ae4f2cba4",
+    "report": "reports/vizcsv-240b6a3ae4f2cba4.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "coverage:shape=time_measure"
+  },
+  {
+    "name": "vizcsv-7a6c7f323afafbe3",
+    "report": "reports/vizcsv-7a6c7f323afafbe3.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "coverage:rows_bucket=201-1000"
+  },
+  {
+    "name": "vizcsv-18c8e508976a1ff7",
+    "report": "reports/vizcsv-18c8e508976a1ff7.json",
+    "brief": {
+      "intent": "share",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "single_value",
+      "requested_type": "indicator",
+      "chosen_chart": "indicator"
+    },
+    "why": "coverage:task=single_value"
+  },
+  {
+    "name": "vizcsv-a2988e7c4b4ea1ca",
+    "report": "reports/vizcsv-a2988e7c4b4ea1ca.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "stacked_bar"
+    },
+    "why": "coverage:rows_bucket=51-200"
+  },
+  {
+    "name": "vizcsv-245c6996f0f23a81",
+    "report": "reports/vizcsv-245c6996f0f23a81.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "comparison",
+      "requested_type": "bar",
+      "chosen_chart": "bar"
+    },
+    "why": "coverage:task=comparison"
+  },
+  {
+    "name": "vizcsv-ef1e844505012eec",
+    "report": "reports/vizcsv-ef1e844505012eec.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "coverage:rows_bucket=1001+"
+  },
+  {
+    "name": "vizcsv-8b83620b594f28f6",
+    "report": "reports/vizcsv-8b83620b594f28f6.json",
+    "brief": {
+      "intent": "rank",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "ranking",
+      "requested_type": "horizontal_bar",
+      "chosen_chart": "table"
+    },
+    "why": "coverage:task=ranking"
+  },
+  {
+    "name": "vizcsv-ba0187c944a3f829",
+    "report": "reports/vizcsv-ba0187c944a3f829.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": "table",
+      "requested_type": "table",
+      "chosen_chart": "indicator"
+    },
+    "why": "coverage:task=table"
+  },
+  {
+    "name": "vizcsv-257c0f12f1432a46",
+    "report": "reports/vizcsv-257c0f12f1432a46.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-b8644df00c2762b9",
+    "report": "reports/vizcsv-b8644df00c2762b9.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-48346c6f941cbae3",
+    "report": "reports/vizcsv-48346c6f941cbae3.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-8a854c6d5de42945",
+    "report": "reports/vizcsv-8a854c6d5de42945.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-7f680f644ee1097b",
+    "report": "reports/vizcsv-7f680f644ee1097b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-22d6ed96818bd191",
+    "report": "reports/vizcsv-22d6ed96818bd191.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-f34f06741faa43f9",
+    "report": "reports/vizcsv-f34f06741faa43f9.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-f9f194268ea26982",
+    "report": "reports/vizcsv-f9f194268ea26982.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-f350646fd3117689",
+    "report": "reports/vizcsv-f350646fd3117689.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-b2a15904ec3d6ba4",
+    "report": "reports/vizcsv-b2a15904ec3d6ba4.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-c64f304b2b84b9d9",
+    "report": "reports/vizcsv-c64f304b2b84b9d9.json",
+    "brief": {
+      "intent": "rank",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": "ranking",
+      "requested_type": "bar",
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-0c4b51f72c5f421b",
+    "report": "reports/vizcsv-0c4b51f72c5f421b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-dee57e6d0d53b7b3",
+    "report": "reports/vizcsv-dee57e6d0d53b7b3.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-bebe305cb43ceeba",
+    "report": "reports/vizcsv-bebe305cb43ceeba.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-fb2cda3f6bc45384",
+    "report": "reports/vizcsv-fb2cda3f6bc45384.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-54314bd3bcc4cbb7",
+    "report": "reports/vizcsv-54314bd3bcc4cbb7.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-a3eaf791900a3121",
+    "report": "reports/vizcsv-a3eaf791900a3121.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-6f711f47c5a68497",
+    "report": "reports/vizcsv-6f711f47c5a68497.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-0af0dc6352baa677",
+    "report": "reports/vizcsv-0af0dc6352baa677.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-60f1719e2aa2819c",
+    "report": "reports/vizcsv-60f1719e2aa2819c.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-2571f37808cda8e2",
+    "report": "reports/vizcsv-2571f37808cda8e2.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "donut"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-30226c27415c64c4",
+    "report": "reports/vizcsv-30226c27415c64c4.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-888995ad9f633178",
+    "report": "reports/vizcsv-888995ad9f633178.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-f06339ec4dc08786",
+    "report": "reports/vizcsv-f06339ec4dc08786.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-6f8cce3685e4823b",
+    "report": "reports/vizcsv-6f8cce3685e4823b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-26af4983f6a8dd24",
+    "report": "reports/vizcsv-26af4983f6a8dd24.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "comparison",
+      "requested_type": "grouped_bar",
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-8fdedbc49c7f014e",
+    "report": "reports/vizcsv-8fdedbc49c7f014e.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-455ff1a372cee020",
+    "report": "reports/vizcsv-455ff1a372cee020.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-c3f13d7b9948f4c7",
+    "report": "reports/vizcsv-c3f13d7b9948f4c7.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ec2d23712064d6e2",
+    "report": "reports/vizcsv-ec2d23712064d6e2.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-5de6c178d0e7d8bb",
+    "report": "reports/vizcsv-5de6c178d0e7d8bb.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-384d31daa0b523be",
+    "report": "reports/vizcsv-384d31daa0b523be.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-1fc32fd1fa73073b",
+    "report": "reports/vizcsv-1fc32fd1fa73073b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ac79eb320532b8d7",
+    "report": "reports/vizcsv-ac79eb320532b8d7.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-7c3f7894d5f20422",
+    "report": "reports/vizcsv-7c3f7894d5f20422.json",
+    "brief": {
+      "intent": "share",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": "single_value",
+      "requested_type": "indicator",
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-9b572428a8e59724",
+    "report": "reports/vizcsv-9b572428a8e59724.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-7e45deda8028a386",
+    "report": "reports/vizcsv-7e45deda8028a386.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-5b00843a799a3bd8",
+    "report": "reports/vizcsv-5b00843a799a3bd8.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-747e724e7ad28be6",
+    "report": "reports/vizcsv-747e724e7ad28be6.json",
+    "brief": {
+      "intent": "share",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "single_value",
+      "requested_type": "indicator",
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-65f8ab691d424f7b",
+    "report": "reports/vizcsv-65f8ab691d424f7b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-e9f44a121149ffbc",
+    "report": "reports/vizcsv-e9f44a121149ffbc.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-339f20178e500e53",
+    "report": "reports/vizcsv-339f20178e500e53.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-db7c4e9d68a73715",
+    "report": "reports/vizcsv-db7c4e9d68a73715.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-a723f837bb1cd6a9",
+    "report": "reports/vizcsv-a723f837bb1cd6a9.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "donut"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-4257e82813e0fb48",
+    "report": "reports/vizcsv-4257e82813e0fb48.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-a1b1e85e44fc9c25",
+    "report": "reports/vizcsv-a1b1e85e44fc9c25.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ff41a54a31d05d04",
+    "report": "reports/vizcsv-ff41a54a31d05d04.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ceec7a140f8caff6",
+    "report": "reports/vizcsv-ceec7a140f8caff6.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-c2d486b9d05d2227",
+    "report": "reports/vizcsv-c2d486b9d05d2227.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-f178d55a4da605c3",
+    "report": "reports/vizcsv-f178d55a4da605c3.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ab8f482aae1c5fe0",
+    "report": "reports/vizcsv-ab8f482aae1c5fe0.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-57c25fcba38f1bb0",
+    "report": "reports/vizcsv-57c25fcba38f1bb0.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-6ed66df8328f06bc",
+    "report": "reports/vizcsv-6ed66df8328f06bc.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-b9c12529e3c934b0",
+    "report": "reports/vizcsv-b9c12529e3c934b0.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-0db9bee65bac30a5",
+    "report": "reports/vizcsv-0db9bee65bac30a5.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-64d79f4e6a5d6ab6",
+    "report": "reports/vizcsv-64d79f4e6a5d6ab6.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-2d62a3bac17d1956",
+    "report": "reports/vizcsv-2d62a3bac17d1956.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-619a1800148774f5",
+    "report": "reports/vizcsv-619a1800148774f5.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-4289c840eac6004f",
+    "report": "reports/vizcsv-4289c840eac6004f.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-4765cb3741db0752",
+    "report": "reports/vizcsv-4765cb3741db0752.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-dbbdb2e7ef7d0c2f",
+    "report": "reports/vizcsv-dbbdb2e7ef7d0c2f.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-67f34ee0cd5e5a2b",
+    "report": "reports/vizcsv-67f34ee0cd5e5a2b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-6094139a1e16a25d",
+    "report": "reports/vizcsv-6094139a1e16a25d.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "donut"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ff355499d5bc782b",
+    "report": "reports/vizcsv-ff355499d5bc782b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-717a6d79c598be8b",
+    "report": "reports/vizcsv-717a6d79c598be8b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-80c5200879d41be6",
+    "report": "reports/vizcsv-80c5200879d41be6.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-f8e199efc625d863",
+    "report": "reports/vizcsv-f8e199efc625d863.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-794e3d7c83b0a96a",
+    "report": "reports/vizcsv-794e3d7c83b0a96a.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "comparison",
+      "requested_type": "bar",
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ddb00202a6c601a7",
+    "report": "reports/vizcsv-ddb00202a6c601a7.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "comparison",
+      "requested_type": "grouped_bar",
+      "chosen_chart": "stacked_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-cbcc43441b2e34c6",
+    "report": "reports/vizcsv-cbcc43441b2e34c6.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-122a22b948c93a3f",
+    "report": "reports/vizcsv-122a22b948c93a3f.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-c59c087c81c8374d",
+    "report": "reports/vizcsv-c59c087c81c8374d.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-11166bf4d2b4c135",
+    "report": "reports/vizcsv-11166bf4d2b4c135.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-57d8285d747e8bef",
+    "report": "reports/vizcsv-57d8285d747e8bef.json",
+    "brief": {
+      "intent": "share",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "single_value",
+      "requested_type": "indicator",
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ed16d36acaf18ee4",
+    "report": "reports/vizcsv-ed16d36acaf18ee4.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-184567910cd340fd",
+    "report": "reports/vizcsv-184567910cd340fd.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-e6f74cc7f3324781",
+    "report": "reports/vizcsv-e6f74cc7f3324781.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "grouped_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-a1acb71cfd119d31",
+    "report": "reports/vizcsv-a1acb71cfd119d31.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "grouped_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-5423bade43f307f6",
+    "report": "reports/vizcsv-5423bade43f307f6.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-3b3cbb66a5202d7f",
+    "report": "reports/vizcsv-3b3cbb66a5202d7f.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-4de36fb633a296c7",
+    "report": "reports/vizcsv-4de36fb633a296c7.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-423f2e8cc7283c01",
+    "report": "reports/vizcsv-423f2e8cc7283c01.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-10f0096b610da46f",
+    "report": "reports/vizcsv-10f0096b610da46f.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "donut"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-543a0b101bb860c7",
+    "report": "reports/vizcsv-543a0b101bb860c7.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ac8b73d28c07901d",
+    "report": "reports/vizcsv-ac8b73d28c07901d.json",
+    "brief": {
+      "intent": "rank",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": "ranking",
+      "requested_type": "bar",
+      "chosen_chart": "donut"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-476169a7429b4bef",
+    "report": "reports/vizcsv-476169a7429b4bef.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-b8b5f43fc2805a33",
+    "report": "reports/vizcsv-b8b5f43fc2805a33.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-2deca5a2331b1c91",
+    "report": "reports/vizcsv-2deca5a2331b1c91.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-85f003e4694b91de",
+    "report": "reports/vizcsv-85f003e4694b91de.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-d389c23177d0fc91",
+    "report": "reports/vizcsv-d389c23177d0fc91.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-35942b48d0b44c50",
+    "report": "reports/vizcsv-35942b48d0b44c50.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-484b4d84fb751f86",
+    "report": "reports/vizcsv-484b4d84fb751f86.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-e736aa9b7ec4cce5",
+    "report": "reports/vizcsv-e736aa9b7ec4cce5.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-a7e61f1336fadc82",
+    "report": "reports/vizcsv-a7e61f1336fadc82.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-024ef4585b0e017e",
+    "report": "reports/vizcsv-024ef4585b0e017e.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-dc3e559e9e467199",
+    "report": "reports/vizcsv-dc3e559e9e467199.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-7e7be63a17decebc",
+    "report": "reports/vizcsv-7e7be63a17decebc.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-95c9da6c92158dcc",
+    "report": "reports/vizcsv-95c9da6c92158dcc.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-4f44b9dad613ee6a",
+    "report": "reports/vizcsv-4f44b9dad613ee6a.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-afc5f77e558f45b8",
+    "report": "reports/vizcsv-afc5f77e558f45b8.json",
+    "brief": {
+      "intent": "composition",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": "composition",
+      "requested_type": "donut",
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-074877122cb284a2",
+    "report": "reports/vizcsv-074877122cb284a2.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-675d35d001419fb0",
+    "report": "reports/vizcsv-675d35d001419fb0.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-569fd7bee8a1980f",
+    "report": "reports/vizcsv-569fd7bee8a1980f.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ec4e569317f70f41",
+    "report": "reports/vizcsv-ec4e569317f70f41.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "comparison",
+      "requested_type": "grouped_bar",
+      "chosen_chart": "grouped_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-bcd949c9a17caf0e",
+    "report": "reports/vizcsv-bcd949c9a17caf0e.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-f0c249d903acd157",
+    "report": "reports/vizcsv-f0c249d903acd157.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-9e75e9ae40758227",
+    "report": "reports/vizcsv-9e75e9ae40758227.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "stacked_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-c8463b2cef56fee5",
+    "report": "reports/vizcsv-c8463b2cef56fee5.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-d814081ce2c3b52b",
+    "report": "reports/vizcsv-d814081ce2c3b52b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-c76808cc7a78dac8",
+    "report": "reports/vizcsv-c76808cc7a78dac8.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-96a1df15365fba2c",
+    "report": "reports/vizcsv-96a1df15365fba2c.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-34d621b06b086a7b",
+    "report": "reports/vizcsv-34d621b06b086a7b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-3dda20f66cddb9da",
+    "report": "reports/vizcsv-3dda20f66cddb9da.json",
+    "brief": {
+      "intent": "share",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": "single_value",
+      "requested_type": "indicator",
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-c595189619cf5286",
+    "report": "reports/vizcsv-c595189619cf5286.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-76f081a96fee3a7b",
+    "report": "reports/vizcsv-76f081a96fee3a7b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-77600711a523ae55",
+    "report": "reports/vizcsv-77600711a523ae55.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-6e037bb07153c7d7",
+    "report": "reports/vizcsv-6e037bb07153c7d7.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-7eac934220a9ecc2",
+    "report": "reports/vizcsv-7eac934220a9ecc2.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-667ea37014a68025",
+    "report": "reports/vizcsv-667ea37014a68025.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-8fd2c63a7bed0c08",
+    "report": "reports/vizcsv-8fd2c63a7bed0c08.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-6eff7ae46ebb4edf",
+    "report": "reports/vizcsv-6eff7ae46ebb4edf.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "donut"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-286f3b550f50bae9",
+    "report": "reports/vizcsv-286f3b550f50bae9.json",
+    "brief": {
+      "intent": "share",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "single_value",
+      "requested_type": "indicator",
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-4a8c4e2fe7feb581",
+    "report": "reports/vizcsv-4a8c4e2fe7feb581.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-3b88e4c224492601",
+    "report": "reports/vizcsv-3b88e4c224492601.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-e9e34ffe4da72415",
+    "report": "reports/vizcsv-e9e34ffe4da72415.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-a2cb7fc7900c2246",
+    "report": "reports/vizcsv-a2cb7fc7900c2246.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-fe2ce859c3daa4be",
+    "report": "reports/vizcsv-fe2ce859c3daa4be.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-95630c2c5ffa5c81",
+    "report": "reports/vizcsv-95630c2c5ffa5c81.json",
+    "brief": {
+      "intent": "rank",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "ranking",
+      "requested_type": "horizontal_bar",
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-6315a8816a7cd305",
+    "report": "reports/vizcsv-6315a8816a7cd305.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "stacked_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-df9ab911b6b9b867",
+    "report": "reports/vizcsv-df9ab911b6b9b867.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "line"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-b304bcdecbc51577",
+    "report": "reports/vizcsv-b304bcdecbc51577.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-279901e1a4579c5d",
+    "report": "reports/vizcsv-279901e1a4579c5d.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-a9616505d5995bcb",
+    "report": "reports/vizcsv-a9616505d5995bcb.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "grouped_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-4019b0f57d3675c5",
+    "report": "reports/vizcsv-4019b0f57d3675c5.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-bec1a9919473600d",
+    "report": "reports/vizcsv-bec1a9919473600d.json",
+    "brief": {
+      "intent": "composition",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "composition",
+      "requested_type": "grouped_bar",
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-b0ff1af346fcfdd1",
+    "report": "reports/vizcsv-b0ff1af346fcfdd1.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-259a7bf303f77e75",
+    "report": "reports/vizcsv-259a7bf303f77e75.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-3347a1df8aa91c78",
+    "report": "reports/vizcsv-3347a1df8aa91c78.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "line"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-5a4a5148955c1ab7",
+    "report": "reports/vizcsv-5a4a5148955c1ab7.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-706b6897ff3e3ba5",
+    "report": "reports/vizcsv-706b6897ff3e3ba5.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-10318e501dbda559",
+    "report": "reports/vizcsv-10318e501dbda559.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-59450daaa1ce17e8",
+    "report": "reports/vizcsv-59450daaa1ce17e8.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-61793ff199102633",
+    "report": "reports/vizcsv-61793ff199102633.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-4df34284c8a24e83",
+    "report": "reports/vizcsv-4df34284c8a24e83.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-a9cc15781819ef19",
+    "report": "reports/vizcsv-a9cc15781819ef19.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-52d21e8fdac1b392",
+    "report": "reports/vizcsv-52d21e8fdac1b392.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-c2e9c8b6f23372a6",
+    "report": "reports/vizcsv-c2e9c8b6f23372a6.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-c43b2c98ec0d615b",
+    "report": "reports/vizcsv-c43b2c98ec0d615b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-72807ae3ed7eee7e",
+    "report": "reports/vizcsv-72807ae3ed7eee7e.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-496e6bda1c2e3f90",
+    "report": "reports/vizcsv-496e6bda1c2e3f90.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ecc1a0ba0d20ff76",
+    "report": "reports/vizcsv-ecc1a0ba0d20ff76.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ed806865ca1ead18",
+    "report": "reports/vizcsv-ed806865ca1ead18.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-b8abd8eb16060081",
+    "report": "reports/vizcsv-b8abd8eb16060081.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-cafdd0b5b00b7d5c",
+    "report": "reports/vizcsv-cafdd0b5b00b7d5c.json",
+    "brief": {
+      "intent": "rank",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": "ranking",
+      "requested_type": "bar",
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-c11f0d9881fe15e6",
+    "report": "reports/vizcsv-c11f0d9881fe15e6.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-8b3fd04765e40d3a",
+    "report": "reports/vizcsv-8b3fd04765e40d3a.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-59e3e21219b8a91c",
+    "report": "reports/vizcsv-59e3e21219b8a91c.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-a25bc59748f9842d",
+    "report": "reports/vizcsv-a25bc59748f9842d.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-b9e7fdc39ed8177f",
+    "report": "reports/vizcsv-b9e7fdc39ed8177f.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-ce9cb06d71f1383c",
+    "report": "reports/vizcsv-ce9cb06d71f1383c.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-dc69c1dd027671ee",
+    "report": "reports/vizcsv-dc69c1dd027671ee.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-1f2f9b632e822173",
+    "report": "reports/vizcsv-1f2f9b632e822173.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-13ae01141b2d9828",
+    "report": "reports/vizcsv-13ae01141b2d9828.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-a364fe890af67ff2",
+    "report": "reports/vizcsv-a364fe890af67ff2.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "grouped_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-778be821436c7bac",
+    "report": "reports/vizcsv-778be821436c7bac.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": "comparison",
+      "requested_type": null,
+      "chosen_chart": "stacked_bar"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-29f6439dafd15ca2",
+    "report": "reports/vizcsv-29f6439dafd15ca2.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "seeded shuffle:7"
+  },
+  {
+    "name": "vizcsv-c23919bb79a568de",
+    "report": "reports/vizcsv-c23919bb79a568de.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "real English corpus question for language coverage"
+  },
+  {
+    "name": "vizcsv-dd569225f597240f",
+    "report": "reports/vizcsv-dd569225f597240f.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "real English corpus question for language coverage"
+  },
+  {
+    "name": "vizcsv-86dd3ead0a7db46b",
+    "report": "reports/vizcsv-86dd3ead0a7db46b.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar"
+    },
+    "why": "real English corpus question for language coverage"
+  },
+  {
+    "name": "vizcsv-12e089c5153c1f8d",
+    "report": "reports/vizcsv-12e089c5153c1f8d.json",
+    "brief": {
+      "intent": null,
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator"
+    },
+    "why": "real English corpus question for language coverage"
+  },
+  {
+    "name": "actual_fine_distribution",
+    "report": "reports/actual_fine_distribution.json",
+    "brief": {
+      "intent": "distribution",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "average_fine_by_violation_type",
+    "report": "reports/average_fine_by_violation_type.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "citizens_by_trip_year",
+    "report": "reports/citizens_by_trip_year.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "stacked_bar"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "deaths_by_gender",
+    "report": "reports/deaths_by_gender.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "deaths_per_month",
+    "report": "reports/deaths_per_month.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "discounted_percentage",
+    "report": "reports/discounted_percentage.json",
+    "brief": {
+      "intent": "share",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "female_share_by_region",
+    "report": "reports/female_share_by_region.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": "ranking",
+      "requested_type": "bar",
+      "chosen_chart": "bar"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "fines_by_district",
+    "report": "reports/fines_by_district.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "married_share_by_gender",
+    "report": "reports/married_share_by_gender.json",
+    "brief": {
+      "intent": "share",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "non_saudi_deaths_by_age",
+    "report": "reports/non_saudi_deaths_by_age.json",
+    "brief": {
+      "intent": "distribution",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "orders_and_average_price_by_status",
+    "report": "reports/orders_and_average_price_by_status.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "map"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "orders_by_status",
+    "report": "reports/orders_by_status.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "map"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "paid_share_by_year_since_2020",
+    "report": "reports/paid_share_by_year_since_2020.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "line"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "salary_vs_birth_year",
+    "report": "reports/salary_vs_birth_year.json",
+    "brief": {
+      "intent": "relation",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "dev",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "top_makes_by_average_fine",
+    "report": "reports/top_makes_by_average_fine.json",
+    "brief": {
+      "intent": "rank",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "train",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "under_15_share_by_region",
+    "report": "reports/under_15_share_by_region.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "seeded": false,
+    "split": "heldout",
+    "metadata": {
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "map"
+    },
+    "why": "existing real English Phase 4 report"
+  },
+  {
+    "name": "seeded-01-hijri-date",
+    "report": "reports/seeded-01-hijri-date.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-02-hijri-date",
+    "report": "reports/seeded-02-hijri-date.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "dev",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-03-hijri-date",
+    "report": "reports/seeded-03-hijri-date.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-04-hijri-date",
+    "report": "reports/seeded-04-hijri-date.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "dev",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-05-hijri-date",
+    "report": "reports/seeded-05-hijri-date.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-06-hijri-date",
+    "report": "reports/seeded-06-hijri-date.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-07-hijri-date",
+    "report": "reports/seeded-07-hijri-date.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-08-hijri-date",
+    "report": "reports/seeded-08-hijri-date.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-09-arabic-digits",
+    "report": "reports/seeded-09-arabic-digits.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-10-arabic-digits",
+    "report": "reports/seeded-10-arabic-digits.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-11-arabic-digits",
+    "report": "reports/seeded-11-arabic-digits.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-12-arabic-digits",
+    "report": "reports/seeded-12-arabic-digits.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "dev",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-13-arabic-categories",
+    "report": "reports/seeded-13-arabic-categories.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-14-arabic-categories",
+    "report": "reports/seeded-14-arabic-categories.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-15-arabic-categories",
+    "report": "reports/seeded-15-arabic-categories.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-16-arabic-categories",
+    "report": "reports/seeded-16-arabic-categories.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "dev",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-17-arabic-categories",
+    "report": "reports/seeded-17-arabic-categories.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "heldout",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-18-arabic-categories",
+    "report": "reports/seeded-18-arabic-categories.json",
+    "brief": {
+      "intent": "compare",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "heldout",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-19-hijri-year",
+    "report": "reports/seeded-19-hijri-year.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "train",
+    "metadata": {},
+    "why": "Seeded edge case"
+  },
+  {
+    "name": "seeded-20-hijri-year",
+    "report": "reports/seeded-20-hijri-year.json",
+    "brief": {
+      "intent": "trend",
+      "suggested_chart_type": null,
+      "brand_colors": []
+    },
+    "expect": "design",
+    "charts": null,
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "seeded": true,
+    "split": "dev",
+    "metadata": {},
+    "why": "Seeded edge case"
+  }
+]

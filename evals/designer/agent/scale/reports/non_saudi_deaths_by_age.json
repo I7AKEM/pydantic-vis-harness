@@ -1,0 +1,96 @@
+{
+  "dataset_id": "ds_47d7f1f522924d278a92f585f66d456f",
+  "question": "What is the age distribution of non-Saudi deaths?",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT age_range, sum(death_count) AS total_deaths FROM \"ds_47d7f1f522924d278a92f585f66d456f\" WHERE nationality != 'سعودي' GROUP BY age_range ORDER BY age_range",
+    "columns": [
+      {
+        "name": "age_range",
+        "meaning": "Age group of the deceased",
+        "kind": "ordinal",
+        "unit": null,
+        "source": "age_range",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "total_deaths",
+        "meaning": "Total number of deaths",
+        "kind": "measure",
+        "unit": "count",
+        "source": "death_count",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "The age distribution of non-Saudi deaths is highest in the 0-10 age group with 13,470 deaths, followed by the 21-40 group with 8,434 deaths. The 11-20 and 41-60 age groups recorded 2,858 and 921 deaths, respectively.",
+    "assumptions": [
+      "Non-Saudi deaths are defined as those where the nationality is not 'سعودي'"
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT age_range, sum(death_count) AS total_deaths FROM \"ds_47d7f1f522924d278a92f585f66d456f\" WHERE nationality != 'سعودي' GROUP BY age_range ORDER BY age_range",
+    "columns": [
+      "age_range",
+      "total_deaths"
+    ],
+    "types": [
+      "VARCHAR",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        "0-10",
+        13470
+      ],
+      [
+        "11-20",
+        2858
+      ],
+      [
+        "21-40",
+        8434
+      ],
+      [
+        "41-60",
+        921
+      ]
+    ],
+    "row_count": 4,
+    "checks": [
+      {
+        "column": "total_deaths",
+        "check": "total_explained",
+        "severity": "warning",
+        "passed": false,
+        "message": "total_deaths: the result sums to 25683; the column's total is 105009. The query filtered or excluded rows."
+      }
+    ],
+    "seconds": 0.016961707995506003
+  },
+  "checks": [
+    {
+      "column": "total_deaths",
+      "check": "total_explained",
+      "severity": "warning",
+      "passed": false,
+      "message": "total_deaths: the result sums to 25683; the column's total is 105009. The query filtered or excluded rows."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "total_deaths: the result sums to 25683; the column's total is 105009. The query filtered or excluded rows."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.5875359589990694,
+  "created_at": "2026-09-07T17:47:41.226808Z"
+}

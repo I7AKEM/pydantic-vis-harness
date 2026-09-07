@@ -1,0 +1,71 @@
+{
+  "dataset_id": "ds_c74af3280bb04ff0a904e1ac6aea960b",
+  "question": "بناء على البيانات بين الفترة (2010-2025)، قارن بين نسبة الخريجين الاثرياء من الجامعات الحكومية والجامعات الاهلية؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT university_type, wealthy_percentage FROM \"ds_c74af3280bb04ff0a904e1ac6aea960b\"",
+    "columns": [
+      {
+        "name": "university_type",
+        "meaning": "نوع الجامعة",
+        "kind": "category",
+        "unit": null,
+        "source": "university_type",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "wealthy_percentage",
+        "meaning": "نسبة الخريجين الميسورين",
+        "kind": "measure",
+        "unit": null,
+        "source": "wealthy_percentage",
+        "aggregate": "none",
+        "denominator": "total_graduates"
+      }
+    ],
+    "summary": "تبلغ نسبة الخريجين الميسورين من الجامعات الحكومية 20.09%، بينما تبلغ نسبتهم من الجامعات والكليات الأهلية 19.92%.",
+    "assumptions": [
+      "تم استخدام نسبة الخريجين الميسورين كما هي واردة في البيانات دون إجراء عمليات حسابية إضافية."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT university_type, wealthy_percentage FROM \"ds_c74af3280bb04ff0a904e1ac6aea960b\"",
+    "columns": [
+      "university_type",
+      "wealthy_percentage"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "الجامعات الحكومية",
+        20.09
+      ],
+      [
+        "الجامعات والكليات الأهلية",
+        19.92
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0.01173370800097473
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.099806083002477,
+  "created_at": "2026-09-07T19:33:42.658912Z"
+}

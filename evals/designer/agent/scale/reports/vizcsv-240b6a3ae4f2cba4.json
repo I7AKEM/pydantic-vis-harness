@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_59ff27c1cb474f81945ddfc0e74e48cf",
+  "question": "أي سنة شهدت أعلى عدد من المقيمين في المملكة ضمن الفترة الزمنية التي تمتد إلى الثلاث سنوات الماضية؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك تزويدي ببيانات عدد المقيمين في المملكة؟ الجدول الحالي يحتوي فقط على سنوات البداية والنهاية ولا يحتوي على بيانات السكان أو المقيمين.",
+    "reason": "The dataset only contains 'min_year' and 'max_year' columns, but no column representing the number of residents or population, making it impossible to determine which year had the highest number of residents."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.9370742080063792,
+  "created_at": "2026-09-07T19:27:51.113467Z"
+}

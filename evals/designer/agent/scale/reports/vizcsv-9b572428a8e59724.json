@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_a7b1639b200243068716937a47590022",
+  "question": "وحد نظام المعدل التراكمي الى مئوي وقارن بين متوسط معدلات الجامعات الحكومية ومتوسط معدلات الجامعات الاهلية",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT uni_type, AVG(avg_gpa_percentage) AS \"متوسط المعدل المئوي\" FROM \"ds_a7b1639b200243068716937a47590022\" GROUP BY uni_type",
+    "columns": [
+      {
+        "name": "uni_type",
+        "meaning": "نوع الجامعة",
+        "kind": "category",
+        "unit": null,
+        "source": "uni_type",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "متوسط المعدل المئوي",
+        "meaning": "متوسط النسبة المئوية للمعدل التراكمي",
+        "kind": "measure",
+        "unit": null,
+        "source": "avg_gpa_percentage",
+        "aggregate": "avg",
+        "denominator": "null"
+      }
+    ],
+    "summary": "يبلغ متوسط المعدل التراكمي المئوي للجامعات الحكومية 69.99%. لا تتوفر بيانات للجامعات الأهلية في مجموعة البيانات المقدمة.",
+    "assumptions": [
+      "تم استخدام العمود avg_gpa_percentage كقيمة مئوية جاهزة للمقارنة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT uni_type, AVG(avg_gpa_percentage) AS \"متوسط المعدل المئوي\" FROM \"ds_a7b1639b200243068716937a47590022\" GROUP BY uni_type",
+    "columns": [
+      "uni_type",
+      "متوسط المعدل المئوي"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "الجامعات الحكومية",
+        69.99
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.01883891700708773
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.825371333005023,
+  "created_at": "2026-09-07T19:29:17.342972Z"
+}

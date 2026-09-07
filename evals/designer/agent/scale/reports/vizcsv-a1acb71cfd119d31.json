@@ -1,0 +1,234 @@
+{
+  "dataset_id": "ds_f6ffad515f1340099f8edc4a116686cb",
+  "question": "عطني رسم بياني لتوزيع السكان حسب المناطق لاعلى اربع جنسيات",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "WITH top_nationalities AS (\n    SELECT nationality\n    FROM \"ds_f6ffad515f1340099f8edc4a116686cb\"\n    GROUP BY nationality\n    ORDER BY SUM(population) DESC\n    LIMIT 4\n)\nSELECT \n    region AS \"المنطقة\", \n    nationality AS \"الجنسية\", \n    SUM(population) AS \"إجمالي السكان\"\nFROM \"ds_f6ffad515f1340099f8edc4a116686cb\"\nWHERE nationality IN (SELECT nationality FROM top_nationalities)\nGROUP BY region, nationality\nORDER BY region, \"إجمالي السكان\" DESC",
+    "columns": [
+      {
+        "name": "المنطقة",
+        "meaning": "المنطقة الإدارية",
+        "kind": "category",
+        "unit": null,
+        "source": "region",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "الجنسية",
+        "meaning": "الجنسية",
+        "kind": "category",
+        "unit": null,
+        "source": "nationality",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "إجمالي السكان",
+        "meaning": "إجمالي عدد السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "population",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "يوضح التوزيع السكاني لأعلى أربع جنسيات (سعودي، بريطاني، صيني، كويتي) عبر المناطق، حيث سجلت منطقة الجوف أعلى عدد سكان للجنسية السعودية بـ 367 شخصاً. بينما تظهر البيانات توزيعاً متنوعاً لبقية الجنسيات في جميع المناطق المذكورة.",
+    "assumptions": [
+      "تم تحديد أعلى أربع جنسيات بناءً على إجمالي عدد السكان لكل جنسية عبر جميع المناطق."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "WITH top_nationalities AS (\n    SELECT nationality\n    FROM \"ds_f6ffad515f1340099f8edc4a116686cb\"\n    GROUP BY nationality\n    ORDER BY SUM(population) DESC\n    LIMIT 4\n)\nSELECT \n    region AS \"المنطقة\", \n    nationality AS \"الجنسية\", \n    SUM(population) AS \"إجمالي السكان\"\nFROM \"ds_f6ffad515f1340099f8edc4a116686cb\"\nWHERE nationality IN (SELECT nationality FROM top_nationalities)\nGROUP BY region, nationality\nORDER BY region, \"إجمالي السكان\" DESC",
+    "columns": [
+      "المنطقة",
+      "الجنسية",
+      "إجمالي السكان"
+    ],
+    "types": [
+      "VARCHAR",
+      "VARCHAR",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        "الحدود الشمالية",
+        "سعودي",
+        355
+      ],
+      [
+        "الحدود الشمالية",
+        "بريطاني",
+        22
+      ],
+      [
+        "الحدود الشمالية",
+        "صيني",
+        22
+      ],
+      [
+        "الحدود الشمالية",
+        "كويتي",
+        20
+      ],
+      [
+        "منطقة الباحة",
+        "سعودي",
+        336
+      ],
+      [
+        "منطقة الباحة",
+        "صيني",
+        22
+      ],
+      [
+        "منطقة الباحة",
+        "كويتي",
+        15
+      ],
+      [
+        "منطقة الباحة",
+        "بريطاني",
+        14
+      ],
+      [
+        "منطقة الجوف",
+        "سعودي",
+        367
+      ],
+      [
+        "منطقة الجوف",
+        "صيني",
+        17
+      ],
+      [
+        "منطقة الجوف",
+        "بريطاني",
+        13
+      ],
+      [
+        "منطقة الجوف",
+        "كويتي",
+        8
+      ],
+      [
+        "منطقة الرياض",
+        "سعودي",
+        338
+      ],
+      [
+        "منطقة الرياض",
+        "صيني",
+        20
+      ],
+      [
+        "منطقة الرياض",
+        "كويتي",
+        19
+      ],
+      [
+        "منطقة الرياض",
+        "بريطاني",
+        17
+      ],
+      [
+        "منطقة تبوك",
+        "سعودي",
+        346
+      ],
+      [
+        "منطقة تبوك",
+        "بريطاني",
+        17
+      ],
+      [
+        "منطقة تبوك",
+        "كويتي",
+        16
+      ],
+      [
+        "منطقة تبوك",
+        "صيني",
+        12
+      ],
+      [
+        "منطقة جازان",
+        "سعودي",
+        336
+      ],
+      [
+        "منطقة جازان",
+        "صيني",
+        16
+      ],
+      [
+        "منطقة جازان",
+        "كويتي",
+        15
+      ],
+      [
+        "منطقة جازان",
+        "بريطاني",
+        11
+      ],
+      [
+        "منطقة مكة المكرمة",
+        "سعودي",
+        327
+      ],
+      [
+        "منطقة مكة المكرمة",
+        "بريطاني",
+        22
+      ],
+      [
+        "منطقة مكة المكرمة",
+        "صيني",
+        19
+      ],
+      [
+        "منطقة مكة المكرمة",
+        "كويتي",
+        15
+      ],
+      [
+        "منطقة نجران",
+        "سعودي",
+        347
+      ],
+      [
+        "منطقة نجران",
+        "كويتي",
+        24
+      ],
+      [
+        "منطقة نجران",
+        "صيني",
+        15
+      ],
+      [
+        "منطقة نجران",
+        "بريطاني",
+        15
+      ]
+    ],
+    "row_count": 32,
+    "checks": [],
+    "seconds": 0.008696916003827937
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.881944458000362,
+  "created_at": "2026-09-07T19:30:48.910713Z"
+}

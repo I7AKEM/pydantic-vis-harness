@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_5b74ed6f955d406e9bf127786ff6416e",
+  "question": "ما نسبة الطلاب الذين عادوا الى الجامعات التي تخرجوا منها في مرحلة البكالوريوس للحصول على الماجستير أو الدكتوراه أو الزمالة، من اجمالي الحاصلين على هذه الشهادات؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage AS \"النسبة المئوية\" FROM \"ds_5b74ed6f955d406e9bf127786ff6416e\"",
+    "columns": [
+      {
+        "name": "النسبة المئوية",
+        "meaning": "نسبة الطلاب الذين عادوا إلى جامعاتهم السابقة للدراسات العليا",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage",
+        "aggregate": "none",
+        "denominator": "إجمالي الحاصلين على شهادات الماجستير أو الدكتوراه أو الزمالة"
+      }
+    ],
+    "summary": "نسبة الطلاب الذين عادوا إلى الجامعات التي تخرجوا منها في مرحلة البكالوريوس للحصول على الماجستير أو الدكتوراه أو الزمالة هي 0.0%.",
+    "assumptions": [
+      "تم الاعتماد على القيمة المتاحة في عمود النسبة المئوية في مجموعة البيانات المقدمة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage AS \"النسبة المئوية\" FROM \"ds_5b74ed6f955d406e9bf127786ff6416e\"",
+    "columns": [
+      "النسبة المئوية"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        0.0
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "النسبة المئوية",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "النسبة المئوية: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.019478125002933666
+  },
+  "checks": [
+    {
+      "column": "النسبة المئوية",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "النسبة المئوية: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "النسبة المئوية: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.5586548749997746,
+  "created_at": "2026-09-07T19:30:25.319776Z"
+}

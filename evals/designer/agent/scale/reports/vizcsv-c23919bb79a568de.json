@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_05368a2be3be40fa84a96d963526a62f",
+  "question": "•\tHow many graduates pursued postgraduate degrees after their bachelor’s?",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \"count_distinct bachelor.id_\" AS \"Graduates\" FROM \"ds_05368a2be3be40fa84a96d963526a62f\"",
+    "columns": [
+      {
+        "name": "Graduates",
+        "meaning": "Number of graduates who pursued postgraduate degrees",
+        "kind": "measure",
+        "unit": "null",
+        "source": "count_distinct bachelor.id_",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "20 graduates pursued postgraduate degrees after their bachelor's. This result is based on the count of distinct bachelor IDs provided in the dataset.",
+    "assumptions": [
+      "The column 'count_distinct bachelor.id_' represents the total number of graduates who pursued postgraduate degrees."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \"count_distinct bachelor.id_\" AS \"Graduates\" FROM \"ds_05368a2be3be40fa84a96d963526a62f\"",
+    "columns": [
+      "Graduates"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        20
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.01205762499012053
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.010587374999886,
+  "created_at": "2026-09-07T19:33:49.239125Z"
+}

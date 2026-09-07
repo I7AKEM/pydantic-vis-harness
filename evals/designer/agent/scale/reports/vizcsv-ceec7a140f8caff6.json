@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_4c99456d99b84e23a5e242557854cabc",
+  "question": "كم عدد المخالفات ؟ ",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT total_infringements AS \"إجمالي المخالفات\" FROM \"ds_4c99456d99b84e23a5e242557854cabc\"",
+    "columns": [
+      {
+        "name": "إجمالي المخالفات",
+        "meaning": "إجمالي عدد المخالفات",
+        "kind": "measure",
+        "unit": null,
+        "source": "total_infringements",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "إجمالي عدد المخالفات هو 951,777 مخالفة.",
+    "assumptions": [
+      "تم اعتبار عمود total_infringements هو المقياس الصحيح لعدد المخالفات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT total_infringements AS \"إجمالي المخالفات\" FROM \"ds_4c99456d99b84e23a5e242557854cabc\"",
+    "columns": [
+      "إجمالي المخالفات"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        951777
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.008405833999859169
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.063799832991208,
+  "created_at": "2026-09-07T19:29:44.193696Z"
+}

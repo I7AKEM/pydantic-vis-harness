@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_d4c818aaa4cd4d11ae3b62ac777a77c5",
+  "question": "كم تبلغ نسبة النساء السعوديات من اجمالي الموردين السعوديين الذين قاموا بتوريد منتجات تزيد قيمتها عن مليون ريال سعودي في العام الماضي(2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage_female_suppliers AS \"نسبة الموردات النساء\" FROM \"ds_d4c818aaa4cd4d11ae3b62ac777a77c5\"",
+    "columns": [
+      {
+        "name": "نسبة الموردات النساء",
+        "meaning": "نسبة الموردات النساء من إجمالي الموردين",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage_female_suppliers",
+        "aggregate": "none",
+        "denominator": "إجمالي الموردين"
+      }
+    ],
+    "summary": "تبلغ نسبة الموردات النساء من إجمالي الموردين السعوديين الذين قاموا بتوريد منتجات تزيد قيمتها عن مليون ريال سعودي في عام 2025 نسبة 0.0%.",
+    "assumptions": [
+      "تم الاعتماد على العمود المجهز مسبقاً لنسبة الموردات في مجموعة البيانات المقدمة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage_female_suppliers AS \"نسبة الموردات النساء\" FROM \"ds_d4c818aaa4cd4d11ae3b62ac777a77c5\"",
+    "columns": [
+      "نسبة الموردات النساء"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        0.0
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة الموردات النساء",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة الموردات النساء: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.007063375000143424
+  },
+  "checks": [
+    {
+      "column": "نسبة الموردات النساء",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة الموردات النساء: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة الموردات النساء: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.091383416001918,
+  "created_at": "2026-09-07T19:28:31.067482Z"
+}

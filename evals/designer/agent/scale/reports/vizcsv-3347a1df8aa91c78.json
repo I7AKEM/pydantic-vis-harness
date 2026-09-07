@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_6496371d59d24e059425a76830b7c695",
+  "question": "ما هو متوسط عمر الحجاج الذين دخلوا المملكة عبر المنافذ الجوية في الخمسة سنوات الماضية (2021-2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT avg(average_age) AS \"متوسط العمر\" FROM \"ds_6496371d59d24e059425a76830b7c695\" WHERE year BETWEEN 2021 AND 2025",
+    "columns": [
+      {
+        "name": "متوسط العمر",
+        "meaning": "متوسط عمر الحجاج",
+        "kind": "measure",
+        "unit": null,
+        "source": "average_age",
+        "aggregate": "avg",
+        "denominator": "years"
+      }
+    ],
+    "summary": "بلغ متوسط عمر الحجاج الذين دخلوا المملكة عبر المنافذ الجوية في الفترة المحددة حوالي 3.02 سنة.",
+    "assumptions": [
+      "تم حساب المتوسط كمتوسط بسيط للقيم السنوية المتاحة في العمود average_age."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT avg(average_age) AS \"متوسط العمر\" FROM \"ds_6496371d59d24e059425a76830b7c695\" WHERE year BETWEEN 2021 AND 2025",
+    "columns": [
+      "متوسط العمر"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        3.0212606837606844
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.010989833011990413
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.8997615830012364,
+  "created_at": "2026-09-07T19:33:11.825264Z"
+}

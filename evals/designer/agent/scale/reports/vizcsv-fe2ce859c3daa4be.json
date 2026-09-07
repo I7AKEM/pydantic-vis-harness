@@ -1,0 +1,99 @@
+{
+  "dataset_id": "ds_2ebeffd69ef24a8aa32c6eb102b31f16",
+  "question": "ما هي الجامعة المغذية للشركات الكبرى التي يفوق عدد موظفيها 10 الاف موظف اليوم؟ قارن بين الجامعات من حيث عدد خريجيها، مع ترتيب الجامعات من الأعلى إلى الأقل",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT university_name, graduate_count FROM \"ds_2ebeffd69ef24a8aa32c6eb102b31f16\" ORDER BY graduate_count DESC",
+    "columns": [
+      {
+        "name": "university_name",
+        "meaning": "اسم الجامعة",
+        "kind": "category",
+        "unit": null,
+        "source": "university_name",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "graduate_count",
+        "meaning": "عدد الخريجين",
+        "kind": "measure",
+        "unit": null,
+        "source": "graduate_count",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "تتصدر جامعة الملك عبدالعزيز القائمة بأعلى عدد خريجين بواقع 10,163 خريجاً، تليها جامعة الملك سعود بـ 9,640 خريجاً. بينما سجلت جامعة الإمام محمد بن سعود الإسلامية أقل عدد خريجين بواقع 646 خريجاً.",
+    "assumptions": [
+      "تم اعتبار جميع الجامعات الموجودة في الجدول كجامعات مغذية للشركات الكبرى لعدم وجود بيانات أخرى عن الشركات في مجموعة البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT university_name, graduate_count FROM \"ds_2ebeffd69ef24a8aa32c6eb102b31f16\" ORDER BY graduate_count DESC",
+    "columns": [
+      "university_name",
+      "graduate_count"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "جامعة الملك عبدالعزيز",
+        10163
+      ],
+      [
+        "جامعة الملك سعود",
+        9640
+      ],
+      [
+        "جامعة الملك فهد للبترول والمعادن",
+        3748
+      ],
+      [
+        "جامعة أم القرى",
+        3360
+      ],
+      [
+        "جامعة الأميرة نورة",
+        1447
+      ],
+      [
+        "جامعة الأمير سلطان",
+        1187
+      ],
+      [
+        "جامعة الفيصل",
+        1186
+      ],
+      [
+        "الكلية التقنية",
+        1012
+      ],
+      [
+        "جامعة الإمام محمد بن سعود الإسلامية",
+        646
+      ]
+    ],
+    "row_count": 9,
+    "checks": [],
+    "seconds": 0.023542832990642637
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.781557291003992,
+  "created_at": "2026-09-07T19:32:55.876398Z"
+}

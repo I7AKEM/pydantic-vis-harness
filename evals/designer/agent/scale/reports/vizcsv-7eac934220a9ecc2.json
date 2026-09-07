@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_540ba533ca624780a214414471f927bd",
+  "question": "ماهو معدل البطالة في الرياض",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل تتوفر بيانات خاصة بمدينة الرياض في هذا الجدول؟ حيث أن البيانات الحالية تحتوي فقط على الفئات العمرية والعدد.",
+    "reason": "The dataset only contains 'age_group' and 'count' columns. There is no column for city or region (like Riyadh), nor is there a column for unemployment rates or employment status to calculate an unemployment rate."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 0.8408829999971204,
+  "created_at": "2026-09-07T19:32:39.783829Z"
+}

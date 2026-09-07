@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_db1f661d35ac4456b2fc8a5f118521dc",
+  "question": "ما هي أعلى خمس مناطق من حيث الكثافة السكانية الإجمالية وأقل خمس مناطق في أحدث شهر متاح؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل يمكنك توضيح ما تقصده بـ \"الكثافة السكانية\"؟ هل تقصد إجمالي عدد السكان لكل منطقة، أم أن هناك بيانات عن المساحة غير متوفرة في الجدول الحالي لحساب الكثافة (عدد السكان ÷ المساحة)؟ كما أرجو توضيح \"أحدث شهر متاح\" حيث لا يحتوي الجدول على أعمدة للتاريخ.",
+    "reason": "The user asks for \"population density\" and \"the latest available month\", but the dataset only contains 'region', 'person_type', and 'population_count'. There is no area column to calculate density, and no date/time column to determine the latest month."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.6797803750087041,
+  "created_at": "2026-09-07T19:31:56.044763Z"
+}

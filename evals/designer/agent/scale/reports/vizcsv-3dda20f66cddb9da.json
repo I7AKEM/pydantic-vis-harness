@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_89baf58bce534ceca260d9f9c5564c72",
+  "question": "كم عدد سكان منطقة الرياض؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT population_count AS \"عدد السكان\" FROM \"ds_89baf58bce534ceca260d9f9c5564c72\"",
+    "columns": [
+      {
+        "name": "عدد السكان",
+        "meaning": "إجمالي عدد السكان في منطقة الرياض",
+        "kind": "measure",
+        "unit": null,
+        "source": "population_count",
+        "aggregate": "sum",
+        "denominator": "null"
+      }
+    ],
+    "summary": "يبلغ عدد سكان منطقة الرياض 671 شخصاً. تم افتراض أن البيانات المتاحة في الجدول تمثل منطقة الرياض بالكامل.",
+    "assumptions": [
+      "تم افتراض أن البيانات المتاحة في الجدول تمثل منطقة الرياض بالكامل"
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT population_count AS \"عدد السكان\" FROM \"ds_89baf58bce534ceca260d9f9c5564c72\"",
+    "columns": [
+      "عدد السكان"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        671
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.02290795800217893
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.589501124995877,
+  "created_at": "2026-09-07T19:32:31.997013Z"
+}

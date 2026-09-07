@@ -1,0 +1,17 @@
+{
+  "dataset_id": "ds_22ee20a8746e4b65a41e5b1dde9b5254",
+  "question": "كم نسبة السعوديين الذكور المعددين مقارنة بعدد السعوديين الذكور المتزوجين؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": null,
+  "clarification": {
+    "question": "هل تتوفر بيانات عن السعوديين الذكور المعددين والمتزوجين في مجموعة البيانات هذه؟ حيث أن الأعمدة المتاحة تتعلق فقط بعدد حالات الزواج والطلاق ونسبة الطلاق إلى الزواج.",
+    "reason": "The available columns only provide total counts of marriages and divorces, and the ratio between them. There is no column or data indicating the number of polygamous men (معددين) or specifically male Saudi citizens."
+  },
+  "result": null,
+  "checks": [],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.0060466660070233,
+  "created_at": "2026-09-07T19:32:51.746897Z"
+}

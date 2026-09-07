@@ -1,0 +1,83 @@
+{
+  "dataset_id": "ds_e901bc6b17e1421aa773bf34c64fff83",
+  "question": "Count families by wealth level",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT wealth_level, sum(family_count) AS \"family_count\" FROM \"ds_e901bc6b17e1421aa773bf34c64fff83\" GROUP BY wealth_level",
+    "columns": [
+      {
+        "name": "wealth_level",
+        "meaning": "Wealth level of the group",
+        "kind": "category",
+        "unit": null,
+        "source": "wealth_level",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "family_count",
+        "meaning": "Number of families",
+        "kind": "measure",
+        "unit": "count",
+        "source": "family_count",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "The number of families varies by wealth level, with the highest count being 300,677 for the Rich group and the lowest being 298,629 for the Lower Middle group. Other levels include Poor (300,101), Middle (299,407), and Upper Middle (300,186).",
+    "assumptions": [
+      "I assumed that summing the family_count column provides the total number of families per wealth level."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT wealth_level, sum(family_count) AS \"family_count\" FROM \"ds_e901bc6b17e1421aa773bf34c64fff83\" GROUP BY wealth_level",
+    "columns": [
+      "wealth_level",
+      "family_count"
+    ],
+    "types": [
+      "VARCHAR",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        "Poor",
+        300101
+      ],
+      [
+        "Lower Middle",
+        298629
+      ],
+      [
+        "Middle",
+        299407
+      ],
+      [
+        "Upper Middle",
+        300186
+      ],
+      [
+        "Rich",
+        300677
+      ]
+    ],
+    "row_count": 5,
+    "checks": [],
+    "seconds": 0.010818875001859851
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 3.954936957990867,
+  "created_at": "2026-09-07T19:33:48.665834Z"
+}
