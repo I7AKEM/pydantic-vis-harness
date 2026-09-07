@@ -1,10 +1,10 @@
 {
-  "dataset_id": "ds_9f8202c4a9e14cffa85466997b04b93d",
+  "dataset_id": "ds_33ca38166bec44be95d9eea400055a4f",
   "question": "اعرض متوسط «death_count» حسب السنوات الهجرية باستخدام «hijri_year».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT hijri_year, AVG(death_count) AS avg_death_count FROM \"ds_9f8202c4a9e14cffa85466997b04b93d\" GROUP BY hijri_year",
+    "sql": "SELECT hijri_year, AVG(death_count) AS avg_death_count FROM \"ds_33ca38166bec44be95d9eea400055a4f\" GROUP BY hijri_year",
     "columns": [
       {
         "name": "hijri_year",
@@ -25,14 +25,12 @@
         "denominator": null
       }
     ],
-    "summary": "بلغ متوسط عدد الوفيات للسنة الهجرية 1445 حوالي 48.51، بينما ارتفع في السنة الهجرية 1446 ليصل إلى حوالي 54.28.",
-    "assumptions": [
-      "تم حساب المتوسط بناءً على جميع السجلات المتاحة لكل سنة هجرية في مجموعة البيانات."
-    ]
+    "summary": "بلغ متوسط عدد الوفيات في السنة الهجرية 1445 حوالي 48.51، بينما ارتفع المتوسط في السنة الهجرية 1446 ليصل إلى 54.28.",
+    "assumptions": []
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT hijri_year, AVG(death_count) AS avg_death_count FROM \"ds_9f8202c4a9e14cffa85466997b04b93d\" GROUP BY hijri_year",
+    "sql": "SELECT hijri_year, AVG(death_count) AS avg_death_count FROM \"ds_33ca38166bec44be95d9eea400055a4f\" GROUP BY hijri_year",
     "columns": [
       "hijri_year",
       "avg_death_count"
@@ -53,7 +51,7 @@
     ],
     "row_count": 2,
     "checks": [],
-    "seconds": 0.018347499993979
+    "seconds": 0.014215333998436108
   },
   "checks": [
     {
@@ -66,6 +64,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 6.077685374999419,
-  "created_at": "2026-09-07T19:34:19.310920Z"
+  "seconds": 3.482063916992047,
+  "created_at": "2026-09-07T20:00:56.828357Z"
 }

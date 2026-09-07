@@ -1,13 +1,13 @@
 {
-  "dataset_id": "ds_5b393f847ef040dd9ebe31ac74e1e0bc",
+  "dataset_id": "ds_388d0266ff774e1bb419503779857c62",
   "question": "اعرض متوسط «death_count» حسب السنوات الهجرية باستخدام «death_date».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT substr(death_date, 1, 4) AS \"السنة\", AVG(death_count) AS \"متوسط الوفيات\" FROM \"ds_5b393f847ef040dd9ebe31ac74e1e0bc\" GROUP BY 1 ORDER BY 1",
+    "sql": "SELECT substr(death_date, 1, 4) AS hijri_year, avg(death_count) AS avg_death_count FROM \"ds_388d0266ff774e1bb419503779857c62\" GROUP BY hijri_year ORDER BY hijri_year",
     "columns": [
       {
-        "name": "السنة",
+        "name": "hijri_year",
         "meaning": "السنة الهجرية",
         "kind": "time",
         "unit": null,
@@ -16,26 +16,26 @@
         "denominator": null
       },
       {
-        "name": "متوسط الوفيات",
+        "name": "avg_death_count",
         "meaning": "متوسط عدد الوفيات",
         "kind": "measure",
-        "unit": null,
+        "unit": "person",
         "source": "death_count",
         "aggregate": "avg",
         "denominator": null
       }
     ],
-    "summary": "بلغ متوسط عدد الوفيات في عام 1445 حوالي 48.51، بينما ارتفع في عام 1446 ليصل إلى حوالي 54.28. تم استخراج السنة من خلال أول أربعة رموز من تاريخ الوفاة.",
+    "summary": "بلغ متوسط عدد الوفيات في عام 1445 هـ حوالي 48.51 شخصاً، بينما ارتفع المتوسط في عام 1446 هـ ليصل إلى 54.28 شخصاً.",
     "assumptions": [
-      "تم اعتبار أول أربعة رموز من عمود death_date كالسنة الهجرية."
+      "تم استخراج السنة الهجرية من أول 4 رموز في عمود death_date."
     ]
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT substr(death_date, 1, 4) AS \"السنة\", AVG(death_count) AS \"متوسط الوفيات\" FROM \"ds_5b393f847ef040dd9ebe31ac74e1e0bc\" GROUP BY 1 ORDER BY 1",
+    "sql": "SELECT substr(death_date, 1, 4) AS hijri_year, avg(death_count) AS avg_death_count FROM \"ds_388d0266ff774e1bb419503779857c62\" GROUP BY hijri_year ORDER BY hijri_year",
     "columns": [
-      "السنة",
-      "متوسط الوفيات"
+      "hijri_year",
+      "avg_death_count"
     ],
     "types": [
       "VARCHAR",
@@ -53,7 +53,7 @@
     ],
     "row_count": 2,
     "checks": [],
-    "seconds": 0.025935040990589187
+    "seconds": 0.008473374997265637
   },
   "checks": [
     {
@@ -66,6 +66,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 5.131211333005922,
-  "created_at": "2026-09-07T19:33:54.684408Z"
+  "seconds": 5.154133125004591,
+  "created_at": "2026-09-07T20:00:17.783137Z"
 }

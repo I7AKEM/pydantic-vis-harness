@@ -1,79 +1,77 @@
 {
-  "dataset_id": "ds_09a3e28cd40241c882bf954f2478f75d",
+  "dataset_id": "ds_74ba55f1ae454a398577f31e7ad176e2",
   "question": "اعرض قيم «count» حسب «age_group».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT age_group, count FROM \"ds_09a3e28cd40241c882bf954f2478f75d\"",
+    "sql": "SELECT age_group, CAST(replace(translate(count, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') AS DOUBLE) AS count_val FROM \"ds_74ba55f1ae454a398577f31e7ad176e2\"",
     "columns": [
       {
         "name": "age_group",
         "meaning": "الفئة العمرية",
-        "kind": "category",
+        "kind": "ordinal",
         "unit": null,
         "source": "age_group",
         "aggregate": "none",
         "denominator": null
       },
       {
-        "name": "count",
+        "name": "count_val",
         "meaning": "العدد",
         "kind": "measure",
-        "unit": null,
+        "unit": "count",
         "source": "count",
         "aggregate": "none",
         "denominator": null
       }
     ],
-    "summary": "تظهر البيانات قيم «count» لكل فئة عمرية، حيث سجلت الفئة «غير محدد» أعلى قيمة (١٢٨٩٣) تليها الفئة «65+» (١٢٥٤٨). تم عرض جميع الفئات العمرية السبع الموجودة في الجدول.",
-    "assumptions": [
-      "تم اعتبار عمود count كقيمة نصية كما ورد في تعريف الجدول."
-    ]
+    "summary": "تتراوح قيم العدد حسب الفئة العمرية بين 8642 للفئة 55-64 و 12893 للفئة غير المحددة. سجلت الفئة العمرية 65+ عدداً قدره 12548.",
+    "assumptions": []
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT age_group, count FROM \"ds_09a3e28cd40241c882bf954f2478f75d\"",
+    "sql": "SELECT age_group, CAST(replace(translate(count, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') AS DOUBLE) AS count_val FROM \"ds_74ba55f1ae454a398577f31e7ad176e2\"",
     "columns": [
       "age_group",
-      "count"
+      "count_val"
     ],
     "types": [
       "VARCHAR",
-      "VARCHAR"
+      "DOUBLE"
     ],
     "rows": [
       [
         "15-24",
-        "٨٧٤٨"
+        8748.0
       ],
       [
         "25-34",
-        "٨٧٥٤"
+        8754.0
       ],
       [
         "35-44",
-        "٨٦٤٤"
+        8644.0
       ],
       [
         "45-54",
-        "٨٧٠٥"
+        8705.0
       ],
       [
         "55-64",
-        "٨٦٤٢"
+        8642.0
       ],
       [
         "65+",
-        "١٢٥٤٨"
+        12548.0
       ],
       [
         "غير محدد",
-        "١٢٨٩٣"
+        12893.0
       ]
     ],
     "row_count": 7,
     "checks": [],
-    "seconds": 0.02600933299981989
+    "seconds": 0.015969750005751848
   },
   "checks": [
     {
@@ -86,6 +84,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 3.5190887920034584,
-  "created_at": "2026-09-07T19:34:07.314472Z"
+  "seconds": 3.79729854199104,
+  "created_at": "2026-09-07T20:00:33.555662Z"
 }

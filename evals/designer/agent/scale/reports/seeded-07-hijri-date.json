@@ -1,41 +1,41 @@
 {
-  "dataset_id": "ds_b01c92a8cc6a4b14acb9dde0475826b2",
+  "dataset_id": "ds_510c2e10cb394c3a92488c311c68d735",
   "question": "اعرض متوسط «paid_violations» حسب الأشهر الهجرية باستخدام «violation_date».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT substr(violation_date, 1, 7) AS \"الشهر\", AVG(paid_violations) AS \"متوسط المخالفات المدفوعة\" FROM \"ds_b01c92a8cc6a4b14acb9dde0475826b2\" GROUP BY 1 ORDER BY 1",
+    "sql": "SELECT \n    substr(violation_date, 1, 7) AS \"الشهر الهجري\", \n    AVG(paid_violations) AS \"متوسط المخالفات المسددة\" \nFROM \"ds_510c2e10cb394c3a92488c311c68d735\" \nGROUP BY 1 \nORDER BY 1",
     "columns": [
       {
-        "name": "الشهر",
-        "meaning": "الشهر الهجري (سنة-شهر)",
-        "kind": "category",
+        "name": "الشهر الهجري",
+        "meaning": "الشهر الهجري (السنة-الشهر)",
+        "kind": "time",
         "unit": null,
         "source": "violation_date",
         "aggregate": "none",
         "denominator": null
       },
       {
-        "name": "متوسط المخالفات المدفوعة",
-        "meaning": "متوسط عدد المخالفات المدفوعة",
+        "name": "متوسط المخالفات المسددة",
+        "meaning": "متوسط عدد المخالفات المسددة",
         "kind": "measure",
-        "unit": null,
+        "unit": "count",
         "source": "paid_violations",
         "aggregate": "avg",
         "denominator": null
       }
     ],
-    "summary": "يتفاوت متوسط عدد المخالفات المدفوعة شهرياً بشكل ملحوظ عبر الزمن، حيث بدأ من حوالي 1.14 في شهر 1383-08 ووصل إلى ذروته عند 117.6 في شهر 1444-08، قبل أن ينخفض إلى 1.43 في شهر 1447-08.",
+    "summary": "يتراوح متوسط عدد المخالفات المسددة شهرياً من أدنى قيمة بلغت 1.14 في شهر 1383-08 إلى أعلى قيمة وصلت إلى 117.6 في شهر 1444-08. يظهر تحليل البيانات تذبذباً في المتوسطات عبر الأشهر الهجرية المختلفة.",
     "assumptions": [
-      "تم استخراج الشهر والسنة من عمود 'violation_date' باستخدام أول 7 رموز (YYYY-MM) لتمثيل الأشهر الهجرية."
+      "تم تجميع البيانات حسب الشهر والسنة الهجرية باستخدام أول 7 رموز من عمود violation_date."
     ]
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT substr(violation_date, 1, 7) AS \"الشهر\", AVG(paid_violations) AS \"متوسط المخالفات المدفوعة\" FROM \"ds_b01c92a8cc6a4b14acb9dde0475826b2\" GROUP BY 1 ORDER BY 1",
+    "sql": "SELECT \n    substr(violation_date, 1, 7) AS \"الشهر الهجري\", \n    AVG(paid_violations) AS \"متوسط المخالفات المسددة\" \nFROM \"ds_510c2e10cb394c3a92488c311c68d735\" \nGROUP BY 1 \nORDER BY 1",
     "columns": [
-      "الشهر",
-      "متوسط المخالفات المدفوعة"
+      "الشهر الهجري",
+      "متوسط المخالفات المسددة"
     ],
     "types": [
       "VARCHAR",
@@ -3121,7 +3121,7 @@
     ],
     "row_count": 769,
     "checks": [],
-    "seconds": 0.03554216599150095
+    "seconds": 0.015741166003863327
   },
   "checks": [
     {
@@ -3134,6 +3134,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 6.116688250011066,
-  "created_at": "2026-09-07T19:34:00.838120Z"
+  "seconds": 3.487595208993298,
+  "created_at": "2026-09-07T20:00:53.321586Z"
 }

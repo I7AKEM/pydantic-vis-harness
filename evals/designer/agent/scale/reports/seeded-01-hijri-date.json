@@ -1,41 +1,41 @@
 {
-  "dataset_id": "ds_92bebd29774747daa6c09eff22afcfbf",
+  "dataset_id": "ds_4fa1315697474ea49020659c23bc0ebe",
   "question": "اعرض متوسط «paid_violations» حسب الأشهر الهجرية باستخدام «violation_date».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT substr(violation_date, 1, 7) AS \"الشهر\", AVG(paid_violations) AS \"متوسط المخالفات المدفوعة\" FROM \"ds_92bebd29774747daa6c09eff22afcfbf\" GROUP BY 1 ORDER BY 1",
+    "sql": "SELECT substr(violation_date, 1, 7) AS month_bucket, avg(paid_violations) AS avg_paid FROM \"ds_4fa1315697474ea49020659c23bc0ebe\" GROUP BY month_bucket ORDER BY month_bucket",
     "columns": [
       {
-        "name": "الشهر",
-        "meaning": "الشهر الهجري (سنة-شهر)",
+        "name": "month_bucket",
+        "meaning": "الشهر الهجري",
         "kind": "time",
         "unit": null,
         "source": "violation_date",
         "aggregate": "none",
-        "denominator": "null"
+        "denominator": null
       },
       {
-        "name": "متوسط المخالفات المدفوعة",
-        "meaning": "متوسط عدد المخالفات المدفوعة",
+        "name": "avg_paid",
+        "meaning": "متوسط المخالفات المسددة",
         "kind": "measure",
-        "unit": null,
+        "unit": "count",
         "source": "paid_violations",
         "aggregate": "avg",
-        "denominator": "null"
+        "denominator": null
       }
     ],
-    "summary": "يظهر متوسط عدد المخالفات المدفوعة (paid_violations) تذبذباً عبر الأشهر الهجرية، حيث بدأ من حوالي 1.14 في شهر 1383-08 ووصل إلى أعلى مستوياته في شهر 1444-08 بمتوسط 117.6، ثم انخفض تدريجياً ليصل إلى 1.43 في شهر 1447-08.",
+    "summary": "يتراوح متوسط عدد المخالفات المسددة شهرياً من أدنى قيمة بلغت 1.0 في شهر 1383-10 إلى أعلى قيمة وصلت إلى 117.6 في شهر 1444-08. يظهر تحليل البيانات تذبذباً في المتوسطات عبر الأشهر الهجرية المختلفة الممتدة من عام 1383 حتى 1447.",
     "assumptions": [
-      "تم استخراج الشهر والسنة من نص تاريخ المخالفة (violation_date) باستخدام أول 7 أحرف."
+      "تم تجميع البيانات حسب الشهر والسنة الهجرية (YYYY-MM) من عمود violation_date."
     ]
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT substr(violation_date, 1, 7) AS \"الشهر\", AVG(paid_violations) AS \"متوسط المخالفات المدفوعة\" FROM \"ds_92bebd29774747daa6c09eff22afcfbf\" GROUP BY 1 ORDER BY 1",
+    "sql": "SELECT substr(violation_date, 1, 7) AS month_bucket, avg(paid_violations) AS avg_paid FROM \"ds_4fa1315697474ea49020659c23bc0ebe\" GROUP BY month_bucket ORDER BY month_bucket",
     "columns": [
-      "الشهر",
-      "متوسط المخالفات المدفوعة"
+      "month_bucket",
+      "avg_paid"
     ],
     "types": [
       "VARCHAR",
@@ -3121,7 +3121,7 @@
     ],
     "row_count": 769,
     "checks": [],
-    "seconds": 0.01355558299110271
+    "seconds": 0.014502250007353723
   },
   "checks": [
     {
@@ -3134,6 +3134,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 4.929978542000754,
-  "created_at": "2026-09-07T19:33:52.919601Z"
+  "seconds": 4.177807250001933,
+  "created_at": "2026-09-07T20:00:16.792179Z"
 }

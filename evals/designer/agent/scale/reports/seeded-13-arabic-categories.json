@@ -1,14 +1,14 @@
 {
-  "dataset_id": "ds_0ba893db28ba4ae49532ba8a01408a53",
+  "dataset_id": "ds_17b757e2e08a4aad837913cfcca9403d",
   "question": "اعرض قيم «population_count» حسب «region».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT region, population_count FROM \"ds_0ba893db28ba4ae49532ba8a01408a53\"",
+    "sql": "SELECT region, population_count FROM \"ds_17b757e2e08a4aad837913cfcca9403d\"",
     "columns": [
       {
         "name": "region",
-        "meaning": "اسم المنطقة الإدارية",
+        "meaning": "المنطقة",
         "kind": "geography",
         "unit": null,
         "source": "region",
@@ -17,7 +17,7 @@
       },
       {
         "name": "population_count",
-        "meaning": "عدد السكان في المنطقة",
+        "meaning": "عدد السكان",
         "kind": "measure",
         "unit": "شخص",
         "source": "population_count",
@@ -25,14 +25,12 @@
         "denominator": null
       }
     ],
-    "summary": "تظهر البيانات عدد السكان لكل منطقة، حيث سجلت منطقة الجوف 739 شخصاً، والحدود الشمالية 727 شخصاً، ومنطقة نجران 701 شخصاً.",
-    "assumptions": [
-      "تم عرض جميع السجلات المتاحة في الجدول دون أي تجميع أو تصفية."
-    ]
+    "summary": "تتراوح أعداد السكان في المناطق المذكورة بين 701 شخصاً في منطقة نجران و739 شخصاً في منطقة الجوف، بينما سجلت الحدود الشمالية 727 شخصاً.",
+    "assumptions": []
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT region, population_count FROM \"ds_0ba893db28ba4ae49532ba8a01408a53\"",
+    "sql": "SELECT region, population_count FROM \"ds_17b757e2e08a4aad837913cfcca9403d\"",
     "columns": [
       "region",
       "population_count"
@@ -57,7 +55,7 @@
     ],
     "row_count": 3,
     "checks": [],
-    "seconds": 0.02722116700897459
+    "seconds": 0.01755658299953211
   },
   "checks": [
     {
@@ -70,6 +68,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 4.789678916000412,
-  "created_at": "2026-09-07T19:34:10.726418Z"
+  "seconds": 2.159122416996979,
+  "created_at": "2026-09-07T20:00:39.216015Z"
 }

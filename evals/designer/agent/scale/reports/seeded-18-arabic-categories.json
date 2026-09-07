@@ -1,10 +1,10 @@
 {
-  "dataset_id": "ds_404d93f767d14f39b2ad416e5f21209f",
+  "dataset_id": "ds_0f7bd05a2dc54ec2a9ef1205d0806335",
   "question": "اعرض قيم «actual_fine» حسب «violation_type_description».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT violation_type_description, actual_fine FROM \"ds_404d93f767d14f39b2ad416e5f21209f\"",
+    "sql": "SELECT violation_type_description, actual_fine FROM \"ds_0f7bd05a2dc54ec2a9ef1205d0806335\"",
     "columns": [
       {
         "name": "violation_type_description",
@@ -25,14 +25,12 @@
         "denominator": "null"
       }
     ],
-    "summary": "توضح البيانات قيم الغرامات الفعلية لكل نوع من أنواع المخالفات المرورية، حيث تتراوح القيم بين 100 و 1200. أعلى غرامة هي 1200 لدخول أو خروج الشاحنات في أوقات المنع.",
-    "assumptions": [
-      "تم عرض جميع السجلات الموجودة في الجدول دون أي تجميع أو تصفية."
-    ]
+    "summary": "تتراوح قيم الغرامات الفعلية حسب نوع المخالفة بين 100 و 1200، حيث سجلت مخالفة دخول أو خروج الشاحنات في أوقات المنع أعلى قيمة بغرامة 1200.",
+    "assumptions": []
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT violation_type_description, actual_fine FROM \"ds_404d93f767d14f39b2ad416e5f21209f\"",
+    "sql": "SELECT violation_type_description, actual_fine FROM \"ds_0f7bd05a2dc54ec2a9ef1205d0806335\"",
     "columns": [
       "violation_type_description",
       "actual_fine"
@@ -65,7 +63,7 @@
     ],
     "row_count": 5,
     "checks": [],
-    "seconds": 0.0282389170024544
+    "seconds": 0.012743583996780217
   },
   "checks": [
     {
@@ -78,6 +76,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 4.718515708998893,
-  "created_at": "2026-09-07T19:34:16.555733Z"
+  "seconds": 5.894406374995015,
+  "created_at": "2026-09-07T20:00:53.923631Z"
 }

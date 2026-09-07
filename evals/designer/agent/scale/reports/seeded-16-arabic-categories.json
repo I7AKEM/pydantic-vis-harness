@@ -1,10 +1,10 @@
 {
-  "dataset_id": "ds_d716a82fea3443c99c143360a178acfc",
+  "dataset_id": "ds_c589386d951d480aa924f70a839b2618",
   "question": "اعرض قيم «avg_days_to_graduate» حسب «university_name».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT university_name, avg_days_to_graduate FROM \"ds_d716a82fea3443c99c143360a178acfc\"",
+    "sql": "SELECT university_name, avg_days_to_graduate FROM \"ds_c589386d951d480aa924f70a839b2618\"",
     "columns": [
       {
         "name": "university_name",
@@ -13,26 +13,26 @@
         "unit": null,
         "source": "university_name",
         "aggregate": "none",
-        "denominator": "null"
+        "denominator": null
       },
       {
         "name": "avg_days_to_graduate",
-        "meaning": "متوسط عدد أيام التخرج",
+        "meaning": "متوسط عدد الأيام حتى التخرج",
         "kind": "measure",
-        "unit": null,
+        "unit": "يوم",
         "source": "avg_days_to_graduate",
         "aggregate": "none",
-        "denominator": "null"
+        "denominator": null
       }
     ],
-    "summary": "تظهر البيانات متوسط عدد أيام التخرج لكل جامعة، حيث سجلت جامعة الفيصل (١) أعلى قيمة بـ 1389 يوماً، بينما سجلت بقية الجامعات 1387 يوماً.",
+    "summary": "تظهر البيانات متوسط عدد الأيام حتى التخرج لكل جامعة، حيث سجلت جامعة الفيصل أعلى قيمة بـ 1389 يوماً، بينما سجلت بقية الجامعات 1387 يوماً.",
     "assumptions": [
-      "لا توجد افتراضات إضافية."
+      "لا توجد"
     ]
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT university_name, avg_days_to_graduate FROM \"ds_d716a82fea3443c99c143360a178acfc\"",
+    "sql": "SELECT university_name, avg_days_to_graduate FROM \"ds_c589386d951d480aa924f70a839b2618\"",
     "columns": [
       "university_name",
       "avg_days_to_graduate"
@@ -65,7 +65,7 @@
     ],
     "row_count": 5,
     "checks": [],
-    "seconds": 0.013216332998126745
+    "seconds": 0.012633541991817765
   },
   "checks": [
     {
@@ -78,6 +78,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 2.999466499997652,
-  "created_at": "2026-09-07T19:34:13.210925Z"
+  "seconds": 3.995212124995305,
+  "created_at": "2026-09-07T20:00:47.730480Z"
 }

@@ -1,10 +1,10 @@
 {
-  "dataset_id": "ds_c9cb1b19cdf648f4b8a44632e39b0eee",
+  "dataset_id": "ds_91ab15289c93427a8e00da3b428f6b5b",
   "question": "اعرض قيم «count» حسب «age_group».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT age_group, count FROM \"ds_c9cb1b19cdf648f4b8a44632e39b0eee\"",
+    "sql": "SELECT age_group, sum(count) AS count FROM \"ds_91ab15289c93427a8e00da3b428f6b5b\" GROUP BY age_group",
     "columns": [
       {
         "name": "age_group",
@@ -13,33 +13,31 @@
         "unit": null,
         "source": "age_group",
         "aggregate": "none",
-        "denominator": "null"
+        "denominator": null
       },
       {
         "name": "count",
-        "meaning": "عدد الأفراد",
+        "meaning": "العدد",
         "kind": "measure",
-        "unit": null,
+        "unit": "count",
         "source": "count",
-        "aggregate": "none",
-        "denominator": "null"
+        "aggregate": "sum",
+        "denominator": null
       }
     ],
-    "summary": "توضح البيانات عدد الأفراد لكل فئة عمرية، حيث سجلت الفئة \"غير محدد (Riyadh)\" أعلى عدد بـ 12,893 فرداً، تليها الفئة \"65+\" بـ 12,548 فرداً. بينما سجلت الفئة \"55-64\" أقل عدد بـ 8,642 فرداً.",
-    "assumptions": [
-      "تم عرض جميع الفئات العمرية المتاحة في مجموعة البيانات دون أي تصفية."
-    ]
+    "summary": "تتراوح قيم العدد حسب الفئة العمرية بين 8,642 للفئة 55-64 و 12,893 للفئة غير المحددة (الرياض). سجلت الفئة العمرية 65+ عدداً قدره 12,548.",
+    "assumptions": []
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT age_group, count FROM \"ds_c9cb1b19cdf648f4b8a44632e39b0eee\"",
+    "sql": "SELECT age_group, sum(count) AS count FROM \"ds_91ab15289c93427a8e00da3b428f6b5b\" GROUP BY age_group",
     "columns": [
       "age_group",
       "count"
     ],
     "types": [
       "VARCHAR",
-      "BIGINT"
+      "HUGEINT"
     ],
     "rows": [
       [
@@ -73,7 +71,7 @@
     ],
     "row_count": 7,
     "checks": [],
-    "seconds": 0.023593124991748482
+    "seconds": 0.01886716700391844
   },
   "checks": [
     {
@@ -86,6 +84,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 4.482174042001134,
-  "created_at": "2026-09-07T19:34:11.814950Z"
+  "seconds": 2.1386895420000656,
+  "created_at": "2026-09-07T20:00:43.713613Z"
 }
