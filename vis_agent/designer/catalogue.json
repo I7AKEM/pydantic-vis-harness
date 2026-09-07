@@ -1,0 +1,937 @@
+{
+  "entries": [
+    {
+      "name": "column",
+      "aliases": [
+        "vertical bar",
+        "columns"
+      ],
+      "purposes": [
+        "compare",
+        "rank"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography",
+            "time"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "category",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle"
+      ],
+      "category_max": 50,
+      "draw": {
+        "type": "column",
+        "options": {}
+      },
+      "summary": "Compare or rank values across labels or time periods using a category and a measure or share."
+    },
+    {
+      "name": "bar",
+      "aliases": [
+        "horizontal bar",
+        "bars"
+      ],
+      "purposes": [
+        "compare",
+        "rank"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "category",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle"
+      ],
+      "category_max": 50,
+      "draw": {
+        "type": "bar",
+        "options": {}
+      },
+      "summary": "Compare or rank values with long labels using a label category and a measure or share."
+    },
+    {
+      "name": "grouped_column",
+      "aliases": [
+        "grouped bars",
+        "clustered column"
+      ],
+      "purposes": [
+        "compare"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "group": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "category",
+        "group": "group",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle"
+      ],
+      "category_max": 50,
+      "group_max": 10,
+      "draw": {
+        "type": "column",
+        "options": {
+          "group": true
+        }
+      },
+      "summary": "Compare groups side by side within categories using category and group labels and a measure or share."
+    },
+    {
+      "name": "stacked_column",
+      "aliases": [
+        "stacked bars"
+      ],
+      "purposes": [
+        "composition",
+        "compare"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "group": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "category",
+        "group": "group",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle",
+        "percent"
+      ],
+      "category_max": 50,
+      "group_max": 10,
+      "additive_value": true,
+      "draw": {
+        "type": "column",
+        "options": {
+          "stack": true
+        }
+      },
+      "summary": "Compare composition across categories using category and group labels and an additive value."
+    },
+    {
+      "name": "grouped_bar",
+      "aliases": [],
+      "purposes": [
+        "compare"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "group": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "category",
+        "group": "group",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle"
+      ],
+      "category_max": 50,
+      "group_max": 10,
+      "draw": {
+        "type": "bar",
+        "options": {
+          "group": true
+        }
+      },
+      "summary": "Compare groups side by side along horizontal bars using category and group labels and a measure or share."
+    },
+    {
+      "name": "stacked_bar",
+      "aliases": [],
+      "purposes": [
+        "composition",
+        "compare"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "group": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "category",
+        "group": "group",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle",
+        "percent"
+      ],
+      "category_max": 50,
+      "group_max": 10,
+      "additive_value": true,
+      "draw": {
+        "type": "bar",
+        "options": {
+          "stack": true
+        }
+      },
+      "summary": "Compare composition along horizontal bars using category and group labels and an additive value."
+    },
+    {
+      "name": "line",
+      "aliases": [
+        "line chart",
+        "trend line"
+      ],
+      "purposes": [
+        "trend"
+      ],
+      "roles": {
+        "time": {
+          "kinds": [
+            "time",
+            "ordinal"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "time": "time",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle",
+        "zero",
+        "axisYMin",
+        "axisYMax",
+        "axisYScale"
+      ],
+      "min_points": 3,
+      "draw": {
+        "type": "line",
+        "options": {}
+      },
+      "summary": "Show a trend using a time or ordinal axis and a measure or share."
+    },
+    {
+      "name": "multi_line",
+      "aliases": [
+        "lines",
+        "multi-line"
+      ],
+      "purposes": [
+        "trend",
+        "compare"
+      ],
+      "roles": {
+        "time": {
+          "kinds": [
+            "time",
+            "ordinal"
+          ],
+          "required": true
+        },
+        "group": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "time": "time",
+        "group": "group",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle",
+        "zero",
+        "axisYMin",
+        "axisYMax",
+        "axisYScale"
+      ],
+      "min_points": 3,
+      "group_max": 10,
+      "draw": {
+        "type": "line",
+        "options": {}
+      },
+      "summary": "Compare trends between groups using a time or ordinal axis, group labels, and a measure or share."
+    },
+    {
+      "name": "area",
+      "aliases": [
+        "area chart"
+      ],
+      "purposes": [
+        "trend"
+      ],
+      "roles": {
+        "time": {
+          "kinds": [
+            "time",
+            "ordinal"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "time": "time",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle",
+        "zero"
+      ],
+      "min_points": 3,
+      "additive_value": true,
+      "draw": {
+        "type": "area",
+        "options": {}
+      },
+      "summary": "Show a trend as a filled area using a time or ordinal axis and an additive value."
+    },
+    {
+      "name": "stacked_area",
+      "aliases": [
+        "stacked areas"
+      ],
+      "purposes": [
+        "trend",
+        "composition"
+      ],
+      "roles": {
+        "time": {
+          "kinds": [
+            "time",
+            "ordinal"
+          ],
+          "required": true
+        },
+        "group": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "time": "time",
+        "group": "group",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle",
+        "percent",
+        "zero"
+      ],
+      "min_points": 3,
+      "group_max": 10,
+      "additive_value": true,
+      "draw": {
+        "type": "area",
+        "options": {
+          "stack": true
+        }
+      },
+      "summary": "Show how composition changes over time using a time or ordinal axis, group labels, and an additive value."
+    },
+    {
+      "name": "pie",
+      "aliases": [
+        "pie chart"
+      ],
+      "purposes": [
+        "share",
+        "composition"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "category",
+        "value": "value"
+      },
+      "rating": "caution",
+      "keys": [],
+      "category_min": 2,
+      "category_max": 6,
+      "additive_value": true,
+      "draw": {
+        "type": "pie",
+        "options": {}
+      },
+      "summary": "Show shares and composition of one whole using two to six label categories and an additive value or share."
+    },
+    {
+      "name": "donut",
+      "aliases": [
+        "doughnut",
+        "ring"
+      ],
+      "purposes": [
+        "share",
+        "composition"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "category",
+        "value": "value"
+      },
+      "rating": "caution",
+      "keys": [
+        "innerRadius"
+      ],
+      "category_min": 2,
+      "category_max": 6,
+      "additive_value": true,
+      "draw": {
+        "type": "pie",
+        "options": {
+          "innerRadius": 0.6
+        }
+      },
+      "summary": "Show shares and composition of one whole as a ring using two to six label categories and an additive value or share."
+    },
+    {
+      "name": "scatter",
+      "aliases": [
+        "scatter plot",
+        "points"
+      ],
+      "purposes": [
+        "relation"
+      ],
+      "roles": {
+        "x": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        },
+        "y": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        },
+        "group": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": false
+        }
+      },
+      "fields": {
+        "x": "x",
+        "y": "y",
+        "group": "group"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle",
+        "zero",
+        "axisYMin",
+        "axisYMax",
+        "axisYScale",
+        "axisXMin",
+        "axisXMax"
+      ],
+      "draw": {
+        "type": "scatter",
+        "options": {}
+      },
+      "summary": "Show the relationship between two measures or shares using x and y values and optional group labels."
+    },
+    {
+      "name": "histogram",
+      "aliases": [
+        "distribution"
+      ],
+      "purposes": [
+        "distribution"
+      ],
+      "roles": {
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle",
+        "binNumber"
+      ],
+      "min_rows": 30,
+      "raw_values": true,
+      "draw": {
+        "type": "histogram",
+        "options": {}
+      },
+      "summary": "Show a value distribution using at least thirty raw, unaggregated measure or share values."
+    },
+    {
+      "name": "boxplot",
+      "aliases": [
+        "box plot",
+        "box and whisker"
+      ],
+      "purposes": [
+        "distribution",
+        "compare"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "category",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle",
+        "zero",
+        "axisYMin",
+        "axisYMax"
+      ],
+      "min_rows": 30,
+      "raw_values": true,
+      "draw": {
+        "type": "boxplot",
+        "options": {}
+      },
+      "summary": "Compare value distributions across label categories using at least thirty raw, unaggregated measure or share values."
+    },
+    {
+      "name": "treemap",
+      "aliases": [
+        "tree map"
+      ],
+      "purposes": [
+        "share",
+        "composition"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "name",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [],
+      "category_max": 50,
+      "additive_value": true,
+      "draw": {
+        "type": "treemap",
+        "options": {}
+      },
+      "summary": "Show shares and composition using label categories and an additive value."
+    },
+    {
+      "name": "radar",
+      "aliases": [
+        "spider"
+      ],
+      "purposes": [
+        "compare"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        },
+        "group": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": false
+        }
+      },
+      "fields": {
+        "category": "name",
+        "value": "value",
+        "group": "group"
+      },
+      "rating": "caution",
+      "keys": [],
+      "category_min": 3,
+      "category_max": 12,
+      "group_max": 5,
+      "draw": {
+        "type": "radar",
+        "options": {}
+      },
+      "summary": "Compare values across three to twelve label categories using a measure or share and optional group labels."
+    },
+    {
+      "name": "dual_axes",
+      "aliases": [
+        "dual axis",
+        "two axes",
+        "combo"
+      ],
+      "purposes": [
+        "compare",
+        "trend"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography",
+            "time"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        },
+        "value2": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "category",
+        "value": "value",
+        "value2": "value2"
+      },
+      "rating": "caution",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle",
+        "zero",
+        "axisYMin",
+        "axisYMax"
+      ],
+      "category_max": 50,
+      "draw": {
+        "type": "dual-axes",
+        "options": {}
+      },
+      "summary": "Compare values or trends using labels or time periods and two measures or shares with different units."
+    },
+    {
+      "name": "word_cloud",
+      "aliases": [
+        "word cloud",
+        "tag cloud"
+      ],
+      "purposes": [
+        "rank"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "text",
+        "value": "value"
+      },
+      "rating": "caution",
+      "keys": [],
+      "category_min": 20,
+      "draw": {
+        "type": "word-cloud",
+        "options": {}
+      },
+      "summary": "Show the relative rank of many labels using at least twenty label categories and a measure or share."
+    },
+    {
+      "name": "table",
+      "aliases": [
+        "spreadsheet",
+        "grid"
+      ],
+      "purposes": [
+        "compare",
+        "trend",
+        "rank",
+        "distribution",
+        "composition",
+        "relation",
+        "share"
+      ],
+      "roles": {},
+      "fields": {},
+      "rating": "fallback",
+      "keys": [],
+      "draw": {
+        "type": "spreadsheet",
+        "options": {}
+      },
+      "summary": "Show every result column for any purpose without requiring role bindings."
+    }
+  ]
+}
