@@ -66,6 +66,14 @@ defects, all fixed with tests:
 - A null code crashed the label check; descriptions could be given out of result order and mislabel the lead's table;
   the request budget was measured against the lead's shared counter rather than the analyst's own run.
 
+## The profiler before the merge
+
+The three profiler sets were run on this branch before the merge, as the standing rule requires: held-out 0.998,
+training 0.998, hand-made 0.958, the same columns wrong as before Phase 2. Moving the profiler's instructions into its
+rulebook file changed nothing, as the byte-for-byte test guarantees. One run overlapped with an analyst evaluation and
+two profiler requests stalled for the full 90 seconds; the one-retry rule absorbed one of them, and the rerun alone was
+clean. Run the sets one at a time when the numbers matter.
+
 ## Process
 
 Every task was implemented by Codex from a written brief holding the exact code and tests, and reviewed, tested, and
