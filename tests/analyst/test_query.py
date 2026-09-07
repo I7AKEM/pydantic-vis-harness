@@ -83,3 +83,60 @@ def test_run_sql_caps_cells(store):
     store.import_csv(source.dataset_id)
     result = run_sql(store, source.dataset_id, f'SELECT note FROM "{source.dataset_id}"')
     assert len(result.rows[0][0]) == 121 and result.rows[0][0].endswith("…")
+
+
+@pytest.mark.parametrize("function", ["substr", "substring"])
+def test_hijri_monthly_buckets_pass_guard_and_run(store, hijri, function):
+    dataset, _profile = hijri
+    sql = (f"SELECT {function}(translate(day, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 7) AS month, "
+           f'count(*) AS n FROM "{dataset}" GROUP BY 1 ORDER BY 1')
+    with store.connect() as connection:
+        validate_sql(connection, sql, dataset)
+    result = run_sql(store, dataset, sql)
+    assert isinstance(result, QueryResult)
+    assert result.types[0] == "VARCHAR"
+    assert result.rows == [["1399-12", 1], ["1400-01", 1], ["1447-03", 2], ["1447-04", 1]]
+
+
+def test_hijri_month_names_pass_guard_and_run(store, hijri):
+    dataset, _profile = hijri
+    sql = f"""
+        WITH dates AS (
+            SELECT translate(named_day, '٠١٢٣٤٥٦٧٨٩', '0123456789') AS day FROM "{dataset}"
+        )
+        SELECT regexp_extract(day, '1[34][0-9]{{2}}') || '-' ||
+            CASE
+                WHEN day LIKE '%محرم%' THEN '01'
+                WHEN day LIKE '%صفر%' THEN '02'
+                WHEN day LIKE '%ربيع الأول%' THEN '03'
+                WHEN day LIKE '%ربيع الآخر%' THEN '04'
+                WHEN day LIKE '%جمادى الأولى%' THEN '05'
+                WHEN day LIKE '%جمادى الآخرة%' THEN '06'
+                WHEN day LIKE '%رجب%' THEN '07'
+                WHEN day LIKE '%شعبان%' THEN '08'
+                WHEN day LIKE '%رمضان%' THEN '09'
+                WHEN day LIKE '%شوال%' THEN '10'
+                WHEN day LIKE '%ذو القعدة%' THEN '11'
+                WHEN day LIKE '%ذو الحجة%' THEN '12'
+            END AS month,
+            count(*) AS n
+        FROM dates GROUP BY 1 ORDER BY 1
+    """
+    with store.connect() as connection:
+        validate_sql(connection, sql, dataset)
+    result = run_sql(store, dataset, sql)
+    assert isinstance(result, QueryResult)
+    assert result.types[0] == "VARCHAR"
+    assert result.rows == [["1399-12", 1], ["1400-01", 1], ["1447-03", 2], ["1447-04", 1]]
+
+
+def test_arabic_digit_sum_passes_guard_and_runs(store, hijri):
+    dataset, _profile = hijri
+    sql = ("SELECT sum(CAST(replace(translate(amount, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') "
+           f'AS DOUBLE)) AS total FROM "{dataset}"')
+    with store.connect() as connection:
+        validate_sql(connection, sql, dataset)
+    result = run_sql(store, dataset, sql)
+    assert isinstance(result, QueryResult)
+    assert result.types == ["DOUBLE"]
+    assert result.rows == [[1285.0]]

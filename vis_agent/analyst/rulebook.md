@@ -33,6 +33,8 @@ Intent decides the query shape:
 - Single number: one aggregate, one row.
 
 Rules that hold in every shape:
+- A column whose measurement levels include hijri holds Hijri dates as text. Never date_trunc or cast it. Translate Arabic-Indic digits first with translate(col, '٠١٢٣٤٥٦٧٨٩', '0123456789'); bucket by year with substr(..., 1, 4) and by month with substr(..., 1, 7) when the date is written 1447-03-12; for the month-name form (12 ربيع الأول 1447) take the year with regexp_extract(col, '1[34][0-9]{2}') and the month number from the name (محرم 01 … ذو الحجة 12) with a CASE, and write the bucket as 'YYYY-MM' text. Describe the bucket with kind time and unit null, ordered by the bucket text.
+- A column whose levels include arabic_digits is a number written in Arabic-Indic digits: convert with CAST(replace(translate(col, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') AS DOUBLE) before aggregating; never treat it as a label.
 - unit is null for counts and numbers of things; write a unit only for money, percent, and physical measures, in the caller's language.
 - When common_values_are_a_sample is true, the listed values are only the most frequent ones. A value the question
   names may still exist; filter for it (case and spelling as written in the data) instead of assuming it is absent.

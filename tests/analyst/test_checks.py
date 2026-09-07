@@ -1,4 +1,6 @@
 # tests/analyst/test_checks.py
+import pytest
+
 from vis_agent.analyst.checks import check_result, summary_numbers_exist
 from vis_agent.analyst.models import QueryResult, ResultColumn
 from vis_agent.analyst.query import run_sql
@@ -121,3 +123,20 @@ def test_summary_numbers_must_exist_in_the_result():
     assert not summary_numbers_exist("Under 15, the West leads with 65 SAR.", result).passed
     assert summary_numbers_exist("Under 15, the West leads with 65 SAR.", result, "What share is under 15?").passed
     assert summary_numbers_exist("In December 2025 the West led with 65 SAR.", result, "violations December 2025").passed
+
+
+@pytest.mark.parametrize("width", [4, 7], ids=["year", "month"])
+@pytest.mark.parametrize("order", ["ASC", "DESC"])
+def test_hijri_text_time_order(store, hijri, width, order):
+    dataset, profile = hijri
+    result = run(store, dataset,
+                 f"SELECT substr(translate(day, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, {width}) AS bucket, "
+                 f'count(*) AS n FROM "{dataset}" GROUP BY 1 ORDER BY 1 {order}')
+    columns = [column("bucket", "time", "day", unit=None), column("n", "measure", aggregate="count")]
+    assert result.types[0] == "VARCHAR"
+    failed = failed_checks(check_result(store, profile, columns, result))
+    if order == "ASC":
+        assert failed == []
+    else:
+        assert names(failed) == ["time_in_order"]
+        assert failed[0].severity == "warning"
