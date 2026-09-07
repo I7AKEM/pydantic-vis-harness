@@ -33,6 +33,13 @@ It adds the chart designer agent, checked delivery, rendering, and the lead's ch
 - Each agent's rulebook is `vis_agent/<agent>/rulebook.md`; every confirmed mistake becomes an eval case plus a check or a rulebook line.
 - Run the evals before every merge, including `evals/designer/run.py` (`uv run python -m evals.designer.run`).
   Also run `uv run python -m evals.designer.agent.run` (needs `OPENROUTER_API_KEY`).
+  Run the scale set with `uv run python -m evals.designer.agent.run --cases evals/designer/agent/scale/cases.json`
+  and `--split train`, `--split dev`, or `--split heldout`; judge the held-out forty with `--render`.
+  Use `uv run python -m evals.designer.agent.optimize_instructions check` before optimizing with
+  `uv run python -m evals.designer.agent.optimize_instructions run light OUT_DIR --split train`
+  (`medium` is also supported; both modes need `OPENROUTER_API_KEY` and the `optimize` dependency group).
+  The optimizer uses train and dev only. Adopt its rulebook changes only if the real runner's automatic
+  scores improve on dev and heldout without lowering the judged sample; otherwise keep the seed rulebook.
 
 Run with:
 
