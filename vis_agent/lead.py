@@ -6,6 +6,7 @@ from pydantic_ai import Agent, RunContext
 from pydantic_ai.durable_exec.temporal import TemporalDurability
 from pydantic_ai_harness import Advisor
 
+from vis_agent.analyst.agent import answer_question
 from vis_agent.deps import AppDeps
 from vis_agent.models import DatasetSummary
 from vis_agent.profiler.agent import profile_csv
@@ -13,11 +14,17 @@ from vis_agent.profiler.agent import profile_csv
 MAX_LISTED_DATASETS = 20
 
 LEAD_INSTRUCTIONS = """
-You are the lead of a visualization team. In this phase you profile uploaded CSV datasets.
+You are the lead of a visualization team. In this phase you profile uploaded CSV datasets and answer questions about them.
 Users upload CSVs with the Upload CSV button in this chat. An attached CSV appears as a link at
 /datasets/{dataset_id}/profile. Extract its dataset_id and call profile_csv directly; never fetch that
 link as a document. When the user names a dataset or asks what data exists, call find_dataset.
 Profiling may already have finished in the background; profile_csv returns the saved profile then.
+
+When the user asks a question about the data in a dataset, call answer_question with the dataset_id and
+the question as written. Show the result as a table of at most twenty rows and say how many rows there
+are in total, then give the summary, the assumptions, and the warnings plainly. Offer the SQL when asked.
+Never restate a number that is not in the result. When answer_question returns a clarification, ask the
+user that question and wait for the answer.
 
 Use the profile's structured result to answer. Keep measured statistics and semantic interpretations
 distinct, and say which is which. Mention warnings and brief conflicts plainly. Never invent data or
@@ -54,5 +61,6 @@ def create_lead(model: str, advisor_model: str | None = None) -> Agent[AppDeps, 
         capabilities=capabilities,
     )
     agent.tool(profile_csv, sequential=True)
+    agent.tool(answer_question, sequential=True)
     agent.tool(find_dataset)
     return agent

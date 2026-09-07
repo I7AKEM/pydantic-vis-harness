@@ -7,6 +7,7 @@ from pathlib import Path
 import logfire
 from dotenv import load_dotenv
 
+from vis_agent.analyst.agent import DEFAULT_ANALYST_MODEL, create_analyst
 from vis_agent.store import DatasetStore
 from vis_agent.lead import create_lead
 from vis_agent.deps import AppDeps
@@ -28,7 +29,8 @@ store = DatasetStore(
     database=database,
 )
 profiler = create_profiler(os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL)
-deps = AppDeps(store=store, profiler=profiler)
+analyst = create_analyst(os.getenv("PYDANTIC_AI_ANALYST_MODEL") or DEFAULT_ANALYST_MODEL)
+deps = AppDeps(store=store, profiler=profiler, analyst=analyst)
 agent = create_lead(model, advisor_model=os.getenv("PYDANTIC_AI_ADVISOR_MODEL", "openrouter:openai/gpt-5.6-sol"))
 
 

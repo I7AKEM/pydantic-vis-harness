@@ -9,19 +9,22 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
+import duckdb
+
 from pydantic import BaseModel
-from pydantic_ai import Agent, ModelRetry, RunContext, ToolOutput
+from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed, ToolOutput
 from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded
 from pydantic_ai.usage import RunUsage, UsageLimits
 
 from vis_agent.analyst.checks import check_result, summary_numbers_exist
 from vis_agent.analyst.models import Analysis, AnalysisReport, Clarification, QueryError, QueryResult, ResultColumn
 from vis_agent.analyst.query import run_sql
+from vis_agent.deps import AppDeps
 from vis_agent.models import DataBrief
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, ProfilerInput, profile_dataset
 from vis_agent.profiler.models import DatasetProfile, ProfileCheck, SemanticProfile
 from vis_agent.profiler.review import failed_checks
-from vis_agent.store import DatasetStore, quote_identifier
+from vis_agent.store import DatasetNotFound, DatasetStore, quote_identifier
 
 log = logging.getLogger("analyst")
 DEFAULT_ANALYST_MODEL = DEFAULT_PROFILER_MODEL
@@ -223,3 +226,57 @@ async def analyze_dataset(
         result=table, checks=checks, warnings=warnings, model=model_name,
         seconds=time.perf_counter() - started, created_at=datetime.now(timezone.utc),
     )
+
+
+LEAD_ROWS = 50
+
+
+class LeadAnswer(BaseModel):
+    """What the lead sees: the answer, bounded to LEAD_ROWS rows."""
+
+    dataset_id: str
+    question: str
+    summary: str | None = None
+    assumptions: list[str] = []
+    clarification: Clarification | None = None
+    columns: list[ResultColumn] = []
+    rows: list[list] = []
+    row_count: int = 0
+    sql: str | None = None
+    warnings: list[str] = []
+
+    @classmethod
+    def from_report(cls, report: AnalysisReport) -> "LeadAnswer":
+        analysis, table = report.analysis, report.result
+        return cls(
+            dataset_id=report.dataset_id, question=report.question,
+            summary=analysis.summary if analysis else None,
+            assumptions=analysis.assumptions if analysis else [],
+            clarification=report.clarification,
+            columns=analysis.columns if analysis else [],
+            rows=table.rows[:LEAD_ROWS] if table else [],
+            row_count=table.row_count if table else 0,
+            sql=analysis.sql if analysis else None,
+            warnings=report.warnings,
+        )
+
+
+async def answer_question(ctx: RunContext["AppDeps"], dataset_id: str, question: str) -> LeadAnswer:
+    """Answer a question about an uploaded dataset with a result table and a two-sentence summary, or return the
+    question the analyst needs answered first.
+
+    Args:
+        dataset_id: The ds_ ID of an uploaded dataset.
+        question: The user's question, as they wrote it.
+    """
+    try:
+        report = await analyze_dataset(ctx.deps.store, ctx.deps.profiler, ctx.deps.analyst, dataset_id, question,
+                                       usage=ctx.usage)
+    except DatasetNotFound as exc:
+        raise ToolFailed(str(exc)) from exc
+    except ValueError as exc:
+        raise ModelRetry(str(exc)) from exc
+    except duckdb.Error as exc:
+        log.warning("DuckDB failed while answering %r on %s: %s", question, dataset_id, exc)
+        raise ToolFailed("DuckDB could not run the analysis on this dataset.") from exc
+    return LeadAnswer.from_report(report)
