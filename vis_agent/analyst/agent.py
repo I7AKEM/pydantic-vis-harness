@@ -51,6 +51,7 @@ class ColumnFacts(BaseModel):
     null_percentage: float
     distinct_count: int
     common_values: list[str] = []
+    common_values_are_a_sample: bool = False
     minimum: float | None = None
     maximum: float | None = None
     earliest: str | None = None
@@ -116,6 +117,7 @@ def build_prompt(store: DatasetStore, profile: DatasetProfile, question: str, la
                 brief_conflict=semantic.brief_conflict if semantic else None,
                 null_percentage=round(stats.null_percentage, 1), distinct_count=stats.distinct_count,
                 common_values=common,
+                common_values_are_a_sample=stats.distinct_count > PROMPT_DISTINCT_VALUES,
                 minimum=stats.numeric.minimum if stats.numeric else None,
                 maximum=stats.numeric.maximum if stats.numeric else None,
                 earliest=stats.earliest, latest=stats.latest, ordinal_pattern=stats.ordinal_pattern,
@@ -137,7 +139,10 @@ async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[Result
         return QueryError(sql=sql, error=f"You have used the {MAX_QUERY_CALLS} query calls of this run. "
                                           "Deliver the last result that passed its checks, or ask the caller a question.")
     deps.query_calls += 1
-    result = await asyncio.to_thread(run_sql, deps.store, deps.profile.source.dataset_id, sql)
+    result = await asyncio.to_thread(
+        run_sql, deps.store, deps.profile.source.dataset_id, sql,
+        omitted={c.name.casefold() for c in deps.profile.deterministic.columns if c.values_omitted},
+    )
     if isinstance(result, QueryError):
         return result
     result.checks = await asyncio.to_thread(check_result, deps.store, deps.profile, columns, result)
@@ -205,7 +210,7 @@ async def analyze_dataset(
     try:
         async with asyncio.timeout(ANALYSIS_TIMEOUT_SECONDS):
             result = await analyst.run(prompt.model_dump_json(), deps=deps, usage=usage,
-                                       usage_limits=UsageLimits(request_limit=MAX_REQUESTS))
+                                       usage_limits=UsageLimits(request_limit=(usage.requests if usage is not None else 0) + MAX_REQUESTS))
         output = result.output
         model_name = result.response.model_name
     except (ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded, TimeoutError) as exc:

@@ -11,7 +11,7 @@ from pydantic_ai.usage import RunUsage
 from vis_agent.analyst.agent import MAX_QUERY_CALLS, analyze_dataset, build_prompt, create_analyst, detect_language
 from vis_agent.analyst.models import Analysis, Clarification
 from vis_agent.models import DataBrief
-from vis_agent.profiler.agent import create_profiler
+from vis_agent.profiler.agent import create_profiler, profile_dataset
 
 COLUMNS = [
     {"name": "region", "meaning": "المنطقة", "kind": "geography", "source": "region"},
@@ -40,7 +40,7 @@ def agents():
     return create_profiler("test"), create_analyst("test")
 
 
-def test_language_and_prompt(store, people):
+def test_language_and_prompt(store, people, agents):
     dataset, profile = people
     assert detect_language("ما مجموع المبالغ؟", None, []) == "Arabic"
     assert detect_language("Total amount?", None, []) == "English"
@@ -55,8 +55,23 @@ def test_language_and_prompt(store, people):
     assert facts["day"].earliest == "2026-01-01"
     assert "rows" not in prompt.model_dump_json()
 
+    cities = "Riyadh Jeddah Dammam Mecca Medina Taif Tabuk Abha Jizan Najran Hail Buraydah Yanbu Jubail Khobar".split()
+    source = store.save_upload("cities.csv", ("city\n" + "\n".join(cities) + "\n").encode())
+    profiler, _analyst = agents
+    profile_output = {"description": "Cities.", "row_meaning": "A city.", "questions": [],
+                      "columns": [{"name": "city", "meaning": None, "role": "geography", "unit": None,
+                                   "confidence": "high", "evidence": "x"}]}
+    with profiler.override(model=TestModel(call_tools=[], custom_output_args=profile_output)):
+        wide_profile = asyncio.run(profile_dataset(store, profiler, source.dataset_id))
+    wide_prompt = build_prompt(store, wide_profile, "Count Jeddah", "English")
+    assert wide_prompt.columns[0].distinct_count == 15
+    assert len(wide_prompt.columns[0].common_values) == 5
+    assert wide_prompt.columns[0].common_values_are_a_sample is True
+    assert facts["wealth_level"].common_values_are_a_sample is False
 
-def test_query_then_delivery(store, people, agents):
+
+@pytest.mark.parametrize("starting_requests", [0, 7])
+def test_query_then_delivery(store, people, agents, starting_requests):
     dataset, _profile = people
     profiler, analyst = agents
 
@@ -68,14 +83,14 @@ def test_query_then_delivery(store, people, agents):
         assert returned["row_count"] == 2 and returned["rows"][0] == ["West", 65]
         return tool_call("deliver_analysis", summary="الغرب يتصدر بمجموع 65 ريال. الشرق 40 ريال.", assumptions=[])
 
-    usage = RunUsage()
+    usage = RunUsage(requests=starting_requests)
     with analyst.override(model=FunctionModel(drive)):
         report = run(store, profiler, analyst, dataset, "ما مجموع المبالغ حسب المنطقة؟", usage=usage)
     assert report.language == "Arabic" and report.clarification is None
     assert report.analysis.sql == sql_for(dataset)
     assert [c.name for c in report.analysis.columns] == ["region", "total"]
     assert report.result.rows == [["West", 65], ["East", 40]]
-    assert report.warnings == [] and usage.requests == 2
+    assert report.warnings == [] and usage.requests == starting_requests + 2
     assert report.model is not None and report.seconds >= 0
 
 
@@ -154,6 +169,29 @@ def test_model_failure_is_a_report_with_a_warning(store, people, agents):
         report = run(store, profiler, analyst, dataset, "Total by region")
     assert report.analysis is None and report.clarification is None
     assert report.warnings and "could not answer" in report.warnings[0]
+
+
+def test_omitted_columns_are_refused_through_the_agent(store, agents):
+    profiler, analyst = agents
+    source = store.save_upload("places.csv", b'region,WKT\nRiyadh,"MULTIPOLYGON (((45 19,46 20,45 19)))"\nJeddah,"POINT (39 21)"\n')
+    profile_output = {"description": "Places.", "row_meaning": "A place.", "questions": [],
+                      "columns": [{"name": n, "meaning": None, "role": "geography", "unit": None,
+                                   "confidence": "high", "evidence": "x"} for n in ("region", "WKT")]}
+
+    def drive(messages, info):
+        calls = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
+        if not calls:
+            return tool_call("run_query", sql=f'SELECT WKT FROM "{source.dataset_id}"',
+                             columns=[{"name": "WKT", "meaning": "Geometry", "kind": "geography", "source": "WKT"}])
+        returned = last_return(messages).model_response_object()
+        assert "cannot be queried" in returned["error"]
+        return tool_call("ask_clarification", question="Which region should I count?", reason="Geometry cannot be queried.")
+
+    with profiler.override(model=TestModel(call_tools=[], custom_output_args=profile_output)):
+        with analyst.override(model=FunctionModel(drive)):
+            report = run(store, profiler, analyst, source.dataset_id, "Show the geometry")
+    assert report.clarification is not None and report.result is None
+    assert report.analysis is None
 
 
 def test_unprofiled_dataset_is_profiled_first(store, agents):

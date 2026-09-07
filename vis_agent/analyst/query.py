@@ -31,7 +31,7 @@ def _nodes(tree):
             yield from _nodes(value)
 
 
-def validate_sql(connection, sql: str, table: str) -> None:
+def validate_sql(connection, sql: str, table: str, omitted=frozenset()) -> None:
     """Raise QueryRejected unless sql is one SELECT whose tables are the dataset's table or its own CTEs."""
     try:
         statements = connection.extract_statements(sql)
@@ -45,14 +45,25 @@ def validate_sql(connection, sql: str, table: str) -> None:
     if tree.get("error"):
         raise QueryRejected(f"The SQL could not be parsed: {tree.get('error_message')}")
     ctes = {entry.get("key") for node in _nodes(tree) if "cte_map" in node for entry in node["cte_map"].get("map", [])}
+    real = {name for (name,) in connection.execute("SELECT table_name FROM information_schema.tables").fetchall()}
     for node in _nodes(tree):
+        if omitted and node.get("class") == "COLUMN_REF":
+            name = node["column_names"][-1]
+            if name.casefold() in omitted:
+                raise QueryRejected(f"Column {name!r} holds long text or geometry and cannot be queried; "
+                                    "count rows with count(*) instead.")
+        if omitted and node.get("class") == "STAR":
+            excluded = {name.casefold() for name in node.get("exclude_list", [])}
+            if not omitted <= excluded:
+                raise QueryRejected("Name the columns you need; * would include columns that cannot be queried: "
+                                    + ", ".join(sorted(omitted - excluded)))
         kind = node.get("type")
         if kind == "TABLE_FUNCTION":
             name = (node.get("function") or {}).get("function_name", "?")
             raise QueryRejected(f"Table functions such as {name} are not allowed; query the dataset table only.")
         if kind == "BASE_TABLE":
             name = node.get("table_name")
-            if node.get("schema_name") or node.get("catalog_name") or (name != table and name not in ctes):
+            if node.get("schema_name") or node.get("catalog_name") or (name != table and (name in real or name not in ctes)):
                 raise QueryRejected(f'Only the dataset table "{table}" may be queried; found {name!r}.')
 
 
@@ -70,14 +81,14 @@ def cell(value) -> Cell:
     return preview(value)
 
 
-def run_sql(store: DatasetStore, dataset_id: str, sql: str, *, row_cap: int = ROW_CAP,
+def run_sql(store: DatasetStore, dataset_id: str, sql: str, *, omitted=frozenset(), row_cap: int = ROW_CAP,
             timeout: float = TIMEOUT_SECONDS) -> QueryResult | QueryError:
     """Validate, run with a timeout, fetch at most row_cap + 1 rows, cap cells. Errors come back for the model."""
     table = store.table_name(dataset_id)
     started = time.perf_counter()
     with store.connect() as connection:
         try:
-            validate_sql(connection, sql, table)
+            validate_sql(connection, sql, table, omitted=omitted)
         except QueryRejected as exc:
             return QueryError(sql=sql, error=str(exc))
         timer = threading.Timer(timeout, connection.interrupt)

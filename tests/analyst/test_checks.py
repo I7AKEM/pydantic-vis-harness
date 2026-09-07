@@ -34,6 +34,15 @@ def test_descriptions_must_match_the_result(store, people):
     assert names(failed) == ["column_descriptions_match_result"] and failed[0].severity == "error"
 
 
+def test_descriptions_must_be_in_result_order(store, people):
+    dataset, profile = people
+    result = run(store, dataset, f'SELECT region, count(*) AS n FROM "{dataset}" GROUP BY 1')
+    columns = [column("n", "measure", None, "count"), column("region", "geography", "region")]
+    failed = failed_checks(check_result(store, profile, columns, result), "error")
+    assert names(failed) == ["column_descriptions_match_result"]
+    assert failed[0].message == f"Describe exactly the result columns, once each and in result order: {result.columns}."
+
+
 def test_relabelled_codes_need_the_code_column_and_the_known_meaning(store, people):
     dataset, profile = people
     swapped = run(store, dataset, f"SELECT gender, CASE gender WHEN 'F' THEN 'Male' ELSE 'Female' END AS label, "
@@ -48,6 +57,15 @@ def test_relabelled_codes_need_the_code_column_and_the_known_meaning(store, peop
                                  f'FROM "{dataset}" GROUP BY 1')
     failed = failed_checks(check_result(store, profile, [column("label", "category", "gender"), column("n", "measure", None, "count")], orphan))
     assert names(failed) == ["labels_faithful"] and "code column" in failed[0].message
+
+
+def test_null_codes_do_not_crash_the_label_check(store, people):
+    _dataset, profile = people
+    result = QueryResult(sql="x", columns=["gender", "label", "n"], types=["VARCHAR", "VARCHAR", "BIGINT"],
+                         rows=[[None, "Unknown", 3], ["F", "Female", 2]], row_count=2, seconds=0)
+    columns = [column("gender", "category", "gender"), column("label", "category", "gender"),
+               column("n", "measure", None, "count")]
+    assert failed_checks(check_result(store, profile, columns, result), "error") == []
 
 
 def test_other_rows_and_unknown_labels(store, people):

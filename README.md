@@ -122,7 +122,9 @@ the prompt contains no raw rows.
 
 Before running the SQL, code parses it. It allows one SELECT on the dataset's table and the
 query's own named subqueries (CTEs) only. It rejects other tables, schema-qualified tables,
-and all table functions, including file readers. A query is interrupted after 10 seconds.
+and all table functions, including file readers.
+Columns the profile marked as omitted (long text, WKT, geometry) cannot be queried; the guard rejects them and `*`.
+A query is interrupted after 10 seconds.
 A result over 1,000 rows is rejected so the analyst can group it further or return fewer rows.
 
 Code checks the result against the data and profile:

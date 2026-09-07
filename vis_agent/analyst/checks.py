@@ -40,9 +40,9 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
         checks.append(_check(None, "result_not_empty", "error", False,
                              "The query returned no rows. Reconsider the filters, or ask the caller."))
         return checks
-    if sorted(c.name for c in columns) != sorted(result.columns) or len(columns) != len(result.columns):
+    if [c.name for c in columns] != result.columns:
         checks.append(_check(None, "column_descriptions_match_result", "error", False,
-                             f"Describe exactly the result columns, once each: {result.columns}."))
+                             f"Describe exactly the result columns, once each and in result order: {result.columns}."))
         return checks
 
     stats = {c.name: c for c in profile.deterministic.columns}
@@ -85,7 +85,7 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
                     wrong = sorted({f"{_text(code)!r} is labelled {_text(label)!r} but the profile says "
                                     f"{known.get(_text(code).casefold(), 'nothing')!r}"
                                     for code, label in zip(codes, labels)
-                                    if label is not None and label not in raw
+                                    if code is not None and label is not None and label not in raw
                                     and known.get(_text(code).casefold()) != label.casefold()})
                     if wrong:
                         checks.append(_check(column.name, "code_labels_match_profile", "error", False,
