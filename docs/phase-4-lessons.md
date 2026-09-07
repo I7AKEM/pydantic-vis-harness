@@ -84,6 +84,13 @@ check first time. The delivery send-back was never needed on the default model.
 Gemma: 2.3 seconds and 3.1 requests per design on average; a design is one recommendation call, one check, and
 one delivery. The renderer adds 0.1 to 0.4 seconds.
 
+## Before the merge
+
+The analyst's rulebook gained one line on this branch (no unit for counts), so its sixty-nine-question set ran
+again: 67 of 69 tables right, every delivered result free of error-level checks, 8.6 seconds per question. The
+two misses were clarifications on questions that passed in other runs, the same day-to-day variance recorded
+before the Phase 3 merge. The profiler did not change.
+
 ## What changed in the rulebook
 
 - A limit lifts the too-many-categories rejection, so a bar with `limit 20` is a valid answer to fifty-five
