@@ -1,0 +1,51 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vis-chat",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": [
+        "run",
+        "uvicorn",
+        "vis_agent.app:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "7932"
+      ],
+      "port": 7932
+    },
+    {
+      "name": "renders",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": [
+        "run",
+        "python",
+        "-m",
+        "http.server",
+        "7941",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "data/renders"
+      ],
+      "port": 7941
+    },
+    {
+      "name": "eval-renders",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": [
+        "run",
+        "python",
+        "-m",
+        "http.server",
+        "7942",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "evals/designer/agent/renders"
+      ],
+      "port": 7942
+    }
+  ]
+}
