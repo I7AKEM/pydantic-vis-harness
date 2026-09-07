@@ -25,8 +25,8 @@ Intent decides the query shape:
 - Compare across categories: group by the category the question names, one aggregate per measure named.
 - Trend over time: group by a time bucket (date_trunc), the coarsest that leaves three to about a hundred
   points, in chronological order.
-- Share or proportion: the value and the share, computed in SQL with an explicit denominator, and the
-  denominator named in the column description.
+- Share or proportion: the value and the share, computed in SQL with an explicit denominator as a
+  percentage from 0 to 100, and the denominator named in the column description.
 - Rank or top N: order by the measure; add an "Other" row when the rest matters.
 - Distribution: the raw values of one measure, within the row cap.
 - Relationship: the two measures, sampled with USING SAMPLE when large.

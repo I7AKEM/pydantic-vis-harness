@@ -35,6 +35,7 @@ CASES_DIR = Path(__file__).with_name("cases")
 
 DATE_MIDNIGHT = re.compile(r"^(\d{4}-\d{2}-\d{2})[T ]00:00:00(?:\.0+)?(?:Z|[+-]\d{2}:\d{2})?$")
 MONTH_START = re.compile(r"^(\d{4}-\d{2})-01$")
+YEAR_START = re.compile(r"^(\d{4})-01$")
 
 
 def _normal(value):
@@ -44,11 +45,15 @@ def _normal(value):
     if isinstance(value, (int, float)):
         if value == 0 or not math.isfinite(value):
             return float(value)
-        return float(round(value, 3 - int(math.floor(math.log10(abs(value))))))
+        number = float(round(value, 3 - int(math.floor(math.log10(abs(value))))))
+        # A whole number that looks like a year compares equal to a year bucket written as a date.
+        return str(int(number)) if number.is_integer() and 1000 <= number <= 3000 else number
     text = str(value).strip()
     if match := DATE_MIDNIGHT.match(text):
         text = match[1]
     if match := MONTH_START.match(text):
+        text = match[1]
+    if match := YEAR_START.match(text):
         text = match[1]
     return text
 
@@ -66,15 +71,20 @@ def tables_match(expected: dict, actual: dict) -> float:
         return 0.0
     expected_columns = [[_normal(row[i]) for row in expected["rows"]] for i in range(len(expected["columns"]))]
     actual_columns = [[_normal(row[i]) for row in actual["rows"]] for i in range(len(actual["columns"]))]
-    candidates = [[j for j, column in enumerate(actual_columns) if sorted(map(_key, column)) == sorted(map(_key, wanted))]
+    # A share may come back as a fraction or a percentage; both count.
+    variants = list(enumerate(actual_columns))
+    for j, column in enumerate(actual_columns):
+        if column and all(isinstance(v, float) and 0 <= v <= 1 for v in column):
+            variants.append((j, [_normal(v * 100) for v in column]))
+    candidates = [[(j, column) for j, column in variants if sorted(map(_key, column)) == sorted(map(_key, wanted))]
                   for wanted in expected_columns]
     if any(not choice for choice in candidates):
         return 0.0
     expected_rows = sorted(_key(list(row)) for row in zip(*expected_columns))
     for choice in itertools.product(*candidates):
-        if len(set(choice)) != len(choice):
+        if len({j for j, _ in choice}) != len(choice):
             continue
-        rows = sorted(_key([actual_columns[j][r] for j in choice]) for r in range(len(actual["rows"])))
+        rows = sorted(_key([column[r] for _, column in choice]) for r in range(len(actual["rows"])))
         if rows == expected_rows:
             return 1.0
     return 0.0

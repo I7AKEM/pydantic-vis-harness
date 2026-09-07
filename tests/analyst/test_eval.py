@@ -15,6 +15,11 @@ def test_tables_match_ignores_order_names_rounding_and_extra_columns():
     assert tables_match(expected, {"columns": ["a", "b"], "rows": [["West", 65]]}) == 0.0
     months = {"columns": ["month", "n"], "rows": [["2024-01-01", 5], ["2024-02-01T00:00:00", 6]]}
     assert tables_match(months, {"columns": ["m", "n"], "rows": [["2024-01", 5], ["2024-02", 6]]}) == 1.0
+    years = {"columns": ["year", "n"], "rows": [[2020, 5], [2021, 6]]}
+    assert tables_match(years, {"columns": ["y", "n"], "rows": [["2020-01-01T00:00:00+03:00", 5], ["2021-01-01", 6]]}) == 1.0
+    shares = {"columns": ["type", "share"], "rows": [["a", 22.6], ["b", 77.4]]}
+    assert tables_match(shares, {"columns": ["t", "s"], "rows": [["a", 0.22600000000000001], ["b", 0.774]]}) == 1.0
+    assert tables_match(shares, {"columns": ["t", "s"], "rows": [["a", 0.3], ["b", 0.7]]}) == 0.0
 
 
 def test_load_cases_reads_the_format(tmp_path):
