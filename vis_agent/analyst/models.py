@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from vis_agent.profiler.models import ProfileCheck
 
@@ -27,6 +27,14 @@ class ResultColumn(BaseModel):
                                                          "from several.")
     aggregate: Aggregate = Field(default="none", description="How the source was aggregated, or none.")
     denominator: str | None = Field(default=None, description="For a share: what the share is of, in words.")
+
+    @field_validator("unit", mode="before")
+    @classmethod
+    def _placeholder_unit_is_null(cls, value):
+        # Models sometimes write the word null, or a dash, instead of a JSON null; the picture would print it.
+        if isinstance(value, str) and value.strip().lower() in {"", "null", "none", "n/a", "na", "-"}:
+            return None
+        return value
 
     @model_validator(mode="after")
     def _consistent(self):

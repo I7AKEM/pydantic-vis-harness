@@ -26,6 +26,9 @@ WITHOUT_AXES = {"pie", "donut", "treemap", "radar", "word_cloud", "table"}
 SINGLE_SERIES = {"column", "bar", "line", "area", "scatter", "histogram", "boxplot"}
 COUNT_UNITS = {"count", "counts", "number", "n", "عدد", "رقم"}
 ISO_DATE_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?", re.ASCII)
+GREGORIAN_ISO = re.compile(
+    r"(?:1[6-9]|2\d)\d{2}(?:-\d{2}(?:-\d{2})?)?(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?", re.ASCII,
+)
 
 
 @dataclass
@@ -134,6 +137,13 @@ def _totals(records: list[dict], axis: str) -> dict:
         label = record[axis]
         totals[label] = totals.get(label, 0) + record["value"]
     return totals
+
+
+def _chronological(records: list[dict], axis: str) -> list[dict]:
+    """Gregorian time text goes in time order whatever order the analyst returned; other time text keeps it."""
+    if records and all(GREGORIAN_ISO.fullmatch(record[axis]) for record in records):
+        return sorted(records, key=lambda record: record[axis])
+    return records
 
 
 def _sort(records: list[dict], order: str, axis: str | None, grouped: bool) -> list[dict]:
@@ -262,6 +272,8 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     if order != "none" and order.split()[0] not in binding:
         raise ResolveError("The sort target must be a bound role; remove the sort.")
     records = _sort(records, order, axis, "group" in binding)
+    if order == "none" and axis is not None and (axis == "time" or binding[axis].kind == "time"):
+        records = _chronological(records, axis)
     folded = 0
     if spec.limit is not None:
         values = [binding[role] for role in ("value", "value2") if role in binding]

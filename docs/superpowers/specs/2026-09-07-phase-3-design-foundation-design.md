@@ -386,7 +386,8 @@ The renderer, not the spec, holds the rows. Resolving happens in code, once, bef
    Choose the coarsest pattern satisfying those zero-unit conditions that preserves the number of distinct
    source values, increasing to `YYYY-MM-DD HH:MM:SS` and then `YYYY-MM-DD HH:MM:SS.ffffff` when needed,
    or retaining the original text if none preserves distinctness.
-   Hijri and other non-Gregorian time text is never shortened or reordered.
+   Gregorian time text is drawn in chronological order whatever order the analyst returned; Hijri and
+   other non-Gregorian time text is never shortened or reordered.
    Histogram resolution measures `binNumber` equal-width bins (default 10) over the bound value's minimum
    and maximum in DuckDB, using the result's own cells. Bins include their lower bound and exclude their
    upper bound, except the last includes the maximum. Empty bins retain zero counts. Python writes each

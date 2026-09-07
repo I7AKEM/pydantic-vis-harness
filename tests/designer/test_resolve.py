@@ -759,3 +759,31 @@ def test_labels_on_reports_unsupported_mark_structure(chart, builder, bindings):
     resolved = resolve(Spec(type=chart, bind=bindings, labels="on"), *builder())
     assert any(c.key == "labels" for c in resolved.compromises)
     assert "labels" not in resolved.overrides
+
+
+@pytest.mark.parametrize("chart, role", [("line", "time"), ("column", "category")])
+def test_gregorian_time_is_drawn_in_order_whatever_the_analyst_returned(chart, role):
+    columns = [column("period", "time"), column("value", "measure")]
+    result = table(columns, [["2026", 5], ["2024", 20], ["2025", 10]])
+    spec = Spec(type=chart, bind={role: "period", "value": "value"}, sort="none")
+    resolved = resolve(spec, columns, result)
+    assert [record[role] for record in resolved.config["data"]] == ["2024", "2025", "2026"]
+
+
+def test_integer_years_bound_as_time_are_drawn_in_order():
+    columns = [column("year", "ordinal"), column("value", "measure")]
+    result = table(columns, [[2026, 5], [2025, 10], [2024, 20]])
+    spec = Spec(type="line", bind={"time": "year", "value": "value"})
+    resolved = resolve(spec, columns, result)
+    assert [record["time"] for record in resolved.config["data"]] == ["2024", "2025", "2026"]
+
+
+@pytest.mark.parametrize("values", [
+    ["1447-04", "1447-03", "1447-02"], ["١٤٤٧-٠٤", "١٤٤٧-٠٣"], ["ربيع الآخر 1447", "صفر 1447"],
+])
+def test_hijri_time_keeps_the_analyst_order(values):
+    columns = [column("period", "time"), column("value", "measure")]
+    result = table(columns, [[label, 10] for label in values])
+    spec = Spec(type="line", bind={"time": "period", "value": "value"})
+    resolved = resolve(spec, columns, result)
+    assert [record["time"] for record in resolved.config["data"]] == values

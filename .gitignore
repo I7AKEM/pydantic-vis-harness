@@ -13,3 +13,4 @@ node_modules/
 tests/render/images/*.png
 evals/designer/agent/renders/
 .worktrees/
+evals/designer/agent/scale/renders/

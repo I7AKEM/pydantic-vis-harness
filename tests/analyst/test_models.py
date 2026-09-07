@@ -23,3 +23,11 @@ def test_query_result_keeps_cells_and_analysis_keeps_query():
     analysis = Analysis(sql="SELECT 1", columns=[ResultColumn(name="a", meaning="one", kind="measure")],
                         summary="One row.", assumptions=[])
     assert analysis.columns[0].aggregate == "none"
+
+
+@pytest.mark.parametrize("unit", ["null", "None", " n/a ", "", "-"])
+def test_placeholder_units_become_null(unit):
+    from vis_agent.analyst.models import ResultColumn
+
+    column = ResultColumn(name="Graduates", meaning="Graduates", kind="measure", unit=unit)
+    assert column.unit is None
