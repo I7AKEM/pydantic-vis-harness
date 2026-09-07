@@ -278,6 +278,12 @@ to ask (a column that cannot answer, a term with no definition) and rules out pr
 readings. The analyst eval holds at 68 to 69 of 69 with that wording, the eight cases that must still ask
 included.
 
+The home machine's server log then showed a third mechanism behind the same symptom: the analyst
+described the percentage column as a share without naming its denominator, the description model rejected
+it, the model repeated the mistake on its one retry, and the run died with "could not answer", which the lead
+turned into a question. A missing denominator is a gap in a description, not a wrong number, so it now
+defaults to "not stated" instead of ending the run.
+
 ## Left for later
 
 - A single-series line, area, column, or bar whose axis values repeat, with no group role, should fail

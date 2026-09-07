@@ -41,7 +41,8 @@ class ResultColumn(BaseModel):
         if self.unit is not None and self.kind not in ("measure", "share"):
             raise ValueError("unit belongs only on a measure or a share")
         if self.kind == "share" and not self.denominator:
-            raise ValueError("a share must name its denominator")
+            # A missing denominator is a gap in the description, not a wrong result; rejecting it cost whole runs.
+            self.denominator = "not stated"
         return self
 
 

@@ -11,8 +11,8 @@ def test_result_column_rules():
                  denominator="the sum of amount over every region")
     with pytest.raises(ValidationError, match="unit"):
         ResultColumn(name="Region", meaning="The region", kind="category", unit="SAR")
-    with pytest.raises(ValidationError, match="denominator"):
-        ResultColumn(name="Share", meaning="Share", kind="share", aggregate="share")
+    share = ResultColumn(name="Share", meaning="Share", kind="share", aggregate="share")
+    assert share.denominator == "not stated"
     with pytest.raises(ValidationError):
         ResultColumn(name="X", meaning="X", kind="weight")
 
