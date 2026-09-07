@@ -70,8 +70,8 @@ result has four columns: the gender code, its label, the count, and the share, a
 
 3. `check_spec` parses it, confirms donut is in the catalogue and the renderer draws it, confirms both bound
    columns exist with allowed kinds (a category and a share), runs the check rules, and resolves every key
-   against the renderer's capability table. It returns no violations and two compromises: the title stays
-   left-aligned, and the renderer decides the labels.
+   against the renderer's capability table. It returns no violations and one compromise: the legend stays where
+   the package puts it.
 4. The renderer resolves the spec against the result: binds the label column to `category` and the share to
    `value`, sorts by value, takes the percent sign from the share column's unit so the labels read "61.6%", and
    builds the library's configuration in memory. It spawns Node with that
@@ -448,8 +448,8 @@ No model anywhere in this phase, so every test is plain input and expected outpu
 - The three terminal commands.
 
 Pictures are checked by size and non-background share, not by pixel equality, because fonts differ between macOS
-and Linux and a reference image from one does not match the other. Reference images are kept in the repository
-for people to look at, regenerated with a flag, and reviewed in the lessons.
+and Linux and a reference image from one does not match the other. The render tests write every picture to an
+ignored folder when asked with an environment variable, for people to look at; the pictures are not committed.
 
 ## 13. The evaluation set
 
@@ -498,8 +498,9 @@ Phase 3 adds two packages: the designer's tools, which the designer agent joins 
    the axis ranges, the log scale, percent stacks, the label and legend switches, number formats, and digit
    shapes. Date formats, annotations, and hidden axes wait for a renderer that draws them; the strict parser
    makes adding them later safe.
-6. **Pictures checked by size and non-background share, not by pixel equality.** Recommended and assumed, for
-   the font reason in section 12. Say so if you want exact references generated on Linux in a container as well.
+6. **Pictures checked by size and non-background share, not by pixel equality.** Decided, for the font reason
+   in section 12; the pictures are inspected by eye and kept out of git. Exact references generated on Linux in
+   a container remain an option.
 7. **Funnel, maps, graph charts, and the stat card left out.** Decided from the spike. A single number is a
    one-cell table with a note.
 8. **No lead change and no chat in this phase.** Decided: the phase has no model, and the three terminal
