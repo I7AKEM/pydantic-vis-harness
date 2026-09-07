@@ -1,8 +1,12 @@
 """The designer's contracts: the spec, the recommendation, the check, and the compromises."""
 
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from vis_agent.analyst.models import Clarification
+from vis_agent.models import Intent
 
 ChartType = Literal[
     "column", "bar", "grouped_column", "stacked_column", "grouped_bar", "stacked_bar",
@@ -125,3 +129,29 @@ class SpecCheck(BaseModel):
     violations: list[Violation] = Field(default_factory=list)
     compromises: list[Compromise] = Field(default_factory=list)
     canonical: str | None = None
+
+
+class Design(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    spec: str
+    chart: ChartType
+    intent: Intent | None
+    explanation: str
+    considered: list[str]
+    compromises: list[Compromise]
+
+
+class DesignReport(BaseModel):
+    dataset_id: str
+    question: str
+    language: str
+    design: Design | None = None
+    clarification: Clarification | None = None
+    check: SpecCheck | None = None
+    warnings: list[str] = Field(default_factory=list)
+    model: str | None = None
+    requests: int = 0
+    check_calls: int = 0
+    seconds: float
+    created_at: datetime
