@@ -1,0 +1,99 @@
+{
+ "dataset_id": "ds_4ea4f575f5f44fc19ccfff6b6c326cae",
+ "question": "What percentage of violations were discounted?",
+ "language": "English",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT \n    count(*) FILTER (WHERE is_discounted = true) AS \"Discounted Count\",\n    (count(*) FILTER (WHERE is_discounted = true) * 100.0 / count(*)) AS \"Discount Percentage\"\nFROM \"ds_4ea4f575f5f44fc19ccfff6b6c326cae\"",
+  "columns": [
+   {
+    "name": "Discounted Count",
+    "meaning": "Number of discounted violations",
+    "kind": "measure",
+    "unit": "count",
+    "source": "is_discounted",
+    "aggregate": "count",
+    "denominator": null
+   },
+   {
+    "name": "Discount Percentage",
+    "meaning": "Percentage of violations that were discounted",
+    "kind": "share",
+    "unit": "%",
+    "source": "is_discounted",
+    "aggregate": "share",
+    "denominator": "Total violations"
+   }
+  ],
+  "summary": "48.0% of violations were discounted, which corresponds to 480 violations.",
+  "assumptions": [
+   "All rows in the dataset were considered as total violations."
+  ]
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT \n    count(*) FILTER (WHERE is_discounted = true) AS \"Discounted Count\",\n    (count(*) FILTER (WHERE is_discounted = true) * 100.0 / count(*)) AS \"Discount Percentage\"\nFROM \"ds_4ea4f575f5f44fc19ccfff6b6c326cae\"",
+  "columns": [
+   "Discounted Count",
+   "Discount Percentage"
+  ],
+  "types": [
+   "BIGINT",
+   "DOUBLE"
+  ],
+  "rows": [
+   [
+    480,
+    48.0
+   ]
+  ],
+  "row_count": 1,
+  "checks": [
+   {
+    "column": "Discounted Count",
+    "check": "total_explained",
+    "severity": "warning",
+    "passed": false,
+    "message": "Discounted Count: the result sums to 480; the column's total is 1000. The query filtered or excluded rows."
+   },
+   {
+    "column": "Discount Percentage",
+    "check": "shares_add_up",
+    "severity": "warning",
+    "passed": false,
+    "message": "Discount Percentage: shares sum to 48.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+   }
+  ],
+  "seconds": 0.00597787500009872
+ },
+ "checks": [
+  {
+   "column": "Discounted Count",
+   "check": "total_explained",
+   "severity": "warning",
+   "passed": false,
+   "message": "Discounted Count: the result sums to 480; the column's total is 1000. The query filtered or excluded rows."
+  },
+  {
+   "column": "Discount Percentage",
+   "check": "shares_add_up",
+   "severity": "warning",
+   "passed": false,
+   "message": "Discount Percentage: shares sum to 48.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  },
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [
+  "Discounted Count: the result sums to 480; the column's total is 1000. The query filtered or excluded rows.",
+  "Discount Percentage: shares sum to 48.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+ ],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 7.52786337499856,
+ "created_at": "2026-09-07T17:47:35.347455Z"
+}

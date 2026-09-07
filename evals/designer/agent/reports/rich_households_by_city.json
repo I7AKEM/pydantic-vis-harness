@@ -1,0 +1,144 @@
+{
+ "dataset_id": "ds_c9e6b6c5f80a429eb12d73c82cfdb028",
+ "question": "كم عدد الأسر الغنية في كل مدينة؟",
+ "language": "Arabic",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT city, sum(count) AS total_rich_households FROM \"ds_c9e6b6c5f80a429eb12d73c82cfdb028\" WHERE wealth_level = 'Rich' GROUP BY city",
+  "columns": [
+   {
+    "name": "city",
+    "meaning": "المدينة",
+    "kind": "geography",
+    "unit": null,
+    "source": "city",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "total_rich_households",
+    "meaning": "إجمالي عدد الأسر الغنية",
+    "kind": "measure",
+    "unit": null,
+    "source": "count",
+    "aggregate": "sum",
+    "denominator": null
+   }
+  ],
+  "summary": "يختلف عدد الأسر الغنية حسب المدينة، حيث سجلت نجران أعلى عدد بـ 13,121 أسرة، تليها جازان بـ 10,911 أسرة، بينما سجلت الخرج أقل عدد بـ 2,160 أسرة.",
+  "assumptions": [
+   "تم اعتبار 'Rich' كتعريف للأسر الغنية بناءً على عمود مستوى الثراء."
+  ]
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT city, sum(count) AS total_rich_households FROM \"ds_c9e6b6c5f80a429eb12d73c82cfdb028\" WHERE wealth_level = 'Rich' GROUP BY city",
+  "columns": [
+   "city",
+   "total_rich_households"
+  ],
+  "types": [
+   "VARCHAR",
+   "HUGEINT"
+  ],
+  "rows": [
+   [
+    "الوجه",
+    4487
+   ],
+   [
+    "نجران",
+    13121
+   ],
+   [
+    "الرياض",
+    4787
+   ],
+   [
+    "دومة الجندل",
+    6501
+   ],
+   [
+    "ضبا",
+    4374
+   ],
+   [
+    "مكة المكرمة",
+    7545
+   ],
+   [
+    "جدة",
+    8248
+   ],
+   [
+    "بلجرشي",
+    9898
+   ],
+   [
+    "سكاكا",
+    6585
+   ],
+   [
+    "الخرج",
+    2160
+   ],
+   [
+    "رفحاء",
+    6607
+   ],
+   [
+    "عرعر",
+    6523
+   ],
+   [
+    "تبوك",
+    4364
+   ],
+   [
+    "جازان",
+    10911
+   ],
+   [
+    "الباحة",
+    4414
+   ],
+   [
+    "صبيا",
+    6555
+   ]
+  ],
+  "row_count": 16,
+  "checks": [
+   {
+    "column": "total_rich_households",
+    "check": "total_explained",
+    "severity": "warning",
+    "passed": false,
+    "message": "total_rich_households: the result sums to 107080; the column's total is 531925. The query filtered or excluded rows."
+   }
+  ],
+  "seconds": 0.013296291988808662
+ },
+ "checks": [
+  {
+   "column": "total_rich_households",
+   "check": "total_explained",
+   "severity": "warning",
+   "passed": false,
+   "message": "total_rich_households: the result sums to 107080; the column's total is 531925. The query filtered or excluded rows."
+  },
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [
+  "total_rich_households: the result sums to 107080; the column's total is 531925. The query filtered or excluded rows."
+ ],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 2.8358016249985667,
+ "created_at": "2026-09-07T17:47:49.314455Z"
+}

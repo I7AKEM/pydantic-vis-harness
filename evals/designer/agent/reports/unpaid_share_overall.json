@@ -1,0 +1,94 @@
+{
+ "dataset_id": "ds_34192ba7691845188169b24a1fa2c33a",
+ "question": "ما نسبة المخالفات غير المسددة من إجمالي المخالفات؟",
+ "language": "Arabic",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT \n    sum(unpaid_violations) AS total_unpaid, \n    sum(total_violations) AS total_all, \n    (sum(unpaid_violations) * 100.0 / sum(total_violations)) AS unpaid_share \nFROM \"ds_34192ba7691845188169b24a1fa2c33a\"",
+  "columns": [
+   {
+    "name": "total_unpaid",
+    "meaning": "إجمالي المخالفات غير المسددة",
+    "kind": "measure",
+    "unit": "count",
+    "source": "unpaid_violations",
+    "aggregate": "sum",
+    "denominator": null
+   },
+   {
+    "name": "total_all",
+    "meaning": "إجمالي كافة المخالفات",
+    "kind": "measure",
+    "unit": "count",
+    "source": "total_violations",
+    "aggregate": "sum",
+    "denominator": null
+   },
+   {
+    "name": "unpaid_share",
+    "meaning": "نسبة المخالفات غير المسددة من الإجمالي",
+    "kind": "share",
+    "unit": "%",
+    "source": null,
+    "aggregate": "share",
+    "denominator": "total_violations"
+   }
+  ],
+  "summary": "تبلغ نسبة المخالفات غير المسددة حوالي 9.91% من إجمالي المخالفات، حيث بلغ عدد المخالفات غير المسددة 94,356 مخالفة من أصل 951,777 مخالفة إجمالية.",
+  "assumptions": []
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT \n    sum(unpaid_violations) AS total_unpaid, \n    sum(total_violations) AS total_all, \n    (sum(unpaid_violations) * 100.0 / sum(total_violations)) AS unpaid_share \nFROM \"ds_34192ba7691845188169b24a1fa2c33a\"",
+  "columns": [
+   "total_unpaid",
+   "total_all",
+   "unpaid_share"
+  ],
+  "types": [
+   "HUGEINT",
+   "HUGEINT",
+   "DOUBLE"
+  ],
+  "rows": [
+   [
+    94356,
+    951777,
+    9.913666751770636
+   ]
+  ],
+  "row_count": 1,
+  "checks": [
+   {
+    "column": "unpaid_share",
+    "check": "shares_add_up",
+    "severity": "warning",
+    "passed": false,
+    "message": "unpaid_share: shares sum to 9.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+   }
+  ],
+  "seconds": 0.008826416000374593
+ },
+ "checks": [
+  {
+   "column": "unpaid_share",
+   "check": "shares_add_up",
+   "severity": "warning",
+   "passed": false,
+   "message": "unpaid_share: shares sum to 9.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  },
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [
+  "unpaid_share: shares sum to 9.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+ ],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 2.3315311659971485,
+ "created_at": "2026-09-07T17:47:47.453181Z"
+}

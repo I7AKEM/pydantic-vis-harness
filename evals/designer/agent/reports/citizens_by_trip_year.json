@@ -1,0 +1,69 @@
+{
+ "dataset_id": "ds_41e0f06ff56d45438ff2acae815827cf",
+ "question": "How many citizens travelled in each year?",
+ "language": "English",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT trip_year, sum(citizen_count) AS total_citizens FROM \"ds_41e0f06ff56d45438ff2acae815827cf\" GROUP BY trip_year ORDER BY trip_year",
+  "columns": [
+   {
+    "name": "trip_year",
+    "meaning": "Trip Year",
+    "kind": "ordinal",
+    "unit": null,
+    "source": "trip_year",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "total_citizens",
+    "meaning": "Total Citizens",
+    "kind": "measure",
+    "unit": "person",
+    "source": "citizen_count",
+    "aggregate": "sum",
+    "denominator": null
+   }
+  ],
+  "summary": "In 2021, 2,431 citizens travelled, while in 2022, 629 citizens travelled.",
+  "assumptions": []
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT trip_year, sum(citizen_count) AS total_citizens FROM \"ds_41e0f06ff56d45438ff2acae815827cf\" GROUP BY trip_year ORDER BY trip_year",
+  "columns": [
+   "trip_year",
+   "total_citizens"
+  ],
+  "types": [
+   "BIGINT",
+   "HUGEINT"
+  ],
+  "rows": [
+   [
+    2021,
+    2431
+   ],
+   [
+    2022,
+    629
+   ]
+  ],
+  "row_count": 2,
+  "checks": [],
+  "seconds": 0.012460958008887246
+ },
+ "checks": [
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 2.905868082991219,
+ "created_at": "2026-09-07T17:47:39.886397Z"
+}

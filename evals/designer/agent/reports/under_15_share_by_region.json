@@ -1,0 +1,131 @@
+{
+ "dataset_id": "ds_7aca3553c7fd40edaf1509457a1e34ca",
+ "question": "What share of each region's population is under 15?",
+ "language": "English",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT region, age_0_14 AS pop_under_15, (CAST(age_0_14 AS DOUBLE) / total_population) * 100 AS share_under_15 FROM \"ds_7aca3553c7fd40edaf1509457a1e34ca\"",
+  "columns": [
+   {
+    "name": "region",
+    "meaning": "Administrative Region",
+    "kind": "category",
+    "unit": null,
+    "source": "region",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "pop_under_15",
+    "meaning": "Population under 15",
+    "kind": "measure",
+    "unit": "person",
+    "source": "age_0_14",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "share_under_15",
+    "meaning": "Share of population under 15",
+    "kind": "share",
+    "unit": "%",
+    "source": null,
+    "aggregate": "share",
+    "denominator": "total population of the region"
+   }
+  ],
+  "summary": "The share of the population under 15 varies by region, with the highest share in the Northern Borders (الحدود الشمالية) at 33.7% and the lowest in the Riyadh region (منطقة الرياض) at 30.3%. Other regions such as Najran and Jazan also show high shares, both exceeding 33%.",
+  "assumptions": [
+   "Population under 15 is defined by the 'age_0_14' column."
+  ]
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT region, age_0_14 AS pop_under_15, (CAST(age_0_14 AS DOUBLE) / total_population) * 100 AS share_under_15 FROM \"ds_7aca3553c7fd40edaf1509457a1e34ca\"",
+  "columns": [
+   "region",
+   "pop_under_15",
+   "share_under_15"
+  ],
+  "types": [
+   "VARCHAR",
+   "BIGINT",
+   "DOUBLE"
+  ],
+  "rows": [
+   [
+    "منطقة نجران",
+    233,
+    33.238231098430816
+   ],
+   [
+    "الحدود الشمالية",
+    245,
+    33.70013755158185
+   ],
+   [
+    "منطقة الرياض",
+    203,
+    30.25335320417288
+   ],
+   [
+    "منطقة مكة المكرمة",
+    213,
+    31.36966126656848
+   ],
+   [
+    "منطقة الجوف",
+    235,
+    31.799729364005415
+   ],
+   [
+    "منطقة تبوك",
+    222,
+    31.896551724137932
+   ],
+   [
+    "منطقة الباحة",
+    227,
+    32.70893371757925
+   ],
+   [
+    "منطقة جازان",
+    225,
+    33.482142857142854
+   ]
+  ],
+  "row_count": 8,
+  "checks": [
+   {
+    "column": "share_under_15",
+    "check": "shares_add_up",
+    "severity": "warning",
+    "passed": false,
+    "message": "share_under_15: shares sum to 258.4, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+   }
+  ],
+  "seconds": 0.008933332996093668
+ },
+ "checks": [
+  {
+   "column": "share_under_15",
+   "check": "shares_add_up",
+   "severity": "warning",
+   "passed": false,
+   "message": "share_under_15: shares sum to 258.4, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  },
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [
+  "share_under_15: shares sum to 258.4, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+ ],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 3.028938959003426,
+ "created_at": "2026-09-07T17:47:42.915781Z"
+}

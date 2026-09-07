@@ -1,0 +1,81 @@
+{
+ "dataset_id": "ds_4ea4f575f5f44fc19ccfff6b6c326cae",
+ "question": "Which five vehicle makes have the highest average original fine?",
+ "language": "English",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT vehicle_make, AVG(original_fine) AS avg_original_fine FROM \"ds_4ea4f575f5f44fc19ccfff6b6c326cae\" GROUP BY vehicle_make ORDER BY avg_original_fine DESC LIMIT 5",
+  "columns": [
+   {
+    "name": "vehicle_make",
+    "meaning": "Vehicle make",
+    "kind": "category",
+    "unit": null,
+    "source": "vehicle_make",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "avg_original_fine",
+    "meaning": "Average original fine",
+    "kind": "measure",
+    "unit": "SAR",
+    "source": "original_fine",
+    "aggregate": "avg",
+    "denominator": null
+   }
+  ],
+  "summary": "The five vehicle makes with the highest average original fines are BMW (678.23 SAR), Honda (628.00 SAR), Lexus (616.30 SAR), Mitsubishi (609.23 SAR), and Chevrolet (608.93 SAR).",
+  "assumptions": []
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT vehicle_make, AVG(original_fine) AS avg_original_fine FROM \"ds_4ea4f575f5f44fc19ccfff6b6c326cae\" GROUP BY vehicle_make ORDER BY avg_original_fine DESC LIMIT 5",
+  "columns": [
+   "vehicle_make",
+   "avg_original_fine"
+  ],
+  "types": [
+   "VARCHAR",
+   "DOUBLE"
+  ],
+  "rows": [
+   [
+    "بي إم دبليو",
+    678.2258064516129
+   ],
+   [
+    "هوندا",
+    628.0
+   ],
+   [
+    "لكزس",
+    616.304347826087
+   ],
+   [
+    "ميتسوبيشي",
+    609.2307692307693
+   ],
+   [
+    "شيفروليه",
+    608.9285714285714
+   ]
+  ],
+  "row_count": 5,
+  "checks": [],
+  "seconds": 0.01598616599221714
+ },
+ "checks": [
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 6.5145491670118645,
+ "created_at": "2026-09-07T17:47:34.334222Z"
+}

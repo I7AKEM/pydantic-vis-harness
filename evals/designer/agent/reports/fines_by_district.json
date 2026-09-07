@@ -1,0 +1,101 @@
+{
+ "dataset_id": "ds_4ea4f575f5f44fc19ccfff6b6c326cae",
+ "question": "What is the total actual fine by district?",
+ "language": "English",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT district, SUM(actual_fine) AS total_actual_fine FROM \"ds_4ea4f575f5f44fc19ccfff6b6c326cae\" GROUP BY district",
+  "columns": [
+   {
+    "name": "district",
+    "meaning": "District name",
+    "kind": "geography",
+    "unit": null,
+    "source": "district",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "total_actual_fine",
+    "meaning": "Total actual fine amount",
+    "kind": "measure",
+    "unit": "SAR",
+    "source": "actual_fine",
+    "aggregate": "sum",
+    "denominator": null
+   }
+  ],
+  "summary": "The total actual fines vary by district, with Al-Sully (السلي) recording the highest total of 62,750 SAR and Al-Malqa (الملقا) recording the lowest at 47,150 SAR.",
+  "assumptions": []
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT district, SUM(actual_fine) AS total_actual_fine FROM \"ds_4ea4f575f5f44fc19ccfff6b6c326cae\" GROUP BY district",
+  "columns": [
+   "district",
+   "total_actual_fine"
+  ],
+  "types": [
+   "VARCHAR",
+   "HUGEINT"
+  ],
+  "rows": [
+   [
+    "النسيم",
+    54750
+   ],
+   [
+    "الغدير",
+    56600
+   ],
+   [
+    "السلي",
+    62750
+   ],
+   [
+    "الملز",
+    52550
+   ],
+   [
+    "العقيق",
+    57950
+   ],
+   [
+    "الملقا",
+    47150
+   ],
+   [
+    "العليا",
+    61500
+   ],
+   [
+    "النرجس",
+    50350
+   ],
+   [
+    "الياسمين",
+    54100
+   ],
+   [
+    "الروضة",
+    57800
+   ]
+  ],
+  "row_count": 10,
+  "checks": [],
+  "seconds": 0.014659708002000116
+ },
+ "checks": [
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 6.693495792002068,
+ "created_at": "2026-09-07T17:47:34.513053Z"
+}

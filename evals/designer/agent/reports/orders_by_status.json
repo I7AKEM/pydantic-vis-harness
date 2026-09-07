@@ -1,0 +1,81 @@
+{
+ "dataset_id": "ds_28e59188a3964b8390fb7865c264ac8a",
+ "question": "How many orders are there in each status?",
+ "language": "English",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT status, count(pk_id) AS order_count FROM \"ds_28e59188a3964b8390fb7865c264ac8a\" GROUP BY status",
+  "columns": [
+   {
+    "name": "status",
+    "meaning": "Order status",
+    "kind": "category",
+    "unit": null,
+    "source": "status",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "order_count",
+    "meaning": "Number of orders",
+    "kind": "measure",
+    "unit": null,
+    "source": "pk_id",
+    "aggregate": "count",
+    "denominator": null
+   }
+  ],
+  "summary": "There are 83 Executed orders, 7 Accepted, 6 Canceled, 3 Driver_Assigned, and 1 Rejected order.",
+  "assumptions": []
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT status, count(pk_id) AS order_count FROM \"ds_28e59188a3964b8390fb7865c264ac8a\" GROUP BY status",
+  "columns": [
+   "status",
+   "order_count"
+  ],
+  "types": [
+   "VARCHAR",
+   "BIGINT"
+  ],
+  "rows": [
+   [
+    "Executed",
+    83
+   ],
+   [
+    "Accepted",
+    7
+   ],
+   [
+    "Canceled",
+    6
+   ],
+   [
+    "Driver_Assigned",
+    3
+   ],
+   [
+    "Rejected",
+    1
+   ]
+  ],
+  "row_count": 5,
+  "checks": [],
+  "seconds": 0.016543332996661775
+ },
+ "checks": [
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 4.413965625004494,
+ "created_at": "2026-09-07T17:47:40.022690Z"
+}

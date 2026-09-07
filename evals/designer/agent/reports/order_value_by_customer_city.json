@@ -1,0 +1,116 @@
+{
+ "dataset_id": "ds_28e59188a3964b8390fb7865c264ac8a",
+ "question": "ما إجمالي قيمة الطلبات لكل مدينة من مدن العملاء؟",
+ "language": "Arabic",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT customer_city, SUM(price) AS total_price FROM \"ds_28e59188a3964b8390fb7865c264ac8a\" GROUP BY customer_city",
+  "columns": [
+   {
+    "name": "customer_city",
+    "meaning": "مدينة العميل",
+    "kind": "geography",
+    "unit": null,
+    "source": "customer_city",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "total_price",
+    "meaning": "إجمالي قيمة الطلبات",
+    "kind": "measure",
+    "unit": null,
+    "source": "price",
+    "aggregate": "sum",
+    "denominator": null
+   }
+  ],
+  "summary": "بلغ إجمالي قيمة الطلبات في مدينة الرياض 35,422.75، تليها مدينة جدة بقيمة 8,401.78. بينما سجلت مدن أخرى مثل مكة المكرمة وخميس مشيط والظهران قيمة منخفضة بلغت 3.0 لكل منها.",
+  "assumptions": [
+   "تم حساب إجمالي القيمة بناءً على عمود السعر (price) لكل مدينة من مدن العملاء.",
+   "القيم الفارغة (null) في السعر لم تؤثر على المجموع."
+  ]
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT customer_city, SUM(price) AS total_price FROM \"ds_28e59188a3964b8390fb7865c264ac8a\" GROUP BY customer_city",
+  "columns": [
+   "customer_city",
+   "total_price"
+  ],
+  "types": [
+   "VARCHAR",
+   "DOUBLE"
+  ],
+  "rows": [
+   [
+    "الرياض",
+    35422.75
+   ],
+   [
+    "مكة المكرمة",
+    3.0
+   ],
+   [
+    "جدة",
+    8401.779999999999
+   ],
+   [
+    "ينبع",
+    116.0
+   ],
+   [
+    "الطائف",
+    124.75
+   ],
+   [
+    "حائل",
+    49.5
+   ],
+   [
+    "خميس مشيط",
+    3.0
+   ],
+   [
+    "الظهران",
+    3.0
+   ],
+   [
+    "ابها",
+    null
+   ],
+   [
+    "الدمام",
+    null
+   ],
+   [
+    "المدينة المنورة",
+    39.0
+   ],
+   [
+    "بريدة",
+    100.0
+   ],
+   [
+    "تبوك",
+    1.0
+   ]
+  ],
+  "row_count": 13,
+  "checks": [],
+  "seconds": 0.017228583004907705
+ },
+ "checks": [
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 1.4245145409950055,
+ "created_at": "2026-09-07T17:47:46.615982Z"
+}

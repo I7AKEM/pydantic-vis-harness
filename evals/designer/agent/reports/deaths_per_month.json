@@ -1,0 +1,111 @@
+{
+ "dataset_id": "ds_d959e889524e4b118b66986b75c79d1d",
+ "question": "How many deaths were there per month?",
+ "language": "English",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT date_trunc('month', death_date) AS month, sum(death_count) AS total_deaths FROM \"ds_d959e889524e4b118b66986b75c79d1d\" GROUP BY 1 ORDER BY 1",
+  "columns": [
+   {
+    "name": "month",
+    "meaning": "Month of death",
+    "kind": "time",
+    "unit": null,
+    "source": "death_date",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "total_deaths",
+    "meaning": "Total number of deaths",
+    "kind": "measure",
+    "unit": "count",
+    "source": "death_count",
+    "aggregate": "sum",
+    "denominator": null
+   }
+  ],
+  "summary": "The monthly death counts in 2024 ranged from a low of 1,370 in February to a high of 1,746 in December. The total number of deaths increased generally throughout the year, peaking in the final month.",
+  "assumptions": [
+   "Deaths were aggregated by calendar month for the year 2024."
+  ]
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT date_trunc('month', death_date) AS month, sum(death_count) AS total_deaths FROM \"ds_d959e889524e4b118b66986b75c79d1d\" GROUP BY 1 ORDER BY 1",
+  "columns": [
+   "month",
+   "total_deaths"
+  ],
+  "types": [
+   "TIMESTAMP",
+   "HUGEINT"
+  ],
+  "rows": [
+   [
+    "2024-01-01T00:00:00",
+    1487
+   ],
+   [
+    "2024-02-01T00:00:00",
+    1370
+   ],
+   [
+    "2024-03-01T00:00:00",
+    1490
+   ],
+   [
+    "2024-04-01T00:00:00",
+    1452
+   ],
+   [
+    "2024-05-01T00:00:00",
+    1571
+   ],
+   [
+    "2024-06-01T00:00:00",
+    1444
+   ],
+   [
+    "2024-07-01T00:00:00",
+    1576
+   ],
+   [
+    "2024-08-01T00:00:00",
+    1611
+   ],
+   [
+    "2024-09-01T00:00:00",
+    1647
+   ],
+   [
+    "2024-10-01T00:00:00",
+    1730
+   ],
+   [
+    "2024-11-01T00:00:00",
+    1657
+   ],
+   [
+    "2024-12-01T00:00:00",
+    1746
+   ]
+  ],
+  "row_count": 12,
+  "checks": [],
+  "seconds": 0.006551250000484288
+ },
+ "checks": [
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 2.121885290995124,
+ "created_at": "2026-09-07T17:47:36.457803Z"
+}

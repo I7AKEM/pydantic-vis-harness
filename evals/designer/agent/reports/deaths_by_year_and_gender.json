@@ -1,0 +1,162 @@
+{
+ "dataset_id": "ds_09d700f22ad6419f82ee08b2da7beb55",
+ "question": "كم عدد الوفيات حسب الجنس في كل سنة؟",
+ "language": "Arabic",
+ "brief_fingerprint": "6adae0b745d05cb6",
+ "analysis": {
+  "sql": "SELECT death_year, gender, sum(death_count) AS total_deaths FROM \"ds_09d700f22ad6419f82ee08b2da7beb55\" GROUP BY death_year, gender ORDER BY death_year, gender",
+  "columns": [
+   {
+    "name": "death_year",
+    "meaning": "سنة الوفاة",
+    "kind": "time",
+    "unit": null,
+    "source": "death_year",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "gender",
+    "meaning": "الجنس",
+    "kind": "category",
+    "unit": null,
+    "source": "gender",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "total_deaths",
+    "meaning": "إجمالي عدد الوفيات",
+    "kind": "measure",
+    "unit": "count",
+    "source": "death_count",
+    "aggregate": "sum",
+    "denominator": null
+   }
+  ],
+  "summary": "تتراوح أعداد الوفيات السنوية حسب الجنس من 4,379 وفاة للإناث و 4,428 وفاة للذكور في عام 2009، لتصل إلى 7,447 وفاة للإناث و 7,615 وفاة للذكور في عام 2017. يظهر تحليل البيانات زيادة تدريجية في عدد الوفيات لكلا الجنسين على مدار السنوات المذكورة.",
+  "assumptions": []
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT death_year, gender, sum(death_count) AS total_deaths FROM \"ds_09d700f22ad6419f82ee08b2da7beb55\" GROUP BY death_year, gender ORDER BY death_year, gender",
+  "columns": [
+   "death_year",
+   "gender",
+   "total_deaths"
+  ],
+  "types": [
+   "BIGINT",
+   "VARCHAR",
+   "HUGEINT"
+  ],
+  "rows": [
+   [
+    2009,
+    "F",
+    4379
+   ],
+   [
+    2009,
+    "M",
+    4428
+   ],
+   [
+    2010,
+    "F",
+    4667
+   ],
+   [
+    2010,
+    "M",
+    4638
+   ],
+   [
+    2011,
+    "F",
+    5126
+   ],
+   [
+    2011,
+    "M",
+    5128
+   ],
+   [
+    2012,
+    "F",
+    5324
+   ],
+   [
+    2012,
+    "M",
+    5562
+   ],
+   [
+    2013,
+    "F",
+    5768
+   ],
+   [
+    2013,
+    "M",
+    5858
+   ],
+   [
+    2014,
+    "F",
+    5930
+   ],
+   [
+    2014,
+    "M",
+    6086
+   ],
+   [
+    2015,
+    "F",
+    6367
+   ],
+   [
+    2015,
+    "M",
+    6637
+   ],
+   [
+    2016,
+    "F",
+    6783
+   ],
+   [
+    2016,
+    "M",
+    7266
+   ],
+   [
+    2017,
+    "F",
+    7447
+   ],
+   [
+    2017,
+    "M",
+    7615
+   ]
+  ],
+  "row_count": 18,
+  "checks": [],
+  "seconds": 0.009758792002685368
+ },
+ "checks": [
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 1.6421949580108048,
+ "created_at": "2026-09-07T17:47:50.727454Z"
+}

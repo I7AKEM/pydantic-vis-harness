@@ -1,0 +1,101 @@
+{
+ "dataset_id": "ds_23954f64e59e495fb650e204aaf1558e",
+ "question": "كم عدد الطلبات لكل تطبيق؟",
+ "language": "Arabic",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT app_name, count(*) AS order_count FROM \"ds_23954f64e59e495fb650e204aaf1558e\" GROUP BY app_name",
+  "columns": [
+   {
+    "name": "app_name",
+    "meaning": "اسم التطبيق",
+    "kind": "category",
+    "unit": null,
+    "source": "app_name",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "order_count",
+    "meaning": "عدد الطلبات",
+    "kind": "measure",
+    "unit": null,
+    "source": null,
+    "aggregate": "count",
+    "denominator": null
+   }
+  ],
+  "summary": "تطبيق Hungerstation هو الأكثر طلباً بـ 464 طلباً، يليه تطبيق Jahez بـ 212 طلباً. بينما سجل تطبيق DailyMealz أقل عدد من الطلبات بطلب واحد فقط.",
+  "assumptions": []
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT app_name, count(*) AS order_count FROM \"ds_23954f64e59e495fb650e204aaf1558e\" GROUP BY app_name",
+  "columns": [
+   "app_name",
+   "order_count"
+  ],
+  "types": [
+   "VARCHAR",
+   "BIGINT"
+  ],
+  "rows": [
+   [
+    "Hungerstation",
+    464
+   ],
+   [
+    "ToYou",
+    80
+   ],
+   [
+    "Jahez",
+    212
+   ],
+   [
+    "Mrsool",
+    107
+   ],
+   [
+    "Keeta",
+    95
+   ],
+   [
+    "The Chefz",
+    35
+   ],
+   [
+    "noonfood",
+    2
+   ],
+   [
+    "Shgardi",
+    2
+   ],
+   [
+    "DailyMealz",
+    1
+   ],
+   [
+    "NINJA",
+    2
+   ]
+  ],
+  "row_count": 10,
+  "checks": [],
+  "seconds": 0.044198458999744616
+ },
+ "checks": [
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 2.323839083997882,
+ "created_at": "2026-09-07T17:47:47.346201Z"
+}

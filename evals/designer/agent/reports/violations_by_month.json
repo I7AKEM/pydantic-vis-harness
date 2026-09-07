@@ -1,0 +1,75 @@
+{
+ "dataset_id": "ds_4ea4f575f5f44fc19ccfff6b6c326cae",
+ "question": "كم عدد المخالفات في كل شهر حسب تاريخ وقوعها؟",
+ "language": "Arabic",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT date_trunc('month', gdate_happened) AS \"الشهر\", count(*) AS \"عدد المخالفات\" FROM \"ds_4ea4f575f5f44fc19ccfff6b6c326cae\" GROUP BY 1 ORDER BY 1",
+  "columns": [
+   {
+    "name": "الشهر",
+    "meaning": "الشهر",
+    "kind": "time",
+    "unit": null,
+    "source": "gdate_happened",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "عدد المخالفات",
+    "meaning": "عدد المخالفات",
+    "kind": "measure",
+    "unit": null,
+    "source": "control_number",
+    "aggregate": "count",
+    "denominator": null
+   }
+  ],
+  "summary": "توزعت المخالفات على ثلاثة أشهر، حيث سجل شهر يناير 2026 العدد الأكبر بـ 722 مخالفة، يليه ديسمبر 2025 بـ 220 مخالفة، ثم نوفمبر 2025 بـ 58 مخالفة.",
+  "assumptions": [
+   "تم تجميع البيانات شهرياً بناءً على تاريخ وقوع المخالفة (gdate_happened)."
+  ]
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT date_trunc('month', gdate_happened) AS \"الشهر\", count(*) AS \"عدد المخالفات\" FROM \"ds_4ea4f575f5f44fc19ccfff6b6c326cae\" GROUP BY 1 ORDER BY 1",
+  "columns": [
+   "الشهر",
+   "عدد المخالفات"
+  ],
+  "types": [
+   "TIMESTAMP",
+   "BIGINT"
+  ],
+  "rows": [
+   [
+    "2025-11-01T00:00:00",
+    58
+   ],
+   [
+    "2025-12-01T00:00:00",
+    220
+   ],
+   [
+    "2026-01-01T00:00:00",
+    722
+   ]
+  ],
+  "row_count": 3,
+  "checks": [],
+  "seconds": 0.0190939169988269
+ },
+ "checks": [
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 2.909380124998279,
+ "created_at": "2026-09-07T17:47:42.932537Z"
+}

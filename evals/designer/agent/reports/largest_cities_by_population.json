@@ -1,0 +1,100 @@
+{
+ "dataset_id": "ds_b44fab55f28f403c9b2e24663333c7d1",
+ "question": "ما أكبر خمس مدن من حيث إجمالي عدد السكان؟",
+ "language": "Arabic",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT city, SUM(population) AS total_population FROM \"ds_b44fab55f28f403c9b2e24663333c7d1\" GROUP BY city ORDER BY total_population DESC LIMIT 5",
+  "columns": [
+   {
+    "name": "city",
+    "meaning": "المدينة",
+    "kind": "category",
+    "unit": null,
+    "source": "city",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "total_population",
+    "meaning": "إجمالي عدد السكان",
+    "kind": "measure",
+    "unit": "person",
+    "source": "population",
+    "aggregate": "sum",
+    "denominator": null
+   }
+  ],
+  "summary": "أكبر خمس مدن من حيث إجمالي عدد السكان هي نجران (701 شخص)، تليها جازان (573 شخص)، ثم بلجرشي (540 شخص)، وجدة (450 شخص)، ودومة الجندل (390 شخص).",
+  "assumptions": [
+   "تم حساب إجمالي عدد السكان لكل مدينة بناءً على مجموع السكان في جميع أحيائها المذكورة في البيانات."
+  ]
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT city, SUM(population) AS total_population FROM \"ds_b44fab55f28f403c9b2e24663333c7d1\" GROUP BY city ORDER BY total_population DESC LIMIT 5",
+  "columns": [
+   "city",
+   "total_population"
+  ],
+  "types": [
+   "VARCHAR",
+   "HUGEINT"
+  ],
+  "rows": [
+   [
+    "نجران",
+    701
+   ],
+   [
+    "جازان",
+    573
+   ],
+   [
+    "بلجرشي",
+    540
+   ],
+   [
+    "جدة",
+    450
+   ],
+   [
+    "دومة الجندل",
+    390
+   ]
+  ],
+  "row_count": 5,
+  "checks": [
+   {
+    "column": "total_population",
+    "check": "total_explained",
+    "severity": "warning",
+    "passed": false,
+    "message": "total_population: the result sums to 2654; the column's total is 5718. The query filtered or excluded rows."
+   }
+  ],
+  "seconds": 0.006491416002972983
+ },
+ "checks": [
+  {
+   "column": "total_population",
+   "check": "total_explained",
+   "severity": "warning",
+   "passed": false,
+   "message": "total_population: the result sums to 2654; the column's total is 5718. The query filtered or excluded rows."
+  },
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [
+  "total_population: the result sums to 2654; the column's total is 5718. The query filtered or excluded rows."
+ ],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 2.890597958001308,
+ "created_at": "2026-09-07T17:47:46.477608Z"
+}

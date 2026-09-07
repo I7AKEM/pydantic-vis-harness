@@ -1,0 +1,100 @@
+{
+ "dataset_id": "ds_47d7f1f522924d278a92f585f66d456f",
+ "question": "ما توزيع وفيات السعوديين حسب الفئة العمرية؟",
+ "language": "Arabic",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT age_range, sum(death_count) AS total_deaths FROM \"ds_47d7f1f522924d278a92f585f66d456f\" WHERE nationality = 'سعودي' GROUP BY age_range ORDER BY age_range",
+  "columns": [
+   {
+    "name": "age_range",
+    "meaning": "الفئة العمرية",
+    "kind": "ordinal",
+    "unit": null,
+    "source": "age_range",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "total_deaths",
+    "meaning": "إجمالي عدد الوفيات",
+    "kind": "measure",
+    "unit": "count",
+    "source": "death_count",
+    "aggregate": "sum",
+    "denominator": null
+   }
+  ],
+  "summary": "تتوزع وفيات السعوديين بشكل أكبر في الفئة العمرية 0-10 بـ 24,651 حالة وفاة، تليها الفئة 21-40 بـ 20,922 حالة وفاة. بينما سجلت الفئة العمرية 61+ أقل عدد من الوفيات بواقع 3,808 حالات.",
+  "assumptions": [
+   "تم تجميع البيانات بناءً على الفئات العمرية المحددة في مجموعة البيانات."
+  ]
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT age_range, sum(death_count) AS total_deaths FROM \"ds_47d7f1f522924d278a92f585f66d456f\" WHERE nationality = 'سعودي' GROUP BY age_range ORDER BY age_range",
+  "columns": [
+   "age_range",
+   "total_deaths"
+  ],
+  "types": [
+   "VARCHAR",
+   "HUGEINT"
+  ],
+  "rows": [
+   [
+    "0-10",
+    24651
+   ],
+   [
+    "11-20",
+    15903
+   ],
+   [
+    "21-40",
+    20922
+   ],
+   [
+    "41-60",
+    14042
+   ],
+   [
+    "61+",
+    3808
+   ]
+  ],
+  "row_count": 5,
+  "checks": [
+   {
+    "column": "total_deaths",
+    "check": "total_explained",
+    "severity": "warning",
+    "passed": false,
+    "message": "total_deaths: the result sums to 79326; the column's total is 105009. The query filtered or excluded rows."
+   }
+  ],
+  "seconds": 0.012199958000564948
+ },
+ "checks": [
+  {
+   "column": "total_deaths",
+   "check": "total_explained",
+   "severity": "warning",
+   "passed": false,
+   "message": "total_deaths: the result sums to 79326; the column's total is 105009. The query filtered or excluded rows."
+  },
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [
+  "total_deaths: the result sums to 79326; the column's total is 105009. The query filtered or excluded rows."
+ ],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 1.5135207919956883,
+ "created_at": "2026-09-07T17:47:43.586484Z"
+}

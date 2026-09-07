@@ -1,0 +1,77 @@
+{
+ "dataset_id": "ds_f6f9d906515f4093a3a765b30000c54b",
+ "question": "ما إجمالي الزوار السياح في كل سنة؟",
+ "language": "Arabic",
+ "brief_fingerprint": null,
+ "analysis": {
+  "sql": "SELECT year, sum(tourist_visitors) AS total_visitors FROM \"ds_f6f9d906515f4093a3a765b30000c54b\" GROUP BY year ORDER BY year",
+  "columns": [
+   {
+    "name": "year",
+    "meaning": "السنة",
+    "kind": "ordinal",
+    "unit": null,
+    "source": "year",
+    "aggregate": "none",
+    "denominator": null
+   },
+   {
+    "name": "total_visitors",
+    "meaning": "إجمالي الزوار السياح",
+    "kind": "measure",
+    "unit": "visitors",
+    "source": "tourist_visitors",
+    "aggregate": "sum",
+    "denominator": null
+   }
+  ],
+  "summary": "بلغ إجمالي الزوار السياح 1,459 زائراً في عام 2023، و1,954 زائراً في عام 2024، و1,266 زائراً في عام 2025، و18 زائراً في عام 2026.",
+  "assumptions": []
+ },
+ "clarification": null,
+ "result": {
+  "sql": "SELECT year, sum(tourist_visitors) AS total_visitors FROM \"ds_f6f9d906515f4093a3a765b30000c54b\" GROUP BY year ORDER BY year",
+  "columns": [
+   "year",
+   "total_visitors"
+  ],
+  "types": [
+   "BIGINT",
+   "HUGEINT"
+  ],
+  "rows": [
+   [
+    2023,
+    1459
+   ],
+   [
+    2024,
+    1954
+   ],
+   [
+    2025,
+    1266
+   ],
+   [
+    2026,
+    18
+   ]
+  ],
+  "row_count": 4,
+  "checks": [],
+  "seconds": 0.01309900000342168
+ },
+ "checks": [
+  {
+   "column": null,
+   "check": "summary_numbers_exist",
+   "severity": "error",
+   "passed": true,
+   "message": "ok"
+  }
+ ],
+ "warnings": [],
+ "model": "google/gemma-4-31b-it",
+ "seconds": 2.2749457909958437,
+ "created_at": "2026-09-07T17:47:45.191190Z"
+}
