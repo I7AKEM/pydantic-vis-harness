@@ -1,0 +1,266 @@
+[
+ {
+  "name": "fines_by_district",
+  "csv": "../../profiler/corpus_cases/vizcsv-113cb217c6077a95.csv",
+  "question": "What is the total actual fine by district?",
+  "brief": null,
+  "reference_sql": "SELECT district, sum(actual_fine) AS total_actual_fine FROM dataset GROUP BY 1 ORDER BY 2 DESC",
+  "expect": "table"
+ },
+ {
+  "name": "violations_by_month",
+  "csv": "../../profiler/corpus_cases/vizcsv-113cb217c6077a95.csv",
+  "question": "كم عدد المخالفات في كل شهر حسب تاريخ وقوعها؟",
+  "brief": null,
+  "reference_sql": "SELECT date_trunc('month', gdate_happened) AS month, count(*) AS violations FROM dataset GROUP BY 1 ORDER BY 1",
+  "expect": "table"
+ },
+ {
+  "name": "violation_type_share",
+  "csv": "../../profiler/corpus_cases/vizcsv-113cb217c6077a95.csv",
+  "question": "ما نسبة كل نوع مخالفة من إجمالي المخالفات؟",
+  "brief": null,
+  "reference_sql": "SELECT violation_type_description, 100.0 * count(*) / (SELECT count(*) FROM dataset) AS share FROM dataset GROUP BY 1 ORDER BY 2 DESC",
+  "expect": "table"
+ },
+ {
+  "name": "discounted_percentage",
+  "csv": "../../profiler/corpus_cases/vizcsv-113cb217c6077a95.csv",
+  "question": "What percentage of violations were discounted?",
+  "brief": null,
+  "reference_sql": "SELECT 100.0 * count(*) FILTER (WHERE is_discounted) / count(*) AS discounted_percentage FROM dataset",
+  "expect": "table"
+ },
+ {
+  "name": "top_makes_by_average_fine",
+  "csv": "../../profiler/corpus_cases/vizcsv-113cb217c6077a95.csv",
+  "question": "Which five vehicle makes have the highest average original fine?",
+  "brief": null,
+  "reference_sql": "SELECT vehicle_make, avg(original_fine) AS avg_original_fine FROM dataset GROUP BY 1 ORDER BY 2 DESC LIMIT 5",
+  "expect": "table"
+ },
+ {
+  "name": "deaths_by_gender",
+  "csv": "../../profiler/corpus_cases/vizcsv-d4e0160118abe245.csv",
+  "question": "How many deaths were there by gender?",
+  "brief": {
+   "raw_question": "How many deaths were there by gender?",
+   "code_meanings": {
+    "gender": {
+     "F": "Female",
+     "M": "Male"
+    }
+   }
+  },
+  "reference_sql": "SELECT gender, sum(death_count) AS deaths FROM dataset GROUP BY 1 ORDER BY 2 DESC",
+  "expect": "table"
+ },
+ {
+  "name": "deaths_by_year",
+  "csv": "../../profiler/corpus_cases/vizcsv-d4e0160118abe245.csv",
+  "question": "كيف تغير عدد الوفيات عبر السنوات؟",
+  "brief": null,
+  "reference_sql": "SELECT death_year, sum(death_count) AS deaths FROM dataset GROUP BY 1 ORDER BY 1",
+  "expect": "table"
+ },
+ {
+  "name": "saudi_deaths_by_age",
+  "csv": "../../profiler/corpus_cases/vizcsv-d4e0160118abe245.csv",
+  "question": "ما توزيع وفيات السعوديين حسب الفئة العمرية؟",
+  "brief": null,
+  "reference_sql": "SELECT age_range, sum(death_count) AS deaths FROM dataset WHERE nationality = 'سعودي' GROUP BY 1 ORDER BY 1",
+  "expect": "table"
+ },
+ {
+  "name": "top_nationalities_by_deaths",
+  "csv": "../../profiler/corpus_cases/vizcsv-d4e0160118abe245.csv",
+  "question": "Which three nationalities have the most deaths?",
+  "brief": null,
+  "reference_sql": "SELECT nationality, sum(death_count) AS deaths FROM dataset GROUP BY 1 ORDER BY 2 DESC LIMIT 3",
+  "expect": "table"
+ },
+ {
+  "name": "married_share_by_gender",
+  "csv": "../../profiler/corpus_cases/vizcsv-d4e0160118abe245.csv",
+  "question": "What share of deaths were married people, for each gender?",
+  "brief": {
+   "raw_question": "What share of deaths were married people, for each gender?",
+   "code_meanings": {
+    "gender": {
+     "F": "Female",
+     "M": "Male"
+    }
+   }
+  },
+  "reference_sql": "SELECT gender, 100.0 * sum(death_count) FILTER (WHERE marital_status_group = 'Married') / sum(death_count) AS married_share FROM dataset GROUP BY 1 ORDER BY 1",
+  "expect": "table"
+ },
+ {
+  "name": "doctorates_by_city",
+  "csv": "../../profiler/corpus_train/vizcsv-e9ff66ca65930ade.csv",
+  "question": "كم عدد حملة الدكتوراه في كل مدينة؟",
+  "brief": null,
+  "reference_sql": "SELECT city, sum(count) AS doctorate_holders FROM dataset WHERE qualification = 'دكتوراه' GROUP BY 1 ORDER BY 2 DESC",
+  "expect": "table"
+ },
+ {
+  "name": "masters_by_city",
+  "csv": "../../profiler/corpus_train/vizcsv-e9ff66ca65930ade.csv",
+  "question": "How many master's degree holders are there in each city?",
+  "brief": null,
+  "reference_sql": "SELECT city, sum(count) AS masters_holders FROM dataset WHERE qualification = 'ماجستير' GROUP BY 1 ORDER BY 2 DESC",
+  "expect": "table"
+ },
+ {
+  "name": "nationality_share_within_region",
+  "csv": "../../profiler/corpus_train/vizcsv-c0929d6ebea2582e.csv",
+  "question": "ما نسبة كل جنسية من سكان كل منطقة؟",
+  "brief": null,
+  "reference_sql": "SELECT region, nationality, 100.0 * population / sum(population) OVER (PARTITION BY region) AS share FROM dataset ORDER BY 1, 2",
+  "expect": "table"
+ },
+ {
+  "name": "peak_visitor_month",
+  "csv": "../../profiler/corpus_train/vizcsv-6616fb91afa0ee0e.csv",
+  "question": "Which month had the most visitors?",
+  "brief": null,
+  "reference_sql": "SELECT year_month, visitor_count FROM dataset ORDER BY visitor_count DESC LIMIT 1",
+  "expect": "table"
+ },
+ {
+  "name": "tourists_by_year",
+  "csv": "../../profiler/corpus_train/vizcsv-5ab7c06fb1936175.csv",
+  "question": "ما إجمالي الزوار السياح في كل سنة؟",
+  "brief": null,
+  "reference_sql": "SELECT year, sum(tourist_visitors) AS visitors FROM dataset GROUP BY 1 ORDER BY 1",
+  "expect": "table"
+ },
+ {
+  "name": "deaths_per_month",
+  "csv": "../../profiler/corpus_cases/vizcsv-7f0bd5a88227073a.csv",
+  "question": "How many deaths were there per month?",
+  "brief": null,
+  "reference_sql": "SELECT date_trunc('month', death_date) AS month, sum(death_count) AS deaths FROM dataset GROUP BY 1 ORDER BY 1",
+  "expect": "table"
+ },
+ {
+  "name": "paid_share_by_year_since_2020",
+  "csv": "../../profiler/corpus_cases/vizcsv-061a265236a642ce.csv",
+  "question": "What percentage of violations were paid in each year from 2020 onwards?",
+  "brief": null,
+  "reference_sql": "SELECT year(violation_date) AS year, 100.0 * sum(paid_violations) / sum(paid_violations + unpaid_violations) AS paid_share FROM dataset WHERE year(violation_date) >= 2020 GROUP BY 1 ORDER BY 1",
+  "expect": "table"
+ },
+ {
+  "name": "average_violations_per_violator",
+  "csv": "../../profiler/corpus_cases/vizcsv-f5ab9ce5e561e8b7.csv",
+  "question": "ما متوسط عدد المخالفات لكل مخالف؟",
+  "brief": null,
+  "reference_sql": "SELECT avg(violation_count) AS average_violations FROM dataset",
+  "expect": "table"
+ },
+ {
+  "name": "most_common_violation_jeddah",
+  "csv": "../../profiler/corpus_train/vizcsv-244e80ce1f6ea1e6.csv",
+  "question": "What is the most common violation type in Jeddah?",
+  "brief": null,
+  "reference_sql": "SELECT violation_type_description, violation_count FROM dataset WHERE city = 'جدة' ORDER BY 2 DESC LIMIT 1",
+  "expect": "table"
+ },
+ {
+  "name": "top_destinations_from_riyadh",
+  "csv": "../../profiler/corpus_train/vizcsv-03384a96e9fe5870.csv",
+  "question": "ما أكثر خمس وجهات من مطار الملك خالد الدولي؟",
+  "brief": null,
+  "reference_sql": "SELECT destination, flight_count FROM dataset WHERE airport = 'مطار الملك خالد الدولي (الرياض)' ORDER BY 2 DESC LIMIT 5",
+  "expect": "table"
+ },
+ {
+  "name": "weighted_household_size_by_region",
+  "csv": "../../profiler/corpus_train/vizcsv-73777b277dd2df9e.csv",
+  "question": "What is the average household size in each region, weighting each wealth level by its number of households?",
+  "brief": null,
+  "reference_sql": "SELECT region, sum(avg_household_size * total_households) / sum(total_households) AS avg_household_size FROM dataset GROUP BY 1 ORDER BY 1",
+  "expect": "table"
+ },
+ {
+  "name": "largest_cities_by_population",
+  "csv": "../../profiler/corpus_train/vizcsv-bfec427bf3135ffe.csv",
+  "question": "ما أكبر خمس مدن من حيث إجمالي عدد السكان؟",
+  "brief": null,
+  "reference_sql": "SELECT city, sum(population) AS population FROM dataset GROUP BY 1 ORDER BY 2 DESC LIMIT 5",
+  "expect": "table"
+ },
+ {
+  "name": "female_share_by_region",
+  "csv": "../../profiler/corpus_cases/vizcsv-1240bc417714a3e6.csv",
+  "question": "What percentage of the population is female in each region?",
+  "brief": {
+   "raw_question": "What percentage of the population is female in each region?",
+   "code_meanings": {
+    "gender": {
+     "F": "Female",
+     "M": "Male"
+    }
+   }
+  },
+  "reference_sql": "SELECT region, 100.0 * sum(population_count) FILTER (WHERE gender = 'F') / sum(population_count) AS female_share FROM dataset GROUP BY 1 ORDER BY 1",
+  "expect": "table"
+ },
+ {
+  "name": "top_cities_by_average_price",
+  "csv": "../../profiler/corpus_cases/vizcsv-ae315d3da67a2d11.csv",
+  "question": "Which three cities have the highest average order price?",
+  "brief": null,
+  "reference_sql": "SELECT city, avg(price) AS avg_price FROM dataset GROUP BY 1 ORDER BY 2 DESC LIMIT 3",
+  "expect": "table"
+ },
+ {
+  "name": "orders_by_app",
+  "csv": "../../profiler/corpus_cases/vizcsv-ae315d3da67a2d11.csv",
+  "question": "كم عدد الطلبات لكل تطبيق؟",
+  "brief": null,
+  "reference_sql": "SELECT app_name, count(*) AS orders FROM dataset GROUP BY 1 ORDER BY 2 DESC",
+  "expect": "table"
+ },
+ {
+  "name": "top_nationalities_arabic_columns",
+  "csv": "../../profiler/corpus_train/vizcsv-51d8ee210d07e31f.csv",
+  "question": "ما أكثر ثلاث جنسيات من حيث عدد الأفراد؟",
+  "brief": null,
+  "reference_sql": "SELECT \"الجنسية\", \"عدد_الأفراد\" FROM dataset ORDER BY 2 DESC LIMIT 3",
+  "expect": "table"
+ },
+ {
+  "name": "recent_violations_is_vague",
+  "csv": "../../profiler/corpus_cases/vizcsv-113cb217c6077a95.csv",
+  "question": "Show me the recent violations.",
+  "brief": null,
+  "reference_sql": null,
+  "expect": "clarification"
+ },
+ {
+  "name": "schools_column_missing",
+  "csv": "../../profiler/corpus_train/vizcsv-8d3bcfb667744984.csv",
+  "question": "كم عدد المدارس في كل منطقة؟",
+  "brief": null,
+  "reference_sql": null,
+  "expect": "clarification"
+ },
+ {
+  "name": "large_orders_is_vague",
+  "csv": "../../profiler/corpus_cases/vizcsv-ae315d3da67a2d11.csv",
+  "question": "How many large orders were there?",
+  "brief": null,
+  "reference_sql": null,
+  "expect": "clarification"
+ },
+ {
+  "name": "salary_column_missing",
+  "csv": "../../profiler/corpus_train/vizcsv-d7fb489a344da23d.csv",
+  "question": "ما متوسط الراتب في كل مدينة؟",
+  "brief": null,
+  "reference_sql": null,
+  "expect": "clarification"
+ }
+]

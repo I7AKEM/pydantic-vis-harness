@@ -1,0 +1,18 @@
+{
+ "provenance": "Thirty questions written by hand over files from the profiler corpus (evals/profiler/corpus_cases and corpus_train), with reference SQL run by DuckDB to produce expected.json. Fourteen questions are in Arabic, sixteen in English; four expect a clarification.",
+ "rules": [
+  "The reference SQL returns the minimal columns the question asks for. A result that adds columns (the value beside a share, a code column beside its label, a city beside a district) still scores, because the match ignores column names and extra columns and only requires the rows to line up.",
+  "Monthly buckets score whether they are written as a date (2024-01-01), a timestamp at midnight, or a year-month string (2024-01).",
+  "Numbers match after rounding to four significant digits.",
+  "A question with an undefined term (recent, large) expects a clarification, not a guess.",
+  "A question about a column the dataset lacks (schools, salary) expects a clarification.",
+  "Questions whose natural reading is ambiguous were rewritten instead of labelled: 'largest districts' became 'largest cities by total population' because district names repeat across cities.",
+  "Top-N questions were checked for ties at the boundary; none has one."
+ ],
+ "known_hazards": {
+  "married_share_by_gender": "A share within each gender's own group; the shares_add_up warning fires and must not be treated as an error.",
+  "deaths_by_gender": "The brief gives code meanings, so a faithful result keeps the F/M code next to its label; the expected table has the code column only.",
+  "paid_share_by_year_since_2020": "The timestamp column carries a time zone; year() must be applied to it as stored.",
+  "peak_visitor_month": "year_month is text, so the month is returned as the stored string."
+ }
+}
