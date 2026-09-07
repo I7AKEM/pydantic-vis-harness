@@ -33,8 +33,8 @@ In scope:
 - Terminal and programmatic entry points, tests without a model, a recommendation evaluation set, lessons.
 
 Out of scope: the designer agent and its rulebook (Phase 4), the reviewer, artifacts and versions, maps, a second
-renderer, number and date format strings, annotations, hiding axes, changes to the lead, and the chat. Nothing in
-this phase calls a model.
+renderer, date format strings, annotations, hiding axes, changes to the lead, and the chat. Nothing in this phase
+calls a model.
 
 ## 3. What the spike settled
 
@@ -73,7 +73,8 @@ result has four columns: the gender code, its label, the count, and the share, a
    against the renderer's capability table. It returns no violations and two compromises: the title stays
    left-aligned, and the renderer decides the labels.
 4. The renderer resolves the spec against the result: binds the label column to `category` and the share to
-   `value`, sorts by value, and builds the library's configuration in memory. It spawns Node with that
+   `value`, sorts by value, takes the percent sign from the share column's unit so the labels read "61.6%", and
+   builds the library's configuration in memory. It spawns Node with that
    configuration on standard input and gets a PNG back, then writes the PNG, an HTML page that draws the same
    chart in a browser, and the configuration as a file, in one folder.
 5. The caller receives the folder, the compromises, and the render time. In Phase 5 the reviewer receives the
@@ -148,9 +149,19 @@ Our keys:
 | `labels` | `on`, `off` | Data labels. Default: the renderer decides |
 | `legend` | `on`, `off` | The legend. Default: on when a group role is bound |
 | `subtitle` | text | A second title line, for the unit, the period, or the filter |
+| `format` | pattern | How every number is written, on the value axis, the data labels, and the tooltip together. See below |
+| `digits` | `western`, `arabic` | The digit shapes: 1,240 or ١٬٢٤٠. Default western in both languages |
 
-Keys named in section 6.3 of the main design and not listed here (formats, annotations, hiding axes, interaction
-hints) wait for the renderer that can draw them. Adding a key
+The `format` pattern is plain: `0` writes whole digits, `0,0` adds thousands separators, `.0` or `.00` sets
+the decimals, `k` writes compact numbers such as 1.2K and 3.4M, and any text after the number is the unit, so
+`format 0,0 SAR`, `format 0.0%`, `format 0k`, and `format 0,0.00 ريال` are all valid. A percent sign sits
+against the number; any other unit follows a space. Without `format`, numbers get thousands separators and up
+to two decimals, and the unit comes from the bound value column's `unit` in the analyst's description, so a
+share reads "61.6%" and an amount reads "1,240 ريال" with nothing written in the spec. A unit in `format`
+overrides the column's.
+
+Keys named in section 6.3 of the main design and not listed here (date formats, annotations, hiding axes,
+interaction hints) wait for the renderer that can draw them. Adding a key
 later is safe because unknown keys are errors today, so no stored spec can contain one.
 
 ### 5.3 What the spec never holds
@@ -265,6 +276,7 @@ catalogue order. Intent unknown means S1 scores nothing for everyone.
 | C14 log | `axisYScale log` only on line, multi_line, and scatter, every value positive, largest at least a hundred times the smallest | Use linear |
 | C15 labels | `labels on` with more than fifty marks | Turn them off, or limit the rows |
 | C16 contradiction | `zero true` together with an `axisYMin` other than zero | Drop one |
+| C17 format | `format` follows the pattern of section 5.2; `k` and decimals together are allowed, `%` as a unit on a value that is not a share is a warning-level compromise, not an error | Rewrite the pattern |
 
 `check_spec` reports every violation at once, each with its fix, so a repair is one turn.
 
@@ -287,6 +299,7 @@ Each edge case in section 8 of the main design that is a rule or a fix gets a te
 | Negative values rule out pie and percent-stacked | H4 |
 | Dual axes only when units differ | H10; the brief's ask is S2 |
 | Percentages with the denominator stated | The analyst's job; a share without a denominator does not validate |
+| Units and number formats come from the profile and the brief | The unit default from the analyst's column description; `format` overrides it, C17 |
 | A single number is not a chart | S13 |
 | Empty result: ask | H12 |
 | Data labels only when marks are few | C15 |
@@ -334,7 +347,11 @@ The renderer, not the spec, holds the rows. Resolving happens in code, once, bef
    categories and one muted grey for the rest, so the library's "palette by category order" draws the rule.
 7. Direction: `rtl` puts the first category on the right on bar and column charts and right-aligns the title,
    through the renderer's overrides. Time axes are never reversed.
-8. Shape: rows become the library's records for the entry, `category`, `value`, `group`, `time`, `x`, `y`, or
+8. Numbers: the format is written as a small description, the digit pattern, the decimals, compact or not, the
+   unit and its side, and the digit shapes, taken from `format` and `digits` or from the defaults and the bound
+   column's unit. It travels in the configuration as data; the Node script and the page each build the same
+   formatting function from it, from one shared file, so the picture and the page write every number alike.
+9. Shape: rows become the library's records for the entry, `category`, `value`, `group`, `time`, `x`, `y`, or
    `name` and `value`, as the catalogue says.
 
 Every transformation here is arithmetic on the result's own cells, in line with rule 6 of the main design.
@@ -353,9 +370,11 @@ script is the whole Node surface; nothing else in the project runs JavaScript.
 **The overrides.** The package reads a fixed set of keys and drops the rest, so the script honours our keys by
 merging a small set of settings into the configuration the package builds, through one hook on the library's
 chart-creation function, the point the spike showed can be intercepted: the axis range and scale, the title
-alignment and the category order for right-to-left, the label and legend switches, and the subtitle. The
-overrides are plain G2 options, listed in one place in the script, and the package version is pinned so a
-change to its internals shows up as a failing render test rather than a silent loss.
+alignment and the category order for right-to-left, the label and legend switches, the subtitle, and the number
+formatting function on the value axis and the data labels. The overrides are plain G2 options, listed in one
+place in the script, and the package version is pinned so a change to its internals shows up as a failing render
+test rather than a silent loss. On request the script also lists every piece of text it drew, which is how the
+tests assert that a label reads "61.6%" without decoding pixels.
 
 **The Python side.** `render(spec, columns, result, out_dir) -> Rendered`: resolves the data, builds the
 configuration, spawns `node` with a 20 second timeout, and writes three files in `out_dir`: `chart.png`,
@@ -363,16 +382,21 @@ configuration, spawns `node` with a 20 second timeout, and writes three files in
 non-background share, and the seconds. A missing `node` or an uninstalled package raises a failure whose message
 holds the install command; a timeout kills the process and raises. Nothing is retried.
 
-**The page.** A standalone HTML file that draws the same configuration in a browser with the GPT-Vis 1.x
-script from a pinned CDN address, the configuration inline as JSON, the description as the image's alternative
-text, and the page direction set from the spec's language. The PNG is embedded as a fallback so the page shows
-the chart offline.
+**The page.** A standalone HTML file that draws the chart in a browser from the same G2 configuration the
+script captured after its overrides, with G2's browser build from a pinned CDN address, so the page and the PNG
+are one chart: the same axis range, order, formats, and labels. The configuration is inline as JSON with the
+number description of section 9, and the page rebuilds the formatting function from it with the shared file. The
+description is the image's alternative text, the page direction follows the spec's language, and the PNG is
+embedded as a fallback so the page shows the chart offline. The table entry is a plain HTML table on the page,
+not a G2 chart. `config.json` beside them holds that same captured configuration, which is what "the library's
+own configuration" means from here on.
 
 **The capability table.** Per catalogue entry, which keys the renderer honours, which it degrades and how, and
 which it rejects. Honoured: the base keys, `bind`, `sort`, `limit`, `other`, `unknown`, `emphasis`, `palette`,
 `language`, `description`, `subtitle`, `percent`, `zero`, `axisYMin`, `axisYMax`, `axisXMin`, `axisXMax`,
-`axisYScale`, `labels`, `legend`, and `direction` for the title and the category order. Degraded: `direction`
-for the legend, which stays where the package puts it. Rejected: nothing in the Phase 3 vocabulary.
+`axisYScale`, `labels`, `legend`, `format`, `digits`, the unit default, and `direction` for the title and the
+category order. Degraded: `direction` for the legend, which stays where the package puts it. Rejected: nothing
+in the Phase 3 vocabulary.
 
 **Size.** The default canvas is 800 by 450 points, drawn at three times that. Line and area charts with more
 than twelve points use 1200 wide unless the spec says otherwise, because the spike showed monthly labels rotate
@@ -416,6 +440,9 @@ No model anywhere in this phase, so every test is plain input and expected outpu
   reason when Node or the package is absent. The images are written to a folder for inspection by eye.
 - The overrides: for each key the hook honours, the configuration handed to the library carries the expected
   setting, checked by capturing it, and the chart still renders.
+- Formats: the pattern parser on every form of section 5.2 and the invalid ones; the default unit from the
+  column; and, through the script's text listing, a rendered chart whose labels read "61.6%", "1,240 ريال",
+  "1.2K", and "١٬٢٤٠".
 - The three terminal commands.
 
 Pictures are checked by size and non-background share, not by pixel equality, because fonts differ between macOS
@@ -449,7 +476,7 @@ Phase 3 adds two packages: the designer's tools, which the designer agent joins 
 | `vis_agent/designer/recommend.py`, `check.py` | The two functions of section 8 |
 | `vis_agent/designer/resolve.py` | Section 9 |
 | `vis_agent/render/base.py` | The renderer protocol, the capability table shape, `Rendered` |
-| `vis_agent/render/gptvis.py`, `vis_agent/render/gptvis/{package.json,package-lock.json,render.mjs,page.html}` | Section 10 |
+| `vis_agent/render/gptvis.py`, `vis_agent/render/gptvis/{package.json,package-lock.json,render.mjs,format.js,page.html}` | Section 10; `format.js` is the one formatting function, used by the script and inlined into the page |
 | `vis_agent/cli.py` | `recommend`, `check`, `render` |
 | `evals/designer/{cases.json,decisions.json,run.py}` | Section 13 |
 | `tests/designer/`, `tests/render/` | Section 12 |
@@ -466,8 +493,9 @@ Phase 3 adds two packages: the designer's tools, which the designer agent joins 
    score. The renderer maps them to the library's flags.
 5. **Extensions limited to what has a consumer now.** Decided: bind, sort, limit and Other, unknown, emphasis,
    palette, direction, language, description, subtitle, zero, and, added at the owner's request on 2026-09-07,
-   the axis ranges, the log scale, percent stacks, and the label and legend switches. Formats, annotations, and
-   hidden axes wait for a renderer that draws them; the strict parser makes adding them later safe.
+   the axis ranges, the log scale, percent stacks, the label and legend switches, number formats, and digit
+   shapes. Date formats, annotations, and hidden axes wait for a renderer that draws them; the strict parser
+   makes adding them later safe.
 6. **Pictures checked by size and non-background share, not by pixel equality.** Recommended and assumed, for
    the font reason in section 12. Say so if you want exact references generated on Linux in a container as well.
 7. **Funnel, maps, graph charts, and the stat card left out.** Decided from the spike. A single number is a
@@ -479,6 +507,10 @@ Phase 3 adds two packages: the designer's tools, which the designer agent joins 
    package builds, through the chart-creation function the spike showed can be intercepted. The package version
    is pinned and the render tests guard it. The alternative, driving G2 directly per chart, costs a file per
    entry and is kept for when the hook is not enough.
+10. **Numbers formatted once, from a description.** Decided on 2026-09-07: the unit comes from the analyst's
+    column by default, `format` overrides it, and one shared formatting function serves the script and the
+    page, so the page draws the captured G2 configuration rather than the GPT-Vis browser component, which
+    would not see any override.
 
 ## 16. Lessons to record
 
