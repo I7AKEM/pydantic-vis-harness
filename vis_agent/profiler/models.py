@@ -9,7 +9,9 @@ from vis_agent.models import UploadedDataset
 
 PROFILE_VERSION = "2.0"
 
-MeasurementLevel = Literal["nominal", "ordinal", "interval", "discrete", "continuous", "time", "geographic"]
+MeasurementLevel = Literal[
+    "nominal", "ordinal", "interval", "discrete", "continuous", "time", "geographic", "hijri", "arabic_digits",
+]
 GeographicRole = Literal["latitude", "longitude", "wkt", "place_name"]
 
 

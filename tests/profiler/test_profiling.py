@@ -119,6 +119,22 @@ def test_profile_dataset_runs_the_agent_saves_and_reuses(store, profiler):
     assert usage.requests == 1
 
 
+def test_localized_measurements_reach_the_agent_and_persist(store, profiler):
+    content = "day,year_h,amount\n١٤٤٧/٠٣/١٢,1447,٣٬٤٥٦٫٥\n١٤٤٧/٠٣/١٣,1447,١٢٫٥\n"
+    source = store.save_upload("localized.csv", content.encode())
+    usage = RunUsage()
+    with profiler.override(model=quiet(source.headers, {"day": "time", "year_h": "time", "amount": "measure"})):
+        with capture_run_messages() as messages:
+            result = run(store, profiler, source.dataset_id, usage=usage)
+    assert result.status == "complete"
+    assert all(check.passed for check in result.review)
+    assert usage.requests == 1
+    assert '"hijri"' in str(messages) and '"arabic_digits"' in str(messages)
+    assert result.deterministic.columns[0].earliest == "1447/03/12"
+    assert result.deterministic.columns[2].numeric.maximum == 3456.5
+    assert DatasetStore(store.directory).get_profile(source.dataset_id) == result
+
+
 def test_brief_reaches_the_model_and_changes_reuse(store, profiler):
     brief = DataBrief(raw_question="Sales by region", units={"amount": "USD"})
     source = store.save_upload("sales.csv", SALES, brief)

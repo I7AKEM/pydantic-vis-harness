@@ -1,3 +1,5 @@
+import pytest
+
 from vis_agent.profiler.measurements import compute_statistics
 
 
@@ -203,3 +205,118 @@ def test_word_scales_need_no_repeats_and_cover_education(store):
 
     columns = profile_of(store, "invoices.csv", b"code\nINV-1\nINV-2\nINV-3\n")
     assert columns["code"].ordinal_pattern is None
+
+
+@pytest.mark.parametrize("values,earliest,latest", [
+    (["1447-03-12", "1446-12-30"], "1446-12-30", "1447-03-12"),
+    (["١٤٤٧/٠٣/١٢", "١٤٤٦/١٢/٣٠"], "1446/12/30", "1447/03/12"),
+    (["12 ربيع الأول 1447", "٣٠ رمضان ١٤٤٦"], "12 ربيع الأول 1447", "30 رمضان 1446"),
+    (["١٤٤٧", "١٣٨٣"], "1383", "1447"),
+    (["1447-03", "1446/12"], "1446/12", "1447-03"),
+])
+def test_hijri_forms_have_translated_text_ranges(store, values, earliest, latest):
+    columns = profile_of(store, "hijri.csv", ("day\n" + "\n".join(values) + "\n").encode())
+    day = columns["day"]
+    assert "hijri" in day.measurement_levels
+    assert day.earliest == earliest
+    assert day.latest == latest
+    assert day.ordinal_pattern is None
+
+
+@pytest.mark.parametrize("month", [
+    "محرم", "صفر", "ربيع الأول", "ربيع الآخر", "ربيع الثاني", "جمادى الأولى", "جمادى الآخرة",
+    "جمادى الثانية", "رجب", "شعبان", "رمضان", "شوال", "ذو القعدة", "ذي القعدة", "ذو الحجة", "ذي الحجة",
+])
+def test_hijri_month_names(store, month):
+    columns = profile_of(store, "month.csv", f"day\n1 {month} 1447\n".encode())
+    assert "hijri" in columns["day"].measurement_levels
+
+
+@pytest.mark.parametrize("value", ["1299/12/30", "1500/01/01", "1447/13/01", "1447/01/31", "0 محرم 1447"])
+def test_invalid_hijri_text_is_not_hijri(store, value):
+    columns = profile_of(store, "invalid.csv", f"day\n{value}\n".encode())
+    assert "hijri" not in columns["day"].measurement_levels
+
+
+def test_gregorian_dates_are_not_hijri(store):
+    columns = profile_of(store, "gregorian.csv", b"day\n2026-03-12\n2026-04-13\n")
+    assert columns["day"].measurement_levels == ["time"]
+
+
+@pytest.mark.parametrize("name", ["year_hijri", "العام_الهجري", "year_h", "YEAR_H"])
+def test_hijri_integer_years_with_name_hint(store, name):
+    columns = profile_of(store, "years.csv", f"{name}\n1300\n1383\n1447\n1500\n".encode())
+    year = columns[name]
+    assert year.physical_type == "BIGINT"
+    assert "hijri" in year.measurement_levels
+    assert (year.earliest, year.latest) == ("1300", "1500")
+
+
+@pytest.mark.parametrize("header,rows", [
+    ("year,day", "1383,1963-06-01\n1447,2026-01-01"),
+    ("day,year", "1963-06-01,1383\n2026-01-01,1447"),
+    ("year,day", "1383,1963-06-01 12:00:00\n1447,2026-01-01 12:00:00"),
+])
+def test_hijri_integer_years_with_gregorian_companion_in_either_order(store, header, rows):
+    columns = profile_of(store, "companion.csv", f"{header}\n{rows}\n".encode())
+    assert "hijri" in columns["year"].measurement_levels
+    assert (columns["year"].earliest, columns["year"].latest) == ("1383", "1447")
+
+
+@pytest.mark.parametrize("content", [
+    "code\n1383\n1447\n",
+    "year_h\n1299\n1447\n",
+    "year_h\n1447\n1501\n",
+    "year_h\n1383.0\n1447.0\n",
+    "year,day\n1383,1900-01-01\n1447,2026-01-01\n",
+    "year,day\n1383,1446-01-01\n1447,1447-01-01\n",
+    "year,day\n1383,10:00:00\n1447,11:00:00\n",
+])
+def test_integer_year_detection_requires_range_and_context(store, content):
+    columns = profile_of(store, "not_hijri.csv", content.encode())
+    assert "hijri" not in next(iter(columns.values())).measurement_levels
+
+
+def test_arabic_digit_measure_has_all_numeric_statistics(store):
+    columns = profile_of(store, "amounts.csv", "amount\n٣٬٤٥٦٫٥\n-١٢٫٥\n١٠٠\n".encode())
+    amount = columns["amount"]
+    assert amount.physical_type == "VARCHAR"
+    assert amount.measurement_levels == ["interval", "continuous", "arabic_digits"]
+    assert amount.integer_valued is False
+    assert amount.numeric.model_dump() == pytest.approx({
+        "finite_count": 3, "non_finite_count": 0, "minimum": -12.5, "maximum": 3456.5,
+        "mean": 1181.3333333333333, "standard_deviation": 1609.4412246352942,
+        "q25": 43.75, "median": 100, "q75": 1778.25,
+    })
+
+
+@pytest.mark.parametrize("valid_count,expected", [(9, True), (8, False)])
+def test_localized_threshold_uses_non_null_values(store, valid_count, expected):
+    rows = ["١٤٤٧/٠٣/١٢,٣٬٤٥٦٫٥"] * valid_count + ["unknown,unknown"] * (10 - valid_count) + [","]
+    columns = profile_of(store, "threshold.csv", ("day,amount\n" + "\n".join(rows) + "\n").encode())
+    assert ("hijri" in columns["day"].measurement_levels) is expected
+    assert ("arabic_digits" in columns["amount"].measurement_levels) is expected
+    assert "arabic_digits" not in columns["day"].measurement_levels
+    assert "hijri" not in columns["amount"].measurement_levels
+    if expected:
+        assert columns["amount"].numeric.minimum == 3456.5
+        assert columns["amount"].numeric.maximum == 3456.5
+        assert columns["amount"].numeric.finite_count == 9
+        assert columns["amount"].numeric.non_finite_count == 1
+    else:
+        assert columns["amount"].numeric is None
+
+
+def test_localized_detection_preserves_omitted_value_protection(store):
+    rows = ["١٤٤٧/٠٣/١٢,١٢٫٥,١٢٫٥"] * 9 + [f"{'x' * 257},١٢٫٥,POINT(1 2)"]
+    columns = profile_of(store, "omitted.csv", ("day,shape_area,amount\n" + "\n".join(rows) + "\n").encode())
+    for column in columns.values():
+        assert column.values_omitted
+        assert not {"hijri", "arabic_digits"}.intersection(column.measurement_levels)
+        assert column.earliest is None and column.latest is None and column.numeric is None
+
+
+def test_null_columns_do_not_get_localized_levels(store):
+    columns = profile_of(store, "nulls.csv", b"year_h,amount,day\n,,\n,,\n")
+    for column in columns.values():
+        assert not {"hijri", "arabic_digits"}.intersection(column.measurement_levels)

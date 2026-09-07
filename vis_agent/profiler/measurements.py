@@ -67,6 +67,13 @@ MEASURE_NAME = re.compile(r"(^|[_\s])(" + "|".join(MEASURE_TOKENS) + r")($|[_\s]
 WKT_SQL_PATTERN = r"^\s*(SRID=\d+;)?(POINT|LINESTRING|POLYGON|MULTIPOINT|MULTILINESTRING|MULTIPOLYGON|GEOMETRYCOLLECTION)\b"
 ORDINAL_SQL_PATTERN = r"^\D*\d+\D*$"
 DIGITS_SQL_PATTERN = r"\d+"
+LOCALIZED_TEXT_SHARE = 0.9
+HIJRI_SQL_PATTERN = (
+    r"^1[34]\d{2}([-/](0?[1-9]|1[0-2])([-/](0?[1-9]|[12]\d|30))?)?$"
+    r"|^(0?[1-9]|[12]\d|30) "
+    r"(محرم|صفر|ربيع الأول|ربيع الآخر|ربيع الثاني|جمادى الأولى|جمادى الآخرة|جمادى الثانية|"
+    r"رجب|شعبان|رمضان|شوال|ذو القعدة|ذي القعدة|ذو الحجة|ذي الحجة) 1[34]\d{2}$"
+)
 BOOLEAN_PAIRS = [
     {"true", "false"}, {"yes", "no"}, {"y", "n"}, {"t", "f"}, {"on", "off"}, {"نعم", "لا"},
 ]
@@ -171,9 +178,13 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
                     f"ORDER BY frequency DESC, {column} ASC LIMIT 5"
                 ).fetchall()
                 stats.common_values = [ValueCount(value=preview(value), count=count) for value, count in common]
-                if is_text:
-                    _text_labels(connection, table, column, stats, distinct_count, row_count - null_count)
+            if is_text or physical_type == "DATE":
+                _localized_labels(connection, table, column, stats, row_count, warnings)
+            if is_text and not {"hijri", "arabic_digits"}.intersection(stats.measurement_levels):
+                _text_labels(connection, table, column, stats, distinct_count, row_count - null_count)
             columns.append(stats)
+
+        _hijri_year_labels(connection, table, columns)
 
         # Oversized columns stay in DuckDB; neither agent receives their values.
         sample_names = [c.name for c in columns if not c.values_omitted]
@@ -209,6 +220,59 @@ def compute_statistics(store: DatasetStore, source: UploadedDataset) -> Determin
     )
 
 
+def _localized_labels(connection, table, column, stats, row_count, warnings) -> None:
+    non_null = row_count - stats.null_count
+    if not non_null:
+        return
+    translated = f"translate(CAST({column} AS VARCHAR), '٠١٢٣٤٥٦٧٨٩', '0123456789')"
+    hijri_count, earliest, latest = connection.execute(
+        f"SELECT count(*) FILTER (WHERE regexp_matches(v, ?)), min(v), max(v) "
+        f"FROM (SELECT {translated} AS v FROM {table})",
+        [HIJRI_SQL_PATTERN],
+    ).fetchone()
+    if stats.physical_type == "VARCHAR":
+        number = f"TRY_CAST(replace(translate({translated}, '٫٬', '.,'), ',', '') AS DOUBLE)"
+        numeric_count, arabic_count = connection.execute(
+            f"SELECT count({number}), count(*) FILTER (WHERE regexp_matches(CAST({column} AS VARCHAR), '[٠-٩]')) "
+            f"FROM {table}"
+        ).fetchone()
+        # Plain ASCII numeric text keeps its old labels; the level names digits actually written in Arabic-Indic.
+        if arabic_count and numeric_count >= LOCALIZED_TEXT_SHARE * non_null:
+            _numeric_labels(connection, table, number, stats.name, stats, row_count, stats.null_count, warnings)
+            stats.measurement_levels.append("arabic_digits")
+    if hijri_count >= LOCALIZED_TEXT_SHARE * non_null:
+        stats.measurement_levels.append("hijri")
+        stats.earliest, stats.latest = preview(earliest), preview(latest)
+
+
+def _hijri_year_labels(connection, table, columns) -> None:
+    # Use a second pass so a Gregorian companion can occur on either side of the year column.
+    gregorian_companion = False
+    for stats in columns:
+        if "time" in stats.measurement_levels and stats.physical_type.startswith(("DATE", "TIMESTAMP")):
+            column = quote_identifier(stats.name)
+            count, modern_count = connection.execute(
+                f"SELECT count({column}), count(*) FILTER (WHERE year({column}) > 1900) FROM {table}"
+            ).fetchone()
+            if count and count == modern_count:
+                gregorian_companion = True
+                break
+    for stats in columns:
+        if stats.values_omitted or not stats.physical_type.startswith(INTEGER_TYPES):
+            continue
+        name = stats.name.lower()
+        if not (gregorian_companion or "hijri" in name or "هجري" in name or name.endswith("_h")):
+            continue
+        column = quote_identifier(stats.name)
+        count, in_range, earliest, latest = connection.execute(
+            f"SELECT count({column}), count(*) FILTER (WHERE {column} BETWEEN 1300 AND 1500), "
+            f"min(CAST({column} AS VARCHAR)), max(CAST({column} AS VARCHAR)) FROM {table}"
+        ).fetchone()
+        if count and count == in_range:
+            stats.measurement_levels.append("hijri")
+            stats.earliest, stats.latest = preview(earliest), preview(latest)
+
+
 def _coordinate_text_role(connection, table, column, name, non_null, warnings) -> GeographicRole | None:
     role = "latitude" if LATITUDE_NAME.search(name) else "longitude"
     low, high = (-90, 90) if role == "latitude" else (-180, 180)
@@ -239,7 +303,8 @@ def _numeric_labels(connection, table, column, name, stats, row_count, null_coun
         )),
     )
     if stats.numeric.non_finite_count:
-        warnings.append(f"{name}: numeric statistics exclude non-finite values.")
+        excluded = "non-finite or unparseable values" if stats.physical_type == "VARCHAR" else "non-finite values"
+        warnings.append(f"{name}: numeric statistics exclude {excluded}.")
     if stats.physical_type.startswith(INTEGER_TYPES):
         stats.integer_valued = True
     elif finite_count:

@@ -29,7 +29,8 @@ def run_checks(statistics: DeterministicProfile, semantic: SemanticProfile,
         if column.role == "time":
             checks.append(_check(
                 column.name, "time_role_has_time_statistics", "error",
-                stats.physical_type.startswith(TIME_TYPES) or stats.ordinal_pattern is not None,
+                stats.physical_type.startswith(TIME_TYPES) or stats.ordinal_pattern is not None
+                or "hijri" in stats.measurement_levels,
                 f"{column.name}: role is time but the column is {stats.physical_type} with no date statistics.",
             ))
         if column.role == "identifier":

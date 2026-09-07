@@ -1,6 +1,7 @@
 from vis_agent.models import DataBrief
 from vis_agent.profiler.models import ColumnStatistics, ColumnSemantics, DeterministicProfile, NumericStatistics, SemanticProfile
 from vis_agent.profiler.review import failed_checks, run_checks
+from vis_agent.profiler.measurements import compute_statistics
 
 
 def stat(name, physical_type="VARCHAR", distinct=3, nulls=0, **extra):
@@ -36,6 +37,17 @@ def test_time_role_needs_time_statistics_or_ordinal_pattern():
     assert names(failed_checks(result)) == ["time_role_has_time_statistics"]
     assert failed_checks(result)[0].column == "note"
     assert failed_checks(result)[0].severity == "error"
+
+
+def test_hijri_time_and_arabic_digit_measure_pass_review(store):
+    content = "day,year_h,amount\n12 ربيع الأول 1447,1447,٣٬٤٥٦٫٥\n13 ربيع الأول 1447,1447,١٢٫٥\n"
+    source = store.save_upload("localized.csv", content.encode())
+    store.import_csv(source.dataset_id)
+    stats = compute_statistics(store, source)
+    result = run_checks(stats, semantic(day=("time", None, None), year_h=("time", None, None),
+                                       amount=("measure", "SAR", None)))
+    assert failed_checks(result) == []
+    assert sum(check.check == "time_role_has_time_statistics" for check in result) == 2
 
 
 def test_identifier_must_be_near_unique():

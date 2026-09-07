@@ -10,6 +10,8 @@ or place names; text for free text; unknown when evidence is missing.
 
 Use the measurement_levels, codes, boolean_vocabulary, ordinal_pattern, and geographic_role fields as
 evidence. Give code_meanings for coded values only when the brief or the values make the meaning clear.
+A column with the hijri measurement level holds dates in the Hijri calendar written as text: its role is time, its unit null; say hijri in the meaning.
+A column with the arabic_digits level is a number written in Arabic-Indic digits: its role is measure, with the unit the header or the brief gives.
 
 Role assignment rules:
 - Assign time only when the physical_type is a native date or datetime type (e.g., DATE, TIMESTAMP).
