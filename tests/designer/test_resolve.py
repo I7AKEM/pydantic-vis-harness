@@ -71,7 +71,7 @@ def test_dual_axes_series_and_categories_remain_aligned_after_null_drop():
     assert resolved.config["categories"] == [row[0] for row in rows]
     assert resolved.config["series"] == [
         {"type": "column", "data": [row[1] for row in rows], "axisYTitle": "visits"},
-        {"type": "line", "data": [row[2] for row in rows], "axisYTitle": "SAR"},
+        {"type": "line", "data": [row[2] for row in rows], "axisYTitle": "revenue"},
     ]
     assert (resolved.drawn_rows, resolved.dropped_rows) == (11, 1)
 
@@ -281,6 +281,64 @@ def test_number_defaults_come_from_value_unit_and_language_does_not_change_digit
     assert resolve(city_spec(language="ar"), columns, result).number == NumberFormat(unit="ريال")
 
 
+@pytest.mark.parametrize("pattern", [None, "0,0 SAR"])
+def test_histogram_count_format_has_no_unit(pattern):
+    spec = Spec(type="histogram", bind={"value": "amount"}, format=pattern)
+    resolved = resolve(spec, *raw_amounts())
+    assert resolved.number == NumberFormat(thousands=True, unit=None)
+    assert resolved.number2 is None
+
+
+@pytest.mark.parametrize("pattern,digits", [(None, "western"), ("0,0.0", "arabic")])
+def test_dual_axes_have_separate_units_and_measure_names(pattern, digits):
+    spec = Spec(type="dual_axes", bind={"category": "month", "value": "visits", "value2": "revenue"},
+                format=pattern, digits=digits)
+    resolved = resolve(spec, *two_units())
+    decimals = 1 if pattern else None
+    assert resolved.number == NumberFormat(unit="visits", decimals=decimals, digits=digits)
+    assert resolved.number2 == NumberFormat(unit="SAR", decimals=decimals, digits=digits)
+    assert [series["axisYTitle"] for series in resolved.config["series"]] == ["visits", "revenue"]
+    assert resolved.config["axisXTitle"] == "month"
+    assert resolved.config["axisYTitle"] == "visits"
+
+
+def test_dual_axes_second_unit_does_not_inherit_first_format_unit():
+    columns, result = two_units()
+    columns[2].unit = None
+    spec = Spec(type="dual_axes", bind={"category": "month", "value": "visits", "value2": "revenue"},
+                format="0,0.0 people")
+    resolved = resolve(spec, columns, result)
+    assert resolved.number.unit == "people"
+    assert resolved.number2 == NumberFormat(decimals=1, unit=None)
+
+
+@pytest.mark.parametrize("spec,builder", [(city_spec(), cities), (Spec(type="table"), single_number)])
+def test_other_entries_have_no_second_number_description(spec, builder):
+    assert resolve(spec, *builder()).number2 is None
+
+
+@pytest.mark.parametrize("spec,builder,x_title,y_title", [
+    (city_spec(), cities, "city", "violations"),
+    (line_spec(), monthly, "month", "visits"),
+    (Spec(type="scatter", bind={"x": "age", "y": "amount"}), scatter_points, "age", "amount"),
+])
+@pytest.mark.parametrize("explicit", [False, True])
+def test_axis_titles_use_bound_names_unless_explicit(spec, builder, x_title, y_title, explicit):
+    if explicit:
+        spec = spec.model_copy(update={"axis_x_title": "Horizontal", "axis_y_title": "Vertical"})
+    config = resolve(spec, *builder()).config
+    assert config["axisXTitle"] == ("Horizontal" if explicit else x_title)
+    assert config["axisYTitle"] == ("Vertical" if explicit else y_title)
+
+
+@pytest.mark.parametrize("chart", ["pie", "donut", "treemap", "radar", "word_cloud", "table"])
+@pytest.mark.parametrize("explicit", [False, True])
+def test_entries_without_axes_have_no_axis_titles(chart, explicit):
+    spec = city_spec(chart, **({"axis_x_title": "Unused", "axis_y_title": "Unused"} if explicit else {}))
+    config = resolve(spec, *cities()).config
+    assert "axisXTitle" not in config and "axisYTitle" not in config
+
+
 def test_scatter_number_unit_comes_from_y():
     columns, result = scatter_points()
     columns[0].unit, columns[1].unit = "years", "SAR"
@@ -355,10 +413,10 @@ def test_explicit_size_and_base_options():
     spec = city_spec("donut", width=900, height=500, inner_radius=0.4, title="Cities", theme="academy",
                      axis_x_title="City", axis_y_title="Count")
     config = resolve(spec, *cities()).config
-    assert {key: config[key] for key in ("width", "height", "innerRadius", "title", "theme", "axisXTitle", "axisYTitle")} == {
+    assert {key: config[key] for key in ("width", "height", "innerRadius", "title", "theme")} == {
         "width": 900, "height": 500, "innerRadius": 0.4, "title": "Cities", "theme": "academy",
-        "axisXTitle": "City", "axisYTitle": "Count",
     }
+    assert "axisXTitle" not in config and "axisYTitle" not in config
     assert resolve(line_spec(width=900), *monthly(24)).width == 900
 
 

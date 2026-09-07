@@ -16,6 +16,7 @@ LANGUAGE_DEFAULTS = {
 }
 TRENDS = {"line", "multi_line", "area", "stacked_area"}
 MEASURES = {"value", "value2", "x", "y"}
+WITHOUT_AXES = {"pie", "donut", "treemap", "radar", "word_cloud", "table"}
 
 
 @dataclass
@@ -29,6 +30,7 @@ class Resolved:
     dropped_rows: int
     width: int
     height: int
+    number2: NumberFormat | None = None
 
 
 class ResolveError(Exception):
@@ -159,13 +161,19 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     width = spec.width if spec.width is not None else (1200 if spec.type in TRENDS and len(categories) > 12 else 800)
     config = {"type": entry.draw.type, **deepcopy(entry.draw.options),
               "theme": spec.theme, "width": width, "height": height}
-    for key, value in (("title", spec.title), ("axisXTitle", spec.axis_x_title),
-                       ("axisYTitle", spec.axis_y_title), ("innerRadius", spec.inner_radius),
+    for key, value in (("title", spec.title), ("innerRadius", spec.inner_radius),
                        ("binNumber", spec.bin_number)):
         if value is not None:
             config[key] = value
-    if spec.percent and spec.axis_y_title is None:
-        config["axisYTitle"] = "%"
+    if spec.type not in WITHOUT_AXES:
+        x_column = binding.get("category") or binding.get("time") or binding.get("x")
+        y_column = binding.get("value") or binding.get("y")
+        for key, title, column in (("axisXTitle", spec.axis_x_title, x_column),
+                                   ("axisYTitle", spec.axis_y_title, y_column)):
+            if title is not None or column is not None:
+                config[key] = title if title is not None else column.name
+        if spec.percent and spec.axis_y_title is None:
+            config["axisYTitle"] = "%"
 
     style = {}
     if spec.background_color is not None:
@@ -226,14 +234,17 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     if number.unit is None:
         number.unit = "%" if spec.percent else value.unit if value is not None else None
 
+    number2 = None
     if spec.type == "histogram":
+        number.unit = None  # The formatted y axis counts records, not the bound measure.
         config["data"] = [r["value"] for r in records]
     elif spec.type == "dual_axes":
+        number2 = number.model_copy(update={"unit": binding["value2"].unit})
         config["categories"] = [r["category"] for r in records]
         config["series"] = [
-            {"type": chart, "data": [r[role] for r in records], "axisYTitle": binding[role].unit}
+            {"type": chart, "data": [r[role] for r in records], "axisYTitle": binding[role].name}
             for role, chart in (("value", "column"), ("value2", "line"))
         ]
     else:
         config["data"] = [{entry.fields[role]: cell for role, cell in record.items()} for record in records]
-    return Resolved(config, overrides, number, compromises, len(records), folded, dropped, width, height)
+    return Resolved(config, overrides, number, compromises, len(records), folded, dropped, width, height, number2)

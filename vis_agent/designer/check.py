@@ -1,6 +1,7 @@
 """Validate a written spec and disclose its renderer's compromises."""
 
 from vis_agent.analyst.models import QueryResult, ResultColumn
+import vis_agent.render.gptvis  # noqa: F401
 from vis_agent.render.base import capability_for
 
 from .catalogue import CATALOGUE

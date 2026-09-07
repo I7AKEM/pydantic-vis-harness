@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="{{lang}}" dir="{{dir}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}}</title>
+  <style>
+    body { font-family: sans-serif; margin: 2rem; }
+    img { max-width: 100%; height: auto; }
+    table { border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: .5rem 1rem; text-align: start; }
+  </style>
+</head>
+<body>
+  <h1>{{title}}</h1>
+  <img id="picture" src="data:image/png;base64,{{png}}" width="{{width}}" height="{{height}}" alt="{{description}}">
+  <div id="chart" hidden role="img" aria-label="{{description}}"></div>
+  {{table}}
+  <script>
+    {{format_js}}
+    const interactive = {{interactive}};
+    if (interactive) {
+      const g2 = {{g2}}, format = {{format}}, format2 = {{format2}};
+      const formatter = makeFormatter(format), formatter2 = makeFormatter(format2);
+      const img = document.getElementById('picture'), div = document.getElementById('chart');
+      function revive(value) {
+        if (value && typeof value === 'object') {
+          if (value.$format === 'value') return formatter;
+          if (value.$format === 'value2') return formatter2;
+          if (value.$label === 'category_value') return d => `${d.category}: ${formatter(d.value)}`;
+          if (Array.isArray(value)) return value.map(revive);
+          return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, revive(item)]));
+        }
+        return value;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/@antv/g2@5.4.8/dist/g2.min.js';
+      script.onload = async () => {
+        try {
+          const chart = new G2.Chart({ container: 'chart', autoFit: false, width: {{width}}, height: {{height}} });
+          chart.options(revive(g2));
+          await chart.render();
+          img.hidden = true;
+          div.hidden = false;
+        } catch { div.hidden = true; img.hidden = false; }
+      };
+      script.onerror = () => { div.hidden = true; img.hidden = false; };
+      document.head.appendChild(script);
+    }
+  </script>
+</body>
+</html>

@@ -6,7 +6,6 @@ from pathlib import Path
 from pydantic import BaseModel
 
 from vis_agent.designer.models import ChartType, Compromise
-from vis_agent.designer.syntax import KEYS, STYLE_KEYS
 
 
 class Capability(BaseModel):
@@ -27,6 +26,7 @@ class Rendered(BaseModel):
     drawn_rows: int
     folded_rows: int
     dropped_rows: int
+    texts: list[str] | None = None
 
 
 class RendererUnavailable(Exception):
@@ -45,22 +45,3 @@ def capability_for(renderer: str, chart_type: ChartType) -> Capability:
         raise KeyError(f"Unknown renderer '{renderer}'; registered: {', '.join(RENDERERS)}")
     return RENDERERS[renderer](chart_type)
 
-
-# Task 6 moves this temporary registration into gptvis.py.
-GPTVIS_HONOURED = set(KEYS) | set(STYLE_KEYS) | {"bind"}
-GPTVIS_DEGRADED = {
-    "direction": "the legend stays where the package puts it; the title and the category order follow the direction",
-}
-
-
-def _gptvis_capability(chart_type: ChartType) -> Capability:
-    degraded = GPTVIS_DEGRADED
-    if chart_type == "table":
-        degraded = dict.fromkeys(
-            ("subtitle", "labels", "legend", "axisXTitle", "axisYTitle", "direction", "format"),
-            "tables are drawn as the package draws them",
-        )
-    return Capability(honoured=GPTVIS_HONOURED, degraded=degraded, rejected={})
-
-
-RENDERERS["gptvis"] = _gptvis_capability
