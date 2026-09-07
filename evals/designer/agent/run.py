@@ -5,11 +5,11 @@ import asyncio
 import json
 import os
 import re
-from collections import Counter
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
 
+import duckdb
 from dotenv import load_dotenv
 from pydantic_evals import Case, Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext, LLMJudge
@@ -21,11 +21,17 @@ from vis_agent.designer.agent import (
 )
 from vis_agent.designer.check import check_spec
 from vis_agent.designer.models import DesignReport, SpecError
+from vis_agent.designer.recommend import recommend_charts
 from vis_agent.designer.syntax import parse
-from vis_agent.models import DataBrief
+from vis_agent.models import DataBrief, Intent
 from vis_agent.render.base import Rendered as RenderResult, RendererUnavailable, RenderFailed
 
 CASES_PATH = Path(__file__).with_name("cases.json")
+# Private copy until Task 1's corpus_tools.select.TASK_TO_INTENT is merged.
+_TASK_TO_INTENT: dict[str, Intent] = {
+    "single_value": "share", "comparison": "compare", "ranking": "rank",
+    "composition": "composition", "distribution": "distribution",
+}
 RUBRIC = {"type": "The chart type fits the intent and the shape of the result.",
           "roles": "The right columns hold the right roles.",
           "title": "The title says what is shown, in the caller's language, and is true.",
@@ -72,9 +78,39 @@ class Passed(Evaluator[dict, DesignReport, dict]):
 @dataclass
 class ChartAccepted(Evaluator[dict, DesignReport, dict]):
     def evaluate(self, ctx: EvaluatorContext[dict, DesignReport, dict]) -> float:
-        return float(_clarified(ctx) or (
-            ctx.output.design is not None and ctx.output.design.chart in ctx.expected_output["charts"]
-        ))
+        if _clarified(ctx):
+            return 1.0
+        if ctx.output.design is None:
+            return 0.0
+        charts = ctx.expected_output["charts"]
+        if charts is None:
+            report = AnalysisReport.model_validate_json(Path(ctx.inputs["report"]).read_text(encoding="utf-8"))
+            charts = reference_charts(report, ctx.output.design.intent)
+        return float(ctx.output.design.chart in charts)
+
+
+def reference_charts(report: AnalysisReport, intent: Intent | None) -> list[str]:
+    """Rules agreement for the declared intent, not a correctness label."""
+    if report.analysis is None or report.result is None or not report.result.rows:
+        return []
+    candidates = recommend_charts(report.analysis.columns, report.result, intent=intent).candidates
+    if not candidates:
+        return []
+    nearby = {c.name for c in candidates if c.score >= 0 and c.score >= candidates[0].score - 1}
+    for first, second in (("bar", "column"), ("grouped_bar", "grouped_column"),
+                          ("stacked_bar", "stacked_column"), ("pie", "donut")):
+        if nearby.intersection((first, second)):
+            nearby.update((first, second))
+    return [c.name for c in candidates if c.name in nearby and c.score >= 0]
+
+
+@dataclass
+class IntentPlausible(Evaluator[dict, DesignReport, dict]):
+    def evaluate(self, ctx: EvaluatorContext[dict, DesignReport, dict]) -> float:
+        intent = _TASK_TO_INTENT.get((ctx.metadata or {}).get("task"))
+        if intent is None:
+            return 1.0
+        return float(ctx.output.design is not None and ctx.output.design.intent == intent)
 
 
 @dataclass
@@ -121,10 +157,12 @@ class Rendered(Evaluator[dict, DesignReport, dict]):
         ))
 
 
-def load_cases(cases_path=CASES_PATH) -> list[Case]:
+def load_cases(cases_path=CASES_PATH, split: str | None = None) -> list[Case]:
     cases_path = Path(cases_path)
     cases = []
     for case in json.loads(cases_path.read_text(encoding="utf-8")):
+        if split is not None and case.get("split") != split:
+            continue
         path = (cases_path.parent / case["report"]).resolve()
         report = AnalysisReport.model_validate_json(path.read_text(encoding="utf-8"))
         brief = DataBrief.model_validate(case["brief"]) if case["brief"] else None
@@ -133,19 +171,23 @@ def load_cases(cases_path=CASES_PATH) -> list[Case]:
             inputs={"name": case["name"], "report": str(path), "brief": case["brief"],
                     "question": report.question, "result_description": build_prompt(report, brief).model_dump()},
             expected_output={key: case[key] for key in ("expect", "charts", "language", "bind", "emphasis")},
-            metadata={"why": case["why"]},
+            metadata={"why": case["why"], **(case.get("metadata") or {}),
+                      **{key: case[key] for key in ("split", "seeded", "task") if key in case}},
         ))
     return cases
 
 
-def build_dataset(cases_path=CASES_PATH, judge: str | None = None) -> Dataset:
+def build_dataset(cases_path=CASES_PATH, judge: str | None = None, split: str | None = None) -> Dataset:
+    cases = load_cases(cases_path, split)
     evaluators = [Delivered(), Passed(), ChartAccepted(), LanguageRight(), BindingRight(), Metrics()]
+    if any(case.expected_output["charts"] is None or "split" in case.metadata for case in cases):
+        evaluators.append(IntentPlausible())
     if judge:
         evaluators.append(LLMJudge(
             rubric="\n".join(RUBRIC.values()) + "\nJudge the design against the question and the result description.",
             model=judge, include_input=True,
         ))
-    return Dataset(name="designer-agent", cases=load_cases(cases_path), evaluators=evaluators)
+    return Dataset(name="designer-agent", cases=cases, evaluators=evaluators)
 
 
 def make_task(designer, render_directory: Path | None = None):
@@ -178,14 +220,23 @@ def make_task(designer, render_directory: Path | None = None):
 def write_review_page(directory: Path, entries: list[dict]) -> Path:
     directory.mkdir(parents=True, exist_ok=True)
     sections = []
-    for index, entry in enumerate(entries):
+    split_order = {"train": 0, "dev": 1, "heldout": 2}
+    previous_split = None
+    for index, entry in enumerate(sorted(entries, key=lambda entry: split_order.get(entry.get("split"), 3))):
         text = lambda key: escape(str(entry.get(key) or ""))
+        split = entry.get("split") or "unsplit"
+        if split != previous_split:
+            sections.append(f"<h2>Split: {escape(split)}</h2>")
+            previous_split = split
+        seeded = "true" if entry.get("seeded", False) else "false"
+        badge = " · Seeded" if entry.get("seeded", False) else ""
         checks = "".join(f'<label><input type="checkbox" name="{key}"> {escape(label)}</label>'
                          for key, label in RUBRIC.items())
         picture = f'<img src="{text("image")}" alt="{text("chart")}">' if entry.get("image") else "<p>No image.</p>"
-        sections.append(f'''<section data-name="{text('name')}" data-model="{text('model')}">
+        sections.append(f'''<section data-name="{text('name')}" data-model="{text('model')}"
+data-split="{text('split')}" data-seeded="{seeded}">
 <h2>{text('name')}</h2><p dir="auto">{text('question')}</p>
-<p>Language: {text('language')} · Chart: {text('chart')}</p>{picture}
+<p>Language: {text('language')} · Chart: {text('chart')}{badge}</p>{picture}
 <pre class="spec">{text('spec')}</pre><p dir="auto">{text('explanation')}</p>
 <p>Compromises: {escape(json.dumps(entry.get('compromises', []), ensure_ascii=False))}</p>
 <p>Automatic scores: {escape(json.dumps(entry.get('scores', {}), ensure_ascii=False))}</p>
@@ -221,6 +272,7 @@ document.getElementById('copy').addEventListener('click', async () => {
     judgments[section.dataset.name] = {
       verdict: verdict.value, failed, note: section.querySelector('.note').value, by,
       date: new Date().toISOString().slice(0, 10), model: section.dataset.model,
+      split: section.dataset.split || null, seeded: section.dataset.seeded === 'true',
       spec: section.querySelector('.spec').textContent
     };
   }
@@ -237,14 +289,38 @@ document.getElementById('copy').addEventListener('click', async () => {
 
 def judgment_summary(judgments: dict) -> dict:
     judged = [entry for entry in judgments.values() if entry.get("verdict") in {"pass", "fail"}]
-    correct = sum(entry["verdict"] == "pass" and not entry.get("failed") for entry in judged)
-    failed = Counter(key for entry in judged for key in set(entry.get("failed", [])))
-    return {"judged": len(judged), "correct": correct, "share": correct / len(judged) if judged else 0,
-            "failed_by_criterion": dict(sorted(failed.items()))}
+    with duckdb.connect() as connection:
+        connection.execute("""
+            CREATE TABLE judgments AS
+            SELECT key AS id, value->'failed' AS failed,
+                   (value->>'verdict') = 'pass'
+                       AND coalesce(json_array_length(value->'failed'), 0) = 0 AS correct,
+                   coalesce((value->>'seeded')::BOOLEAN, false) AS seeded
+            FROM json_each(?)
+        """, [json.dumps(judged)])
+
+        def totals(seeded: bool | None = None) -> dict:
+            row = connection.execute("""
+                SELECT count(*), count(*) FILTER (WHERE correct), coalesce(avg(correct::INT), 0)
+                FROM judgments WHERE ? IS NULL OR seeded = ?
+            """, [seeded, seeded]).fetchone()
+            return dict(zip(("judged", "correct", "share"), row))
+
+        summary = totals()
+        summary["failed_by_criterion"] = dict(connection.execute("""
+            SELECT criterion, count(DISTINCT id) FROM (
+                SELECT j.id, f.value->>'$' AS criterion
+                FROM judgments j, json_each(j.failed) f
+            ) GROUP BY criterion ORDER BY criterion
+        """).fetchall())
+        # Keep the legacy summary's exact shape for judgments without provenance.
+        if any("seeded" in entry for entry in judged):
+            summary.update(seeded=totals(True), unseeded=totals(False))
+        return summary
 
 
-def saved_spec_summary(cases_path: Path, judgments: dict) -> dict:
-    cases = {case.name: case for case in load_cases(cases_path)}
+def saved_spec_summary(cases_path: Path, judgments: dict, split: str | None = None) -> dict:
+    cases = {case.name: case for case in load_cases(cases_path, split)}
     checks = []
     for name, judgment in judgments.items():
         case = cases.get(re.sub(r" \[\d+/\d+\]$", "", name))
@@ -274,6 +350,8 @@ def _review_entries(report, model: str, directory: Path) -> list[dict]:
                 result.compromises if isinstance(result, RenderResult) else design.compromises if design else [])],
             "scores": {key: value.value for key, value in {**case.scores, **case.assertions}.items()},
             "model": model, "error": result if isinstance(result, str) else None,
+            "split": (case.metadata or {}).get("split"),
+            "seeded": (case.metadata or {}).get("seeded", False),
         })
     return entries
 
@@ -291,9 +369,20 @@ def judge_agreement(report, judgments: dict, model: str) -> dict:
     return {"compared": len(matches), "agreement": sum(matches) / len(matches) if matches else None}
 
 
+def _print_case_counts(cases: list[Case]) -> None:
+    with duckdb.connect() as connection:
+        total, seeded, unseeded = connection.execute("""
+            SELECT count(*), count(*) FILTER (WHERE value::BOOLEAN),
+                   count(*) FILTER (WHERE NOT value::BOOLEAN)
+            FROM json_each(?)
+        """, [json.dumps([bool(case.metadata.get("seeded", False)) for case in cases])]).fetchone()
+    print(f"cases: {total}; seeded: {seeded}; unseeded: {unseeded}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cases", type=Path, default=CASES_PATH)
+    parser.add_argument("--split", choices=("train", "dev", "heldout"))
     parser.add_argument("--model")
     parser.add_argument("--max-concurrency", type=int, default=4)
     parser.add_argument("--repeat", type=int, default=1)
@@ -305,16 +394,28 @@ def main() -> None:
     judgments_path = args.cases.with_name("judgments.json")
     judgments = json.loads(judgments_path.read_text(encoding="utf-8"))["judgments"] if judgments_path.exists() else {}
     if args.judgments:
+        cases = {case.name: case for case in load_cases(args.cases, args.split)}
+        selected = {}
+        for name, judgment in judgments.items():
+            case = cases.get(re.sub(r" \[\d+/\d+\]$", "", name))
+            if args.split is not None and case is None:
+                continue
+            metadata = {key: case.metadata[key] for key in ("split", "seeded") if key in case.metadata} if case else {}
+            selected[name] = {**judgment, **metadata}
+        judgments = selected
+        _print_case_counts(list(cases.values()))
         print(json.dumps(judgment_summary(judgments), ensure_ascii=False, indent=2))
-        print("saved spec checks: " + json.dumps(saved_spec_summary(args.cases, judgments)))
+        print("saved spec checks: " + json.dumps(saved_spec_summary(args.cases, judgments, args.split)))
         return
     load_dotenv()
     model = args.model or os.getenv("PYDANTIC_AI_DESIGNER_MODEL") or DEFAULT_DESIGNER_MODEL
     if args.judge and args.judge.removeprefix("openrouter:") == model.removeprefix("openrouter:"):
         parser.error("--judge must name a model other than the designer's")
     designer = create_designer(model)
-    dataset = build_dataset(args.cases, args.judge)
-    directory = CASES_PATH.parent / "renders" / (re.sub(r"[^A-Za-z0-9_.-]+", "-", model).strip(".-") or "model")
+    dataset = build_dataset(args.cases, args.judge, args.split)
+    directory = args.cases.parent / "renders" / (re.sub(r"[^A-Za-z0-9_.-]+", "-", model).strip(".-") or "model")
+    if args.split:
+        directory /= args.split
     outputs.clear()
     renders.clear()
     render_results.clear()
@@ -324,11 +425,12 @@ def main() -> None:
                                          max_concurrency=args.max_concurrency, repeat=args.repeat))
     report.print(include_input=False, include_output=False)
     print(f"model: {model}")
+    _print_case_counts(dataset.cases)
     if args.render:
         print(f"review page: {write_review_page(directory, _review_entries(report, model, directory))}")
     if args.mismatches:
         for case in report.cases:
-            failed = [key for key in ("ChartAccepted", "LanguageRight", "BindingRight")
+            failed = [key for key in ("ChartAccepted", "LanguageRight", "BindingRight", "IntentPlausible")
                       if key in case.scores and case.scores[key].value < 1]
             if failed:
                 print(f"{case.name}: {', '.join(failed)}\n{case.output.design.spec if case.output.design else '(no spec)'}")
