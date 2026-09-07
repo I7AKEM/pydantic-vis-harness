@@ -203,3 +203,20 @@ def test_main_scale_repeat_render_and_mismatches(scale_cases, tmp_path, monkeypa
     page = page_path.read_text()
     assert page.count('data-split="dev"') == 2 and page.count('data-seeded="true"') == 2
     assert "offline fixture" in page
+
+
+def test_unanswered_reports_are_listed_not_scored(tmp_path):
+    import json
+    from datetime import datetime, timezone
+    from vis_agent.analyst.models import AnalysisReport, Clarification
+    from evals.designer.agent import run
+
+    report = AnalysisReport(dataset_id="ds", question="Q?", language="English",
+                            clarification=Clarification(question="Which column?", reason="none"),
+                            seconds=0, created_at=datetime(2026, 9, 7, tzinfo=timezone.utc))
+    (tmp_path / "unanswered.json").write_text(report.model_dump_json(), encoding="utf-8")
+    cases = [{"name": "unanswered", "report": "unanswered.json", "brief": None, "expect": "design",
+              "charts": None, "language": "en", "bind": {}, "emphasis": None, "why": "test", "split": "dev"}]
+    (tmp_path / "cases.json").write_text(json.dumps(cases), encoding="utf-8")
+    assert run.load_cases(tmp_path / "cases.json") == []
+    assert run.unanswered == ["unanswered"]

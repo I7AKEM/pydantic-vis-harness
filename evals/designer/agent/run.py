@@ -155,14 +155,22 @@ class Rendered(Evaluator[dict, DesignReport, dict]):
         ))
 
 
+# Cases whose analyst report holds no table cannot be designed; they are listed here, not scored.
+unanswered: list[str] = []
+
+
 def load_cases(cases_path=CASES_PATH, split: str | None = None) -> list[Case]:
     cases_path = Path(cases_path)
     cases = []
+    unanswered.clear()
     for case in json.loads(cases_path.read_text(encoding="utf-8")):
         if split is not None and case.get("split") != split:
             continue
         path = (cases_path.parent / case["report"]).resolve()
         report = AnalysisReport.model_validate_json(path.read_text(encoding="utf-8"))
+        if report.analysis is None or report.result is None:
+            unanswered.append(case["name"])
+            continue
         brief = DataBrief.model_validate(case["brief"]) if case["brief"] else None
         cases.append(Case(
             name=case["name"],
@@ -423,6 +431,8 @@ def main() -> None:
                                          max_concurrency=args.max_concurrency, repeat=args.repeat))
     report.print(include_input=False, include_output=False)
     print(f"model: {model}")
+    if unanswered:
+        print(f"unanswered by the analyst, excluded from the scores: {len(unanswered)} ({', '.join(unanswered)})")
     _print_case_counts(dataset.cases)
     if args.render:
         print(f"review page: {write_review_page(directory, _review_entries(report, model, directory))}")
