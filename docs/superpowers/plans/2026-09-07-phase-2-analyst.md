@@ -527,7 +527,7 @@ def test_shares_must_add_up(store, people):
     assert failed_checks(check_result(store, profile, columns, fraction)) == []
     short = QueryResult(sql="x", columns=["region", "share"], types=["VARCHAR", "DOUBLE"], rows=[["East", 38.1], ["West", 50.0]], row_count=2, seconds=0)
     failed = failed_checks(check_result(store, profile, columns, short))
-    assert names(failed) == ["shares_add_up"] and "88.1" in failed[0].message
+    assert names(failed) == ["shares_add_up"] and failed[0].severity == "warning" and "88.1" in failed[0].message
 
 
 def test_aggregates_stay_in_bounds_and_totals_are_explained(store, people):
@@ -673,9 +673,9 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
                 for key, total in groups.items():
                     if abs(total - 100) > SHARE_TOLERANCE and abs(total - 1) > SHARE_TOLERANCE / 100:
                         where = f" for {key!r}" if key_column else ""
-                        checks.append(_check(column.name, "shares_add_up", "error", False,
-                                             f"{column.name}: shares sum to {total:.1f}{where}, not 100; include every group "
-                                             "or an Other row, or fix the denominator."))
+                        checks.append(_check(column.name, "shares_add_up", "warning", False,
+                                             f"{column.name}: shares sum to {total:.1f}{where}, not 100. Fine when the share "
+                                             "is within each row's own group; otherwise include every group or an Other row."))
                         break
 
             if (column.kind in ("measure", "share") and numbers is not None and source is not None
@@ -1624,12 +1624,17 @@ import json
 from evals.analyst.run import load_cases, tables_match
 
 
-def test_tables_match_ignores_order_names_and_rounding():
+def test_tables_match_ignores_order_names_rounding_and_extra_columns():
     expected = {"columns": ["region", "total"], "rows": [["East", 40], ["West", 65.0004]]}
     assert tables_match(expected, {"columns": ["المنطقة", "المجموع"], "rows": [["West", 65], ["East", 40]]}) == 1.0
     assert tables_match(expected, {"columns": ["a", "b"], "rows": [["West", 66], ["East", 40]]}) == 0.0
     assert tables_match(expected, {"columns": ["a"], "rows": [["West"], ["East"]]}) == 0.0
-    assert tables_match(expected, {"columns": ["a", "b", "c"], "rows": [["West", 65, 1], ["East", 40, 2]]}) == 0.0
+    assert tables_match(expected, {"columns": ["a", "b", "c"], "rows": [["West", 65, 1], ["East", 40, 2]]}) == 1.0
+    assert tables_match(expected, {"columns": ["b", "a"], "rows": [[65, "West"], [40, "East"]]}) == 1.0
+    assert tables_match(expected, {"columns": ["a", "b"], "rows": [["West", 40], ["East", 65]]}) == 0.0
+    assert tables_match(expected, {"columns": ["a", "b"], "rows": [["West", 65]]}) == 0.0
+    months = {"columns": ["month", "n"], "rows": [["2024-01-01", 5], ["2024-02-01T00:00:00", 6]]}
+    assert tables_match(months, {"columns": ["m", "n"], "rows": [["2024-01", 5], ["2024-02", 6]]}) == 1.0
 
 
 def test_load_cases_reads_the_format(tmp_path):
@@ -1656,16 +1661,18 @@ Expected: FAIL with `ModuleNotFoundError: evals.analyst`
     uv run python -m evals.analyst.run                    # evals/analyst/cases
     uv run python -m evals.analyst.run --model openrouter:openai/gpt-5.4-mini --mismatches
 
-Scores: whether the result table equals the expected table (rows sorted, numbers rounded to four significant
-digits, column names ignored), whether a clarification came back when one was expected, whether no error-level
+Scores: whether every expected column appears in the result with the same values, rows aligned (numbers rounded to
+four significant digits, column names ignored, extra columns allowed), whether a clarification came back when one was expected, whether no error-level
 check remained, and seconds per question.
 """
 
 import argparse
 import asyncio
+import itertools
 import json
 import math
 import os
+import re
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -1683,19 +1690,51 @@ from vis_agent.store import DatasetStore
 CASES_DIR = Path(__file__).with_name("cases")
 
 
-def _round(value):
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
+DATE_MIDNIGHT = re.compile(r"^(\d{4}-\d{2}-\d{2})[T ]00:00:00(?:\.0+)?(?:Z|[+-]\d{2}:\d{2})?$")
+MONTH_START = re.compile(r"^(\d{4}-\d{2})-01$")
+
+
+def _normal(value):
+    """Four significant digits for numbers; midnight timestamps become dates; first-of-month dates become months."""
+    if isinstance(value, bool) or value is None:
         return value
-    if value == 0 or not math.isfinite(value):
-        return value
-    return round(value, 3 - int(math.floor(math.log10(abs(value)))))
+    if isinstance(value, (int, float)):
+        if value == 0 or not math.isfinite(value):
+            return float(value)
+        return float(round(value, 3 - int(math.floor(math.log10(abs(value))))))
+    text = str(value).strip()
+    if match := DATE_MIDNIGHT.match(text):
+        text = match[1]
+    if match := MONTH_START.match(text):
+        text = match[1]
+    return text
+
+
+def _key(value) -> str:
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, default=str)
 
 
 def tables_match(expected: dict, actual: dict) -> float:
-    if len(expected["columns"]) != len(actual["columns"]):
+    """1.0 when every expected column appears in the actual table with the same values and the rows line up.
+
+    Column names are ignored, extra actual columns are allowed, row order is ignored.
+    """
+    if len(expected["rows"]) != len(actual["rows"]):
         return 0.0
-    normalise = lambda rows: sorted(json.dumps([_round(v) for v in row], ensure_ascii=False, sort_keys=True) for row in rows)
-    return 1.0 if normalise(expected["rows"]) == normalise(actual["rows"]) else 0.0
+    expected_columns = [[_normal(row[i]) for row in expected["rows"]] for i in range(len(expected["columns"]))]
+    actual_columns = [[_normal(row[i]) for row in actual["rows"]] for i in range(len(actual["columns"]))]
+    candidates = [[j for j, column in enumerate(actual_columns) if sorted(map(_key, column)) == sorted(map(_key, wanted))]
+                  for wanted in expected_columns]
+    if any(not choice for choice in candidates):
+        return 0.0
+    expected_rows = sorted(_key(list(row)) for row in zip(*expected_columns))
+    for choice in itertools.product(*candidates):
+        if len(set(choice)) != len(choice):
+            continue
+        rows = sorted(_key([actual_columns[j][r] for j in choice]) for r in range(len(actual["rows"])))
+        if rows == expected_rows:
+            return 1.0
+    return 0.0
 
 
 @dataclass

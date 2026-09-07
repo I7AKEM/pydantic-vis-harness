@@ -134,7 +134,7 @@ raw table.
 |---|---|---|
 | Descriptions match the result | Every result column is described exactly once, by its exact name. | error |
 | Labels are faithful | For a result column whose `source` is a category, ordinal, boolean, or geography column: its values are a subset of the source's distinct values, or the result also carries the source's codes in another column with the same `source`, and every code and label pair matches the profile's code meanings or the brief's. Anything else is a relabel the data does not support. | error |
-| Shares add up | A column of kind share sums to 100 or to 1, within half a point, over the rows that share the same first category. | error |
+| Shares add up | A column of kind share sums to 100 or to 1, within half a point, over the rows that share the same first category. A warning, not an error, because a share within each row's own group (married share per gender) need not sum to 100. | warning |
 | Aggregates stay in bounds | An avg, min, or max of a source column lies between the source's minimum and maximum. | error |
 | Totals are explained | A sum or a count over a source column is compared with the raw total. When they differ, the query filtered or excluded rows, and the warning says so with both numbers. | warning |
 | Nothing came back | An empty result is never delivered. The model reconsiders or asks. | error |
@@ -228,8 +228,9 @@ Twenty to thirty questions over the corpus, built with the Phase 1 tooling and p
   question is a trend by month, a share by status, or the top districts).
 - Each case holds the dataset, the question (half Arabic, half English), an optional brief with code meanings where
   the data has codes, a reference SQL written by hand, and the expected table computed by DuckDB from that SQL.
-- Scoring: the result equals the expected table after sorting rows and rounding numbers to four significant digits.
-  Column count must match; column names may differ. Cases that expect a clarification score on whether a question
+- Scoring: every expected column appears in the result with the same values after rounding numbers to four significant
+  digits, rows aligned; row order and column names are ignored and extra columns are allowed, so a result that keeps a
+  code column next to its label, or adds the value beside a share, still scores. Cases that expect a clarification score on whether a question
   came back.
 - Seeded label inversions: five hand-built results with swapped labels, shares that do not add up, or averages out
   of range, run through the checks with no model. All must be flagged. This is the deterministic half of the exit
