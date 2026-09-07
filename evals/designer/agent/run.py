@@ -149,9 +149,11 @@ class Rendered(Evaluator[dict, DesignReport, dict]):
         if _clarified(ctx):
             return 1.0
         result = render_results.get(ctx.inputs["name"], {}).get(id(ctx.output))
-        table = ctx.output.design is not None and ctx.output.design.chart == "table"
+        chart = ctx.output.design.chart if ctx.output.design is not None else None
+        # Thin strokes cover under two percent of a line chart; measured 1.8 to 1.9 percent on real cases.
+        blank = 0.01 if chart in {"line", "area", "scatter"} else 0.02
         return float(isinstance(result, RenderResult) and result.png.is_file() and (
-            table or result.non_background_share >= 0.02
+            chart == "table" or result.non_background_share >= blank
         ))
 
 
