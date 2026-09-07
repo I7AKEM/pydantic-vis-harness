@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 
     from vis_agent.analyst.agent import AnalystDeps
     from vis_agent.analyst.models import Analysis, Clarification
+    from vis_agent.designer.agent import DesignerDeps
+    from vis_agent.designer.models import Design
     from vis_agent.profiler.agent import ProfilerInput
     from vis_agent.profiler.models import SemanticProfile
 
@@ -21,3 +23,4 @@ class AppDeps:
     store: DatasetStore
     profiler: Agent[ProfilerInput, SemanticProfile]
     analyst: Agent[AnalystDeps, Analysis | Clarification]
+    designer: Agent[DesignerDeps, Design | Clarification]
