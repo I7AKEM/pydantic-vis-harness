@@ -236,6 +236,7 @@ def test_page_escapes_content_and_embeds_png(tmp_path):
     assert '</ScRiPt>' not in page and '<script>alert(' not in page
     assert "{{g2}}" in page  # Replacement must not reinterpret user text as a template.
     assert "@antv/g2@5.4.8/dist/g2.min.js" in page
+    assert "animate: false" in page
 
 
 def test_timeout(tmp_path, monkeypatch):

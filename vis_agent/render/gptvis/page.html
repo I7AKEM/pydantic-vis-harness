@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{title}}</title>
   <style>
-    body { font-family: sans-serif; margin: 2rem; }
+    body { font-family: sans-serif; margin: 2rem; background: white; color: #1D2129; }
     img { max-width: 100%; height: auto; }
     table { border-collapse: collapse; }
     th, td { border: 1px solid #ccc; padding: .5rem 1rem; text-align: start; }
@@ -38,7 +38,7 @@
       script.onload = async () => {
         try {
           const chart = new G2.Chart({ container: 'chart', autoFit: false, width: {{width}}, height: {{height}} });
-          chart.options(revive(g2));
+          chart.options({...revive(g2), animate: false});
           await chart.render();
           img.hidden = true;
           div.hidden = false;
