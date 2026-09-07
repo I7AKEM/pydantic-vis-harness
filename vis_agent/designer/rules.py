@@ -325,11 +325,12 @@ def check_rules(
         ):
             fail("C14", "Log needs line, multi_line, or scatter with positive values spanning at least a factor of one hundred.", "Use linear")
     marks = shape.rows
-    if valid_limit and category is not None:
-        marks = min(marks, displayed_binding["category"].distinct *
+    if category is not None and (entry.name in BARS | COLUMNS or valid_limit):
+        marks = min(shape.rows, displayed_binding["category"].distinct *
                     (binding["group"].distinct if "group" in binding else 1))
-    if spec.labels == "on" and marks > 50:
-        fail("C15", "More than fifty marks crowd the data labels.", "Turn them off, or limit the rows")
+    label_limit = 12 if entry.name in BARS | COLUMNS else 50
+    if spec.labels == "on" and marks > label_limit:
+        fail("C15", f"More than {label_limit} marks crowd the data labels.", "Turn them off, or limit the rows")
     if spec.zero is True and spec.axis_y_min is not None and spec.axis_y_min != 0:
         fail("C16", "zero true contradicts a nonzero axisYMin.", "Drop one")
     return violations

@@ -148,9 +148,9 @@ def grammar() -> str:
         elif key == "style":
             description = "section; backgroundColor <hex>"
         elif key == "axisXTitle":
-            description = "text; the category axis title (vertical on a bar)"
+            description = "text; the horizontal axis title"
         elif key == "axisYTitle":
-            description = "text; the value axis title (horizontal on a bar)"
+            description = "text; the vertical axis title"
         elif kind == "section:list":
             description = 'section; lines "- <hex>"' if key == "palette" else 'section; lines "- <value>"'
         else:

@@ -125,8 +125,8 @@ def test_prompt_is_bounded():
 
 def test_grammar_and_instructions():
     text = grammar()
-    assert "axisXTitle: text; the category axis title (vertical on a bar)" in text
-    assert "axisYTitle: text; the value axis title (horizontal on a bar)" in text
+    assert "axisXTitle: text; the horizontal axis title" in text
+    assert "axisYTitle: text; the vertical axis title" in text
     for key in [*syntax.KEYS, *syntax.STYLE_KEYS]:
         assert f"{key}:" in text
     for choice in [*get_args(models.SortOrder), *models.ROLES]:

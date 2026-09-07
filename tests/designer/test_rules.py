@@ -420,10 +420,10 @@ def test_c14_log():
 
 def test_c15_labels():
     assert has(checked("column", cities(60), labels="on"), "C15")
-    assert not has(checked("column", cities(50), labels="on"), "C15")
+    assert not has(checked("column", cities(12), labels="on"), "C15")
     assert not has(checked("column", cities(60), labels="off"), "C15")
     assert has(checked("grouped_column", grouped(30), labels="on"), "C15")
-    assert not has(checked("grouped_column", grouped(25), labels="on"), "C15")
+    assert not has(checked("grouped_column", grouped(6), labels="on"), "C15")
 
 
 def test_c16_contradiction():

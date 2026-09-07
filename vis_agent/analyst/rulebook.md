@@ -33,6 +33,7 @@ Intent decides the query shape:
 - Single number: one aggregate, one row.
 
 Rules that hold in every shape:
+- unit is null for counts and numbers of things; write a unit only for money, percent, and physical measures, in the caller's language.
 - When common_values_are_a_sample is true, the listed values are only the most frequent ones. A value the question
   names may still exist; filter for it (case and spelling as written in the data) instead of assuming it is absent.
 - Group by exactly what the question compares, nothing more.

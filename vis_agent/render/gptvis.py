@@ -89,6 +89,7 @@ def render(spec: Spec, columns: list[ResultColumn], result: QueryResult, out_dir
     payload = {"config": resolved.config, "overrides": resolved.overrides,
                "format": resolved.number.model_dump(),
                "format2": resolved.number2.model_dump() if resolved.number2 else None,
+               "tableFormats": resolved.table_formats,
                "output": str(png.resolve()), "trace": trace}
     try:
         process = subprocess.run(["node", str(SCRIPT), str(png.resolve())], input=json.dumps(payload), text=True,
@@ -105,9 +106,12 @@ def render(spec: Spec, columns: list[ResultColumn], result: QueryResult, out_dir
         raise RenderFailed(reason)
     try:
         metrics = json.loads(process.stdout)
+        if spec.type == "table":
+            resolved.config = metrics["config"]
         config.write_text(json.dumps({"gptvis": resolved.config, "overrides": resolved.overrides,
                                      "number": resolved.number.model_dump(), "g2": metrics["g2"],
                                      "number2": payload["format2"],
+                                     "tableFormats": resolved.table_formats,
                                      "functionPaths": metrics["functionPaths"]}, ensure_ascii=False, indent=2), encoding="utf-8")
         page.write_text(_page(spec, resolved, metrics, png), encoding="utf-8")
         merged_compromises = list(compromises) + resolved.compromises

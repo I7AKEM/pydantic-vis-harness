@@ -1,7 +1,10 @@
 """Bind and transform a checked spec's result into GPT-Vis renderer options."""
 
+import re
+from collections import Counter
 from copy import deepcopy
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import datetime
 
 from vis_agent.analyst.models import QueryResult, ResultColumn
 
@@ -17,6 +20,9 @@ LANGUAGE_DEFAULTS = {
 TRENDS = {"line", "multi_line", "area", "stacked_area"}
 MEASURES = {"value", "value2", "x", "y"}
 WITHOUT_AXES = {"pie", "donut", "treemap", "radar", "word_cloud", "table"}
+SINGLE_SERIES = {"column", "bar", "line", "area", "scatter", "histogram", "boxplot"}
+COUNT_UNITS = {"count", "counts", "number", "n", "عدد", "رقم"}
+ISO_DATE_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?")
 
 
 @dataclass
@@ -31,10 +37,51 @@ class Resolved:
     width: int
     height: int
     number2: NumberFormat | None = None
+    table_formats: dict[str, dict] = field(default_factory=dict)
 
 
 class ResolveError(Exception):
     """Result cells cannot be faithfully resolved into chart records."""
+
+
+def _label_text(cell) -> str:
+    text = str(cell)
+    return text.removesuffix(".0") if isinstance(cell, float) else text
+
+
+def _shorten_time(records: list[dict], role: str) -> None:
+    """Use one precision for the entire axis, preserving each timestamp's local time."""
+    values = [record[role] for record in records]
+    if not values or not all(ISO_DATE_TIME.fullmatch(value) for value in values):
+        return
+    try:
+        dates = [datetime.fromisoformat(value) for value in values]
+    except ValueError:
+        return
+    pattern = "%Y-%m-%d %H:%M"
+    if all((date.hour, date.minute, date.second, date.microsecond) == (0, 0, 0, 0) for date in dates):
+        pattern = "%Y-%m-%d"
+        if all(date.day == 1 for date in dates):
+            pattern = "%Y-%m"
+            if all(date.month == 1 for date in dates):
+                pattern = "%Y"
+    for record, date in zip(records, dates):
+        record[role] = date.strftime(pattern)
+
+
+def _column_unit(column: ResultColumn | None) -> str | None:
+    unit = column.unit if column is not None else None
+    return None if unit is not None and unit.strip().lower() in COUNT_UNITS else unit
+
+
+def _table_headers(columns: list[ResultColumn]) -> list[str]:
+    headers = [column.meaning if column.meaning.strip() else column.name for column in columns]
+    # Falling back can expose another collision with a raw column name.
+    while len(set(headers)) != len(headers):
+        counts = Counter(headers)
+        headers = [column.name if counts[header] > 1 else header
+                   for column, header in zip(columns, headers)]
+    return headers
 
 
 def _bind(spec: Spec, result: QueryResult, unknown: str) -> tuple[list[dict], int]:
@@ -59,6 +106,8 @@ def _bind(spec: Spec, result: QueryResult, unknown: str) -> tuple[list[dict], in
                     )
             elif cell is None:
                 cell = unknown
+            if role in {"category", "group", "time"}:
+                cell = _label_text(cell)
             record[role] = cell
         if missing_value:
             dropped += 1
@@ -117,21 +166,29 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     number = parse_format(spec.format) if spec.format is not None else NumberFormat()
     number.digits = spec.digits
     height = spec.height if spec.height is not None else 450
+    by_name = {column.name: column for column in columns}
     if spec.type == "table":
         width = spec.width if spec.width is not None else 800
+        table_columns = [by_name[name] for name in result.columns]
+        headers = _table_headers(table_columns)
+        table_formats = {header: NumberFormat(unit=_column_unit(column), digits=spec.digits).model_dump()
+                         for header, column in zip(headers, table_columns)}
         config = {
             "type": entry.draw.type,
-            "data": [dict(zip(result.columns, row)) for row in result.rows],
-            "columns": list(result.columns), "width": width, "height": height,
+            "data": [dict(zip(headers, row)) for row in result.rows],
+            "columns": headers, "width": width, "height": height,
         }
         compromises = [Compromise(key=key, message="tables are drawn as the package draws them")
                        for key in ("labels", "legend") if getattr(spec, key) == "on"]
-        return Resolved(config, {}, number, compromises, len(result.rows), 0, 0, width, height)
+        return Resolved(config, {}, number, compromises, len(result.rows), 0, 0, width, height,
+                        table_formats=table_formats)
 
-    by_name = {column.name: column for column in columns}
     binding = {role: by_name[name] for role, name in spec.bind.items()}
     axis = "time" if "time" in binding else "category" if "category" in binding else None
     records, dropped = _bind(spec, result, spec.unknown if spec.unknown is not None else defaults["unknown"])
+    for role, column in binding.items():
+        if role == "time" or (role in {"category", "group"} and column.kind == "time"):
+            _shorten_time(records, role)
     compromises = []
     if dropped:
         compromises.append(Compromise(key="bind", message=f"Dropped {dropped} rows with null measures."))
@@ -172,21 +229,25 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     if spec.type not in WITHOUT_AXES:
         x_column = binding.get("category") or binding.get("time") or binding.get("x")
         y_column = binding.get("value") or binding.get("y")
-        for key, title, column in (("axisXTitle", spec.axis_x_title, x_column),
-                                   ("axisYTitle", spec.axis_y_title, y_column)):
+        x_title, y_title = spec.axis_x_title, spec.axis_y_title
+        if spec.type in BARS:
+            x_title, y_title = y_title, x_title
+        for key, title, column in (("axisXTitle", x_title, x_column),
+                                   ("axisYTitle", y_title, y_column)):
             if title is not None or column is not None:
                 config[key] = title if title is not None else column.name
         if spec.type == "histogram":
             config["axisXTitle"] = spec.axis_x_title if spec.axis_x_title is not None else binding["value"].name
             config["axisYTitle"] = spec.axis_y_title if spec.axis_y_title is not None else defaults["count"]
-        if spec.percent and spec.axis_y_title is None:
+        if spec.percent and y_title is None:
             config["axisYTitle"] = "%"
 
     style = {}
     if spec.background_color is not None:
         style["backgroundColor"] = spec.background_color
     if spec.palette:
-        style["palette"] = list(spec.palette)
+        style["palette"] = list(spec.palette[:1] if spec.type in SINGLE_SERIES and "group" not in binding
+                                else spec.palette)
     elif spec.emphasis:
         color_role = "group" if "group" in binding else axis
         labels = list(dict.fromkeys(r[color_role] for r in records)) if color_role else []
@@ -252,14 +313,14 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
         compromises.append(Compromise(key="format", message="a percent sign on a value that is not a share"))
     value = binding.get("value") or binding.get("y")
     if number.unit is None:
-        number.unit = "%" if spec.percent else value.unit if value is not None else None
+        number.unit = "%" if spec.percent else _column_unit(value)
 
     number2 = None
     if spec.type == "histogram":
         number.unit = None  # The formatted y axis counts records, not the bound measure.
-        config["data"] = [r["value"] for r in records]
+        config["data"] = sorted(r["value"] for r in records)
     elif spec.type == "dual_axes":
-        number2 = number.model_copy(update={"unit": binding["value2"].unit})
+        number2 = number.model_copy(update={"unit": _column_unit(binding["value2"])})
         config["categories"] = [r["category"] for r in records]
         config["series"] = [
             {"type": chart, "data": [r[role] for r in records], "axisYTitle": binding[role].name}

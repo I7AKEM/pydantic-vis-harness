@@ -115,7 +115,10 @@ class Rendered(Evaluator[dict, DesignReport, dict]):
         if _clarified(ctx):
             return 1.0
         result = render_results.get(ctx.inputs["name"], {}).get(id(ctx.output))
-        return float(isinstance(result, RenderResult) and result.png.is_file() and result.non_background_share >= 0.02)
+        table = ctx.output.design is not None and ctx.output.design.chart == "table"
+        return float(isinstance(result, RenderResult) and result.png.is_file() and (
+            table or result.non_background_share >= 0.02
+        ))
 
 
 def load_cases(cases_path=CASES_PATH) -> list[Case]:

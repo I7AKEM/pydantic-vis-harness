@@ -274,12 +274,41 @@ def test_limit_keeps_raw_values_for_checks_and_shape_is_a_copy():
     assert not any(v.rule == "C9" or "H5" in v.message for v in check.violations)
 
 
-@pytest.mark.parametrize("limit,ok", [(20, True), (25, False)])
+@pytest.mark.parametrize("limit,ok", [(5, True), (6, False)])
 def test_c15_counts_grouped_marks_after_limit(limit, ok):
     from .conftest import grouped
 
     text = COLUMN.replace("vis column", "vis grouped_column").replace("value violations", "value n\n  group gender")
     check = check_spec(text + f"limit {limit}\nlabels on\n", *grouped(60))
+    assert check.ok is ok
+    assert any(v.rule == "C15" for v in check.violations) is not ok
+
+
+@pytest.mark.parametrize("chart", ["bar", "column"])
+@pytest.mark.parametrize("n,limit,ok", [(13, None, False), (12, None, True), (20, 11, True), (20, 12, False)])
+def test_c15_bar_and_column_labels_stop_at_twelve(chart, n, limit, ok):
+    text = COLUMN.replace("vis column", f"vis {chart}") + "labels on\n"
+    if limit is not None:
+        text += f"limit {limit}\n"
+    check = check_spec(text, *cities(n))
+    assert check.ok is ok
+    assert any(v.rule == "C15" for v in check.violations) is not ok
+
+
+@pytest.mark.parametrize("n,ok", [(40, True), (50, True), (51, False)])
+def test_c15_line_keeps_fifty_mark_limit(n, ok):
+    check = check_spec(LINE + "labels on\n", *monthly(n))
+    assert check.ok is ok
+    assert any(v.rule == "C15" for v in check.violations) is not ok
+
+
+@pytest.mark.parametrize("chart", ["grouped_bar", "stacked_bar", "grouped_column", "stacked_column"])
+@pytest.mark.parametrize("n,ok", [(6, True), (7, False)])
+def test_c15_counts_all_grouped_and_stacked_marks(chart, n, ok):
+    from .conftest import grouped
+
+    text = COLUMN.replace("vis column", f"vis {chart}").replace("value violations", "value n\n  group gender")
+    check = check_spec(text + "labels on\n", *grouped(n))
     assert check.ok is ok
     assert any(v.rule == "C15" for v in check.violations) is not ok
 

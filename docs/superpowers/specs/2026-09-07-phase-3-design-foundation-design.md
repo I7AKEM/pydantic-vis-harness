@@ -114,13 +114,13 @@ line nowhere. Parse then serialize then parse gives the same spec.
 
 ### 5.2 Keys
 
-Base keys, GPT-Vis's own, with GPT-Vis's meaning:
+Base keys from GPT-Vis; axis titles use screen directions and resolve maps them to the package:
 
 | Key | Type | Meaning |
 |---|---|---|
 | `vis` | type line | The chart type, a catalogue name |
 | `title` | text | Chart title, in the caller's language |
-| `axisXTitle`, `axisYTitle` | text | Axis titles, with units |
+| `axisXTitle`, `axisYTitle` | text | Horizontal and vertical screen-axis titles respectively, on every chart, with real units in brackets when present |
 | `theme` | `default`, `dark`, `academy` | Appearance |
 | `width`, `height` | integers, default 800 by 450 | Canvas size in points; the renderer draws at three times that |
 | `innerRadius` | number, donut only | Hole size, default 0.6 |
@@ -278,7 +278,7 @@ list every intent so it is always eligible, and it stays the zero-score fallback
 | C12 crop | A line's value axis may start above zero, through `zero false` or `axisYMin`, only when the values are narrow: the smallest is above half the largest. The start value is recorded as a compromise so the explanation states it | Start at zero |
 | C13 percent | `percent` only on the stacked entries, with an additive value and no negative values | Drop it, or use a share the analyst computed |
 | C14 log | `axisYScale log` only on line, multi_line, and scatter, every value positive, largest at least a hundred times the smallest | Use linear |
-| C15 labels | `labels on` with more than fifty displayed marks (category count times group count after a valid limit, capped by raw rows) | Turn them off, or limit the rows |
+| C15 labels | `labels on` with more than twelve displayed marks on bar and column entries, or fifty elsewhere (category count times group count after a valid limit, capped by raw rows) | Turn them off, or limit the rows |
 | C16 contradiction | `zero true` together with an `axisYMin` other than zero | Drop one |
 | C17 format | `format` follows the pattern of section 5.2; `k` and decimals together are allowed, `%` as a unit on a value that is not a share is a warning-level compromise, not an error | Rewrite the pattern |
 | C18 sort target | An explicit `sort value …` requires a bound `value`; `sort category …` requires a bound `category`. A derived default sort does not trigger this rule | Remove the sort |
@@ -360,7 +360,9 @@ The renderer, not the spec, holds the rows. Resolving happens in code, once, bef
    multiplied by 100, so the stack reads as shares. C13 has already required an additive value. The axis title
    becomes the percent sign unless the spec gives one, and the range checks run on the scaled values.
 6. Colors: `palette` follows the package's colour domain order: bound groups first, otherwise categories or
-   series as C6 specifies. A single colour can repeat across a single-series chart's categories. `emphasis`
+   series as C6 specifies. On single-series column, bar, line, area, scatter, histogram, and boxplot entries,
+   a written palette uses only its first colour. A scatter with a bound group, the grouped and stacked entries,
+   pie, donut, treemap, word cloud, radar, and dual axes keep the whole list. `emphasis`
    builds the palette for the bound group when present, otherwise category, using the accent and muted grey.
 7. Direction: `rtl` reverses the category domain only for `column`, `grouped_column`, and `stacked_column`,
    putting the first category on the right. Bars keep the sorted category order top to bottom. The title is
@@ -368,11 +370,31 @@ The renderer, not the spec, holds the rows. Resolving happens in code, once, bef
    never reversed.
 8. Numbers: the format is written as a small description, the digit pattern, the decimals, compact or not, the
    unit and its side, and the digit shapes, taken from `format` and `digits` or from the defaults and the bound
-   column's unit. It travels in the configuration as data; the Node script and the page each build the same
-   formatting function from it, from one shared file, so the picture and the page write every number alike.
+   column's unit. Inherited units whose stripped, lowercased text is `count`, `counts`, `number`, `n`, `عدد`,
+   or `رقم` become null; an explicit format unit is kept as written. Histogram count-axis formats remain unitless,
+   and the second dual-axis series uses its own column's cleaned unit. It travels in the configuration as data;
+   the Node script and the page each build the same formatting function from it, from one shared file,
+   so the picture and the page write every number alike.
 9. Shape: rows become the library's records for the entry, `category`, `value`, `group`, `time`, `x`, `y`, or
-   `name` and `value`, as the catalogue says.
+   `name` and `value`, as the catalogue says. Every category, group, and time value is text: integers use
+   their digits, floats their shortest representation without a trailing `.0`, and strings stay unchanged.
+   Time columns (including those bound as category) whose displayed values all parse as `YYYY-MM-DD` with
+   an optional T/space time and zone use one precision for the whole column: `YYYY` for January 1 midnight
+   buckets, `YYYY-MM` for first-of-month midnight buckets, `YYYY-MM-DD` for other midnight dates, and
+   `YYYY-MM-DD HH:MM` otherwise. Keep local clock values without converting zones; an unparseable value
+   leaves the whole column as text. Conversion precedes sorting, folding, emphasis matching, and RTL domains.
+   Histogram data are sorted ascending before drawing.
 
+Tables retain every column and row in result order. Headers and record keys use the analyst's column meanings;
+empty or whitespace-only meanings and all colliding headers fall back to column names, repeating fallback if it
+causes another collision. A `tableFormats` map holds each header's NumberFormat description with its cleaned
+column unit, decimals null (up to two, trimmed), and the spec's digits. A table's global `format` remains
+degraded: each column uses its own default description.
+
+Axis titles name screen axes in the spec. For bar, grouped_bar, and stacked_bar, resolve sends the spec's
+`axisYTitle` to the package's vertical category `axisXTitle`, and the spec's `axisXTitle` to its horizontal
+value `axisYTitle`. Defaults remain the category name vertically and the value name horizontally; a percent
+stack defaults the value-axis title to `%` unless explicitly titled. Other chart mappings are unchanged.
 Histogram axis titles default to the bound value column on X and the language's count word on Y (`Count` / `العدد`); explicit titles override both.
 
 Every transformation here is arithmetic on the result's own cells, in line with rule 6 of the main design.
@@ -382,11 +404,14 @@ Every transformation here is arithmetic on the result's own cells, in line with 
 One renderer in this phase, in code, with a declared capability table.
 
 **The Node side.** A folder holding a `package.json` pinned to `@antv/gpt-vis-ssr` 0.3.8 with its lock file,
-and one script of under a hundred lines. The script reads the library configuration as JSON on standard input,
+and one small script. The script reads the library configuration as JSON on standard input,
 installs the one-line no-op loader for CSS files that the package needs, renders, writes the PNG to the path
 given on the command line, and prints a JSON line with the render time, the pixel size, and the share of pixels
 that differ from the background, then exits. Any error is a JSON line on standard error and a non-zero exit. The
-script is the whole Node surface; nothing else in the project runs JavaScript.
+script is the whole Node surface; nothing else in the project runs JavaScript. For spreadsheet configurations,
+it builds `makeFormatter(tableFormats[header])` from the shared formatter and replaces numeric cells with
+formatted strings before drawing. Text and null cells are untouched. The script returns that formatted
+configuration to Python so `config.json` and the standalone page use exactly the strings drawn in the PNG.
 
 **The overrides.** The package reads a fixed set of keys and drops the rest, so the script honours our keys by
 merging a small set of settings into the configuration the package builds, through one hook on the library's
@@ -416,7 +441,9 @@ are one chart: the same axis range, order, formats, and labels. The configuratio
 number description of section 9, and the page rebuilds the formatting function from it with the shared file. The
 description is the image's alternative text, the page direction follows the spec's language, and the PNG is
 embedded as a fallback so the page shows the chart offline. The table entry is a plain HTML table on the page,
-not a G2 chart. `config.json` beside them holds that same captured configuration, which is what "the library's
+not a G2 chart; Python builds it from the formatted spreadsheet configuration also saved in `config.json`,
+with escaped meaning headers and cells, so it works offline without fetching a file. `config.json` beside them
+holds that same captured configuration and the table format descriptions, which is what "the library's
 own configuration" means from here on.
 
 **The capability table.** Per catalogue entry, which keys the renderer honours, which it degrades and how, and

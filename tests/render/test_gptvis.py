@@ -188,6 +188,37 @@ def test_histogram_count_axis_draws_no_measure_unit(tmp_path):
     keep_image(rendered, "fix1-histogram")
 
 
+@pytest.mark.parametrize("digits,amount,share", [("western", "533.3", "9.91%"), ("arabic", "٥٣٣٫٣", "٩٫٩١%")])
+def test_table_formats_numbers_and_meanings_in_png_config_and_page(digits, amount, share, tmp_path):
+    columns = [column("average", "measure"), column("share", "share", unit="%", denominator="all"),
+               column("n", "measure", unit="count"), column("label", "category")]
+    for c, meaning in zip(columns, ["Average amount", "Share of total", "Orders", "Region <name>"]):
+        c.meaning = meaning
+    result = table(columns, [[533.2985542168675, 9.913666751770636, 1240, "<script>bad()</script>"],
+                             [533.3, None, 0, "001"]])
+    before = result.model_copy(deep=True)
+    spec = parse(f"vis table\ndigits {digits}")
+    rendered = gptvis.render(spec, columns, result, tmp_path, trace=True)
+    config = json.loads(rendered.config.read_text())
+    headers = [c.meaning for c in columns]
+    assert config["gptvis"]["columns"] == headers
+    rows = config["gptvis"]["data"]
+    assert list(rows[0]) == headers
+    assert rows[0]["Average amount"] == amount
+    assert rows[0]["Share of total"] == share
+    assert rows[0]["Orders"] == ("1,240" if digits == "western" else "١٬٢٤٠")
+    assert rows[1]["Share of total"] is None
+    assert rows[1]["Region <name>"] == "001"
+    assert config["tableFormats"]["Orders"]["unit"] is None
+    assert amount in rendered.texts and share in rendered.texts
+    page = rendered.html.read_text()
+    assert f"<td>{amount}</td>" in page and f"<td>{share}</td>" in page
+    assert "Region &lt;name&gt;" in page and "&lt;script&gt;bad()&lt;/script&gt;" in page
+    assert "<script>bad()</script>" not in page
+    assert "533.2985542168675" not in page
+    assert result == before
+
+
 @pytest.mark.parametrize("axis_title", [None, "Attendance"])
 def test_dual_axes_draw_separate_units_and_measure_titles(tmp_path, axis_title):
     spec = parse(SPECS["dual_axes"][0] + "\ntitle Monthly visits and revenue")

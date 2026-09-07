@@ -54,9 +54,11 @@ def test_grouped_and_stacked_catalogue_options(chart, flag):
     assert resolved.config["data"][0] == {"category": "City4", "group": "F", "value": 14}
 
 
-def test_histogram_is_numbers_and_keeps_raw_order():
+def test_histogram_is_numbers_sorted_ascending():
     spec = Spec(type="histogram", bind={"value": "amount"}, bin_number=8)
-    resolved = resolve(spec, *raw_amounts())
+    columns, result = raw_amounts()
+    result.rows = result.rows[::2][::-1] + result.rows[1::2]
+    resolved = resolve(spec, columns, result)
     assert resolved.config["data"] == list(range(1, 61))
     assert resolved.config["binNumber"] == 8
 
@@ -138,7 +140,7 @@ def test_sort_orders(sort, expected):
 def test_category_sort_uses_text_for_numeric_labels():
     columns, _ = cities()
     result = table(columns, [[2, 20], [10, 10]])
-    assert [r["category"] for r in resolve(city_spec(sort="category asc"), columns, result).config["data"]] == [10, 2]
+    assert [r["category"] for r in resolve(city_spec(sort="category asc"), columns, result).config["data"]] == ["10", "2"]
 
 
 @pytest.mark.parametrize("kind", ["time", "ordinal"])
@@ -246,7 +248,7 @@ def test_explicit_palette_wins_and_style_background_passes_through():
     spec = parse("vis column\nbind\n  category city\n  value violations\nemphasis\n  - City0\n"
                  "style\n  backgroundColor #000000\n  palette\n    - #FFFFFF\n    - #1783FF\n")
     resolved = resolve(spec, *cities(2))
-    assert resolved.config["style"] == {"backgroundColor": "#000000", "palette": spec.palette}
+    assert resolved.config["style"] == {"backgroundColor": "#000000", "palette": spec.palette[:1]}
 
 
 @pytest.mark.parametrize("chart", ["column", "grouped_column", "stacked_column"])
@@ -473,6 +475,123 @@ def test_group_palette_passes_through_in_group_order():
     resolved = resolve(group_spec(palette=palette), *grouped())
     assert resolved.config["style"]["palette"] == palette
     assert list(dict.fromkeys(row["group"] for row in resolved.config["data"])) == ["F", "M"]
+
+
+@pytest.mark.parametrize("values,expected", [
+    ([2021, 2022], ["2021", "2022"]),
+    ([2021.0, 2022.5], ["2021", "2022.5"]),
+    (["2024-01-01T00:00:00", "2024-02-01T00:00:00"], ["2024-01", "2024-02"]),
+    (["2020-01-01T00:00:00+03:00", "2021-01-01T00:00:00+03:00"], ["2020", "2021"]),
+    (["2024-01-01", "2024-01-02T00:00:00Z"], ["2024-01-01", "2024-01-02"]),
+    (["2024-01-01T00:00:00", "2024-01-02 12:30:45+03:00"],
+     ["2024-01-01 00:00", "2024-01-02 12:30"]),
+    (["2024-01-01T00:00:00", "2024-02-30T00:00:00"],
+     ["2024-01-01T00:00:00", "2024-02-30T00:00:00"]),
+    (["2024-01-01T00:00:00", "Not a date"], ["2024-01-01T00:00:00", "Not a date"]),
+])
+@pytest.mark.parametrize("chart", ["column", "line", "dual_axes"])
+def test_time_labels_are_text_with_consistent_precision(values, expected, chart):
+    columns = [column("period", "time"), column("value", "measure"), column("value2", "measure")]
+    result = table(columns, [[value, i + 1, 10 * (i + 1)] for i, value in enumerate(values)])
+    role = "time" if chart == "line" else "category"
+    spec = Spec(type=chart, bind={role: "period", "value": "value"}, language="ar")
+    if chart == "dual_axes":
+        spec.bind["value2"] = "value2"
+    resolved = resolve(spec, columns, result)
+    labels = resolved.config["categories"] if chart == "dual_axes" else [r[role] for r in resolved.config["data"]]
+    assert labels == expected
+    assert "domain" not in resolved.overrides.get("scale", {}).get("x", {})
+    assert [row[0] for row in result.rows] == values
+
+
+def test_numeric_categories_and_groups_use_text_for_sort_rtl_emphasis_and_other():
+    columns, _ = cities()
+    result = table(columns, [[2, 20], [10.0, 30], [1.25, 10], ["2.0", 5]])
+    resolved = resolve(city_spec(sort="category asc", language="ar", emphasis=["10"]), columns, result)
+    assert [r["category"] for r in resolved.config["data"]] == ["1.25", "10", "2", "2.0"]
+    assert resolved.overrides["scale"]["x"]["domain"] == ["2.0", "2", "10", "1.25"]
+    assert resolved.config["style"]["palette"] == ["#C9CDD4", "#1783FF", "#C9CDD4", "#C9CDD4"]
+    folded = resolve(city_spec(limit=1), columns, result)
+    assert folded.config["data"] == [{"category": "10", "value": 30}, {"category": "Other", "value": 35}]
+    columns, result = grouped(1)
+    result.rows[0][1], result.rows[1][1] = 1, 2.0
+    resolved = resolve(group_spec(emphasis=["2"]), columns, result)
+    assert [r["group"] for r in resolved.config["data"]] == ["1", "2"]
+    assert resolved.config["style"]["palette"] == ["#C9CDD4", "#1783FF"]
+
+
+@pytest.mark.parametrize("meanings,expected", [
+    (["Region", "Total", "Share"], ["Region", "Total", "Share"]),
+    (["", "  ", "Share"], ["a", "b", "Share"]),
+    (["Repeated", "Repeated", "Share"], ["a", "b", "Share"]),
+    (["b", "", "Share"], ["a", "b", "Share"]),
+    (["b", "Same", "Same"], ["a", "b", "c"]),
+])
+def test_table_headers_use_meanings_with_collision_safe_fallback(meanings, expected):
+    columns = [column(name, "measure") for name in ["a", "b", "c"]]
+    for c, meaning in zip(columns, meanings):
+        c.meaning = meaning
+    result = table(columns, [[1, 2, 3]])
+    resolved = resolve(Spec(type="table"), columns[::-1], result)
+    assert resolved.config["columns"] == expected
+    assert resolved.config["data"] == [dict(zip(expected, [1, 2, 3]))]
+
+
+@pytest.mark.parametrize("unit,expected", [("count", None), (" COUNTS ", None), ("number", None),
+                                         ("N", None), ("عدد", None), ("رقم", None), ("SAR", "SAR")])
+def test_inherited_count_units_are_removed_from_charts_and_tables(unit, expected):
+    columns, result = gender_share()
+    columns[2].unit = unit
+    spec = Spec(type="column", bind={"category": "label", "value": "n"})
+    assert resolve(spec, columns, result).number.unit == expected
+    spec.format = "0.0"
+    assert resolve(spec, columns, result).number.unit == expected
+    spec.format = "0.0 count"
+    assert resolve(spec, columns, result).number.unit == "count"
+    resolved = resolve(Spec(type="table", digits="arabic", format="0.0 SAR"), columns, result)
+    assert resolved.table_formats["n"] == NumberFormat(unit=expected, digits="arabic").model_dump()
+    assert resolved.table_formats["share"]["unit"] == "%"
+
+
+@pytest.mark.parametrize("chart,builder,bindings", [
+    ("column", cities, {"category": "city", "value": "violations"}),
+    ("bar", cities, {"category": "city", "value": "violations"}),
+    ("line", monthly, {"time": "month", "value": "visits"}),
+    ("area", monthly, {"time": "month", "value": "visits"}),
+    ("scatter", scatter_points, {"x": "age", "y": "amount"}),
+    ("histogram", raw_amounts, {"value": "amount"}),
+    ("boxplot", cities, {"category": "city", "value": "violations"}),
+])
+def test_single_series_palette_uses_first_brand_colour(chart, builder, bindings):
+    spec = Spec(type=chart, bind=bindings, palette=["#1F4E79", "#C0504D"])
+    assert resolve(spec, *builder()).config["style"]["palette"] == ["#1F4E79"]
+    assert spec.palette == ["#1F4E79", "#C0504D"]
+
+
+@pytest.mark.parametrize("chart", ["pie", "donut", "treemap", "word_cloud", "radar"])
+def test_category_colour_palettes_keep_all_colours(chart):
+    palette = ["#1F4E79", "#C0504D"]
+    assert resolve(city_spec(chart, palette=palette), *cities(2)).config["style"]["palette"] == palette
+
+
+@pytest.mark.parametrize("chart", ["bar", "grouped_bar", "stacked_bar", "column"])
+@pytest.mark.parametrize("explicit", [False, True])
+def test_axis_titles_follow_screen_axes(chart, explicit):
+    spec, data = (group_spec(chart), grouped()) if "_" in chart else (city_spec(chart), cities())
+    if explicit:
+        spec.axis_x_title, spec.axis_y_title = "Share (%)", "Region"
+    config = resolve(spec, *data).config
+    expected = ("city", spec.bind["value"])
+    if explicit:
+        expected = ("Share (%)", "Region") if chart == "column" else ("Region", "Share (%)")
+    assert (config["axisXTitle"], config["axisYTitle"]) == expected
+
+
+@pytest.mark.parametrize("x,y,expected", [(None, None, "%"), ("Share", None, "Share"), (None, "Region", "%")])
+def test_percent_bar_default_title_is_on_horizontal_value_axis(x, y, expected):
+    config = resolve(group_spec("stacked_bar", percent=True, axis_x_title=x, axis_y_title=y), *grouped()).config
+    assert config["axisXTitle"] == (y if y is not None else "city")
+    assert config["axisYTitle"] == expected
 
 
 @pytest.mark.parametrize("chart,builder,bindings", [

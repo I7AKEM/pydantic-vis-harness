@@ -88,6 +88,28 @@ def test_evaluators_score_a_hand_built_report():
     assert score(case, output).scores["BindingRight"].value == 1
 
 
+@pytest.mark.parametrize("chart,share,exists,expected", [
+    ("table", 0.0, True, 1), ("table", 0.019, True, 1), ("table", 0.1, False, 0),
+    ("donut", 0.019, True, 0), ("donut", 0.02, True, 1), ("donut", 0.1, False, 0),
+])
+def test_rendered_table_only_requires_png_but_charts_keep_pixel_floor(chart, share, exists, expected, tmp_path, monkeypatch):
+    from vis_agent.render.base import Rendered
+
+    case = next(case for case in run.load_cases() if case.name == "deaths_by_gender")
+    output = gender_report()
+    output.design.chart = chart
+    png = tmp_path / "chart.png"
+    if exists:
+        png.write_bytes(b"fake PNG")
+    rendered = Rendered(png=png, html=tmp_path / "chart.html", config=tmp_path / "config.json",
+                        width=600, height=400, seconds=0, non_background_share=share,
+                        compromises=[], drawn_rows=2, folded_rows=0, dropped_rows=0)
+    monkeypatch.setitem(run.render_results, case.inputs["name"], {id(output): rendered})
+    scored = score(case, output, evaluators=[run.Rendered()])
+    assert not scored.evaluator_failures
+    assert scored.scores["Rendered"].value == expected
+
+
 def test_empty_case_short_circuits():
     case = next(case for case in run.load_cases() if case.name == "empty_result")
     designer = create_designer("test")

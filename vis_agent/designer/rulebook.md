@@ -51,14 +51,15 @@ Filling the spec:
 - title: in the caller's language; say what is shown, where, and when; no numbers.
 - description: one sentence saying what the picture shows, for a person who cannot see it.
 - language: ar for an Arabic caller, en otherwise.
-- axisXTitle names the category axis and axisYTitle the value axis on every chart, each as the column's meaning with its unit in brackets; on a bar the category axis runs vertically, so do not swap them.
+- axisXTitle names the horizontal axis and axisYTitle the vertical axis on every chart, each as the column's meaning with its unit in brackets when it has one.
+- Bracket only real units (SAR, %, km, kg); a count has no unit, so write no brackets for it.
 - sort: value desc for comparisons and ranks; none over time and ordinals; category asc when the order
   of the labels carries meaning.
 - limit with the Other row when a comparison has more than about twenty categories, and the number the
   question names when it says "top five".
 - emphasis: the value the question names, when it names one.
 - palette: the brief's brand colors, in order, when it gives them; otherwise leave it out.
-- labels on when the marks are about ten or fewer and the exact values matter; off when they crowd.
+- labels on when the marks are twelve or fewer and the exact values matter; off when they crowd.
 - format: only when the unit or the precision needs saying; the unit comes from the column by default.
 - percent true on a stacked chart when the question asks for shares within each category.
 - Never crop a bar's or a column's value axis. A line may start above zero only when the values are

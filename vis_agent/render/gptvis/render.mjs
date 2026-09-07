@@ -13,7 +13,12 @@ function deepMerge(base, overrides) {
 }
 
 try {
-  const { config, overrides = {}, format, format2, output, trace = false } = JSON.parse(readFileSync(0, 'utf8'));
+  const { config, overrides = {}, format, format2, tableFormats = {}, output, trace = false } = JSON.parse(readFileSync(0, 'utf8'));
+  if (config.type === 'spreadsheet') {
+    const formatters = Object.fromEntries(Object.entries(tableFormats).map(([header, desc]) => [header, makeFormatter(desc)]));
+    config.data = config.data.map(row => Object.fromEntries(Object.entries(row).map(([header, value]) =>
+      [header, typeof value === 'number' && formatters[header] ? formatters[header](value) : value])));
+  }
   const require = createRequire(import.meta.url);
   require.extensions['.css'] = () => {};
   const g2 = require('@antv/g2-ssr');
@@ -92,7 +97,8 @@ try {
     sampled++;
   }
   console.log(JSON.stringify({ renderMs, width, height, bytes: buffer.length,
-    nonBackgroundShare: changed / sampled, g2: captured, functionPaths, formatPaths, texts }));
+    nonBackgroundShare: changed / sampled, g2: captured, functionPaths, formatPaths, texts,
+    ...(config.type === 'spreadsheet' ? { config } : {}) }));
 } catch (error) {
   console.error(JSON.stringify({ error: String(error.message || error) }));
   process.exitCode = 1;
