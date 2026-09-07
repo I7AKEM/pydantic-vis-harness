@@ -33,8 +33,8 @@ In scope:
 - Terminal and programmatic entry points, tests without a model, a recommendation evaluation set, lessons.
 
 Out of scope: the designer agent and its rulebook (Phase 4), the reviewer, artifacts and versions, maps, a second
-renderer, number and date format strings, annotations, log scales, hiding axes or legends, changes to the lead,
-and the chat. Nothing in this phase calls a model.
+renderer, number and date format strings, annotations, hiding axes, changes to the lead, and the chat. Nothing in
+this phase calls a model.
 
 ## 3. What the spike settled
 
@@ -141,9 +141,16 @@ Our keys:
 | `language` | `ar`, `en` | The caller's language; drives the defaults above and the page's text direction |
 | `description` | text, required | What the chart shows, in words, for accessibility and for the reviewer |
 | `zero` | `true`, `false` | Force the value axis to start at zero on line, area, and box plots. Bars always start at zero |
+| `axisYMin`, `axisYMax` | numbers | The value axis range. Allowed on line, multi_line, scatter, boxplot, and dual_axes only; a cropped bar, column, or area lies, so they are rejected there. The range must hold every plotted value |
+| `axisXMin`, `axisXMax` | numbers | The horizontal range on scatter only |
+| `axisYScale` | `linear`, `log` | Log only on line, multi_line, and scatter, only with positive values that span at least two orders of magnitude, and the axis title says so |
+| `percent` | `true`, `false` | On stacked_column, stacked_bar, and stacked_area: each category's stack is scaled to 100 so the segments read as shares, computed in code from the result's own cells; the value axis is titled in percent |
+| `labels` | `on`, `off` | Data labels. Default: the renderer decides |
+| `legend` | `on`, `off` | The legend. Default: on when a group role is bound |
+| `subtitle` | text | A second title line, for the unit, the period, or the filter |
 
-Keys named in section 6.3 of the main design and not listed here (formats, annotations, log scale, hiding axes
-and legends, data labels on or off, interaction hints) wait for the renderer that can draw them. Adding a key
+Keys named in section 6.3 of the main design and not listed here (formats, annotations, hiding axes, interaction
+hints) wait for the renderer that can draw them. Adding a key
 later is safe because unknown keys are errors today, so no stored spec can contain one.
 
 ### 5.3 What the spec never holds
@@ -188,7 +195,8 @@ means category, ordinal, or geography.
 "Additive" means the column's aggregate is sum, count, or count distinct, or its kind is share. Grouped and
 stacked variants are separate entries, not flags, so each carries its own rules and its own score: the design
 says rules cannot tell a grouped bar from a stacked bar, and separate candidates with separate breakdowns are
-what the designer needs to decide.
+what the designer needs to decide. The stacked entries also accept `percent`, which turns each stack into
+shares of its category's total.
 
 Left out on purpose: the funnel until its Chinese label is fixed, maps because the server package has none,
 graph charts and diagrams because they are not drawn from a result table, and the stat card because the
@@ -251,6 +259,12 @@ catalogue order. Intent unknown means S1 scores nothing for everyone.
 | C8 words | A title and a description are present | Write them |
 | C9 emphasis | Emphasised values exist in the bound category | Fix the spelling |
 | C10 hard | The hard rules of section 7.1 pass for this type on this result | As the hard rule says |
+| C11 range | `axisYMin` and `axisYMax` only on line, multi_line, scatter, boxplot, and dual_axes; `axisXMin` and `axisXMax` only on scatter; minimum below maximum; every plotted value inside the range | Widen the range or drop it |
+| C12 crop | A line's value axis may start above zero, through `zero false` or `axisYMin`, only when the values are narrow: the smallest is above half the largest. The start value is recorded as a compromise so the explanation states it | Start at zero |
+| C13 percent | `percent` only on the stacked entries, with an additive value and no negative values | Drop it, or use a share the analyst computed |
+| C14 log | `axisYScale log` only on line, multi_line, and scatter, every value positive, largest at least a hundred times the smallest | Use linear |
+| C15 labels | `labels on` with more than fifty marks | Turn them off, or limit the rows |
+| C16 contradiction | `zero true` together with an `axisYMin` other than zero | Drop one |
 
 `check_spec` reports every violation at once, each with its fix, so a repair is one turn.
 
@@ -267,13 +281,15 @@ Each edge case in section 8 of the main design that is a rule or a fix gets a te
 | Unique-per-row values are identifiers | S9 exempts them; the analyst's kind says identifier |
 | Line and area need time or ordinal | H8 |
 | Fewer than three time points is not a trend | H7 |
-| Never truncate a bar's value axis | The renderer starts bars at zero; `zero` is only for lines and box plots |
+| Never truncate a bar's value axis | C11 rejects an axis range on bars, columns, and areas; the renderer starts bars at zero |
+| A line may start above zero only when the range is narrow, with a note | C12 |
+| Log scale only for positive values spanning orders of magnitude, always labelled | C14 |
 | Negative values rule out pie and percent-stacked | H4 |
 | Dual axes only when units differ | H10; the brief's ask is S2 |
 | Percentages with the denominator stated | The analyst's job; a share without a denominator does not validate |
 | A single number is not a chart | S13 |
 | Empty result: ask | H12 |
-| Data labels only when marks are few | A compromise recorded by the renderer, which decides its own labels |
+| Data labels only when marks are few | C15 |
 | Palettes cap at ten colors, colorblind-safe | H6; the default palette is the renderer's ten |
 | Emphasis on a few marks | `emphasis`, section 9 |
 | Colors the caller names are honoured by category | `palette`, C6, C7 |
@@ -311,11 +327,14 @@ The renderer, not the spec, holds the rows. Resolving happens in code, once, bef
 3. Sort: as the spec says, or the default for the axis kind.
 4. Limit: keep the first `limit` rows; when the value is additive, add one `other` row holding the sum of the
    rest; when it is not, the limit is rejected by C5. Row counts reported to the reviewer include what was folded.
-5. Colors: `palette` by category order as given; `emphasis` builds the list in code, the accent for the named
+5. Percent: on a stacked entry with `percent true`, each value is divided by its category's total and
+   multiplied by 100, so the stack reads as shares. C13 has already required an additive value. The axis title
+   becomes the percent sign unless the spec gives one, and the range checks run on the scaled values.
+6. Colors: `palette` by category order as given; `emphasis` builds the list in code, the accent for the named
    categories and one muted grey for the rest, so the library's "palette by category order" draws the rule.
-6. Direction: `rtl` reverses the category order on bar and column charts so the first category is on the right.
-   Time axes are never reversed. The title alignment is recorded as a compromise.
-7. Shape: rows become the library's records for the entry, `category`, `value`, `group`, `time`, `x`, `y`, or
+7. Direction: `rtl` puts the first category on the right on bar and column charts and right-aligns the title,
+   through the renderer's overrides. Time axes are never reversed.
+8. Shape: rows become the library's records for the entry, `category`, `value`, `group`, `time`, `x`, `y`, or
    `name` and `value`, as the catalogue says.
 
 Every transformation here is arithmetic on the result's own cells, in line with rule 6 of the main design.
@@ -331,6 +350,13 @@ given on the command line, and prints a JSON line with the render time, the pixe
 that differ from the background, then exits. Any error is a JSON line on standard error and a non-zero exit. The
 script is the whole Node surface; nothing else in the project runs JavaScript.
 
+**The overrides.** The package reads a fixed set of keys and drops the rest, so the script honours our keys by
+merging a small set of settings into the configuration the package builds, through one hook on the library's
+chart-creation function, the point the spike showed can be intercepted: the axis range and scale, the title
+alignment and the category order for right-to-left, the label and legend switches, and the subtitle. The
+overrides are plain G2 options, listed in one place in the script, and the package version is pinned so a
+change to its internals shows up as a failing render test rather than a silent loss.
+
 **The Python side.** `render(spec, columns, result, out_dir) -> Rendered`: resolves the data, builds the
 configuration, spawns `node` with a 20 second timeout, and writes three files in `out_dir`: `chart.png`,
 `chart.html`, and `config.json`. `Rendered` carries the three paths, the pixel size, the compromises, the
@@ -344,9 +370,9 @@ the chart offline.
 
 **The capability table.** Per catalogue entry, which keys the renderer honours, which it degrades and how, and
 which it rejects. Honoured: the base keys, `bind`, `sort`, `limit`, `other`, `unknown`, `emphasis`, `palette`,
-`language`, `description`, `zero` on line, area, and box plots. Degraded: `direction` (category order reversed,
-title and legend stay left) and data labels (the renderer decides). Rejected: nothing in the Phase 3
-vocabulary.
+`language`, `description`, `subtitle`, `percent`, `zero`, `axisYMin`, `axisYMax`, `axisXMin`, `axisXMax`,
+`axisYScale`, `labels`, `legend`, and `direction` for the title and the category order. Degraded: `direction`
+for the legend, which stays where the package puts it. Rejected: nothing in the Phase 3 vocabulary.
 
 **Size.** The default canvas is 800 by 450 points, drawn at three times that. Line and area charts with more
 than twelve points use 1200 wide unless the spec says otherwise, because the spike showed monthly labels rotate
@@ -388,6 +414,8 @@ No model anywhere in this phase, so every test is plain input and expected outpu
 - The renderer: every catalogue entry renders from a hand-written spec to a PNG of the expected size with a
   non-background share above the floor; the Arabic column spec; a timeout; a missing package. Skipped with a
   reason when Node or the package is absent. The images are written to a folder for inspection by eye.
+- The overrides: for each key the hook honours, the configuration handed to the library carries the expected
+  setting, checked by capturing it, and the chart still renders.
 - The three terminal commands.
 
 Pictures are checked by size and non-background share, not by pixel equality, because fonts differ between macOS
@@ -437,14 +465,20 @@ Phase 3 adds two packages: the designer's tools, which the designer agent joins 
 4. **Grouped and stacked charts as separate catalogue entries.** Decided, so each carries its own rules and
    score. The renderer maps them to the library's flags.
 5. **Extensions limited to what has a consumer now.** Decided: bind, sort, limit and Other, unknown, emphasis,
-   palette, direction, language, description, zero. Formats, annotations, log scale, and hidden axes wait for a
-   renderer that draws them; the strict parser makes adding them later safe.
+   palette, direction, language, description, subtitle, zero, and, added at the owner's request on 2026-09-07,
+   the axis ranges, the log scale, percent stacks, and the label and legend switches. Formats, annotations, and
+   hidden axes wait for a renderer that draws them; the strict parser makes adding them later safe.
 6. **Pictures checked by size and non-background share, not by pixel equality.** Recommended and assumed, for
    the font reason in section 12. Say so if you want exact references generated on Linux in a container as well.
 7. **Funnel, maps, graph charts, and the stat card left out.** Decided from the spike. A single number is a
    one-cell table with a note.
 8. **No lead change and no chat in this phase.** Decided: the phase has no model, and the three terminal
    commands cover "a human hand-writes a spec and gets a picture".
+9. **A hook for overrides.** Recommended and assumed: the script merges the axis range and scale, the
+   right-to-left title and order, the label and legend switches, and the subtitle into the configuration the
+   package builds, through the chart-creation function the spike showed can be intercepted. The package version
+   is pinned and the render tests guard it. The alternative, driving G2 directly per chart, costs a file per
+   entry and is kept for when the hook is not enough.
 
 ## 16. Lessons to record
 
