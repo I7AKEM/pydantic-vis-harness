@@ -1,11 +1,630 @@
 {
-  "rubric": {
-    "type": "The chart type fits the intent and the shape of the result.",
-    "roles": "The right columns hold the right roles.",
-    "title": "The title says what is shown, in the caller's language, and is true.",
-    "units": "Units and number formats are right.",
-    "honest": "Nothing misleads: zero baseline, sort, readable labels, emphasis on what was asked.",
-    "explanation": "The explanation is honest and in the caller's language."
+ "rubric": {
+  "type": "The chart type fits the intent and the shape of the result.",
+  "roles": "The right columns hold the right roles.",
+  "title": "The title says what is shown, in the caller's language, and is true.",
+  "units": "Units and number formats are right.",
+  "honest": "Nothing misleads: zero baseline, sort, readable labels, emphasis on what was asked.",
+  "explanation": "The explanation is honest and in the caller's language."
+ },
+ "judgments": {
+  "actual_fine_distribution": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Ten equal-width bins in ascending order with their counts, computed in resolving; the fines cluster at both ends. The package colours each bin differently; one colour would read better.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis histogram\ntitle Distribution of Actual Fine Amounts\ndescription A histogram showing the frequency of actual fine amounts across all violations.\naxisXTitle Actual Fine Amount (SAR)\naxisYTitle Number of Violations\nbinNumber 10\nbind\n  value actual_fine\n"
   },
-  "judgments": {}
+  "citizens_by_trip_year": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Years now drawn as text: two categorical colours, both labels readable.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle Number of Citizens Who Travelled by Year\ndescription A column chart showing the total number of citizens who travelled in 2021 and 2022.\naxisXTitle Trip Year\naxisYTitle Total Citizens [person]\nbind\n  category trip_year\n  value total_citizens\nsort none\nlabels on\n"
+  },
+  "deaths_per_month": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Month axis reads 2024-01 to 2024-12; values labelled without a count unit.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis line\ntitle Monthly Deaths in 2024\ndescription A line chart showing the total number of deaths per month throughout 2024.\naxisXTitle Month\naxisYTitle Total Deaths\nbind\n  value total_deaths\n  time month\nsort none\nlabels on\n"
+  },
+  "nationality_share_within_region": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Percent stacked bar with the region on the vertical axis and the share on the horizontal axis, titles on the right axes now.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis stacked_bar\ntitle نسبة الجنسيات في كل منطقة\ndescription A stacked bar chart showing the percentage share of each nationality within each region.\nlanguage ar\naxisXTitle نسبة الجنسية (%)\naxisYTitle المنطقة\nbind\n  category region\n  value share\n  group nationality\nsort value desc\ndirection rtl\npercent true\nlabels off\n"
+  },
+  "order_value_by_customer_city": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Thirteen bars with labels off, as the twelve-mark rule now requires; readable.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle إجمالي قيمة الطلبات حسب مدينة العميل\ndescription يوضح الرسم البياني إجمالي قيمة الطلبات لكل مدينة من مدن العملاء.\nlanguage ar\naxisXTitle إجمالي قيمة الطلبات\naxisYTitle مدينة العميل\nbind\n  category customer_city\n  value total_price\nsort value desc\nlabels off\n"
+  },
+  "orders_and_average_price_by_status": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Table with the column meanings as headers and 533.3 formatted; the override of the suggested dual axes is explained.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle Order Status Summary\ndescription A table showing the number of orders and average price for each order status.\n"
+  },
+  "orders_by_status": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "One brand colour on all five bars now; labels readable.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle Order Distribution by Status\ndescription A column chart showing the number of orders for each status.\naxisXTitle Order Status\naxisYTitle Number of Orders\nbind\n  category status\n  value order_count\nsort value desc\npalette\n  - #1F4E79\n  - #C0504D\nlabels on\n"
+  },
+  "paid_share_by_year_since_2020": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Year axis reads 2020 to 2026; percent labels.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis line\ntitle Percentage of Paid Violations by Year\ndescription A line chart showing the percentage of violations paid from 2020 to 2026.\naxisXTitle Year\naxisYTitle Percentage of Violations Paid (%)\nbind\n  value paid_percentage\n  time year\nsort none\nlabels on\nformat 0.0%\n"
+  },
+  "tourists_by_year": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Years as text, four points, last label fits. The analyst's unit 'visitors' is English inside an Arabic chart.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis line\ntitle إجمالي الزوار السياح حسب السنة\ndescription يوضح الرسم البياني التغير في إجمالي عدد الزوار السياح عبر السنوات من 2023 إلى 2026.\nlanguage ar\naxisXTitle السنة\naxisYTitle إجمالي الزوار السياح [visitors]\nbind\n  value total_visitors\n  time year\nsort none\nlabels on\n"
+  },
+  "under_15_share_by_region": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Bar with the region on the vertical axis and the share on the horizontal axis, titles right.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle Share of Population Under 15 by Region\ndescription A horizontal bar chart showing the percentage of the population under 15 for each administrative region.\naxisXTitle Share of Population Under 15 (%)\naxisYTitle Administrative Region\nbind\n  category region\n  value share_under_15\nsort value desc\nlabels on\nformat 0.0%\n"
+  },
+  "unpaid_share_overall": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Arabic table with meaning headers, thousands separators, and 9.91%.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle نسبة المخالفات غير المسددة\ndescription نسبة المخالفات غير المسددة من إجمالي المخالفات.\nlanguage ar\ndirection rtl\n"
+  },
+  "violations_by_month": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Month axis reads 2025-11 to 2026-01.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis line\ntitle عدد المخالفات حسب الشهر\ndescription رسم بياني خطي يوضح تطور عدد المخالفات عبر الأشهر.\nlanguage ar\naxisXTitle الشهر\naxisYTitle عدد المخالفات\nbind\n  value عدد المخالفات\n  time الشهر\nsort none\ndirection rtl\nlabels on\n"
+  },
+  "average_fine_by_violation_type": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Bar for long Arabic labels, SAR labels, titles on the right axes; the smallest bar's label touches its category text.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle Average Actual Fine by Violation Type\ndescription A horizontal bar chart showing the average actual fine for each violation type.\naxisXTitle Average Actual Fine (SAR)\naxisYTitle Violation Type\nbind\n  category violation_type_description\n  value avg_actual_fine\nsort value desc\nlabels on\n"
+  },
+  "female_share_by_region": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Bar of per-region shares, sorted, one-decimal percent labels, screen-axis titles right.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle Percentage of Female Population by Region\ndescription A horizontal bar chart showing the percentage of the population that is female in each administrative region.\naxisXTitle Percentage of population that is female (%)\naxisYTitle Administrative Region\nbind\n  category region\n  value female_percentage\nsort value desc\nlabels on\nformat 0.0%\n"
+  },
+  "rich_households_by_city": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Sixteen bars with labels off under the twelve-mark rule; readable.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle عدد الأسر الغنية حسب المدينة\ndescription عدد الأسر الغنية في كل مدينة، مرتبة من الأكثر إلى الأقل.\nlanguage ar\naxisXTitle عدد الأسر الغنية\naxisYTitle المدينة\nbind\n  category city\n  value total_rich_households\nsort value desc\nlabels off\n"
+  },
+  "top_destinations_from_riyadh": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Five bars sorted top to bottom; the analyst's unit 'flight' is English inside the Arabic chart.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle أكثر خمس وجهات من مطار الملك خالد الدولي\ndescription يوضح الرسم البياني عدد الرحلات لأكثر خمس وجهات من مطار الملك خالد الدولي.\nlanguage ar\naxisXTitle عدد الرحلات [رحلة]\naxisYTitle وجهة الرحلة\nbind\n  category destination\n  value flight_count\nsort value desc\nlabels on\n"
+  },
+  "violation_type_share": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Five shares sorted with percent labels and correct titles.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle نسبة أنواع المخالفات من الإجمالي\ndescription يوضح الرسم البياني نسبة كل نوع من أنواع المخالفات المرورية.\nlanguage ar\naxisXTitle نسبة نوع المخالفة (%)\naxisYTitle وصف نوع المخالفة\nbind\n  category violation_type_description\n  value share\nsort value desc\ndirection rtl\nlabels on\nformat 0.0%\n"
+  },
+  "violations_by_district_many": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Top twenty districts plus Other, labels off, sorted.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle عدد المخالفات حسب الحي\ndescription مخطط شريطي يوضح عدد المخالفات في كل حي، مرتبة من الأعلى إلى الأقل.\nlanguage ar\naxisXTitle عدد المخالفات\naxisYTitle الحي\nbind\n  category district\n  value violation_count\nsort value desc\nlimit 20\nother أحياء أخرى\nlabels off\n"
+  },
+  "deaths_by_gender": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Column with the label column bound, values without a count unit now.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle Deaths by Gender\ndescription A column chart showing the total number of deaths for males and females.\naxisXTitle Gender\naxisYTitle Total Deaths\nbind\n  category gender_label\n  value total_deaths\nsort value desc\nlabels on\n"
+  },
+  "deaths_by_year": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Arabic line, right-aligned title, plain numbers, the last label fits.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis line\ntitle تغير عدد الوفيات عبر السنوات\ndescription يوضح الرسم البياني التوجه التصاعدي لإجمالي عدد الوفيات من عام 2009 إلى عام 2017.\nlanguage ar\naxisXTitle سنة الوفاة\naxisYTitle إجمالي عدد الوفيات\nbind\n  value total_deaths\n  time death_year\nsort none\nlabels on\n"
+  },
+  "deaths_by_year_and_gender": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Multi-line by gender; the legend shows the codes F and M because the result carries no label column.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis multi_line\ntitle عدد الوفيات حسب الجنس والسنوات\ndescription رسم بياني خطي يوضح تطور عدد الوفيات للذكور والإناث من عام 2009 إلى عام 2017.\nlanguage ar\naxisXTitle سنة الوفاة\naxisYTitle إجمالي عدد الوفيات\nbind\n  value total_deaths\n  group gender\n  time death_year\nsort none\ndirection rtl\nlabels off\n"
+  },
+  "fines_by_district": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Column, sorted, SAR labels; ten labels with the unit still crowd each other.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle Total Actual Fine by District\ndescription A column chart showing the total actual fine amount for each district.\naxisXTitle District\naxisYTitle Total Actual Fine (SAR)\nbind\n  category district\n  value total_actual_fine\nsort value desc\nlabels on\n"
+  },
+  "largest_cities_by_population": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Arabic column with the largest city on the right for right-to-left reading; 'person' is the analyst's English unit.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle أكبر خمس مدن من حيث إجمالي عدد السكان\ndescription يوضح الرسم البياني أكبر خمس مدن من حيث إجمالي عدد السكان.\nlanguage ar\naxisXTitle المدينة\naxisYTitle إجمالي عدد السكان [person]\nbind\n  category city\n  value total_population\nsort value desc\nlimit 5\nlabels on\n"
+  },
+  "married_share_by_gender": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Column of each gender's own share; the suggested line was rightly overridden.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle Share of Deaths Among Married People by Gender\ndescription A column chart showing the share of deaths that were married people for females and males.\naxisXTitle Gender\naxisYTitle Share of Deaths (%)\nbind\n  category gender_label\n  value married_share\nsort value desc\nlabels on\nformat 0.0%\n"
+  },
+  "discounted_percentage": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Table with meaning headers and 48%.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle Percentage of Discounted Violations\ndescription A table showing the number and percentage of violations that were discounted.\n"
+  },
+  "non_saudi_deaths_by_age": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Column over ordinal age groups in order, plain numbers.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle Age Distribution of Non-Saudi Deaths\ndescription A column chart showing the total number of deaths for each age range of non-Saudis.\naxisXTitle Age Group\naxisYTitle Total Deaths\nbind\n  category age_range\n  value total_deaths\nsort none\nlabels on\n"
+  },
+  "orders_by_app": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Bar this time, ten apps sorted top to bottom; the four tiny values' labels touch the app names.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle عدد الطلبات حسب التطبيق\ndescription رسم بياني شريطي يوضح عدد الطلبات لكل تطبيق، مرتبة من الأكثر إلى الأقل.\nlanguage ar\naxisXTitle عدد الطلبات\naxisYTitle اسم التطبيق\nbind\n  category app_name\n  value order_count\nsort value desc\ndirection rtl\nlabels on\n"
+  },
+  "salary_vs_birth_year": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Line over 63 birth years at the wide size, years as text.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis line\ntitle Average Salary by Birth Year\ndescription A line chart showing the relationship between birth year and average salary.\naxisXTitle Birth Year\naxisYTitle Average Salary\nbind\n  value average_salary\n  time birth_year\nsort none\nlabels off\n"
+  },
+  "saudi_deaths_by_age": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Arabic column over ordinal age groups, first group on the right, plain numbers.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle توزيع وفيات السعوديين حسب الفئة العمرية\ndescription توزيع إجمالي عدد الوفيات عبر الفئات العمرية المختلفة.\nlanguage ar\naxisXTitle الفئة العمرية\naxisYTitle إجمالي عدد الوفيات\nbind\n  category age_range\n  value total_deaths\nsort none\nlabels on\n"
+  },
+  "top_makes_by_average_fine": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Column of averages with a two-decimal SAR format.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle Top 5 Vehicle Makes by Average Original Fine\ndescription A column chart showing the five vehicle makes with the highest average original fine.\naxisXTitle Vehicle Make\naxisYTitle Average Original Fine (SAR)\nbind\n  category vehicle_make\n  value avg_original_fine\nsort value desc\nlabels on\nformat 0.00 SAR\n"
+  },
+  "empty_result": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "A clarification came back without a model call, as designed.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": ""
+  }
+ },
+ "first_pass": {
+  "note": "The controller's verdicts on the charts drawn before the fix round of 2026-09-07 (commit a2bdbd8), kept for the record; the runner reads only 'judgments'.",
+  "judgments": {
+   "actual_fine_distribution": {
+    "verdict": "fail",
+    "failed": [
+     "honest"
+    ],
+    "note": "Histogram bins are drawn in order of first appearance (100, 1200, 300, 1000...), not numerically: resolve must sort raw values before binning. Chart type, titles, and units right.",
+    "spec": "vis histogram\ntitle Distribution of Actual Fine Amounts\ndescription A histogram showing the frequency of actual fine amounts across all violations.\naxisXTitle Actual Fine Amount (SAR)\naxisYTitle Frequency\nbinNumber 10\nbind\n  value actual_fine\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "average_fine_by_violation_type": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Bar for long Arabic labels, sorted, SAR labels. The value label of the shortest bar overlaps its category text.",
+    "spec": "vis bar\ntitle Average Actual Fine by Violation Type\ndescription A horizontal bar chart showing the average actual fine in SAR for each violation type.\naxisXTitle Violation Type\naxisYTitle Average Actual Fine (SAR)\nbind\n  category violation_type_description\n  value avg_actual_fine\nsort value desc\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "citizens_by_trip_year": {
+    "verdict": "fail",
+    "failed": [
+     "honest"
+    ],
+    "note": "Category values are numbers (2021, 2022), so the package colours them on a continuous yellow-to-navy scale: one bar is nearly invisible and its label unreadable. Resolve must pass category values as text. Column for two time points was the right choice.",
+    "spec": "vis column\ntitle Number of Citizens Who Travelled by Year\ndescription A column chart showing the total number of citizens who travelled in 2021 and 2022.\naxisXTitle Trip Year\naxisYTitle Total Citizens [person]\nbind\n  category trip_year\n  value total_citizens\nsort none\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "deaths_by_gender": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Column with the label column bound, two bars, values shown. 'count' printed as a unit (53,218 count): a pseudo-unit resolve should drop.",
+    "spec": "vis column\ntitle Total Deaths by Gender\ndescription A column chart showing the total number of deaths for males and females.\naxisXTitle Gender\naxisYTitle Total Deaths [count]\nbind\n  category gender_label\n  value total_deaths\nsort value desc\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "deaths_by_year": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Arabic line, right-aligned title, points labelled. Last label clipped at the right edge; 'count' as unit.",
+    "spec": "vis line\ntitle تغير عدد الوفيات عبر السنوات\ndescription رسم بياني خطي يوضح الزيادة المستمرة في إجمالي عدد الوفيات من عام 2009 إلى عام 2017.\nlanguage ar\naxisXTitle سنة الوفاة\naxisYTitle إجمالي عدد الوفيات [count]\nbind\n  value total_deaths\n  time death_year\nsort none\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "deaths_by_year_and_gender": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Multi-line by gender; legend shows the codes F and M because the result has no label column.",
+    "spec": "vis multi_line\ntitle عدد الوفيات حسب الجنس والسنوات\ndescription يوضح الرسم البياني التغير في عدد الوفيات للذكور والإناث من عام 2009 إلى عام 2017.\nlanguage ar\naxisXTitle سنة الوفاة\naxisYTitle إجمالي عدد الوفيات [count]\nbind\n  value total_deaths\n  group gender\n  time death_year\nsort none\ndirection rtl\nlabels off\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "deaths_per_month": {
+    "verdict": "fail",
+    "failed": [
+     "honest"
+    ],
+    "note": "Line is right, but the month axis prints full timestamps (2024-01-01T00:00:00) rotated and unreadable. Resolve should shorten time labels to the bucket (2024-01).",
+    "spec": "vis line\ntitle Monthly Deaths in 2024\ndescription A line chart showing the total number of deaths per month throughout the year 2024.\naxisXTitle Month\naxisYTitle Total Deaths [count]\nbind\n  value total_deaths\n  time month\nsort none\nlabels off\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "discounted_percentage": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Table for a single number, as designed. The percentage cell shows 48 without a % sign; tables do not format units.",
+    "spec": "vis table\ntitle Percentage of Discounted Violations\ndescription A table showing the count and percentage of discounted violations.\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "female_share_by_region": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Bar of per-region shares, sorted, one-decimal percent labels, correct axis titles.",
+    "spec": "vis bar\ntitle Female Population Percentage by Region\ndescription A horizontal bar chart showing the percentage of the population that is female in each administrative region.\naxisXTitle Administrative Region\naxisYTitle Percentage of population that is female (%)\nbind\n  category region\n  value female_percentage\nsort value desc\nlabels on\nformat 0.0%\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "fines_by_district": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Column, sorted, SAR labels. Ten data labels with the unit overlap each other; data labels could drop the unit the axis already shows.",
+    "spec": "vis column\ntitle Total Actual Fine by District\ndescription A column chart showing the total actual fine amount for each district.\naxisXTitle District\naxisYTitle Total Actual Fine (SAR)\nbind\n  category district\n  value total_actual_fine\nsort value desc\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "largest_cities_by_population": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Arabic column with the first (largest) city on the right for right-to-left reading. Data labels say 'person' in English while the axis title says شخص: the analyst's unit string is English.",
+    "spec": "vis column\ntitle أكبر خمس مدن من حيث إجمالي عدد السكان\ndescription رسم بياني يوضح أكبر خمس مدن من حيث إجمالي عدد السكان.\nlanguage ar\naxisXTitle المدينة\naxisYTitle إجمالي عدد السكان [شخص]\nbind\n  category city\n  value total_population\nsort value desc\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "married_share_by_gender": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Column of each gender's own share; the suggested line was rightly overridden, but the explanation does not say so as the rulebook asks.",
+    "spec": "vis column\ntitle Share of Deaths Among Married People by Gender\ndescription A column chart showing the share of deaths that were married people for females and males.\naxisXTitle Gender\naxisYTitle Share of Deaths (%)\nbind\n  category gender_label\n  value married_share\nsort value desc\nlabels on\nformat 0.0%\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "nationality_share_within_region": {
+    "verdict": "fail",
+    "failed": [
+     "honest"
+    ],
+    "note": "Percent stacked bar is the right chart with the right legend, but the axis titles are swapped: the model titled the vertical category axis 'نسبة الجنسية (%)' and the horizontal value axis 'المنطقة'. Axis titles should follow the screen (X horizontal, Y vertical) in resolve so a bar never needs the model to think in data axes.",
+    "spec": "vis stacked_bar\ntitle نسبة الجنسيات حسب المنطقة\ndescription رسم بياني شريطي مكدس يوضح نسبة كل جنسية من سكان كل منطقة.\nlanguage ar\naxisXTitle نسبة الجنسية (%)\naxisYTitle المنطقة\nbind\n  category region\n  value share\n  group nationality\nsort value desc\ndirection rtl\npercent true\nlabels off\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "non_saudi_deaths_by_age": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Column over ordinal age groups in order, values shown; 'count' as unit.",
+    "spec": "vis column\ntitle Age Distribution of Non-Saudi Deaths\ndescription A column chart showing the total deaths of non-Saudis across different age ranges.\naxisXTitle Age Group\naxisYTitle Total Deaths [count]\nbind\n  category age_range\n  value total_deaths\nsort none\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "order_value_by_customer_city": {
+    "verdict": "fail",
+    "failed": [
+     "honest"
+    ],
+    "note": "Bar with 13 cities and labels on: the nine small values' labels collide with the city names at the axis. The rulebook allows labels for about ten marks or fewer; the model ignored it. Chart type and sort right.",
+    "spec": "vis bar\ntitle إجمالي قيمة الطلبات حسب مدينة العميل\ndescription يوضح الرسم البياني إجمالي قيمة الطلبات لكل مدينة من مدن العملاء.\nlanguage ar\naxisXTitle مدينة العميل\naxisYTitle إجمالي قيمة الطلبات\nbind\n  category customer_city\n  value total_price\nsort value desc\ndirection rtl\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "orders_and_average_price_by_status": {
+    "verdict": "fail",
+    "failed": [
+     "units"
+    ],
+    "note": "A table was a defensible choice (average price exists for one status only, as the explanation says truthfully), but it prints 533.2985542168675 and raw column names as headers. Resolve should format table numbers with the shared formatter and use the column meanings as headers.",
+    "spec": "vis table\ntitle Order Status Analysis\ndescription A table showing the number of orders and average price for each order status.\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "orders_by_app": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Arabic column with the largest app on the right for right-to-left reading; small bars' labels touch the axis names.",
+    "spec": "vis column\ntitle عدد الطلبات حسب التطبيق\ndescription رسم بياني يوضح عدد الطلبات لكل تطبيق.\nlanguage ar\naxisXTitle اسم التطبيق\naxisYTitle عدد الطلبات\nbind\n  category app_name\n  value order_count\nsort value desc\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "orders_by_status": {
+    "verdict": "fail",
+    "failed": [
+     "honest"
+    ],
+    "note": "The two brand colours alternate blue, red, blue, red across five bars of one series, which reads as two groups. Resolve should repeat the first palette colour on single-series charts; brand colours belong to groups.",
+    "spec": "vis column\ntitle Order Distribution by Status\ndescription A column chart showing the number of orders for each status.\naxisXTitle Order Status\naxisYTitle Number of Orders\nbind\n  category status\n  value order_count\nsort value desc\npalette\n  - #1F4E79\n  - #C0504D\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "paid_share_by_year_since_2020": {
+    "verdict": "fail",
+    "failed": [
+     "honest"
+    ],
+    "note": "Line of the yearly paid share with percent labels is right, but the year axis prints 2020-01-01T00:00:00+03:00 for each year. Resolve should print year buckets as the year.",
+    "spec": "vis line\ntitle Percentage of Paid Violations Over Time\ndescription A line chart showing the percentage of violations paid from 2020 to 2026.\naxisXTitle Year\naxisYTitle Percentage of Paid Violations (%)\nbind\n  value paid_percentage\n  time year\nsort none\nlabels on\nformat 0.0%\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "rich_households_by_city": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Arabic bar, 16 cities sorted top to bottom, labels readable because every value is large.",
+    "spec": "vis bar\ntitle عدد الأسر الغنية حسب المدينة\ndescription يوضح الرسم البياني عدد الأسر الغنية في كل مدينة، حيث تتصدر نجران القائمة.\nlanguage ar\naxisXTitle المدينة\naxisYTitle إجمالي عدد الأسر الغنية\nbind\n  category city\n  value total_rich_households\nsort value desc\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "salary_vs_birth_year": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Line over 63 birth years at the wide size; a scatter was impossible because the analyst typed the year as ordinal.",
+    "spec": "vis line\ntitle Average Salary by Birth Year\ndescription A line chart showing the relationship between birth year and average salary.\naxisXTitle Birth Year\naxisYTitle Average Salary\nbind\n  value average_salary\n  time birth_year\nsort none\nlabels off\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "saudi_deaths_by_age": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Arabic column over ordinal age groups, first group on the right for right-to-left reading; 'count' as unit.",
+    "spec": "vis column\ntitle توزيع وفيات السعوديين حسب الفئة العمرية\ndescription توزيع إجمالي عدد الوفيات عبر الفئات العمرية المختلفة.\nlanguage ar\naxisXTitle الفئة العمرية\naxisYTitle إجمالي عدد الوفيات [count]\nbind\n  category age_range\n  value total_deaths\nsort none\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "top_destinations_from_riyadh": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Arabic bar, five destinations sorted top to bottom (the right-to-left bar fix holds). Labels say 'flight' in English while the axis says رحلة: the analyst's unit string.",
+    "spec": "vis bar\ntitle أكثر خمس وجهات من مطار الملك خالد الدولي\ndescription رسم بياني شريطي يوضح أكثر خمس وجهات من مطار الملك خالد الدولي من حيث عدد الرحلات.\nlanguage ar\naxisXTitle وجهة الرحلة\naxisYTitle عدد الرحلات [رحلة]\nbind\n  category destination\n  value flight_count\nsort value desc\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "top_makes_by_average_fine": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Column of averages with a two-decimal SAR format on labels and axis.",
+    "spec": "vis column\ntitle Top 5 Vehicle Makes by Average Original Fine\ndescription A column chart showing the five vehicle makes with the highest average original fines.\naxisXTitle Vehicle Make\naxisYTitle Average Original Fine (SAR)\nbind\n  category vehicle_make\n  value avg_original_fine\nsort value desc\nlabels on\nformat 0.00 SAR\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "tourists_by_year": {
+    "verdict": "fail",
+    "failed": [
+     "honest"
+    ],
+    "note": "Line over four years, but the year axis shows 2023.5 and 2024.5 because integer years are drawn on a continuous scale. Resolve must pass time and category values as text. Last label clipped at the edge.",
+    "spec": "vis line\ntitle إجمالي الزوار السياح حسب السنة\ndescription يوضح الرسم البياني التغير في إجمالي عدد الزوار السياح من عام 2023 إلى عام 2026.\nlanguage ar\naxisXTitle السنة\naxisYTitle إجمالي الزوار السياح [زائر]\nbind\n  value total_visitors\n  time year\nsort none\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "under_15_share_by_region": {
+    "verdict": "fail",
+    "failed": [
+     "honest"
+    ],
+    "note": "Bar of per-region shares is right, but the axis titles are swapped again: the model titled the vertical axis 'Share of population under 15 (%)'. Axis titles must follow the screen in resolve.",
+    "spec": "vis bar\ntitle Share of Population Under 15 by Region\ndescription A horizontal bar chart showing the percentage of the population under 15 for each administrative region.\naxisXTitle Share of population under 15 (%)\naxisYTitle Administrative Region\nbind\n  category region\n  value share_under_15\nsort value desc\nlabels on\nformat 0.0%\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "unpaid_share_overall": {
+    "verdict": "fail",
+    "failed": [
+     "units"
+    ],
+    "note": "Table for a single number is right, but it prints 9.913666751770636 and raw column names as headers.",
+    "spec": "vis table\ntitle نسبة المخالفات غير المسددة\ndescription تظهر هذه الجداول نسبة المخالفات غير المسددة من إجمالي المخالفات.\nlanguage ar\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "violation_type_share": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Arabic bar of five shares sorted top to bottom with percent labels and correct axis titles.",
+    "spec": "vis bar\ntitle توزيع نسب أنواع المخالفات\ndescription توزيع نسب أنواع المخالفات من إجمالي المخالفات\nlanguage ar\naxisXTitle وصف نوع المخالفة\naxisYTitle نسبة نوع المخالفة من الإجمالي (%)\nbind\n  category violation_type_description\n  value share\nsort value desc\ndirection rtl\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "violations_by_district_many": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "Bar with the top twenty districts and an Other bar, as the rulebook asks; Other dwarfs the rest, which is honest about the tail.",
+    "spec": "vis bar\ntitle عدد المخالفات حسب الحي\ndescription يوضح الرسم البياني عدد المخالفات في كل حي، مرتبة من الأكثر إلى الأقل.\nlanguage ar\naxisXTitle الحي\naxisYTitle عدد المخالفات\nbind\n  category district\n  value violation_count\nsort value desc\nlimit 20\nother أحياء أخرى\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "violations_by_month": {
+    "verdict": "fail",
+    "failed": [
+     "honest"
+    ],
+    "note": "Line over three months is right, but the axis prints 2025-11-01T00:00:00 timestamps.",
+    "spec": "vis line\ntitle عدد المخالفات حسب الشهر\ndescription يوضح الرسم البياني التوجه الزمني لعدد المخالفات عبر الأشهر.\nlanguage ar\naxisXTitle الشهر\naxisYTitle عدد المخالفات [عدد]\nbind\n  value عدد المخالفات\n  time الشهر\nsort none\nlabels on\n",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   },
+   "empty_result": {
+    "verdict": "pass",
+    "failed": [],
+    "note": "A clarification came back without a model call, as designed.",
+    "spec": "",
+    "by": "controller",
+    "date": "2026-09-07",
+    "model": "openrouter:google/gemma-4-31b-it:nitro",
+    "pass_number": 1
+   }
+  }
+ }
 }
