@@ -240,7 +240,7 @@ bounded and additive; every candidate keeps its breakdown for the explanation an
 | ID | Rule | Score |
 |---|---|---|
 | S1 intent | The entry serves the request's intent | +3 |
-| S2 suggested | The entry matches the brief's suggested chart, a preference not an order | +2 |
+| S2 suggested | The entry matches the brief's suggested chart, a preference not an order: it wins a tie against charts the rules rate equally, and loses to any hard rule | +3 |
 | S3 caution | The entry is rated use with caution | −1 |
 | S4 count | Categories on a bar or column: up to twelve +1, thirteen to twenty 0, more −2 with the fix "sort and keep the top N with Other" | as stated |
 | S5 long labels | The longest category label is over fifteen characters: bar +1, column −2 | as stated |
@@ -252,7 +252,7 @@ bounded and additive; every candidate keeps its breakdown for the explanation an
 | S11 words | Word cloud with fewer than twenty categories | −3 |
 | S12 fallback | Table is always a candidate at 0 before other rules | 0 |
 | S13 one number | A one-row, one-measure result: table +2, every chart −3 | as stated |
-| S14 few parts | A treemap whose category has six or fewer values | −2, fix "use a pie, a donut, or a bar" |
+| S14 few parts | A treemap whose category has seven or fewer values: pie takes up to six, and a sorted bar takes the rest | −2, fix "use a pie, a donut, or a bar" |
 
 Ranking: sum of the soft scores among the candidates that passed the hard rules, highest first, ties broken by
 catalogue order. Intent unknown means S1 scores nothing for everyone. The table never receives S1: its purposes
@@ -270,7 +270,7 @@ list every intent so it is always eligible, and it stays the zero-score fallback
 | C6 colors | Palette entries are hex colors; the palette is at least as long as the categories when given | Add colors or drop the palette |
 | C7 contrast | Every palette color and the accent contrast with the theme background at least 3 to 1 | Pick a darker or lighter color |
 | C8 words | A title and a description are present | Write them |
-| C9 emphasis | Emphasised values exist in the bound category | Fix the spelling |
+| C9 emphasis | Emphasised values exist in the bound category, or in the bound group on charts with a group role | Fix the spelling |
 | C10 hard | The hard rules of section 7.1 pass for this type on this result | As the hard rule says |
 | C11 range | `axisYMin` and `axisYMax` only on line, multi_line, scatter, boxplot, and dual_axes; `axisXMin` and `axisXMax` only on scatter; minimum below maximum; every plotted value inside the range | Widen the range or drop it |
 | C12 crop | A line's value axis may start above zero, through `zero false` or `axisYMin`, only when the values are narrow: the smallest is above half the largest. The start value is recorded as a compromise so the explanation states it | Start at zero |
