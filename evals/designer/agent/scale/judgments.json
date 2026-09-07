@@ -1,0 +1,324 @@
+{
+ "rubric": {
+  "type": "The chart type fits the intent and the shape of the result.",
+  "roles": "The right columns hold the right roles.",
+  "title": "The title says what is shown, in the caller's language, and is true.",
+  "units": "Units and number formats are right.",
+  "honest": "Nothing misleads: zero baseline, sort, readable labels, emphasis on what was asked.",
+  "explanation": "The explanation is honest and in the caller's language."
+ },
+ "judgments": {
+  "vizcsv-222e820210670029": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Line of a yearly growth rate over nineteen years with negatives and percent ticks; labels off.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis line\ntitle معدل نمو معتمرين الخارج خلال 20 سنة\ndescription يوضح الرسم البياني تغير معدل النمو المئوي لمعتمرين الخارج من عام 2005 إلى 2024.\nlanguage ar\naxisXTitle السنة\naxisYTitle معدل النمو (%)\nbind\n  value growth_rate_percent\n  time year\nsort none\nlabels off\nformat 0.0%\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-099ca8ed3f245957": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Single number as a table.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle إجمالي سكان المملكة\ndescription يوضح الجدول إجمالي عدد السكان في المملكة.\nlanguage ar\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-257c0f12f1432a46": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Single number as a table; the value 0.12 is a fraction the analyst left without a percent unit, so it reads oddly for a 'نسبة' question.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle نسبة خريجي تخصص اللغة العربية الموظفين برواتب تزيد عن 6000 ريال (2021-2025)\ndescription تظهر هذه الجدولة النسبة المئوية لخريجي تخصص اللغة العربية الذين تم توظيفهم برواتب تزيد عن 6000 ريال خلال أول سنة من تخرجهم في الفترة من 2021 إلى 2025.\nlanguage ar\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-2571f37808cda8e2": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Two-bar column with percent labels; the categories are the codes M and F because the result has no label column.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle النسبة المئوية لمن هم دون 30 عاماً حسب الجنس في المملكة\ndescription يوضح الرسم البياني النسبة المئوية للذكور والإناث الذين تقل أعمارهم عن 30 عاماً.\nlanguage ar\naxisXTitle الجنس\naxisYTitle النسبة المئوية (%)\nbind\n  category gender\n  value percentage\nsort value desc\nlabels on\nformat 0.0%\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-5de6c178d0e7d8bb": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Bar of fines by violation type, sorted, labelled; no unit because the analyst gave none.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle قيمة الغرامات حسب فئة المخالفة المرورية\ndescription رسم بياني شريطي يوضح إجمالي الغرامات لكل نوع من أنواع المخالفات المرورية.\nlanguage ar\naxisXTitle إجمالي الغرامات\naxisYTitle نوع المخالفة\nbind\n  category violation_type_description\n  value إجمالي الغرامات\nsort value desc\nlabels on\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-b2a15904ec3d6ba4": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Single number as a table; 48.5 shown without a percent sign because the analyst gave no unit.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle نسبة المواليد الأجانب\ndescription تظهر هذه الجدولة نسبة المواليد من غير المواطنين من إجمالي المواليد.\nlanguage ar\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-f06339ec4dc08786": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "One row with two shares (0.11 and 99.89) as a table; a two-bar chart would need the analyst to return the shares as rows.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle نسبة الأسر السعودية التي لديها عاملة منزلية\ndescription نسبة الأسر السعودية التي لديها عاملة منزلية مقارنة بالأسر التي ليس لديها عاملة منزلية.\nlanguage ar\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-a1b1e85e44fc9c25": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Single number as a table.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle متوسط عدد المخالفات في منطقة الرياض للمواطنين\ndescription متوسط عدد المخالفات للشخص الواحد في منطقة الرياض للمواطنين حتى نهاية يوليو 2025.\nlanguage ar\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-6ed66df8328f06bc": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Five near-equal shares by wealth level on a zero baseline, largest on the right for Arabic; values lack the percent sign the axis title promises.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle نسبة النساء السعوديات الحاصلات على دراسات عليا حسب مستوى الثراء\ndescription نسبة النساء الحاصلات على دراسات عليا موزعة حسب مستوى الثراء.\nlanguage ar\naxisXTitle مستوى الثراء\naxisYTitle نسبة الحاصلات على دراسات عليا (%)\nbind\n  category wealth_level\n  value postgrad_percentage\nsort value desc\nlabels on\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-0db9bee65bac30a5": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Graduates by education level, sorted by value with the largest on the right; the levels' natural order would also have served.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle عدد الخريجين غير السعوديين حسب مستوى التعليم\ndescription يوضح الرسم البياني عدد الخريجين غير السعوديين موزعين حسب المستوى التعليمي.\nlanguage ar\naxisXTitle المستوى التعليمي\naxisYTitle عدد الخريجين\nbind\n  category education_level\n  value إجمالي الخريجين\nsort value desc\ndirection rtl\nlabels on\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-2d62a3bac17d1956": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Eight regional shares of one whole as a sorted bar with percent labels; more than six parts, so a bar over a pie is right.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle النسبة المئوية لسكان المناطق من إجمالي سكان المملكة\ndescription يوضح الرسم البياني النسبة المئوية لسكان كل منطقة إدارية مقارنة بإجمالي سكان المملكة.\nlanguage ar\naxisXTitle النسبة المئوية (%)\naxisYTitle المنطقة الإدارية\nbind\n  category region\n  value النسبة المئوية\nsort value desc\ndirection rtl\nlabels on\nformat 0.0%\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-ff355499d5bc782b": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Single number, zero, as a table.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle إجمالي المسافرين الدائمين (2021-2025)\ndescription إجمالي عدد المواطنين الذين غادروا المملكة أكثر من ثلاث مرات في السنة خلال الفترة 2021-2025.\nlanguage ar\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-ed16d36acaf18ee4": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Two-bar comparison of average violations by education level, labelled.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle متوسط عدد المخالفات المرورية للأثرياء في سنة 2025 حسب المستوى التعليمي\ndescription مقارنة متوسط عدد المخالفات المرورية بين الأثرياء الحاصلين على شهادات عليا والأثرياء غير الحاصلين على شهادات عليا.\nlanguage ar\naxisXTitle متوسط عدد المخالفات\naxisYTitle الفئة التعليمية\nbind\n  category category\n  value avg_violations\nsort value desc\ndirection rtl\nlabels on\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-184567910cd340fd": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Top five nationalities as a sorted column chart with the largest on the right for Arabic.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle أكثر 5 جنسيات تسببت في المخالفات المرورية لعام 2024\ndescription رسم بياني يوضح عدد المخالفات المرورية حسب الجنسية لأكثر 5 جنسيات في عام 2024.\nlanguage ar\naxisXTitle الجنسية\naxisYTitle إجمالي عدد المخالفات المرورية\nbind\n  category الجنسية\n  value إجمالي المخالفات\nsort value desc\nlimit 5\ndirection rtl\nlabels on\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-ac8b73d28c07901d": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Male population by region as a sorted bar.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle عدد السكان الذكور حسب المنطقة\ndescription يوضح الرسم البياني عدد السكان الذكور في مختلف المناطق الإدارية.\nlanguage ar\naxisXTitle عدد السكان\naxisYTitle المنطقة\nbind\n  category region\n  value male_population\nsort value desc\ndirection rtl\nlabels on\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-2deca5a2331b1c91": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Single number as a table; 78.8 without a percent sign because the analyst gave no unit.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle نسبة المخالفات غير المسددة لعام 2025\ndescription نسبة المخالفات التي لم يتم سدادها مقارنة بإجمالي عدد مخالفات الزوار لعام 2025.\nlanguage ar\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-d389c23177d0fc91": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Ten universities ranked as a sorted bar with labels.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle عدد الخريجين المغذين للشركات الكبرى\ndescription رسم بياني شريطي يوضح عدد الخريجين من كل جامعة والذين يعملون في الشركات الكبرى، مرتبين من الأعلى إلى الأقل.\nlanguage ar\naxisXTitle عدد الخريجين\naxisYTitle الجامعة\nbind\n  category الجامعة\n  value عدد الخريجين\nsort value desc\ndirection rtl\nlabels on\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-57c25fcba38f1bb0": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Single share as a table; 48.5 without a percent sign because the analyst gave no unit.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle نسبة المواليد الأجانب من إجمالي المواليد\ndescription يوضح الجدول نسبة المواليد الأجانب من إجمالي المواليد وفقاً لأحدث البيانات.\nlanguage ar\ndirection rtl\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-c8463b2cef56fee5": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Single share as a table; 33.58 without a percent sign because the analyst gave no unit.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle نسبة السعوديين الذكور المعددين مقارنة بالمتزوجين\ndescription تظهر النسبة المئوية للسعوديين الذكور المعددين من إجمالي المتزوجين.\nlanguage ar\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-df9ab911b6b9b867": {
+   "verdict": "fail",
+   "failed": [
+    "honest"
+   ],
+   "note": "Growth-rate line runs 2026 to 2007: the analyst returned the years descending and typed them ordinal, the designer bound them as time with sort none, and resolve kept the row order.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis line\ntitle معدل نمو معتمرين الخارج خلال آخر 20 سنة\ndescription يوضح الرسم البياني التغير في معدل نمو المعتمرين من الخارج عبر السنوات.\nlanguage ar\naxisXTitle السنة\naxisYTitle معدل النمو (%)\nbind\n  value معدل النمو\n  time السنة\nsort none\nlabels off\nformat 0.0%\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-72807ae3ed7eee7e": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Age groups keep their ordinal order, reversed for Arabic; the renderer gives one colour per column although there is one series.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle عدد السعوديين حسب الفئة العمرية\ndescription يوضح الرسم البياني توزيع عدد السعوديين عبر الفئات العمرية المختلفة.\nlanguage ar\naxisXTitle الفئة العمرية\naxisYTitle عدد الأشخاص\nbind\n  category age_group\n  value count\nsort none\nlabels on\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-b8abd8eb16060081": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Single number, zero, as a table.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle إجمالي عدد المخالفات المرورية غير المسددة\ndescription يوضح الجدول إجمالي عدد المخالفات المرورية غير المسددة.\nlanguage ar\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-778be821436c7bac": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Hundred-percent stacked bar of gender shares by region; the legend shows the F and M codes the data holds.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis stacked_bar\ntitle نسبة السكان حسب الجنس لكل منطقة\ndescription A stacked bar chart showing the percentage of population by gender for each region.\nlanguage ar\naxisXTitle نسبة السكان (%)\naxisYTitle المنطقة\nbind\n  category region\n  value النسبة المئوية\n  group gender\nsort none\ndirection rtl\npercent true\nlabels off\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-c23919bb79a568de": {
+   "verdict": "fail",
+   "failed": [
+    "units"
+   ],
+   "note": "The table shows '20 null': the analyst wrote the string null as the unit and the table formatter printed it.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis table\ntitle Graduates Pursuing Postgraduate Degrees\ndescription A table showing the total number of graduates who pursued postgraduate degrees.\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "vizcsv-dd569225f597240f": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Top three birthplaces as a sorted column chart with an English title and Arabic labels from the data.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis column\ntitle Top Three Birthplaces for Expatriate Residents\ndescription A column chart showing the top three birthplaces for expatriate residents.\naxisXTitle Birthplace\naxisYTitle Number of expatriates\nbind\n  category birth_country\n  value expat_count\nsort value desc\nlabels on\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "under_15_share_by_region": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Sorted bar with percent labels.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle Share of Population Under 15 by Region\ndescription A horizontal bar chart showing the percentage of the population under 15 for each administrative region.\naxisXTitle Share of Population Under 15 (%)\naxisYTitle Administrative Region\nbind\n  category region\n  value share_under_15\nsort value desc\nlabels on\nformat 0.0%\n",
+   "split": "heldout",
+   "seeded": false
+  },
+  "seeded-17-arabic-categories": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Seventeen labels past forty characters as a sorted bar; the labels take half the width but stay whole and readable.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle إجمالي عدد السكان حسب المدينة\ndescription يوضح الرسم البياني إجمالي عدد السكان لكل مدينة.\nlanguage ar\naxisXTitle إجمالي عدد السكان\naxisYTitle المدينة\nbind\n  category city\n  value إجمالي عدد السكان\nsort value desc\ndirection rtl\nlabels off\n",
+   "split": "heldout",
+   "seeded": true
+  },
+  "seeded-18-arabic-categories": {
+   "verdict": "pass",
+   "failed": [],
+   "note": "Five long labels as a sorted bar; the smallest value label touches the axis.",
+   "by": "controller",
+   "date": "2026-09-07",
+   "model": "openrouter:google/gemma-4-31b-it:nitro",
+   "spec": "vis bar\ntitle قيمة الغرامة الفعلية حسب نوع المخالفة\ndescription يوضح الرسم البياني قيمة الغرامة الفعلية لكل نوع من أنواع المخالفات المرورية.\nlanguage ar\naxisXTitle قيمة الغرامة الفعلية\naxisYTitle نوع المخالفة\nbind\n  category violation_type_description\n  value actual_fine\nsort value desc\ndirection rtl\nlabels on\n",
+   "split": "heldout",
+   "seeded": true
+  }
+ }
+}

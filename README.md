@@ -276,7 +276,10 @@ otherwise keep the seed rulebook and record why.
 Every statistic and every measurement label is a DuckDB query: counts, distinct values, numeric
 aggregates, date ranges, top values, integer-ness, ordinal patterns such as `Q1`, yes/no vocabularies,
 short codes such as `F` and `M`, latitude and longitude by name and range, WKT content, and place-name
-columns. Python only issues the queries and assigns labels from the results.
+columns. Python only issues the queries and assigns labels from the results. Two levels cover Arabic
+data: `hijri` for dates written in the Hijri calendar as text (`1447-03-12`, `١٤٤٧/٠٣/١٢`,
+`12 ربيع الأول 1447`) and for integer Hijri years beside a Gregorian date, and `arabic_digits` for numbers
+written in Arabic-Indic digits, which get numeric statistics after the digits are translated.
 
 The profiler agent interprets those measurements: meaning, role, unit, code meanings, and conflicts
 with the brief. It returns the profile through `review_profile`, its only output tool, which runs the
@@ -292,7 +295,9 @@ Profiles in an older format are recomputed.
 
 The analyst reads the profile, question, and brief. It writes one SELECT and describes each
 result column. DuckDB computes the answer. The model receives column facts and query results;
-the prompt contains no raw rows.
+the prompt contains no raw rows. The facts carry each column's measurement levels: a `hijri` column
+is bucketed as text (`substr` for the numeric forms, a `CASE` over month names) and never cast to a date,
+and an `arabic_digits` column is translated to Western digits before it is summed.
 
 Before running the SQL, code parses it. It allows one SELECT on the dataset's table and the
 query's own named subqueries (CTEs) only. It rejects other tables, schema-qualified tables,

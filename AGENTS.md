@@ -1,4 +1,4 @@
-# Phase 4: Chart designer agent
+# Phase 4b: Evaluation at scale
 
 The Phase 1 design is in docs/superpowers/specs/2026-09-06-vis-agent-design.md. It introduced the
 profiler as the model for every later agent, plus the lead skeleton, the upload path, and the store.
@@ -12,6 +12,10 @@ It adds deterministic chart recommendations, spec checks, and rendering without 
 The Phase 4 design is in docs/superpowers/specs/2026-09-07-phase-4-chart-designer-design.md.
 It adds the chart designer agent, checked delivery, rendering, and the lead's chart tool.
 
+The Phase 4b design is in docs/superpowers/specs/2026-09-07-phase-4b-evaluation-at-scale-design.md.
+It adds the two-hundred-case scale set, the Hijri and Arabic seeded cases, the DSPy optimizer, and the
+lessons in docs/phase-4b-lessons.md.
+
 - Use Python 3.12, uv, Pydantic AI, OpenRouter, and the built-in Web Chat UI.
 - Keep code small, explicit, and readable. Application code lives in the `vis_agent` package, one subpackage per agent; tests and evals mirror it.
 - `vis_agent/designer/` holds the designer's tools; `vis_agent/render/` holds the renderers.
@@ -22,6 +26,9 @@ It adds the chart designer agent, checked delivery, rendering, and the lead's ch
 - The profiler agent interprets. It never computes. review_profile is its only output tool: it runs the code
   checks and sends failed error checks back once.
 - The brief is context, never fact. Conflicts become warnings.
+- Hijri dates stay text end to end: the profiler labels them `hijri` (and Arabic-Indic numbers
+  `arabic_digits`), the analyst buckets them with substr or a CASE over month names and never casts them,
+  and resolving never shortens or reorders non-Gregorian time text. Gregorian time is drawn in order.
 - Values from oversized, WKT, and geometry-named columns never reach a model.
 - Failures the model cannot fix are ToolFailed. Fixable mistakes are ModelRetry, once.
 - Tests use fake models through agent.override and never hand-build RunContext.
