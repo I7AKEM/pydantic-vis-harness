@@ -159,3 +159,16 @@ class DatasetStore:
                 "UPDATE datasets SET profile = ? WHERE id = ?",
                 [profile.model_dump_json(), profile.source.dataset_id],
             )
+
+    def failed_checks(self) -> list[tuple[str, str, str, str]]:
+        """Every failed check saved with a profile: (dataset_id, check, severity, message), newest dataset first."""
+        with self.connect() as connection:
+            rows = connection.execute(
+                "SELECT id, profile FROM datasets WHERE profile IS NOT NULL "
+                "ORDER BY json_extract_string(metadata, '$.uploaded_at') DESC"
+            ).fetchall()
+        failed = []
+        for dataset_id, profile_json in rows:
+            profile = DatasetProfile.model_validate_json(profile_json)
+            failed.extend((dataset_id, c.check, c.severity, c.message) for c in profile.review if not c.passed)
+        return failed

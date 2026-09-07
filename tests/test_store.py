@@ -48,3 +48,18 @@ def test_list_datasets_newest_first_with_profile_status(store):
     assert [s.has_brief for s in summaries] == [True, False]
     assert {s.profile_status for s in summaries} == {"none"}
     assert summaries[0].row_count is None
+
+
+def test_failed_checks_across_saved_profiles(store):
+    from datetime import datetime, timezone
+
+    from vis_agent.profiler.measurements import compute_statistics
+    from vis_agent.profiler.models import DatasetProfile, ProfileCheck
+
+    source = store.save_upload("sales.csv", b"region,amount\nEast,1\n")
+    store.import_csv(source.dataset_id)
+    review = [ProfileCheck(column="region", check="measure_is_numeric", severity="error", passed=False, message="bad"),
+              ProfileCheck(column="amount", check="unit_only_on_measures", severity="error", passed=True, message="ok")]
+    store.save_profile(DatasetProfile(source=source, status="complete", deterministic=compute_statistics(store, source),
+                                      review=review, created_at=datetime.now(timezone.utc)))
+    assert store.failed_checks() == [(source.dataset_id, "measure_is_numeric", "error", "bad")]
