@@ -71,7 +71,7 @@ Twenty to thirty cases derived from real corpus files by `corpus_tools/seed.py`,
 `evals/designer/agent/scale/seeded/` with the transformation recorded in `decisions.json`:
 
 - Hijri dates in three written forms, converted from Gregorian columns with the Umm al-Qura calendar
-  (`hijri-converter`, added to the optional `optimize` group): `1447-03-12`, `١٤٤٧/٠٣/١٢`, and
+  (`hijridate`, the maintained successor of `hijri-converter`, added to the optional `optimize` group): `1447-03-12`, `١٤٤٧/٠٣/١٢`, and
   `12 ربيع الأول 1447`. Questions ask for monthly and yearly Hijri buckets.
 - Arabic-Indic digits in a measure column and in category labels.
 - Categories with diacritics, tatweel, mixed direction (`مدينة الرياض (Riyadh)`), and labels over forty
