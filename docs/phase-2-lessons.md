@@ -20,6 +20,27 @@ default. The seeded inversions live in `tests/analyst/test_checks.py`: swapped F
 code column, a label the data does not hold, shares that do not add up, an average outside the column's range, an
 empty result, and time out of order. Each is caught with no model involved.
 
+## The final check before the merge: 69 questions
+
+The set was grown from thirty to sixty-nine questions before the merge (33 Arabic, 36 English, 8 expecting a
+clarification), weighted towards trends, filters, Arabic column names, and files with an omitted geometry column.
+
+| Analyst model | Tables right | Delivered results with no error-level check | Seconds per question |
+|---|---|---|---|
+| Gemma 4 31B (default) | 69 of 69 | 100% | 5.7 |
+| GPT-5.4 mini | 60 of 69 | 97% | 7.5 |
+
+The first Gemma run scored 68 of 69 with four results carrying an error-level check. All four were one false
+positive: the summary check flagged numbers that came from the question or the column names ("under 15",
+"December 2025", "drivers over 25") as numbers not in the result. Numbers present in the question or the result's
+column names are now exempt. The one table miss was an over-cautious clarification on the paid-share question, which
+the rerun answered.
+
+GPT-5.4 mini's misses on the larger set are real: it counted rows instead of summing an employee count, summed a
+region total that was already a total, returned every store where the question asked for the top one, rounded a
+share to two decimals, answered a question about a missing schools column with a table, and asked a clarification on
+three answerable questions. Gemma stays the default with a wider margin than the thirty-case set showed.
+
 ## Where SQL fails
 
 It did not, on this set. No delivered query was rejected by the guard, timed out, or hit the row cap, and no check with
