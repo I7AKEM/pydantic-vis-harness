@@ -9,3 +9,4 @@ data/
 *.duckdb.wal
 .logfire/
 .superpowers/
+node_modules/

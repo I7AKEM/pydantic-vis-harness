@@ -1,0 +1,12 @@
+{
+  "name": "vis-agent-gptvis-renderer",
+  "private": true,
+  "type": "module",
+  "description": "Node side of the GPT-Vis renderer: one script that draws a chart configuration to a PNG.",
+  "dependencies": {
+    "@antv/gpt-vis-ssr": "0.3.8"
+  },
+  "devDependencies": {
+    "@antv/gpt-vis": "1.0.1"
+  }
+}
