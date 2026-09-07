@@ -243,8 +243,12 @@ not parse, the three-query budget ran out, and it then alternated a refused deli
 until the request limit. Two code guards close that class: a described name that differs from the result
 column only by surrounding quotes is accepted, and a spent budget with nothing passed returns a clarification
 that names the failed checks. The same question then delivers on the first query and the designer draws a
-line over the Hijri years. Lesson: run one real question through the lead before a merge; the runners test
-the agents, not the conversation.
+line over the Hijri years. The owner's own session then hit the designer's version of the same dead end: a
+donut with one colour for every slice fails the palette rule on every check, and once the three check calls
+were spent the model kept calling refused tools until the request limit. The designer now answers a spent
+check budget with nothing passed by a clarification that names the last violations, and the refusal message
+says so. Lesson: run one real question through the lead before a merge; the runners test the agents, not
+the conversation.
 
 ## Left for later
 

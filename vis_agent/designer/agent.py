@@ -103,6 +103,7 @@ class DesignerDeps:
     intent: Intent | None = None
     considered: list[str] = field(default_factory=list)
     last_check: SpecCheck | None = None
+    last_violations: list[str] = field(default_factory=list)
     delivery_attempts: int = 0
 
 
@@ -183,16 +184,31 @@ async def check_spec(ctx: RunContext[DesignerDeps], spec: str) -> SpecCheck | Re
     """Check a draft chart spec and return violations with fixes, or its canonical text and compromises."""
     deps = ctx.deps
     if deps.check_calls >= MAX_CHECK_CALLS:
+        if deps.last_check is None:
+            return Refused(message="You have used the three check calls of this run and none passed. Call "
+                                   "deliver_design with your best spec, or ask_clarification with the conflict; "
+                                   "a spec that still fails ends in a question to the caller.")
         return Refused(message="You have used the three check calls of this run. "
                                "Deliver the spec that passed, or ask the caller a question.")
     deps.check_calls += 1
     check = run_check(spec, deps.report.analysis.columns, deps.report.result, deps.renderer)
     if check.ok:
         deps.last_check = check
+    else:
+        deps.last_violations = [f"{v.rule}: {v.message}" for v in check.violations]
     return check
 
 
-def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -> Design:
+DEAD_END = {
+    "Arabic": "لم أجد رسماً يجتاز الفحوصات لهذا الطلب؛ آخر محاولة فشلت في: {reasons}. هل تعدّل الطلب (نوع الرسم أو "
+              "الألوان مثلاً)، أم أرسم أقرب رسم يجتاز الفحوصات؟",
+    "English": "I could not find a chart that passes the checks for this request; the last attempt failed on: "
+               "{reasons}. Should I change the request (the chart type or the colours, say), or draw the closest "
+               "chart that passes?",
+}
+
+
+def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -> Design | Clarification:
     """Deliver a checked spec and a two-sentence explanation in the caller's language using supported numbers."""
     deps = ctx.deps
     report = deps.report
@@ -215,6 +231,10 @@ def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -
         failures.append(number_check.message)
     if failures:
         message = "\n".join(failures)
+        if deps.last_check is None and deps.check_calls >= MAX_CHECK_CALLS:
+            # The check budget is spent and nothing passed: ask the caller instead of looping to the request limit.
+            reasons = "; ".join(deps.last_violations or failures)
+            return Clarification(question=DEAD_END[report.language].format(reasons=reasons), reason=message)
         if deps.delivery_attempts == 0:
             deps.delivery_attempts += 1
             raise ModelRetry(message)

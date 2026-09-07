@@ -385,3 +385,22 @@ def test_incomplete_report_is_rejected(missing):
     setattr(source, missing, None)
     with pytest.raises(ValueError, match="The report needs an analysis and a result"):
         run(source, TestModel())
+
+
+def test_a_spent_check_budget_with_no_pass_ends_in_a_clarification():
+    one_colour = DONUT + "palette\n  - #007bff\n"  # two slices, one colour: C6 fails every time
+    calls = []
+
+    def drive(messages, info):
+        calls.append(1)
+        if len(calls) <= 4:  # three checks fail, the fourth is refused
+            return tool_call("check_spec", spec=one_colour)
+        refused = last_return(messages).model_response_object()
+        assert "none passed" in refused["message"]
+        return tool_call("deliver_design", spec=one_colour, explanation=EXPLANATION)
+
+    result = run(report(*gender_share()), FunctionModel(drive))
+    assert result.design is None and result.clarification is not None
+    assert result.clarification.question.startswith("I could not find a chart that passes")
+    assert "C6" in result.clarification.question and "C6" in result.clarification.reason
+    assert result.check_calls == 3 and result.warnings == []
