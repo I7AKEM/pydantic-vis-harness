@@ -25,7 +25,7 @@ MEASURES = {"value", "value2", "x", "y"}
 WITHOUT_AXES = {"pie", "donut", "treemap", "radar", "word_cloud", "table"}
 SINGLE_SERIES = {"column", "bar", "line", "area", "scatter", "histogram", "boxplot"}
 COUNT_UNITS = {"count", "counts", "number", "n", "عدد", "رقم"}
-ISO_DATE_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?")
+ISO_DATE_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?", re.ASCII)
 
 
 @dataclass
@@ -56,6 +56,9 @@ def _shorten_time(records: list[dict], role: str) -> None:
     """Use one precision for the entire axis, preserving each timestamp's local time."""
     values = [record[role] for record in records]
     if not values or not all(ISO_DATE_TIME.fullmatch(value) for value in values):
+        return
+    # Hijri-looking years and non-ASCII/month-name text keep the whole axis verbatim.
+    if any(int(value[:4]) < 1600 for value in values):
         return
     try:
         dates = [datetime.fromisoformat(value) for value in values]
