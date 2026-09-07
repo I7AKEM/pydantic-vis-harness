@@ -5,6 +5,7 @@ import logging
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from hashlib import sha256
 from pathlib import Path
 from typing import get_args
 
@@ -18,6 +19,8 @@ from vis_agent.analyst.checks import summary_numbers_exist
 from vis_agent.analyst.models import Aggregate, AnalysisReport, Cell, Clarification, ColumnKind
 from vis_agent.models import DataBrief, Intent
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL
+from vis_agent.render import gptvis
+from vis_agent.render.base import RENDERERS, Rendered
 
 from . import models
 from .catalogue import CATALOGUE
@@ -285,3 +288,25 @@ async def design_chart(
         requests=run_usage.requests - starting_requests, check_calls=deps.check_calls,
         seconds=time.perf_counter() - started, created_at=datetime.now(timezone.utc),
     )
+
+
+def render_id(spec: str, report: AnalysisReport) -> str:
+    """Identify a render by its spec and serialized analysis report."""
+    return sha256((spec + report.model_dump_json()).encode("utf-8")).hexdigest()[:12]
+
+
+def render_design(
+    report: AnalysisReport, design: Design, out_dir: Path, renderer: str = "gptvis",
+) -> Rendered:
+    """Recheck a delivered design and render it with the current check's compromises."""
+    if renderer not in RENDERERS:
+        raise ValueError(f"Unknown renderer '{renderer}'; registered: {', '.join(RENDERERS)}")
+    if report.analysis is None or report.result is None:
+        raise ValueError("The report needs an analysis and a result; resolve any clarification with the analyst first.")
+    columns, result = report.analysis.columns, report.result
+    check = run_check(design.spec, columns, result, renderer)
+    if not check.ok:
+        raise ValueError("\n".join(
+            f"line {v.line or 1}: {v.rule}: {v.message}. {v.fix}" for v in check.violations
+        ))
+    return gptvis.render(parse(design.spec), columns, result, out_dir, compromises=check.compromises)

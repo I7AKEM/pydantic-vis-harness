@@ -1,5 +1,7 @@
 import asyncio
+import re
 from datetime import datetime, timezone
+from hashlib import sha256
 from typing import get_args
 
 import pytest
@@ -13,11 +15,12 @@ from vis_agent.analyst.models import Analysis, AnalysisReport
 from vis_agent.designer import models, syntax
 from vis_agent.designer.agent import (
     DESIGNER_RULEBOOK, EMPTY_RESULT, MAX_REQUESTS, Refused, build_prompt,
-    create_designer, design_chart, grammar, instructions,
+    create_designer, design_chart, grammar, instructions, render_design, render_id,
 )
 from vis_agent.designer.check import check_spec as run_check
 from vis_agent.designer.recommend import recommend_charts as rank_charts
 from vis_agent.models import DataBrief
+from vis_agent.render import gptvis
 
 from .conftest import cities, gender_share, monthly, table
 
@@ -50,6 +53,51 @@ def run(source, model, **kwargs):
     designer = create_designer("test")
     with designer.override(model=model):
         return asyncio.run(design_chart(source, designer, **kwargs))
+
+
+def test_render_id_is_stable_and_twelve_hex():
+    source = report(*gender_share())
+    digest = render_id(DONUT, source)
+    assert re.fullmatch(r"[0-9a-f]{12}", digest)
+    assert digest == sha256((DONUT + source.model_dump_json()).encode("utf-8")).hexdigest()[:12]
+    assert render_id(DONUT, AnalysisReport.model_validate_json(source.model_dump_json())) == digest
+    assert render_id(DONUT + "language ar\n", source) != digest
+    changed = source.model_copy(update={"question": "Another question?"})
+    assert render_id(DONUT, changed) != digest
+
+
+@pytest.mark.skipif(gptvis.available() is not None, reason=gptvis.available() or "")
+def test_render_design_merges_check_compromises(tmp_path):
+    columns, result = monthly(3)
+    for i, row in enumerate(result.rows):
+        row[1] = 100 + i
+    source = report(columns, result)
+    spec = "vis line\ntitle Visits\ndescription Monthly visits\nbind\n  time month\n  value visits\nzero false\n"
+    design = models.Design(spec=spec, chart="line", intent="trend", explanation="Monthly visits.",
+                           considered=["line"], compromises=[])
+    rendered = render_design(source, design, tmp_path)
+    assert any(c.key == "zero" and c.message == "The value axis starts at 100 instead of zero."
+               for c in rendered.compromises)
+    assert all(path.is_file() for path in [rendered.png, rendered.html, rendered.config])
+
+
+def test_render_design_refuses_a_failing_spec(tmp_path, monkeypatch):
+    def unexpected_render(*args, **kwargs):
+        pytest.fail("A failing spec must not reach the renderer")
+
+    monkeypatch.setattr(gptvis, "render", unexpected_render)
+    design = models.Design(spec="vis donut\n", chart="donut", intent="share", explanation=EXPLANATION,
+                           considered=["donut"], compromises=[])
+    with pytest.raises(ValueError, match="C2"):
+        render_design(report(*gender_share()), design, tmp_path / "out")
+    assert not (tmp_path / "out").exists()
+
+
+def test_render_design_rejects_unknown_renderer(tmp_path):
+    design = models.Design(spec=DONUT, chart="donut", intent="share", explanation=EXPLANATION,
+                           considered=["donut"], compromises=[])
+    with pytest.raises(ValueError, match="Unknown renderer 'missing'"):
+        render_design(report(*gender_share()), design, tmp_path, renderer="missing")
 
 
 def test_prompt_is_bounded():

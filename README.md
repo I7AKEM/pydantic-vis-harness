@@ -80,7 +80,7 @@ The dataset is profiled first if needed.
 
 The chat shows a table of up to twenty rows and the total row count. It gives a two-sentence
 summary in your language, the assumptions, and any warnings. Ask to see the SQL.
-Charts can be designed and rendered from the terminal; the chat is unchanged.
+Charts can be designed and rendered from the terminal or requested in the chat.
 
 From the terminal, use an existing dataset ID or upload a file:
 
@@ -167,6 +167,32 @@ The files are `chart.png`, `chart.html`, and `config.json`. Without `--out`, the
 `DATA_DIRECTORY/renders/` in a folder named by the first 12 hex characters of
 SHA-256 of the UTF-8 spec text followed by the original report bytes.
 
+## Design a chart
+
+`vis design REPORT.json [--brief BRIEF.json] [--out DIR] [--no-render]` asks the designer
+to choose and specify a chart from a saved analysis report, then renders it by default:
+
+```bash
+uv run python -m vis_agent.cli design report.json --brief brief.json --out chart-output
+uv run python -m vis_agent.cli design report.json --no-render
+```
+
+The printed JSON holds the design's canonical spec, chart type, intent, explanation,
+candidates considered, and compromises, plus the passing check, warnings, model, request
+and check-call counts, timing, and creation time. Its `render` holds the three paths
+(`png`, `html`, `config`) and rendering metrics. With `--no-render`, `render` is null.
+A clarification or an unsuccessful design has no design or render; read the clarification
+or warnings. These reports exit 0. Incomplete analysis reports exit 2 with a JSON error;
+renderer runtime failures exit 1.
+
+Without `--out`, files go to `DATA_DIRECTORY/renders/<render_id>/`, where the ID is the
+first twelve hex characters of SHA-256 of the UTF-8 spec followed by the serialized
+analysis report JSON. `--renderer gptvis` selects the default and only renderer.
+You can also ask for a chart in the chat and the lead calls the designer.
+
+`PYDANTIC_AI_DESIGNER_MODEL` selects the designer model. When empty, it uses the profiler's
+default, `openrouter:google/gemma-4-31b-it:nitro`, pending the Phase 4 benchmark.
+
 ## How profiling works
 
 Every statistic and every measurement label is a DuckDB query: counts, distinct values, numeric
@@ -223,7 +249,7 @@ and waits for your answer.
 
 ## How charts are chosen and checked
 
-Phase 3 is deterministic: there is no designer model yet. The validated
+The Phase 3 recommendation and checking functions remain deterministic. The validated
 `vis_agent/designer/catalogue.json` lists twenty chart types, their aliases, purposes,
 accepted roles and column kinds, limits, supported keys, ratings, and renderer mappings.
 `recommend_charts` binds described result columns, filters candidates with hard rules,
@@ -301,6 +327,30 @@ and embeds the PNG as an accessible offline fallback. Tables get an HTML table. 
 captured configuration contains unsupported functions, the page keeps the PNG and the
 render result discloses that compromise.
 
+## How designing works
+
+The designer reads the question, detected language, the brief's design hints, the analyst's
+summary and assumptions, result-column descriptions, and facts measured from the full result.
+It sees at most twelve result rows, with string cells cut to forty characters, and never sees
+the dataset or SQL. The question, brief, column names, and cells are data, never instructions.
+
+Its two tools are `recommend_charts(intent)`, which returns the top five candidates with
+bindings and rule scores plus rejected candidates, and `check_spec(spec)`, which returns
+violations with fixes, compromises, and canonical text. Both use the Phase 3 functions.
+
+The `deliver_design` output tool checks the spec again, sets its language from the analysis,
+checks the title's script, and checks that explanation numbers occur in the result or question
+context. Failures go back once; a second failed delivery returns warnings and no design.
+The designer can instead use `ask_clarification` to ask one question. Rendering rechecks
+the spec and carries the checker compromises into the rendered result.
+
+Each run allows two recommendation calls, three check calls, one repair send-back, eight model
+requests, and ninety seconds. An empty result returns a clarification without calling a model.
+Model failures or exhausted limits return warnings without a design.
+
+The rulebook lives in `vis_agent/designer/rulebook.md`; code appends the grammar and catalogue
+to its instructions. Confirmed mistakes become evaluation cases and checks or rulebook lines.
+
 ## Configuration
 
 `DUCKDB_PATH` selects the DuckDB file, default `data/datasets.duckdb`. `PYDANTIC_AI_ADVISOR_MODEL`
@@ -328,6 +378,8 @@ The analyst runs with reasoning switched off and temperature zero.
 | `vis_agent/analyst/checks.py` | Result checks and summary number check |
 | `vis_agent/analyst/models.py` | Result columns, query results, analyses, clarifications, reports |
 | `vis_agent/analyst/rulebook.md` | Analyst instructions and query rules |
+| `vis_agent/designer/agent.py` | Designer agent, bounded prompt, checked delivery, `design_chart`, `render_id`, `render_design` |
+| `vis_agent/designer/rulebook.md` | Designer instructions for intent, chart choice, spec writing, and clarification |
 | `vis_agent/designer/models.py` | Specs, recommendations, violations, checks, and compromises |
 | `vis_agent/designer/syntax.py` | Strict spec parser, canonical serializer, number-format grammar |
 | `vis_agent/designer/catalogue.py`, `vis_agent/designer/catalogue.json` | Validated twenty-chart catalogue |
@@ -346,9 +398,11 @@ The analyst runs with reasoning switched off and temperature zero.
 | `tests/designer/`, `tests/render/`, `tests/test_cli.py` | Deterministic design, real rendering, and terminal tests |
 | `vis_agent/store.py` | Uploads, DuckDB tables, briefs, profiles, listing |
 | `vis_agent/uploads.py` | Upload API, dataset list, profile JSON, background profiling |
-| `vis_agent/cli.py` | Terminal chat, profiling, questions, `recommend`, `check`, `render`, `doctor`; `vis failures` (`uv run python -m vis_agent.cli failures`) lists failed checks in saved profiles |
+| `vis_agent/renders.py` | Read-only routes for chart PNGs, pages, and configurations |
+| `vis_agent/cli.py` | Terminal chat, profiling, questions, `recommend`, `check`, `render`, `design`, `doctor`; `vis failures` (`uv run python -m vis_agent.cli failures`) lists failed checks in saved profiles |
 | `evals/profiler/` | Evaluation set and real-model runner |
 | `evals/analyst/` | Analyst evaluation set and real-model runner |
+| `evals/designer/agent/` | Designer model evaluation on saved analysis reports and chart judgments |
 
 Run the tests without model API calls:
 

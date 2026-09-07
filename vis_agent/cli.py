@@ -13,6 +13,7 @@ from pydantic import ValidationError
 
 from vis_agent.analyst.agent import analyze_dataset
 from vis_agent.analyst.models import AnalysisReport
+from vis_agent.designer.agent import design_chart, render_design, render_id
 from vis_agent.designer.check import check_spec
 from vis_agent.designer.models import SpecCheck, SpecError, Violation
 from vis_agent.designer.recommend import recommend_charts
@@ -28,11 +29,12 @@ def resources():
     """Import the wired application lazily so tests and --help never touch the real data directory."""
     import vis_agent.app
 
-    return vis_agent.app.agent, vis_agent.app.deps, vis_agent.app.store, vis_agent.app.profiler, vis_agent.app.analyst
+    return (vis_agent.app.agent, vis_agent.app.deps, vis_agent.app.store,
+            vis_agent.app.profiler, vis_agent.app.analyst, vis_agent.app.designer)
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="vis", description="Visualization agent, phase 3.")
+    parser = argparse.ArgumentParser(prog="vis", description="Visualization agent, phase 4.")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("chat", help="Talk to the lead agent in the terminal.")
     profile = commands.add_parser("profile", help="Profile a dataset and print the profile as JSON.")
@@ -58,6 +60,12 @@ def build_parser() -> argparse.ArgumentParser:
     render.add_argument("--report", type=Path, required=True)
     render.add_argument("--out", type=Path)
     render.add_argument("--renderer", choices=["gptvis"], default="gptvis")
+    design = commands.add_parser("design", help="Design a chart for an analysis report and render it.")
+    design.add_argument("report", type=Path)
+    design.add_argument("--brief", type=Path)
+    design.add_argument("--out", type=Path)
+    design.add_argument("--no-render", action="store_true")
+    design.add_argument("--renderer", choices=["gptvis"], default="gptvis")
     commands.add_parser("doctor", help="Check Node, the renderer package, and an Arabic smoke render.")
     return parser
 
@@ -128,11 +136,27 @@ def doctor_command(args: argparse.Namespace) -> int:
     return 1 if reason or smoke else 0
 
 
+def design_command(args: argparse.Namespace) -> int:
+    report = _load_report(args.report.read_bytes())
+    brief = DataBrief.model_validate_json(args.brief.read_bytes()) if args.brief else None
+    designer = resources()[5]
+    design_report = asyncio.run(design_chart(report, designer, brief, args.renderer))
+    rendered = None
+    if design_report.design is not None and not args.no_render:
+        out = args.out
+        if out is None:
+            out = resources()[2].directory / "renders" / render_id(design_report.design.spec, report)
+        rendered = render_design(report, design_report.design, out, args.renderer)
+    _print_json({**design_report.model_dump(mode="json"),
+                 "render": rendered.model_dump(mode="json") if rendered is not None else None})
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     chart_commands = {"recommend": recommend_command, "check": check_command,
-                      "render": render_command, "doctor": doctor_command}
+                      "render": render_command, "design": design_command, "doctor": doctor_command}
     if args.command in chart_commands:
         try:
             return chart_commands[args.command](args)
@@ -143,11 +167,11 @@ def main(argv: list[str] | None = None) -> int:
             _print_json({"error": str(error)})
             return 2
     if args.command == "chat":
-        agent, deps, _store, _profiler, _analyst = resources()
+        agent, deps, _store, _profiler, _analyst, _designer = resources()
         agent.to_cli_sync(deps=deps, prog_name="vis")
         return 0
     if args.command == "failures":
-        _agent, _deps, store, _profiler, _analyst = resources()
+        _agent, _deps, store, _profiler, _analyst, _designer = resources()
         grouped = {}
         for dataset_id, check, severity, message in store.failed_checks():
             grouped.setdefault(check, []).append((dataset_id, severity, message))
@@ -159,7 +183,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if not args.dataset_id and not args.upload:
         parser.error("give a dataset_id or --upload a CSV file")
-    _agent, _deps, store, profiler, analyst = resources()
+    _agent, _deps, store, profiler, analyst, _designer = resources()
     brief = DataBrief.model_validate_json(args.brief.read_text()) if args.brief else None
     dataset_id = args.dataset_id
     if args.upload:

@@ -8,12 +8,125 @@ import pytest
 import vis_agent.cli as cli
 from tests.designer.conftest import gender_share
 from vis_agent.analyst.models import Analysis, AnalysisReport, Clarification
+from vis_agent.designer.agent import render_id
+from vis_agent.designer.models import Design, DesignReport
 from vis_agent.models import DataBrief
 from vis_agent.render import gptvis
-from vis_agent.render.base import RenderFailed, RendererUnavailable
+from vis_agent.render.base import Rendered, RenderFailed, RendererUnavailable
 
 SALES = b"id,region,date,amount\n001,East,2026-01-01,10\n"
 DONUT = "vis donut\ntitle Gender share\ndescription Share by gender\nbind\n  category label\n  value share\nsort value desc\n"
+
+
+@pytest.fixture
+def design_report(report_path):
+    report = AnalysisReport.model_validate_json(report_path.read_bytes())
+    return DesignReport(
+        dataset_id=report.dataset_id, question=report.question, language=report.language,
+        design=Design(spec=DONUT, chart="donut", intent="share", explanation="Share by gender.",
+                      considered=["donut", "pie"], compromises=[]),
+        seconds=0, created_at=report.created_at,
+    )
+
+
+@pytest.mark.parametrize("explicit_out", [False, True])
+def test_design_subcommand_prints_the_report(report_path, design_report, store, tmp_path, monkeypatch, capsys,
+                                           explicit_out):
+    designer = object()
+    brief = DataBrief(intent="share", brand_colors=["#112233", "#334455"])
+    brief_path = tmp_path / "brief.json"
+    brief_path.write_text(brief.model_dump_json())
+    source = AnalysisReport.model_validate_json(report_path.read_bytes())
+    out = tmp_path / "chart" if explicit_out else store.directory / "renders" / render_id(DONUT, source)
+
+    async def fake_design(report_arg, designer_arg, brief_arg, renderer):
+        assert report_arg == source and designer_arg is designer
+        assert brief_arg == brief and renderer == "gptvis"
+        return design_report
+
+    def fake_render(report_arg, design_arg, out_arg, renderer="gptvis"):
+        assert report_arg == source and design_arg == design_report.design
+        assert out_arg == out and renderer == "gptvis"
+        return Rendered(png=out / "chart.png", html=out / "chart.html", config=out / "config.json",
+                        width=2400, height=1350, seconds=1, non_background_share=0.1,
+                        compromises=[], drawn_rows=2, folded_rows=0, dropped_rows=0)
+
+    monkeypatch.setattr(cli, "resources", lambda: (None, None, store, None, None, designer))
+    monkeypatch.setattr(cli, "design_chart", fake_design)
+    monkeypatch.setattr(cli, "render_design", fake_render)
+    args = ["design", str(report_path), "--brief", str(brief_path), "--renderer", "gptvis"]
+    if explicit_out:
+        args += ["--out", str(out)]
+    assert cli.main(args) == 0
+    printed = json.loads(capsys.readouterr().out)
+    assert {key: printed[key] for key in design_report.model_dump()} == design_report.model_dump(mode="json")
+    for key, filename in [("png", "chart.png"), ("html", "chart.html"), ("config", "config.json")]:
+        assert printed["render"][key] == str(out / filename)
+
+
+def test_design_subcommand_without_render(report_path, design_report, monkeypatch, capsys):
+    async def fake_design(report, designer, brief, renderer):
+        assert brief is None
+        return design_report
+
+    def unexpected_render(*args, **kwargs):
+        pytest.fail("--no-render must not call the renderer")
+
+    monkeypatch.setattr(cli, "resources", lambda: (None, None, None, None, None, object()))
+    monkeypatch.setattr(cli, "design_chart", fake_design)
+    monkeypatch.setattr(cli, "render_design", unexpected_render)
+    assert cli.main(["design", str(report_path), "--no-render"]) == 0
+    printed = json.loads(capsys.readouterr().out)
+    assert printed["design"] == design_report.design.model_dump(mode="json")
+    assert printed["render"] is None
+
+
+def test_design_subcommand_reports_a_clarification(report_path, design_report, monkeypatch, capsys):
+    design_report.design = None
+    design_report.clarification = Clarification(question="Which chart?", reason="The request is ambiguous.")
+
+    async def fake_design(*args):
+        return design_report
+
+    def unexpected_render(*args, **kwargs):
+        pytest.fail("A clarification must not reach the renderer")
+
+    monkeypatch.setattr(cli, "resources", lambda: (None, None, None, None, None, object()))
+    monkeypatch.setattr(cli, "design_chart", fake_design)
+    monkeypatch.setattr(cli, "render_design", unexpected_render)
+    assert cli.main(["design", str(report_path)]) == 0
+    printed = json.loads(capsys.readouterr().out)
+    assert printed["design"] is None and printed["render"] is None
+    assert printed["clarification"] == design_report.clarification.model_dump(mode="json")
+
+
+@pytest.mark.parametrize("missing", ["analysis", "result"])
+def test_design_subcommand_rejects_an_incomplete_report(report_path, monkeypatch, capsys, missing):
+    report = AnalysisReport.model_validate_json(report_path.read_bytes())
+    setattr(report, missing, None)
+    report_path.write_text(report.model_dump_json())
+
+    def unexpected_resources():
+        pytest.fail("An incomplete report must be rejected before loading application resources")
+
+    monkeypatch.setattr(cli, "resources", unexpected_resources)
+    assert cli.main(["design", str(report_path)]) == 2
+    assert "analysis and a result" in json.loads(capsys.readouterr().out)["error"]
+
+
+@pytest.mark.parametrize("error", [RendererUnavailable("install the renderer"), RenderFailed("render timed out")])
+def test_design_subcommand_reports_runtime_failure(report_path, design_report, monkeypatch, capsys, error):
+    async def fake_design(*args):
+        return design_report
+
+    def fail_render(*args, **kwargs):
+        raise error
+
+    monkeypatch.setattr(cli, "resources", lambda: (None, None, None, None, None, object()))
+    monkeypatch.setattr(cli, "design_chart", fake_design)
+    monkeypatch.setattr(cli, "render_design", fail_render)
+    assert cli.main(["design", str(report_path), "--out", "unused"]) == 1
+    assert json.loads(capsys.readouterr().out)["error"] == str(error)
 
 
 @pytest.fixture
@@ -39,7 +152,7 @@ def test_profile_subcommand_uploads_and_profiles(store, tmp_path, monkeypatch, c
         return store_arg.get_upload(dataset_id)
 
     monkeypatch.setattr(cli, "profile_dataset", fake_profile_dataset)
-    monkeypatch.setattr(cli, "resources", lambda: (None, None, store, object(), object()))
+    monkeypatch.setattr(cli, "resources", lambda: (None, None, store, object(), object(), object()))
     assert cli.main(["profile", "--upload", str(csv_path), "--brief", str(brief_path)]) == 0
     assert seen["brief"] is None
     assert store.get_upload(seen["dataset_id"]).brief == DataBrief(raw_question="Sales by region")
@@ -55,7 +168,7 @@ def test_profile_subcommand_with_existing_id(store, monkeypatch, capsys):
         return store_arg.get_upload(dataset_id)
 
     monkeypatch.setattr(cli, "profile_dataset", fake_profile_dataset)
-    monkeypatch.setattr(cli, "resources", lambda: (None, None, store, object(), object()))
+    monkeypatch.setattr(cli, "resources", lambda: (None, None, store, object(), object(), object()))
     assert cli.main(["profile", dataset.dataset_id]) == 0
     assert json.loads(capsys.readouterr().out)["dataset_id"] == dataset.dataset_id
 
@@ -74,7 +187,7 @@ def test_ask_subcommand_prints_the_report(store, tmp_path, monkeypatch, capsys):
     csv_path = tmp_path / "sales.csv"
     csv_path.write_bytes(SALES)
     monkeypatch.setattr(cli, "analyze_dataset", fake_analyze)
-    monkeypatch.setattr(cli, "resources", lambda: (None, None, store, object(), object()))
+    monkeypatch.setattr(cli, "resources", lambda: (None, None, store, object(), object(), object()))
     assert cli.main(["ask", "--upload", str(csv_path), "Total by region"]) == 0
     printed = json.loads(capsys.readouterr().out)
     assert printed["question"] == "Total by region" and printed["dataset_id"].startswith("ds_")
@@ -83,7 +196,7 @@ def test_ask_subcommand_prints_the_report(store, tmp_path, monkeypatch, capsys):
 def test_failures_subcommand_lists_failed_checks(store, monkeypatch, capsys):
     from vis_agent import cli
 
-    monkeypatch.setattr(cli, "resources", lambda: (None, None, store, object(), object()))
+    monkeypatch.setattr(cli, "resources", lambda: (None, None, store, object(), object(), object()))
     monkeypatch.setattr(store, "failed_checks", lambda: [("ds_1", "measure_is_numeric", "error", "region: role is measure but the column has no numeric statistics."),
                                                           ("ds_2", "measure_is_numeric", "error", "x: role is measure but the column has no numeric statistics.")])
     assert cli.main(["failures"]) == 0
@@ -154,7 +267,7 @@ def test_render_subcommand_refuses_failing_spec(report_path, tmp_path, monkeypat
 def test_render_subcommand_writes_files(report_path, store, tmp_path, monkeypatch, capsys, explicit_out):
     spec = tmp_path / "donut.vis"
     spec.write_text(DONUT, encoding="utf-8")
-    monkeypatch.setattr(cli, "resources", lambda: (None, None, store, None, None))
+    monkeypatch.setattr(cli, "resources", lambda: (None, None, store, None, None, None))
     args = ["render", str(spec), "--report", str(report_path), "--renderer", "gptvis"]
     if explicit_out:
         out = tmp_path / "rendered"

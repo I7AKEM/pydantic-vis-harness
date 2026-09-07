@@ -1,4 +1,4 @@
-# Phase 3: Design foundation
+# Phase 4: Chart designer agent
 
 The Phase 1 design is in docs/superpowers/specs/2026-09-06-vis-agent-design.md. It introduced the
 profiler as the model for every later agent, plus the lead skeleton, the upload path, and the store.
@@ -8,6 +8,9 @@ It adds the data analyst to answer questions about profiled datasets.
 
 The Phase 3 design is in docs/superpowers/specs/2026-09-07-phase-3-design-foundation-design.md.
 It adds deterministic chart recommendations, spec checks, and rendering without a designer model.
+
+The Phase 4 design is in docs/superpowers/specs/2026-09-07-phase-4-chart-designer-design.md.
+It adds the chart designer agent, checked delivery, rendering, and the lead's chart tool.
 
 - Use Python 3.12, uv, Pydantic AI, OpenRouter, and the built-in Web Chat UI.
 - Keep code small, explicit, and readable. Application code lives in the `vis_agent` package, one subpackage per agent; tests and evals mirror it.
@@ -25,10 +28,11 @@ It adds deterministic chart recommendations, spec checks, and rendering without 
 - Preserve the Advisor and TemporalDurability capabilities on the lead. CodeMode was removed after
   Phase 1 because no lead tool runs inside its sandbox yet; bring it back when the analyst's query tool does.
 - Do not add a planner, additional agents, Docker, a second renderer, or a generic orchestration layer.
-  Phase 3 leaves the lead and chat unchanged; chart design and rendering run through tools and terminal commands.
+  The lead gains one tool per phase; `make_chart` in Phase 4. Request types, checkpoints, and clarification round trips wait for Phase 6.
 - The analyst writes one SELECT; code parses, allow-lists, runs, and checks it. The model never sees raw rows.
 - Each agent's rulebook is `vis_agent/<agent>/rulebook.md`; every confirmed mistake becomes an eval case plus a check or a rulebook line.
 - Run the evals before every merge, including `evals/designer/run.py` (`uv run python -m evals.designer.run`).
+  Also run `uv run python -m evals.designer.agent.run` (needs `OPENROUTER_API_KEY`).
 
 Run with:
 
