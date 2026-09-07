@@ -81,7 +81,7 @@ def load(cases_path: Path, split: str) -> list[dspy.Example]:
         path = (cases_path.parent / case["report"]).resolve()
         report = AnalysisReport.model_validate_json(path.read_text(encoding="utf-8"))
         if report.analysis is None or report.result is None:
-            raise ValueError(f"{case['name']}: optimization needs a saved analysis and result.")
+            continue  # the analyst asked a question instead; the runner lists such cases, the optimizer skips them
         brief = DataBrief.model_validate(case["brief"]) if case.get("brief") else None
         examples.append(dspy.Example(
             name=case["name"], prompt=build_prompt(report, brief).model_dump_json(),
