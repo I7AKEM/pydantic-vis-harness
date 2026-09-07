@@ -1,5 +1,5 @@
 {
- "provenance": "Thirty questions written by hand over files from the profiler corpus (evals/profiler/corpus_cases and corpus_train), with reference SQL run by DuckDB to produce expected.json. Fourteen questions are in Arabic, sixteen in English; four expect a clarification.",
+ "provenance": "69 questions written by hand over files from the profiler corpus (evals/profiler/corpus_cases and corpus_train), with reference SQL run by DuckDB to produce expected.json. 33 questions are in Arabic, 36 in English; 8 expect a clarification. The first thirty were the Phase 2 exit set; thirty-nine more were added as the final check before the merge, weighted towards trends, filters, Arabic column names, and omitted columns.",
  "rules": [
   "The reference SQL returns the minimal columns the question asks for. A result that adds columns (the value beside a share, a code column beside its label, a city beside a district) still scores, because the match ignores column names and extra columns and only requires the rows to line up.",
   "Monthly buckets score whether they are written as a date (2024-01-01), a timestamp at midnight, or a year-month string (2024-01).",
@@ -7,12 +7,16 @@
   "A question with an undefined term (recent, large) expects a clarification, not a guess.",
   "A question about a column the dataset lacks (schools, salary) expects a clarification.",
   "Questions whose natural reading is ambiguous were rewritten instead of labelled: 'largest districts' became 'largest cities by total population' because district names repeat across cities.",
-  "Top-N questions were checked for ties at the boundary; none has one."
+  "Top-N questions were checked for ties at the boundary; none has one.",
+  "A top-1 question whose reference has a tie at the boundary is rewritten as a single-number question ('highest daily deaths' instead of 'the day with the most deaths')."
  ],
  "known_hazards": {
   "married_share_by_gender": "A share within each gender's own group; the shares_add_up warning fires and must not be treated as an error.",
   "deaths_by_gender": "The brief gives code meanings, so a faithful result keeps the F/M code next to its label; the expected table has the code column only.",
   "paid_share_by_year_since_2020": "The timestamp column carries a time zone; year() must be applied to it as stored.",
-  "peak_visitor_month": "year_month is text, so the month is returned as the stored string."
+  "peak_visitor_month": "year_month is text, so the month is returned as the stored string.",
+  "discounted_share_by_person_type": "A share within each person type's own group; the shares_add_up warning fires and must not be treated as an error.",
+  "rich_households_by_city": "The file has a wkt column marked omitted; the guard rejects any query that selects it or uses *.",
+  "annual_average_trend_arabic_column": "The measure column name contains spaces and Arabic text; it must be quoted exactly."
  }
 }
