@@ -1,0 +1,702 @@
+{
+ "provenance": "Thirty controller-captured AnalysisReports (26 analyst-set reports plus four coverage reports), plus the empty copy. Arabic 14, English 17 including empty_result. Rankings recomputed locally with Phase 3; no model calls.",
+ "rules": [
+  "Captured reports are unchanged; empty_result copies deaths_by_gender and changes only result.rows and result.row_count.",
+  "Controller intents and acceptable lists are the floor. Add every recommend_charts candidate within one point of the top, computed with the controller intent and no suggestion, matching the notes ranking context. ChartAccepted measures this permissive type envelope; Passed and the human rubric remain independent.",
+  "Accept bar/column swaps (including grouped and stacked variants), pie/donut swaps, and tables for single-number results. For deaths_by_gender also accept pie and donut because the brief explicitly requires the two-part whole and a passing donut fixture.",
+  "Use the brief-required line suggestion for married_share_by_gender instead of the notes pie suggestion. Keep the notes dual_axes suggestion for orders_and_average_price_by_status as a second override case.",
+  "All cases have explicit brief intents; other brief fields are null or empty except the named suggestions and brand colors.",
+  "Bindings constrain roles shared by all accepted chart types, using the top candidate binding and the requested share where unambiguous. This avoids rejecting tables or alternate time/category roles. Variable-role and table cases rely on Passed and the human roles criterion; nationality stacks may bind counts with percent true or precomputed shares.",
+  "Emphasis is null throughout: no question names a plotted category to highlight. In particular, fines_by_district stays plain as the controller requests. The evaluator has positive and negative emphasis tests.",
+  "The seven-parts fixture has seven independent annual shares, not seven parts of one whole. married_share_by_gender also has independent denominators, so pie/donut remain rejected by H14.",
+  "The relation fixture has an ordinal birth_year, not two measures; no scatter is invented. The two-unit fixture orders_and_average_price_by_status has no declared units, so dual_axes stays rejected by H10. under_15_share_by_region supplies actual person and percent units.",
+  "Single-number questions retain their supporting result columns. nationality_share_within_region is category-by-group composition, not a temporal series; deaths_by_year_and_gender supplies actual time-by-group coverage.",
+  "The literal three-point envelope admits weak alternatives (including single-row scatter, raw-value table, and word_cloud for many categories); retain them as required and let the six-criterion human judgment decide appropriateness.",
+  "Acceptable charts (2026-09-07, controller): the controller's judged list as the floor, plus every candidate within one point of the top score that is not negative, plus the orientation and pie/donut swaps. The earlier three-point envelope admitted charts a person would reject.",
+  "deaths_by_gender keeps pie and donut: a two-slice pie of counts by gender is the design's two-part-share coverage even though the compare intent ranks columns first."
+ ],
+ "cases": {
+  "actual_fine_distribution": {
+   "intent": "distribution",
+   "controller_charts": [
+    "histogram"
+   ],
+   "within_three_points": {
+    "histogram": 3,
+    "table": 0
+   },
+   "charts": [
+    "histogram",
+    "table"
+   ],
+   "bind": {},
+   "why": "Intent: distribution. raw values, 1000 rows"
+  },
+  "average_fine_by_violation_type": {
+   "intent": "compare",
+   "controller_charts": [
+    "bar",
+    "column"
+   ],
+   "within_three_points": {
+    "bar": 5,
+    "column": 2,
+    "radar": 2
+   },
+   "charts": [
+    "bar",
+    "column",
+    "radar"
+   ],
+   "bind": {
+    "category": "violation_type_description",
+    "value": "avg_actual_fine"
+   },
+   "why": "Intent: compare. long labels favour bar (S5)"
+  },
+  "citizens_by_trip_year": {
+   "intent": "trend",
+   "controller_charts": [
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "column": 1,
+    "bar": 1,
+    "table": 0,
+    "pie": -1,
+    "donut": -1,
+    "treemap": -2
+   },
+   "charts": [
+    "column",
+    "bar",
+    "table",
+    "pie",
+    "donut",
+    "treemap"
+   ],
+   "bind": {},
+   "why": "Intent: trend. two time points: line rejected by H7"
+  },
+  "deaths_by_gender": {
+   "intent": "compare",
+   "controller_charts": [
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "column": 4,
+    "bar": 4
+   },
+   "charts": [
+    "column",
+    "bar",
+    "pie",
+    "donut"
+   ],
+   "bind": {
+    "category": "gender_label",
+    "value": "total_deaths"
+   },
+   "why": "Intent: compare. code beside label: H13 keeps grouped charts out; bind gender_label Two-part share coverage from additive gender totals; bind gender_label instead of its code alias. Pie/donut are human alternatives for this whole."
+  },
+  "deaths_by_year": {
+   "intent": "trend",
+   "controller_charts": [
+    "line",
+    "area"
+   ],
+   "within_three_points": {
+    "line": 5,
+    "area": 5
+   },
+   "charts": [
+    "line",
+    "area"
+   ],
+   "bind": {
+    "time": "death_year",
+    "value": "total_deaths"
+   },
+   "why": "Intent: trend."
+  },
+  "deaths_by_year_and_gender": {
+   "intent": "trend",
+   "controller_charts": [
+    "multi_line",
+    "stacked_area",
+    "grouped_column"
+   ],
+   "within_three_points": {
+    "multi_line": 5,
+    "stacked_area": 5,
+    "line": 4,
+    "area": 4
+   },
+   "charts": [
+    "multi_line",
+    "stacked_area",
+    "grouped_column",
+    "line",
+    "area",
+    "grouped_bar"
+   ],
+   "bind": {
+    "value": "total_deaths"
+   },
+   "why": "Intent: trend. time by group"
+  },
+  "deaths_per_month": {
+   "intent": "trend",
+   "controller_charts": [
+    "line",
+    "area"
+   ],
+   "within_three_points": {
+    "line": 5,
+    "area": 5
+   },
+   "charts": [
+    "line",
+    "area"
+   ],
+   "bind": {
+    "time": "month",
+    "value": "total_deaths"
+   },
+   "why": "Intent: trend. suggested chart followed: brief suggested_chart_type \"line\""
+  },
+  "discounted_percentage": {
+   "intent": "share",
+   "controller_charts": [
+    "table"
+   ],
+   "within_three_points": {
+    "table": 0,
+    "scatter": -2
+   },
+   "charts": [
+    "table",
+    "scatter"
+   ],
+   "bind": {},
+   "why": "Intent: share. single number"
+  },
+  "female_share_by_region": {
+   "intent": "compare",
+   "controller_charts": [
+    "bar",
+    "column"
+   ],
+   "within_three_points": {
+    "bar": 5,
+    "column": 2,
+    "radar": 2
+   },
+   "charts": [
+    "bar",
+    "column",
+    "radar"
+   ],
+   "bind": {
+    "category": "region",
+    "value": "female_percentage"
+   },
+   "why": "Intent: compare. per-region shares; not one whole"
+  },
+  "fines_by_district": {
+   "intent": "compare",
+   "controller_charts": [
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "column": 4,
+    "bar": 4,
+    "radar": 2
+   },
+   "charts": [
+    "column",
+    "bar",
+    "radar"
+   ],
+   "bind": {
+    "category": "district",
+    "value": "total_actual_fine"
+   },
+   "why": "Intent: compare. ten districts; emphasis case: the question can name one district in the brief? No: keep plain"
+  },
+  "largest_cities_by_population": {
+   "intent": "rank",
+   "controller_charts": [
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "column": 4,
+    "bar": 4
+   },
+   "charts": [
+    "column",
+    "bar"
+   ],
+   "bind": {
+    "category": "city",
+    "value": "total_population"
+   },
+   "why": "Intent: rank. top five"
+  },
+  "married_share_by_gender": {
+   "intent": "share",
+   "controller_charts": [
+    "bar",
+    "column"
+   ],
+   "within_three_points": {
+    "column": 0,
+    "bar": 0,
+    "table": 0,
+    "dual_axes": -1,
+    "scatter": -2
+   },
+   "charts": [
+    "bar",
+    "column",
+    "table",
+    "dual_axes",
+    "scatter"
+   ],
+   "bind": {},
+   "why": "Intent: share. H14: each gender's own share; pie and donut rejected. Suggested chart overridden: brief suggested_chart_type \"line\" (brief takes precedence over notes) Two rows with separate denominators; suggested line overridden. Not a two-part whole."
+  },
+  "nationality_share_within_region": {
+   "intent": "composition",
+   "controller_charts": [
+    "stacked_bar",
+    "stacked_column",
+    "grouped_bar"
+   ],
+   "within_three_points": {
+    "stacked_bar": 5,
+    "stacked_column": 2
+   },
+   "charts": [
+    "stacked_bar",
+    "stacked_column",
+    "grouped_bar",
+    "grouped_column"
+   ],
+   "bind": {
+    "category": "region",
+    "group": "nationality"
+   },
+   "why": "Intent: composition. 24 rows, 4 columns; expect percent stacks or shares Group-shape coverage is category by group here; deaths_by_year_and_gender covers time by group. Counts with percent stacks and precomputed shares are both valid."
+  },
+  "non_saudi_deaths_by_age": {
+   "intent": "distribution",
+   "controller_charts": [
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "column": 1,
+    "bar": 1,
+    "line": 0,
+    "area": 0,
+    "table": 0,
+    "pie": -1,
+    "donut": -1,
+    "radar": -1,
+    "treemap": -2
+   },
+   "charts": [
+    "column",
+    "bar",
+    "line",
+    "area",
+    "table",
+    "pie",
+    "donut",
+    "radar",
+    "treemap"
+   ],
+   "bind": {},
+   "why": "Intent: distribution. ordinal age bands, no raw values"
+  },
+  "order_value_by_customer_city": {
+   "intent": "compare",
+   "controller_charts": [
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "column": 3,
+    "bar": 3,
+    "treemap": 0,
+    "table": 0
+   },
+   "charts": [
+    "column",
+    "bar",
+    "treemap",
+    "table"
+   ],
+   "bind": {},
+   "why": "Intent: compare. 13 cities"
+  },
+  "orders_and_average_price_by_status": {
+   "intent": "compare",
+   "controller_charts": [
+    "column",
+    "bar",
+    "table"
+   ],
+   "within_three_points": {
+    "column": 3,
+    "bar": 3,
+    "radar": 1,
+    "table": 0
+   },
+   "charts": [
+    "column",
+    "bar",
+    "table",
+    "radar"
+   ],
+   "bind": {},
+   "why": "Intent: compare. two measures without units: dual_axes rejected by H10 even when the brief suggests it. Suggested chart overridden: brief suggested_chart_type \"dual_axes\" Two-unit question, but captured units are missing; do not invent them. under_15_share_by_region covers declared person and percent units."
+  },
+  "orders_by_app": {
+   "intent": "compare",
+   "controller_charts": [
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "column": 4,
+    "bar": 4,
+    "radar": 2
+   },
+   "charts": [
+    "column",
+    "bar",
+    "radar"
+   ],
+   "bind": {
+    "category": "app_name",
+    "value": "order_count"
+   },
+   "why": "Intent: compare."
+  },
+  "orders_by_status": {
+   "intent": "compare",
+   "controller_charts": [
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "column": 4,
+    "bar": 4,
+    "radar": 2
+   },
+   "charts": [
+    "column",
+    "bar",
+    "radar"
+   ],
+   "bind": {
+    "category": "status",
+    "value": "order_count"
+   },
+   "why": "Intent: compare. brand colors case: brief brand_colors [\"#1F4E79\", \"#C0504D\"]"
+  },
+  "paid_share_by_year_since_2020": {
+   "intent": "trend",
+   "controller_charts": [
+    "line",
+    "area",
+    "column"
+   ],
+   "within_three_points": {
+    "line": 3,
+    "area": 3,
+    "table": 0
+   },
+   "charts": [
+    "line",
+    "area",
+    "column",
+    "table",
+    "bar"
+   ],
+   "bind": {},
+   "why": "Intent: trend. seven years; a share over time Seven-parts coverage means seven independent yearly shares, not a single whole."
+  },
+  "rich_households_by_city": {
+   "intent": "compare",
+   "controller_charts": [
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "column": 3,
+    "bar": 3,
+    "treemap": 0,
+    "table": 0
+   },
+   "charts": [
+    "column",
+    "bar",
+    "treemap",
+    "table"
+   ],
+   "bind": {},
+   "why": "Intent: compare. 16 cities"
+  },
+  "salary_vs_birth_year": {
+   "intent": "relation",
+   "controller_charts": [
+    "line",
+    "area",
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "line": 0,
+    "boxplot": 0,
+    "table": 0,
+    "histogram": -1,
+    "word_cloud": -1
+   },
+   "charts": [
+    "line",
+    "area",
+    "column",
+    "bar",
+    "boxplot",
+    "table",
+    "histogram",
+    "word_cloud"
+   ],
+   "bind": {},
+   "why": "Intent: relation. birth_year is ordinal, so scatter is impossible; 63 points"
+  },
+  "saudi_deaths_by_age": {
+   "intent": "distribution",
+   "controller_charts": [
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "column": 1,
+    "bar": 1,
+    "line": 0,
+    "area": 0,
+    "table": 0,
+    "pie": -1,
+    "donut": -1,
+    "radar": -1,
+    "treemap": -2
+   },
+   "charts": [
+    "column",
+    "bar",
+    "line",
+    "area",
+    "table",
+    "pie",
+    "donut",
+    "radar",
+    "treemap"
+   ],
+   "bind": {},
+   "why": "Intent: distribution."
+  },
+  "top_destinations_from_riyadh": {
+   "intent": "rank",
+   "controller_charts": [
+    "bar",
+    "column"
+   ],
+   "within_three_points": {
+    "bar": 5,
+    "column": 2
+   },
+   "charts": [
+    "bar",
+    "column"
+   ],
+   "bind": {
+    "category": "destination",
+    "value": "flight_count"
+   },
+   "why": "Intent: rank. long Arabic labels"
+  },
+  "top_makes_by_average_fine": {
+   "intent": "rank",
+   "controller_charts": [
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "column": 4,
+    "bar": 4
+   },
+   "charts": [
+    "column",
+    "bar"
+   ],
+   "bind": {
+    "category": "vehicle_make",
+    "value": "avg_original_fine"
+   },
+   "why": "Intent: rank. averages: pie rejected by H3"
+  },
+  "tourists_by_year": {
+   "intent": "trend",
+   "controller_charts": [
+    "line",
+    "area",
+    "column",
+    "bar"
+   ],
+   "within_three_points": {
+    "line": 3,
+    "area": 3,
+    "column": 1,
+    "bar": 1,
+    "table": 0
+   },
+   "charts": [
+    "line",
+    "area",
+    "column",
+    "bar",
+    "table"
+   ],
+   "bind": {},
+   "why": "Intent: trend. four points"
+  },
+  "under_15_share_by_region": {
+   "intent": "compare",
+   "controller_charts": [
+    "bar",
+    "column"
+   ],
+   "within_three_points": {
+    "bar": 4,
+    "dual_axes": 2,
+    "column": 1,
+    "radar": 1
+   },
+   "charts": [
+    "bar",
+    "column",
+    "dual_axes",
+    "radar"
+   ],
+   "bind": {
+    "category": "region",
+    "value": "share_under_15"
+   },
+   "why": "Intent: compare. per-region shares (H14)"
+  },
+  "unpaid_share_overall": {
+   "intent": "share",
+   "controller_charts": [
+    "table"
+   ],
+   "within_three_points": {
+    "table": 0,
+    "scatter": -3
+   },
+   "charts": [
+    "table",
+    "scatter"
+   ],
+   "bind": {},
+   "why": "Intent: share. single number with three columns"
+  },
+  "violation_type_share": {
+   "intent": "share",
+   "controller_charts": [
+    "bar",
+    "donut",
+    "pie"
+   ],
+   "within_three_points": {
+    "bar": 1,
+    "pie": 1,
+    "donut": 1,
+    "treemap": 0,
+    "table": 0,
+    "dual_axes": -1,
+    "column": -2,
+    "scatter": -2,
+    "radar": -2
+   },
+   "charts": [
+    "bar",
+    "donut",
+    "pie",
+    "treemap",
+    "table",
+    "dual_axes",
+    "column",
+    "scatter",
+    "radar"
+   ],
+   "bind": {},
+   "why": "Intent: share. five parts summing to 100; long labels"
+  },
+  "violations_by_district_many": {
+   "intent": "compare",
+   "controller_charts": [
+    "bar",
+    "column",
+    "table"
+   ],
+   "within_three_points": {
+    "table": 0,
+    "word_cloud": -1
+   },
+   "charts": [
+    "bar",
+    "column",
+    "table",
+    "word_cloud"
+   ],
+   "bind": {},
+   "why": "Intent: compare. 55 districts: bar or column need `limit` and `sort value desc`; the rulebook says so"
+  },
+  "violations_by_month": {
+   "intent": "trend",
+   "controller_charts": [
+    "line",
+    "area"
+   ],
+   "within_three_points": {
+    "line": 5,
+    "area": 5
+   },
+   "charts": [
+    "line",
+    "area"
+   ],
+   "bind": {
+    "time": "الشهر",
+    "value": "عدد المخالفات"
+   },
+   "why": "Intent: trend. one point"
+  },
+  "empty_result": {
+   "intent": "compare",
+   "controller_charts": [],
+   "within_three_points": {},
+   "charts": [],
+   "bind": {},
+   "why": "Intent: compare. copy of deaths_by_gender with rows emptied Empty result expects clarification before any model request."
+  }
+ }
+}

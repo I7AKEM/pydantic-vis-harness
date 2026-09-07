@@ -1,0 +1,631 @@
+[
+ {
+  "name": "actual_fine_distribution",
+  "report": "reports/actual_fine_distribution.json",
+  "brief": {
+   "intent": "distribution",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "histogram"
+  ],
+  "language": "en",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: distribution. raw values, 1000 rows"
+ },
+ {
+  "name": "average_fine_by_violation_type",
+  "report": "reports/average_fine_by_violation_type.json",
+  "brief": {
+   "intent": "compare",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "bar",
+   "column"
+  ],
+  "language": "en",
+  "bind": {
+   "category": "violation_type_description",
+   "value": "avg_actual_fine"
+  },
+  "emphasis": null,
+  "why": "Intent: compare. long labels favour bar (S5)"
+ },
+ {
+  "name": "citizens_by_trip_year",
+  "report": "reports/citizens_by_trip_year.json",
+  "brief": {
+   "intent": "trend",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "column",
+   "bar",
+   "table"
+  ],
+  "language": "en",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: trend. two time points: line rejected by H7"
+ },
+ {
+  "name": "deaths_by_gender",
+  "report": "reports/deaths_by_gender.json",
+  "brief": {
+   "intent": "compare",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "column",
+   "bar",
+   "pie",
+   "donut"
+  ],
+  "language": "en",
+  "bind": {
+   "category": "gender_label",
+   "value": "total_deaths"
+  },
+  "emphasis": null,
+  "why": "Intent: compare. code beside label: H13 keeps grouped charts out; bind gender_label Two-part share coverage from additive gender totals; bind gender_label instead of its code alias. Pie/donut are human alternatives for this whole."
+ },
+ {
+  "name": "deaths_by_year",
+  "report": "reports/deaths_by_year.json",
+  "brief": {
+   "intent": "trend",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "line",
+   "area"
+  ],
+  "language": "ar",
+  "bind": {
+   "time": "death_year",
+   "value": "total_deaths"
+  },
+  "emphasis": null,
+  "why": "Intent: trend."
+ },
+ {
+  "name": "deaths_by_year_and_gender",
+  "report": "reports/deaths_by_year_and_gender.json",
+  "brief": {
+   "intent": "trend",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "multi_line",
+   "stacked_area",
+   "grouped_column",
+   "line",
+   "area",
+   "grouped_bar"
+  ],
+  "language": "ar",
+  "bind": {
+   "value": "total_deaths"
+  },
+  "emphasis": null,
+  "why": "Intent: trend. time by group"
+ },
+ {
+  "name": "deaths_per_month",
+  "report": "reports/deaths_per_month.json",
+  "brief": {
+   "intent": "trend",
+   "suggested_chart_type": "line",
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "line",
+   "area"
+  ],
+  "language": "en",
+  "bind": {
+   "time": "month",
+   "value": "total_deaths"
+  },
+  "emphasis": null,
+  "why": "Intent: trend. suggested chart followed: brief suggested_chart_type \"line\""
+ },
+ {
+  "name": "discounted_percentage",
+  "report": "reports/discounted_percentage.json",
+  "brief": {
+   "intent": "share",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "table"
+  ],
+  "language": "en",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: share. single number"
+ },
+ {
+  "name": "female_share_by_region",
+  "report": "reports/female_share_by_region.json",
+  "brief": {
+   "intent": "compare",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "bar",
+   "column"
+  ],
+  "language": "en",
+  "bind": {
+   "category": "region",
+   "value": "female_percentage"
+  },
+  "emphasis": null,
+  "why": "Intent: compare. per-region shares; not one whole"
+ },
+ {
+  "name": "fines_by_district",
+  "report": "reports/fines_by_district.json",
+  "brief": {
+   "intent": "compare",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "column",
+   "bar"
+  ],
+  "language": "en",
+  "bind": {
+   "category": "district",
+   "value": "total_actual_fine"
+  },
+  "emphasis": null,
+  "why": "Intent: compare. ten districts; emphasis case: the question can name one district in the brief? No: keep plain"
+ },
+ {
+  "name": "largest_cities_by_population",
+  "report": "reports/largest_cities_by_population.json",
+  "brief": {
+   "intent": "rank",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "column",
+   "bar"
+  ],
+  "language": "ar",
+  "bind": {
+   "category": "city",
+   "value": "total_population"
+  },
+  "emphasis": null,
+  "why": "Intent: rank. top five"
+ },
+ {
+  "name": "married_share_by_gender",
+  "report": "reports/married_share_by_gender.json",
+  "brief": {
+   "intent": "share",
+   "suggested_chart_type": "line",
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "bar",
+   "column",
+   "table"
+  ],
+  "language": "en",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: share. H14: each gender's own share; pie and donut rejected. Suggested chart overridden: brief suggested_chart_type \"line\" (brief takes precedence over notes) Two rows with separate denominators; suggested line overridden. Not a two-part whole."
+ },
+ {
+  "name": "nationality_share_within_region",
+  "report": "reports/nationality_share_within_region.json",
+  "brief": {
+   "intent": "composition",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "stacked_bar",
+   "stacked_column",
+   "grouped_bar",
+   "grouped_column"
+  ],
+  "language": "ar",
+  "bind": {
+   "category": "region",
+   "group": "nationality"
+  },
+  "emphasis": null,
+  "why": "Intent: composition. 24 rows, 4 columns; expect percent stacks or shares Group-shape coverage is category by group here; deaths_by_year_and_gender covers time by group. Counts with percent stacks and precomputed shares are both valid."
+ },
+ {
+  "name": "non_saudi_deaths_by_age",
+  "report": "reports/non_saudi_deaths_by_age.json",
+  "brief": {
+   "intent": "distribution",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "column",
+   "bar",
+   "line",
+   "area",
+   "table"
+  ],
+  "language": "en",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: distribution. ordinal age bands, no raw values"
+ },
+ {
+  "name": "order_value_by_customer_city",
+  "report": "reports/order_value_by_customer_city.json",
+  "brief": {
+   "intent": "compare",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "column",
+   "bar"
+  ],
+  "language": "ar",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: compare. 13 cities"
+ },
+ {
+  "name": "orders_and_average_price_by_status",
+  "report": "reports/orders_and_average_price_by_status.json",
+  "brief": {
+   "intent": "compare",
+   "suggested_chart_type": "dual_axes",
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "column",
+   "bar",
+   "table"
+  ],
+  "language": "en",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: compare. two measures without units: dual_axes rejected by H10 even when the brief suggests it. Suggested chart overridden: brief suggested_chart_type \"dual_axes\" Two-unit question, but captured units are missing; do not invent them. under_15_share_by_region covers declared person and percent units."
+ },
+ {
+  "name": "orders_by_app",
+  "report": "reports/orders_by_app.json",
+  "brief": {
+   "intent": "compare",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "column",
+   "bar"
+  ],
+  "language": "ar",
+  "bind": {
+   "category": "app_name",
+   "value": "order_count"
+  },
+  "emphasis": null,
+  "why": "Intent: compare."
+ },
+ {
+  "name": "orders_by_status",
+  "report": "reports/orders_by_status.json",
+  "brief": {
+   "intent": "compare",
+   "suggested_chart_type": null,
+   "brand_colors": [
+    "#1F4E79",
+    "#C0504D"
+   ]
+  },
+  "expect": "design",
+  "charts": [
+   "column",
+   "bar"
+  ],
+  "language": "en",
+  "bind": {
+   "category": "status",
+   "value": "order_count"
+  },
+  "emphasis": null,
+  "why": "Intent: compare. brand colors case: brief brand_colors [\"#1F4E79\", \"#C0504D\"]"
+ },
+ {
+  "name": "paid_share_by_year_since_2020",
+  "report": "reports/paid_share_by_year_since_2020.json",
+  "brief": {
+   "intent": "trend",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "line",
+   "area",
+   "column",
+   "bar"
+  ],
+  "language": "en",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: trend. seven years; a share over time Seven-parts coverage means seven independent yearly shares, not a single whole."
+ },
+ {
+  "name": "rich_households_by_city",
+  "report": "reports/rich_households_by_city.json",
+  "brief": {
+   "intent": "compare",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "column",
+   "bar"
+  ],
+  "language": "ar",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: compare. 16 cities"
+ },
+ {
+  "name": "salary_vs_birth_year",
+  "report": "reports/salary_vs_birth_year.json",
+  "brief": {
+   "intent": "relation",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "line",
+   "area",
+   "column",
+   "bar",
+   "boxplot",
+   "table"
+  ],
+  "language": "en",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: relation. birth_year is ordinal, so scatter is impossible; 63 points"
+ },
+ {
+  "name": "saudi_deaths_by_age",
+  "report": "reports/saudi_deaths_by_age.json",
+  "brief": {
+   "intent": "distribution",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "column",
+   "bar",
+   "line",
+   "area",
+   "table"
+  ],
+  "language": "ar",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: distribution."
+ },
+ {
+  "name": "top_destinations_from_riyadh",
+  "report": "reports/top_destinations_from_riyadh.json",
+  "brief": {
+   "intent": "rank",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "bar",
+   "column"
+  ],
+  "language": "ar",
+  "bind": {
+   "category": "destination",
+   "value": "flight_count"
+  },
+  "emphasis": null,
+  "why": "Intent: rank. long Arabic labels"
+ },
+ {
+  "name": "top_makes_by_average_fine",
+  "report": "reports/top_makes_by_average_fine.json",
+  "brief": {
+   "intent": "rank",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "column",
+   "bar"
+  ],
+  "language": "en",
+  "bind": {
+   "category": "vehicle_make",
+   "value": "avg_original_fine"
+  },
+  "emphasis": null,
+  "why": "Intent: rank. averages: pie rejected by H3"
+ },
+ {
+  "name": "tourists_by_year",
+  "report": "reports/tourists_by_year.json",
+  "brief": {
+   "intent": "trend",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "line",
+   "area",
+   "column",
+   "bar"
+  ],
+  "language": "ar",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: trend. four points"
+ },
+ {
+  "name": "under_15_share_by_region",
+  "report": "reports/under_15_share_by_region.json",
+  "brief": {
+   "intent": "compare",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "bar",
+   "column"
+  ],
+  "language": "en",
+  "bind": {
+   "category": "region",
+   "value": "share_under_15"
+  },
+  "emphasis": null,
+  "why": "Intent: compare. per-region shares (H14)"
+ },
+ {
+  "name": "unpaid_share_overall",
+  "report": "reports/unpaid_share_overall.json",
+  "brief": {
+   "intent": "share",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "table"
+  ],
+  "language": "ar",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: share. single number with three columns"
+ },
+ {
+  "name": "violation_type_share",
+  "report": "reports/violation_type_share.json",
+  "brief": {
+   "intent": "share",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "bar",
+   "donut",
+   "pie",
+   "treemap",
+   "table",
+   "column"
+  ],
+  "language": "ar",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: share. five parts summing to 100; long labels"
+ },
+ {
+  "name": "violations_by_district_many",
+  "report": "reports/violations_by_district_many.json",
+  "brief": {
+   "intent": "compare",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "bar",
+   "column",
+   "table"
+  ],
+  "language": "ar",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: compare. 55 districts: bar or column need `limit` and `sort value desc`; the rulebook says so"
+ },
+ {
+  "name": "violations_by_month",
+  "report": "reports/violations_by_month.json",
+  "brief": {
+   "intent": "trend",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "line",
+   "area"
+  ],
+  "language": "ar",
+  "bind": {
+   "time": "الشهر",
+   "value": "عدد المخالفات"
+  },
+  "emphasis": null,
+  "why": "Intent: trend. three points"
+ },
+ {
+  "name": "empty_result",
+  "report": "reports/empty_result.json",
+  "brief": {
+   "intent": "compare",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "clarification",
+  "charts": [],
+  "language": "en",
+  "bind": {},
+  "emphasis": null,
+  "why": "Intent: compare. copy of deaths_by_gender with rows emptied Empty result expects clarification before any model request."
+ }
+]

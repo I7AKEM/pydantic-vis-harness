@@ -1,0 +1,11 @@
+{
+  "rubric": {
+    "type": "The chart type fits the intent and the shape of the result.",
+    "roles": "The right columns hold the right roles.",
+    "title": "The title says what is shown, in the caller's language, and is true.",
+    "units": "Units and number formats are right.",
+    "honest": "Nothing misleads: zero baseline, sort, readable labels, emphasis on what was asked.",
+    "explanation": "The explanation is honest and in the caller's language."
+  },
+  "judgments": {}
+}

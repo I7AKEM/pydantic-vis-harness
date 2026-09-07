@@ -11,3 +11,4 @@ data/
 .superpowers/
 node_modules/
 tests/render/images/*.png
+evals/designer/agent/renders/
