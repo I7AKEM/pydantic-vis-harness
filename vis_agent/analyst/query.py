@@ -32,7 +32,11 @@ def _nodes(tree):
 
 
 def validate_sql(connection, sql: str, table: str, omitted=frozenset()) -> None:
-    """Raise QueryRejected unless sql is one SELECT whose tables are the dataset's table or its own CTEs."""
+    """Raise QueryRejected unless sql is one SELECT whose tables are the dataset's table or its own CTEs.
+
+    Scalar expressions, including translate, replace, substr/substring, regexp_extract, CASE and CAST,
+    are allowed; the guard restricts table access, not date bucketing or digit normalization.
+    """
     try:
         statements = connection.extract_statements(sql)
     except duckdb.Error as exc:

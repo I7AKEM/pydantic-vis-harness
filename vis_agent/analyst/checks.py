@@ -135,6 +135,8 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
 
             if column.kind == "time":
                 present = [v for v in values if v is not None]
+                # Fixed-width YYYY and YYYY-MM text sorts chronologically, including Hijri 13xx/14xx.
+                # Keep these buckets as text instead of interpreting them as Gregorian dates.
                 if present != sorted(present, key=lambda v: (isinstance(v, str), v)):
                     checks.append(_check(column.name, "time_in_order", "warning", False,
                                          f"{column.name}: time is not in chronological order."))

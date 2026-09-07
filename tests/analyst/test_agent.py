@@ -1,14 +1,15 @@
 # tests/analyst/test_agent.py
 import asyncio
+import json
 
 import pytest
 from pydantic_ai import capture_run_messages
-from pydantic_ai.messages import ModelResponse, RetryPromptPart, TextPart, ToolCallPart, ToolReturnPart
+from pydantic_ai.messages import ModelResponse, RetryPromptPart, TextPart, ToolCallPart, ToolReturnPart, UserPromptPart
 from pydantic_ai.models.function import FunctionModel
 from pydantic_ai.models.test import TestModel
 from pydantic_ai.usage import RunUsage
 
-from vis_agent.analyst.agent import MAX_QUERY_CALLS, analyze_dataset, build_prompt, create_analyst, detect_language
+from vis_agent.analyst.agent import AnalystDeps, ColumnFacts, MAX_QUERY_CALLS, analyze_dataset, build_prompt, create_analyst, detect_language
 from vis_agent.analyst.models import Analysis, Clarification
 from vis_agent.models import DataBrief
 from vis_agent.profiler.agent import create_profiler, profile_dataset
@@ -213,3 +214,45 @@ def test_unprofiled_dataset_is_profiled_first(store, agents):
             report = run(store, profiler, analyst, source.dataset_id, "Total?")
     assert store.get_profile(source.dataset_id).status == "complete"
     assert report.result.rows == [[3]]
+
+
+def test_measurement_levels_default_to_empty():
+    facts = ColumnFacts(name="value", physical_type="VARCHAR", null_percentage=0, distinct_count=1)
+    assert facts.measurement_levels == []
+
+
+def test_hijri_prompt_and_monthly_delivery(store, hijri, agents):
+    dataset, profile = hijri
+    _profiler, analyst = agents
+    prompt = build_prompt(store, profile, "Total amount by Hijri month", "English")
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+    sql = ("SELECT substr(translate(day, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 7) AS month, "
+           "sum(CAST(replace(translate(amount, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') AS DOUBLE)) AS total "
+           f'FROM "{dataset}" GROUP BY 1 ORDER BY 1')
+    columns = [
+        {"name": "month", "meaning": "Hijri month", "kind": "time", "unit": None, "source": "day"},
+        {"name": "total", "meaning": "Total amount", "kind": "measure", "source": "amount", "aggregate": "sum"},
+    ]
+
+    def drive(messages, info):
+        calls = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
+        if not calls:
+            user_prompt = next(p.content for m in messages for p in m.parts if isinstance(p, UserPromptPart))
+            facts = {c["name"]: c for c in json.loads(user_prompt)["columns"]}
+            assert facts["day"]["physical_type"] == "VARCHAR"
+            assert facts["day"]["measurement_levels"] == ["hijri"]
+            assert facts["named_day"]["measurement_levels"] == ["hijri"]
+            assert facts["amount"]["measurement_levels"] == ["arabic_digits"]
+            return tool_call("run_query", sql=sql, columns=columns)
+        returned = last_return(messages).model_response_object()
+        assert returned["rows"] == [["1399-12", 1234.5], ["1400-01", 25.5], ["1447-03", 30.0], ["1447-04", -5.0]]
+        assert all(check["passed"] for check in returned["checks"])
+        return tool_call("deliver_analysis", summary="Amounts are grouped by Hijri month. The buckets are chronological.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        result = asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
+    assert isinstance(result.output, Analysis)
+    assert result.output.sql == sql
+    assert result.output.columns[0].kind == "time" and result.output.columns[0].unit is None
+    assert deps.query_calls == 1 and deps.passed is not None
+    assert all(check.passed for check in deps.passed.result.checks)
