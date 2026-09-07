@@ -1,41 +1,41 @@
 {
-  "dataset_id": "ds_49255920dc684881ad005c304b2576c4",
+  "dataset_id": "ds_bafbaeb7ab344001a30ce12087521ea1",
   "question": "اعرض متوسط «paid_violations» حسب السنوات الهجرية باستخدام «violation_date».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT substr(translate(violation_date, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 4) AS hijri_year, AVG(paid_violations) AS avg_paid FROM \"ds_49255920dc684881ad005c304b2576c4\" GROUP BY hijri_year ORDER BY hijri_year",
+    "sql": "SELECT substr(translate(violation_date, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 4) AS \"السنة الهجرية\", AVG(paid_violations) AS \"متوسط المخالفات المسددة\" FROM \"ds_bafbaeb7ab344001a30ce12087521ea1\" GROUP BY 1 ORDER BY 1",
     "columns": [
       {
-        "name": "hijri_year",
+        "name": "السنة الهجرية",
         "meaning": "السنة الهجرية",
         "kind": "time",
         "unit": null,
-        "source": "violation_date",
+        "source": null,
         "aggregate": "none",
-        "denominator": null
+        "denominator": "null"
       },
       {
-        "name": "avg_paid",
+        "name": "متوسط المخالفات المسددة",
         "meaning": "متوسط المخالفات المسددة",
         "kind": "measure",
         "unit": "count",
-        "source": "paid_violations",
+        "source": null,
         "aggregate": "avg",
-        "denominator": null
+        "denominator": "null"
       }
     ],
     "summary": "يتراوح متوسط المخالفات المسددة سنوياً من 1.22 في عام 1383 هـ ليصل إلى ذروته عند 108.74 في عام 1444 هـ، ثم ينخفض إلى 16.47 في عام 1447 هـ.",
     "assumptions": [
-      "تم استخراج السنة الهجرية من أول 4 خانات في تاريخ المخالفة بعد تحويل الأرقام العربية إلى إنجليزية."
+      "تم استخراج السنة الهجرية من أول 4 خانات في عمود تاريخ المخالفة بعد تحويل الأرقام العربية إلى أرقام إنجليزية."
     ]
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT substr(translate(violation_date, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 4) AS hijri_year, AVG(paid_violations) AS avg_paid FROM \"ds_49255920dc684881ad005c304b2576c4\" GROUP BY hijri_year ORDER BY hijri_year",
+    "sql": "SELECT substr(translate(violation_date, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 4) AS \"السنة الهجرية\", AVG(paid_violations) AS \"متوسط المخالفات المسددة\" FROM \"ds_bafbaeb7ab344001a30ce12087521ea1\" GROUP BY 1 ORDER BY 1",
     "columns": [
-      "hijri_year",
-      "avg_paid"
+      "السنة الهجرية",
+      "متوسط المخالفات المسددة"
     ],
     "types": [
       "VARCHAR",
@@ -305,7 +305,7 @@
     ],
     "row_count": 65,
     "checks": [],
-    "seconds": 0.032778250009869225
+    "seconds": 0.018341165996389464
   },
   "checks": [
     {
@@ -318,6 +318,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 2.55908645800082,
-  "created_at": "2026-09-07T20:00:23.813875Z"
+  "seconds": 6.953361209001741,
+  "created_at": "2026-09-07T20:44:06.179716Z"
 }

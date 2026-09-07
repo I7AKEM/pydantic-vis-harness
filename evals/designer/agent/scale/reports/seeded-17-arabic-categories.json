@@ -1,41 +1,41 @@
 {
-  "dataset_id": "ds_ab6d6b0e39d24340a87b4628e418bcbb",
+  "dataset_id": "ds_2ad048ac27af41a9837e2edacb888b1b",
   "question": "اعرض قيم «count» حسب «city».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT city, sum(count) AS total_count FROM \"ds_ab6d6b0e39d24340a87b4628e418bcbb\" GROUP BY city",
+    "sql": "SELECT city, sum(count) as \"إجمالي العدد\" FROM \"ds_2ad048ac27af41a9837e2edacb888b1b\" GROUP BY city",
     "columns": [
       {
         "name": "city",
-        "meaning": "المدينة",
-        "kind": "geography",
+        "meaning": "اسم المدينة",
+        "kind": "category",
         "unit": null,
         "source": "city",
         "aggregate": "none",
-        "denominator": null
+        "denominator": "null"
       },
       {
-        "name": "total_count",
+        "name": "إجمالي العدد",
         "meaning": "إجمالي العدد",
         "kind": "measure",
         "unit": null,
         "source": "count",
         "aggregate": "sum",
-        "denominator": null
+        "denominator": "null"
       }
     ],
-    "summary": "تتفاوت قيم العدد حسب المدينة، حيث سجلت نجران أعلى قيمة بإجمالي 701، بينما سجلت الدرعية أقل قيمة بإجمالي 218.",
+    "summary": "تم عرض إجمالي قيم «count» لكل مدينة، حيث سجلت مدينة نجران أعلى قيمة بإجمالي 701، بينما سجلت الدرعية أقل قيمة بإجمالي 218.",
     "assumptions": [
-      "تم حساب إجمالي قيم count لكل مدينة."
+      "تم تجميع البيانات باستخدام مجموع (sum) لقيم count لكل مدينة."
     ]
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT city, sum(count) AS total_count FROM \"ds_ab6d6b0e39d24340a87b4628e418bcbb\" GROUP BY city",
+    "sql": "SELECT city, sum(count) as \"إجمالي العدد\" FROM \"ds_2ad048ac27af41a9837e2edacb888b1b\" GROUP BY city",
     "columns": [
       "city",
-      "total_count"
+      "إجمالي العدد"
     ],
     "types": [
       "VARCHAR",
@@ -113,7 +113,7 @@
     ],
     "row_count": 17,
     "checks": [],
-    "seconds": 0.017462042000261135
+    "seconds": 0.015925500003504567
   },
   "checks": [
     {
@@ -126,6 +126,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 92.81056062500284,
-  "created_at": "2026-09-07T20:02:20.565993Z"
+  "seconds": 5.505804790998809,
+  "created_at": "2026-09-07T20:44:19.492194Z"
 }

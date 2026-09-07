@@ -1,10 +1,10 @@
 {
-  "dataset_id": "ds_1c92eaa973cc4e94a9d2fa75e4e708c2",
+  "dataset_id": "ds_ed39c931986f4e81a42bbc9aeb677cee",
   "question": "اعرض قيم «avg_days_to_graduate» حسب «university_name».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT university_name, CAST(replace(translate(avg_days_to_graduate, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') AS DOUBLE) AS avg_days_to_graduate FROM \"ds_1c92eaa973cc4e94a9d2fa75e4e708c2\"",
+    "sql": "SELECT university_name, CAST(replace(translate(avg_days_to_graduate, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') AS DOUBLE) AS avg_days_to_graduate FROM \"ds_ed39c931986f4e81a42bbc9aeb677cee\"",
     "columns": [
       {
         "name": "university_name",
@@ -17,20 +17,22 @@
       },
       {
         "name": "avg_days_to_graduate",
-        "meaning": "متوسط عدد أيام التخرج",
+        "meaning": "متوسط عدد الأيام حتى التخرج",
         "kind": "measure",
-        "unit": "days",
+        "unit": "يوم",
         "source": "avg_days_to_graduate",
         "aggregate": "none",
         "denominator": null
       }
     ],
-    "summary": "تتراوح قيم متوسط عدد أيام التخرج بين 1387.0 يوماً لمعظم الجامعات و 1389.0 يوماً لجامعة الفيصل.",
-    "assumptions": []
+    "summary": "تظهر البيانات متوسط عدد الأيام حتى التخرج لكل جامعة، حيث سجلت جامعة الفيصل 1389 يوماً، بينما سجلت الجامعات الأخرى (أم القرى، الإمام محمد بن سعود الإسلامية، الملك عبدالعزيز، والملك سعود) 1387 يوماً.",
+    "assumptions": [
+      "تم تحويل الأرقام المكتوبة بالخط العربي-الهندي إلى أرقام عشرية."
+    ]
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT university_name, CAST(replace(translate(avg_days_to_graduate, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') AS DOUBLE) AS avg_days_to_graduate FROM \"ds_1c92eaa973cc4e94a9d2fa75e4e708c2\"",
+    "sql": "SELECT university_name, CAST(replace(translate(avg_days_to_graduate, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') AS DOUBLE) AS avg_days_to_graduate FROM \"ds_ed39c931986f4e81a42bbc9aeb677cee\"",
     "columns": [
       "university_name",
       "avg_days_to_graduate"
@@ -63,7 +65,7 @@
     ],
     "row_count": 5,
     "checks": [],
-    "seconds": 0.01796929100237321
+    "seconds": 0.013652541994815692
   },
   "checks": [
     {
@@ -76,6 +78,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 3.465863166988129,
-  "created_at": "2026-09-07T20:00:37.039940Z"
+  "seconds": 5.616795833004289,
+  "created_at": "2026-09-07T20:44:12.709904Z"
 }

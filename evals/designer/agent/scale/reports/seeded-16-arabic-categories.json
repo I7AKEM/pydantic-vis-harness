@@ -1,10 +1,10 @@
 {
-  "dataset_id": "ds_c589386d951d480aa924f70a839b2618",
+  "dataset_id": "ds_9d128574b4124635b1f5a2bd42f80d5f",
   "question": "اعرض قيم «avg_days_to_graduate» حسب «university_name».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT university_name, avg_days_to_graduate FROM \"ds_c589386d951d480aa924f70a839b2618\"",
+    "sql": "SELECT university_name, avg_days_to_graduate FROM \"ds_9d128574b4124635b1f5a2bd42f80d5f\"",
     "columns": [
       {
         "name": "university_name",
@@ -25,14 +25,12 @@
         "denominator": null
       }
     ],
-    "summary": "تظهر البيانات متوسط عدد الأيام حتى التخرج لكل جامعة، حيث سجلت جامعة الفيصل أعلى قيمة بـ 1389 يوماً، بينما سجلت بقية الجامعات 1387 يوماً.",
-    "assumptions": [
-      "لا توجد"
-    ]
+    "summary": "تتراوح قيم متوسط عدد الأيام حتى التخرج بين 1387 يوماً لمعظم الجامعات و1389 يوماً لجامعة الفيصل.",
+    "assumptions": []
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT university_name, avg_days_to_graduate FROM \"ds_c589386d951d480aa924f70a839b2618\"",
+    "sql": "SELECT university_name, avg_days_to_graduate FROM \"ds_9d128574b4124635b1f5a2bd42f80d5f\"",
     "columns": [
       "university_name",
       "avg_days_to_graduate"
@@ -65,7 +63,7 @@
     ],
     "row_count": 5,
     "checks": [],
-    "seconds": 0.012633541991817765
+    "seconds": 0.00788783399912063
   },
   "checks": [
     {
@@ -78,6 +76,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 3.995212124995305,
-  "created_at": "2026-09-07T20:00:47.730480Z"
+  "seconds": 3.574448333005421,
+  "created_at": "2026-09-07T20:44:17.124735Z"
 }

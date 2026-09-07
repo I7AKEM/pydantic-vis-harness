@@ -1,10 +1,10 @@
 {
-  "dataset_id": "ds_74ba55f1ae454a398577f31e7ad176e2",
+  "dataset_id": "ds_5cfeee609ca24e25ab91d2bef0c86de3",
   "question": "اعرض قيم «count» حسب «age_group».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT age_group, CAST(replace(translate(count, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') AS DOUBLE) AS count_val FROM \"ds_74ba55f1ae454a398577f31e7ad176e2\"",
+    "sql": "SELECT age_group, CAST(replace(translate(count, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') AS DOUBLE) AS \"العدد\" FROM \"ds_5cfeee609ca24e25ab91d2bef0c86de3\"",
     "columns": [
       {
         "name": "age_group",
@@ -13,27 +13,29 @@
         "unit": null,
         "source": "age_group",
         "aggregate": "none",
-        "denominator": null
+        "denominator": "null"
       },
       {
-        "name": "count_val",
-        "meaning": "العدد",
+        "name": "العدد",
+        "meaning": "عدد الأفراد",
         "kind": "measure",
-        "unit": "count",
+        "unit": null,
         "source": "count",
         "aggregate": "none",
-        "denominator": null
+        "denominator": "null"
       }
     ],
-    "summary": "تتراوح قيم العدد حسب الفئة العمرية بين 8642 للفئة 55-64 و 12893 للفئة غير المحددة. سجلت الفئة العمرية 65+ عدداً قدره 12548.",
-    "assumptions": []
+    "summary": "توضح البيانات عدد الأفراد حسب الفئة العمرية، حيث سجلت فئة «غير محدد» أعلى عدد بـ 12,893 شخصاً، تليها فئة «+65» بـ 12,548 شخصاً.",
+    "assumptions": [
+      "تم تحويل الأرقام المكتوبة بالخط العربي-الهندي إلى أرقام عربية قياسية لإجراء العرض."
+    ]
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT age_group, CAST(replace(translate(count, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') AS DOUBLE) AS count_val FROM \"ds_74ba55f1ae454a398577f31e7ad176e2\"",
+    "sql": "SELECT age_group, CAST(replace(translate(count, '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,'), ',', '') AS DOUBLE) AS \"العدد\" FROM \"ds_5cfeee609ca24e25ab91d2bef0c86de3\"",
     "columns": [
       "age_group",
-      "count_val"
+      "العدد"
     ],
     "types": [
       "VARCHAR",
@@ -71,7 +73,7 @@
     ],
     "row_count": 7,
     "checks": [],
-    "seconds": 0.015969750005751848
+    "seconds": 0.013867750007193536
   },
   "checks": [
     {
@@ -84,6 +86,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 3.79729854199104,
-  "created_at": "2026-09-07T20:00:33.555662Z"
+  "seconds": 4.170043917009025,
+  "created_at": "2026-09-07T20:44:11.118615Z"
 }

@@ -1,10 +1,10 @@
 {
-  "dataset_id": "ds_0f7bd05a2dc54ec2a9ef1205d0806335",
+  "dataset_id": "ds_bb7661282de443858df36b07ed277034",
   "question": "اعرض قيم «actual_fine» حسب «violation_type_description».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT violation_type_description, actual_fine FROM \"ds_0f7bd05a2dc54ec2a9ef1205d0806335\"",
+    "sql": "SELECT violation_type_description, SUM(actual_fine) AS total_fine FROM \"ds_bb7661282de443858df36b07ed277034\" GROUP BY violation_type_description",
     "columns": [
       {
         "name": "violation_type_description",
@@ -16,28 +16,28 @@
         "denominator": null
       },
       {
-        "name": "actual_fine",
-        "meaning": "قيمة الغرامة الفعلية",
+        "name": "total_fine",
+        "meaning": "إجمالي قيمة الغرامة الفعلية",
         "kind": "measure",
-        "unit": null,
+        "unit": "Currency",
         "source": "actual_fine",
-        "aggregate": "none",
-        "denominator": "null"
+        "aggregate": "sum",
+        "denominator": null
       }
     ],
-    "summary": "تتراوح قيم الغرامات الفعلية حسب نوع المخالفة بين 100 و 1200، حيث سجلت مخالفة دخول أو خروج الشاحنات في أوقات المنع أعلى قيمة بغرامة 1200.",
+    "summary": "تتفاوت قيم الغرامات حسب نوع المخالفة، حيث سجلت مخالفة دخول أو خروج الشاحنات في أوقات المنع أعلى قيمة بمبلغ 1200، بينما سجلت مخالفة وقوف المركبة في أماكن غير مخصصة أقل قيمة بمبلغ 100.",
     "assumptions": []
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT violation_type_description, actual_fine FROM \"ds_0f7bd05a2dc54ec2a9ef1205d0806335\"",
+    "sql": "SELECT violation_type_description, SUM(actual_fine) AS total_fine FROM \"ds_bb7661282de443858df36b07ed277034\" GROUP BY violation_type_description",
     "columns": [
       "violation_type_description",
-      "actual_fine"
+      "total_fine"
     ],
     "types": [
       "VARCHAR",
-      "BIGINT"
+      "HUGEINT"
     ],
     "rows": [
       [
@@ -63,7 +63,7 @@
     ],
     "row_count": 5,
     "checks": [],
-    "seconds": 0.012743583996780217
+    "seconds": 0.010456457996042445
   },
   "checks": [
     {
@@ -76,6 +76,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 5.894406374995015,
-  "created_at": "2026-09-07T20:00:53.923631Z"
+  "seconds": 3.3657311249990016,
+  "created_at": "2026-09-07T20:44:19.013440Z"
 }

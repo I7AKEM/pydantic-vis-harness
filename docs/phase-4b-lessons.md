@@ -161,38 +161,42 @@ One round, scoped by the table above, in pipeline order.
   1600, so Hijri labels stay whole and in the analyst's order, with one rulebook line on binding Hijri
   buckets to time.
 
-The seeded cases after the round, recaptured with the same models and designed again:
+The seeded cases after the round, recaptured with the same models under the per-run rules and designed
+again:
 
 | Case | Seed kind | First stage that broke, or the design | Detail |
 |---|---|---|---|
-| seeded-01-hijri-date | hijri_date | designer: line | bind {'value': 'avg_paid', 'time': 'month_bucket'}, sort none |
-| seeded-02-hijri-date | hijri_date | designer: column with no time role | bind {'category': 'السنة', 'value': 'متوسط الوفيات'} |
-| seeded-03-hijri-date | hijri_date | analyst: Hijri column typed ordinal | 08, 09, 10 |
-| seeded-04-hijri-date | hijri_date | designer: column with no time role | bind {'category': 'hijri_year', 'value': 'avg_death_count'} |
+| seeded-01-hijri-date | hijri_date | designer: line | bind {'value': 'متوسط المخالفات المسددة', 'time': 'الشهر الهجري'}, sort none |
+| seeded-02-hijri-date | hijri_date | designer: column with no time role | bind {'category': 'السنة الهجرية', 'value': 'متوسط الوفيات'} |
+| seeded-03-hijri-date | hijri_date | analyst: month and year in two columns, not one bucket | month_num, year, متوسط المخالفات المسددة |
+| seeded-04-hijri-date | hijri_date | designer: column with no time role | bind {'category': 'السنة الهجرية', 'value': 'متوسط عدد الوفيات'} |
 | seeded-05-hijri-date | hijri_date | designer: line | bind {'value': 'متوسط المخالفات المسددة', 'time': 'الشهر الهجري'}, sort none |
-| seeded-06-hijri-date | hijri_date | designer: line | bind {'value': 'avg_paid', 'time': 'hijri_year'}, sort none |
-| seeded-07-hijri-date | hijri_date | designer: line | bind {'value': 'متوسط المخالفات المسددة', 'time': 'الشهر الهجري'}, sort none |
-| seeded-08-hijri-date | hijri_date | designer: line | bind {'value': 'avg_paid', 'time': 'hijri_year'}, sort none |
+| seeded-06-hijri-date | hijri_date | designer: line | bind {'value': 'متوسط المخالفات المدفوعة', 'time': 'السنة الهجرية'}, sort none |
+| seeded-07-hijri-date | hijri_date | designer: line | bind {'value': 'متوسط المخالفات المدفوعة', 'time': 'الشهر الهجري'}, sort none |
+| seeded-08-hijri-date | hijri_date | designer: line | bind {'value': 'متوسط المخالفات المسددة', 'time': 'السنة الهجرية'}, sort none |
 | seeded-09-arabic-digits | arabic_digits | designer: column | bind {'category': 'region', 'value': 'population_count'}, sort value desc |
-| seeded-10-arabic-digits | arabic_digits | designer: bar | bind {'category': 'education_group', 'value': 'total_violations'}, sort value desc |
-| seeded-11-arabic-digits | arabic_digits | designer: column | bind {'category': 'age_group', 'value': 'count_val'}, sort none |
+| seeded-10-arabic-digits | arabic_digits | designer: bar | bind {'category': 'education_group', 'value': 'إجمالي المخالفات'}, sort value desc |
+| seeded-11-arabic-digits | arabic_digits | designer: column | bind {'category': 'age_group', 'value': 'العدد'}, sort none |
 | seeded-12-arabic-digits | arabic_digits | designer: bar | bind {'category': 'university_name', 'value': 'avg_days_to_graduate'}, sort value desc |
 | seeded-13-arabic-categories | arabic_categories | designer: bar | bind {'category': 'region', 'value': 'population_count'}, sort value desc |
 | seeded-14-arabic-categories | arabic_categories | designer: bar | bind {'category': 'education_group', 'value': 'total_violations'}, sort value desc |
 | seeded-15-arabic-categories | arabic_categories | designer: bar | bind {'category': 'age_group', 'value': 'count'}, sort none |
 | seeded-16-arabic-categories | arabic_categories | designer: bar | bind {'category': 'university_name', 'value': 'avg_days_to_graduate'}, sort value desc |
-| seeded-17-arabic-categories | arabic_categories | designer: bar | bind {'category': 'city', 'value': 'total_count'}, sort value desc |
-| seeded-18-arabic-categories | arabic_categories | designer: bar | bind {'category': 'violation_type_description', 'value': 'actual_fine'}, sort value desc |
-| seeded-19-hijri-year | hijri_year | designer: line | bind {'value': 'متوسط المخالفات المدفوعة', 'time': 'hijri_year'}, sort none |
+| seeded-17-arabic-categories | arabic_categories | designer: bar | bind {'category': 'city', 'value': 'إجمالي العدد'}, sort value desc |
+| seeded-18-arabic-categories | arabic_categories | designer: bar | bind {'category': 'violation_type_description', 'value': 'total_fine'}, sort value desc |
+| seeded-19-hijri-year | hijri_year | designer: line | bind {'value': 'avg_paid_violations', 'time': 'hijri_year'}, sort none |
 | seeded-20-hijri-year | hijri_year | designer: column with no time role | bind {'category': 'hijri_year', 'value': 'avg_death_count'} |
 
-Every seeded case now delivers, passes, matches the reference list, and renders: all automatic scores 1.00,
-3.10 requests and 2.65 seconds per case. Hijri dates: seven of eight reach the designer, five drawn as lines
-over year-month buckets in order and two as columns of years without a time role, a defensible choice for two
-or three periods. The one that still breaks is the month-name form where the analyst split the month number
-and the year into two ordinal columns instead of one year-month bucket; the designer then drew one line over
-repeated months, a tangle, and no rule stopped it (see Left for later). Arabic-Indic digits: all four are
-measures now and all four render. Hijri years beside a Gregorian date were never dropped and are unchanged.
+Every seeded case delivers, passes, matches the reference list, and renders: all automatic scores 1.00,
+3.10 requests and 2.86 seconds per case. Hijri dates: seven of eight reach the designer, five drawn as lines
+over year-month or year buckets in order and two as columns of years without a time role, a defensible
+choice for two or three periods. The month-name form is the one that still breaks, and it broke differently
+on each of three captures: month and year split into two ordinal columns; one bucket with every month
+written 01 because the model tested `regexp_extract` against null, which DuckDB never returns (the recipe
+now says to test the names with LIKE); and, last, every month mapped correctly but month and year in two
+columns again instead of one year-month bucket. A recipe in prose is not deterministic enough for that form;
+a SQL helper is the fix (see Left for later). Arabic-Indic digits: all four are measures now and all four
+render. Hijri years beside a Gregorian date were never dropped and are unchanged.
 
 A whole-branch Codex review then found three gaps in the round, all fixed: an integer column beside a
 Gregorian date was taken for Hijri years whatever its name (now only a column called a year, or hijri,
@@ -203,7 +207,8 @@ text order is date order).
 The pre-merge analyst eval then caught a cost the scale set could not see: 64 to 65 of 69 on the branch
 against 68 on main the same day, with the misses moving between runs and three of them the model looping
 past its request budget. Removing the profiler's two new lines changed nothing (65); removing the analyst's
-Hijri and digit lines restored 67, the pre-phase level. Long SQL recipes in the always-on instructions cost
+Hijri and digit lines restored 67, the pre-phase level; after the change below the eval scored 69 of 69,
+with no request loops. Long SQL recipes in the always-on instructions cost
 ordinary questions, so those rules now reach the model per run only when a column carries one of the two
 levels, through a Pydantic AI instructions function, and the seeded cases were captured again under that
 arrangement.

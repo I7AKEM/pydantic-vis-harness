@@ -1,10 +1,10 @@
 {
-  "dataset_id": "ds_fb464f75197742aab361febafa5d527a",
+  "dataset_id": "ds_4acc58575b4a4c45ac716b9f376cb81c",
   "question": "اعرض متوسط «paid_violations» حسب السنوات الهجرية باستخدام «hijri_year».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT hijri_year, AVG(paid_violations) AS \"متوسط المخالفات المدفوعة\" FROM \"ds_fb464f75197742aab361febafa5d527a\" GROUP BY hijri_year ORDER BY hijri_year",
+    "sql": "SELECT hijri_year, AVG(paid_violations) AS avg_paid_violations FROM \"ds_4acc58575b4a4c45ac716b9f376cb81c\" GROUP BY hijri_year ORDER BY hijri_year",
     "columns": [
       {
         "name": "hijri_year",
@@ -13,29 +13,29 @@
         "unit": null,
         "source": "hijri_year",
         "aggregate": "none",
-        "denominator": "null"
+        "denominator": null
       },
       {
-        "name": "متوسط المخالفات المدفوعة",
-        "meaning": "متوسط عدد المخالفات المدفوعة",
+        "name": "avg_paid_violations",
+        "meaning": "متوسط المخالفات المدفوعة",
         "kind": "measure",
-        "unit": null,
+        "unit": "count",
         "source": "paid_violations",
         "aggregate": "avg",
-        "denominator": "null"
+        "denominator": null
       }
     ],
-    "summary": "يوضح الجدول متوسط عدد المخالفات المدفوعة لكل سنة هجرية، حيث تراوح المتوسط من 1.22 تقريباً في عام 1383هـ إلى ذروته عند 108.74 تقريباً في عام 1444هـ. يلاحظ وجود اتجاه تصاعدي مستمر في المتوسط حتى عام 1444هـ قبل أن ينخفض في السنوات الأخيرة.",
+    "summary": "يوضح التحليل متوسط عدد المخالفات المدفوعة لكل سنة هجرية، حيث بدأ المتوسط من 1.22 تقريباً في عام 1383هـ ووصل إلى ذروته عند 108.74 تقريباً في عام 1444هـ، قبل أن ينخفض في السنوات الأخيرة.",
     "assumptions": [
       "تم تجميع البيانات حسب السنة الهجرية المذكورة في عمود hijri_year."
     ]
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT hijri_year, AVG(paid_violations) AS \"متوسط المخالفات المدفوعة\" FROM \"ds_fb464f75197742aab361febafa5d527a\" GROUP BY hijri_year ORDER BY hijri_year",
+    "sql": "SELECT hijri_year, AVG(paid_violations) AS avg_paid_violations FROM \"ds_4acc58575b4a4c45ac716b9f376cb81c\" GROUP BY hijri_year ORDER BY hijri_year",
     "columns": [
       "hijri_year",
-      "متوسط المخالفات المدفوعة"
+      "avg_paid_violations"
     ],
     "types": [
       "BIGINT",
@@ -305,7 +305,7 @@
     ],
     "row_count": 65,
     "checks": [],
-    "seconds": 0.01445508300093934
+    "seconds": 0.007052249988191761
   },
   "checks": [
     {
@@ -318,6 +318,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 4.473115375003545,
-  "created_at": "2026-09-07T20:00:56.017433Z"
+  "seconds": 3.9010539169976255,
+  "created_at": "2026-09-07T20:44:20.717585Z"
 }

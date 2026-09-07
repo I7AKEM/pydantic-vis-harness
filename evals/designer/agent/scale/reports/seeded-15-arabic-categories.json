@@ -1,10 +1,10 @@
 {
-  "dataset_id": "ds_91ab15289c93427a8e00da3b428f6b5b",
+  "dataset_id": "ds_c4e8eda4293c4d70889bed1a5d2cc845",
   "question": "اعرض قيم «count» حسب «age_group».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT age_group, sum(count) AS count FROM \"ds_91ab15289c93427a8e00da3b428f6b5b\" GROUP BY age_group",
+    "sql": "SELECT age_group, count FROM \"ds_c4e8eda4293c4d70889bed1a5d2cc845\"",
     "columns": [
       {
         "name": "age_group",
@@ -13,31 +13,33 @@
         "unit": null,
         "source": "age_group",
         "aggregate": "none",
-        "denominator": null
+        "denominator": "null"
       },
       {
         "name": "count",
         "meaning": "العدد",
         "kind": "measure",
-        "unit": "count",
+        "unit": null,
         "source": "count",
-        "aggregate": "sum",
-        "denominator": null
+        "aggregate": "none",
+        "denominator": "null"
       }
     ],
-    "summary": "تتراوح قيم العدد حسب الفئة العمرية بين 8,642 للفئة 55-64 و 12,893 للفئة غير المحددة (الرياض). سجلت الفئة العمرية 65+ عدداً قدره 12,548.",
-    "assumptions": []
+    "summary": "توضح البيانات قيم «count» لكل فئة عمرية، حيث سجلت الفئة «غير محدد (Riyadh)» أعلى قيمة بـ 12,893، تليها الفئة «+65» بـ 12,548. بينما سجلت الفئة «55-64» أقل قيمة بـ 8,642.",
+    "assumptions": [
+      "تم عرض البيانات كما هي موجودة في الجدول دون أي تجميع إضافي."
+    ]
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT age_group, sum(count) AS count FROM \"ds_91ab15289c93427a8e00da3b428f6b5b\" GROUP BY age_group",
+    "sql": "SELECT age_group, count FROM \"ds_c4e8eda4293c4d70889bed1a5d2cc845\"",
     "columns": [
       "age_group",
       "count"
     ],
     "types": [
       "VARCHAR",
-      "HUGEINT"
+      "BIGINT"
     ],
     "rows": [
       [
@@ -71,7 +73,7 @@
     ],
     "row_count": 7,
     "checks": [],
-    "seconds": 0.01886716700391844
+    "seconds": 0.008477832991047762
   },
   "checks": [
     {
@@ -84,6 +86,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 2.1386895420000656,
-  "created_at": "2026-09-07T20:00:43.713613Z"
+  "seconds": 2.9089109170017764,
+  "created_at": "2026-09-07T20:44:15.628185Z"
 }

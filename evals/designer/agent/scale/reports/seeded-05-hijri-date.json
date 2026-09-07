@@ -1,10 +1,10 @@
 {
-  "dataset_id": "ds_f63c14f1ca9141eab7541afe6c3c023f",
+  "dataset_id": "ds_d50f90e0435649a0a16c748901b65beb",
   "question": "اعرض متوسط «paid_violations» حسب الأشهر الهجرية باستخدام «violation_date».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT \n    substr(translate(violation_date, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 7) AS \"الشهر الهجري\", \n    AVG(paid_violations) AS \"متوسط المخالفات المسددة\" \nFROM \"ds_f63c14f1ca9141eab7541afe6c3c023f\" \nGROUP BY 1 \nORDER BY 1",
+    "sql": "SELECT \n    substr(translate(violation_date, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 7) AS \"الشهر الهجري\", \n    AVG(paid_violations) AS \"متوسط المخالفات المسددة\" \nFROM \"ds_d50f90e0435649a0a16c748901b65beb\" \nGROUP BY 1 \nORDER BY 1",
     "columns": [
       {
         "name": "الشهر الهجري",
@@ -25,14 +25,14 @@
         "denominator": null
       }
     ],
-    "summary": "تم عرض متوسط عدد المخالفات المسددة لكل شهر هجري، حيث تراوح المتوسط من حوالي 1.14 في شهر 1383/08 إلى حوالي 117.6 في شهر 1444/08.",
+    "summary": "يوضح الجدول متوسط عدد المخالفات المسددة لكل شهر هجري، حيث تراوح المتوسط من حوالي 1.14 في شهر 1383/08 إلى ذروته عند 117.6 في شهر 1444/08. يلاحظ وجود اتجاه تصاعدي عام في المتوسطات عبر السنوات الهجرية.",
     "assumptions": [
-      "تم تجميع البيانات حسب السنة والشهر الهجري المستخرج من عمود violation_date."
+      "تم استخراج الشهر والسنة من عمود تاريخ المخالفة (violation_date) باستخدام أول 7 رموز بعد تحويل الأرقام العربية إلى أرقام إنجليزية."
     ]
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT \n    substr(translate(violation_date, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 7) AS \"الشهر الهجري\", \n    AVG(paid_violations) AS \"متوسط المخالفات المسددة\" \nFROM \"ds_f63c14f1ca9141eab7541afe6c3c023f\" \nGROUP BY 1 \nORDER BY 1",
+    "sql": "SELECT \n    substr(translate(violation_date, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 7) AS \"الشهر الهجري\", \n    AVG(paid_violations) AS \"متوسط المخالفات المسددة\" \nFROM \"ds_d50f90e0435649a0a16c748901b65beb\" \nGROUP BY 1 \nORDER BY 1",
     "columns": [
       "الشهر الهجري",
       "متوسط المخالفات المسددة"
@@ -3121,7 +3121,7 @@
     ],
     "row_count": 769,
     "checks": [],
-    "seconds": 0.037000250013079494
+    "seconds": 0.029866208002204075
   },
   "checks": [
     {
@@ -3134,6 +3134,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 4.023220041010063,
-  "created_at": "2026-09-07T20:00:51.511235Z"
+  "seconds": 4.557200625000405,
+  "created_at": "2026-09-07T20:43:56.814616Z"
 }

@@ -1,17 +1,17 @@
 {
-  "dataset_id": "ds_937baa9f2d4a421f874a500222cad496",
+  "dataset_id": "ds_e622b6550f344f459bb0b1086f579112",
   "question": "اعرض متوسط «death_count» حسب السنوات الهجرية باستخدام «death_date».",
   "language": "Arabic",
   "brief_fingerprint": null,
   "analysis": {
-    "sql": "SELECT substr(translate(death_date, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 4) AS السنة, AVG(death_count) AS \"متوسط الوفيات\" FROM \"ds_937baa9f2d4a421f874a500222cad496\" GROUP BY 1 ORDER BY 1",
+    "sql": "SELECT \n    substr(translate(death_date, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 4) AS \"السنة الهجرية\", \n    avg(death_count) AS \"متوسط الوفيات\" \nFROM \"ds_e622b6550f344f459bb0b1086f579112\" \nGROUP BY 1 \nORDER BY 1",
     "columns": [
       {
-        "name": "السنة",
+        "name": "السنة الهجرية",
         "meaning": "السنة الهجرية",
         "kind": "time",
         "unit": null,
-        "source": "death_date",
+        "source": null,
         "aggregate": "none",
         "denominator": null
       },
@@ -19,22 +19,22 @@
         "name": "متوسط الوفيات",
         "meaning": "متوسط عدد الوفيات",
         "kind": "measure",
-        "unit": "person",
+        "unit": null,
         "source": "death_count",
         "aggregate": "avg",
-        "denominator": null
+        "denominator": "null"
       }
     ],
-    "summary": "بلغ متوسط عدد الوفيات في عام 1445 هـ حوالي 48.51 شخصاً، بينما ارتفع المتوسط في عام 1446 هـ ليصل إلى 54.28 شخصاً.",
+    "summary": "بلغ متوسط عدد الوفيات في عام 1445 هـ حوالي 48.51 شخصاً، بينما ارتفع في عام 1446 هـ ليصل إلى حوالي 54.28 شخصاً.",
     "assumptions": [
-      "تم استخراج السنة الهجرية من أول 4 رموز في تاريخ الوفاة بعد تحويل الأرقام العربية إلى إنجليزية."
+      "تم استخراج السنة من تاريخ الوفاة الهجري عبر أخذ أول 4 رموز من النص بعد تحويل الأرقام العربية-الهندية إلى أرقام عربية."
     ]
   },
   "clarification": null,
   "result": {
-    "sql": "SELECT substr(translate(death_date, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 4) AS السنة, AVG(death_count) AS \"متوسط الوفيات\" FROM \"ds_937baa9f2d4a421f874a500222cad496\" GROUP BY 1 ORDER BY 1",
+    "sql": "SELECT \n    substr(translate(death_date, '٠١٢٣٤٥٦٧٨٩', '0123456789'), 1, 4) AS \"السنة الهجرية\", \n    avg(death_count) AS \"متوسط الوفيات\" \nFROM \"ds_e622b6550f344f459bb0b1086f579112\" \nGROUP BY 1 \nORDER BY 1",
     "columns": [
-      "السنة",
+      "السنة الهجرية",
       "متوسط الوفيات"
     ],
     "types": [
@@ -53,7 +53,7 @@
     ],
     "row_count": 2,
     "checks": [],
-    "seconds": 0.011525958005222492
+    "seconds": 0.0179488329886226
   },
   "checks": [
     {
@@ -66,6 +66,6 @@
   ],
   "warnings": [],
   "model": "google/gemma-4-31b-it",
-  "seconds": 5.085363999998663,
-  "created_at": "2026-09-07T20:00:17.704586Z"
+  "seconds": 3.4780635420029284,
+  "created_at": "2026-09-07T20:43:52.241792Z"
 }
