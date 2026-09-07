@@ -33,6 +33,8 @@ from vis_agent.designer.recommend import recommend_charts
 from vis_agent.designer.syntax import parse
 from vis_agent.models import DataBrief, Intent
 
+from .run import reference_charts
+
 CASES_PATH = Path(__file__).parent / "scale" / "cases.json"
 
 
@@ -89,22 +91,6 @@ def load(cases_path: Path, split: str) -> list[dspy.Example]:
     return examples
 
 
-def _reference_charts(report: AnalysisReport, intent: Intent | None) -> list[str]:
-    """Private Task 3 reference_charts copy; the controller reconciles at merge.
-
-    Insightor's chosen chart and requested type never influence this reference.
-    """
-    candidates = recommend_charts(report.analysis.columns, report.result, intent=intent).candidates
-    if not candidates:
-        return []
-    top = max(candidate.score for candidate in candidates)
-    accepted = {candidate.name for candidate in candidates if candidate.score >= max(0, top - 1)}
-    for left, right in (("bar", "column"), ("grouped_bar", "grouped_column"),
-                        ("stacked_bar", "stacked_column"), ("pie", "donut")):
-        if accepted.intersection((left, right)):
-            accepted.update((left, right))
-    return sorted(accepted)
-
 
 def score_and_feedback(gold, pred) -> tuple[float, str]:
     """Four deterministic components; explanation evidence is part of Passed.
@@ -133,7 +119,7 @@ def score_and_feedback(gold, pred) -> tuple[float, str]:
 
     # Neither the spec grammar nor DesignOut declares intent. Use the gold
     # brief's intent for this single-shot proxy; the runtime uses design.intent.
-    accepted = _reference_charts(report, gold.intent)
+    accepted = reference_charts(report, gold.intent)
     chart_accepted = spec.type in accepted
     if not chart_accepted:
         choices = ", ".join(accepted) or "(none; the result cannot support a chart)"

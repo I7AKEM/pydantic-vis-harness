@@ -195,13 +195,13 @@ def test_reference_threshold_and_swaps(monkeypatch):
         ("column", 3), ("grouped_column", 2), ("stacked_bar", 2), ("pie", 2),
         ("line", 1), ("table", -1),
     )]
-    monkeypatch.setattr(optimizer, "recommend_charts", lambda *args, **kwargs: Recommendation(
+    import evals.designer.agent.run as runner
+    monkeypatch.setattr(runner, "recommend_charts", lambda *args, **kwargs: Recommendation(
         candidates=candidates, rejected=[],
     ))
-    assert set(optimizer._reference_charts(report, "share")) == {
-        "column", "bar", "grouped_column", "grouped_bar", "stacked_column", "stacked_bar", "pie", "donut",
-    }
+    # Swap partners count only when the rules listed them as non-negative candidates.
+    assert set(optimizer.reference_charts(report, "share")) == {"column", "grouped_column", "stacked_bar", "pie"}
     candidates[:] = [Candidate(name="table", score=-1, binding={}, breakdown=[])]
-    assert optimizer._reference_charts(report, None) == []
+    assert optimizer.reference_charts(report, None) == []
     candidates.clear()
-    assert optimizer._reference_charts(report, None) == []
+    assert optimizer.reference_charts(report, None) == []

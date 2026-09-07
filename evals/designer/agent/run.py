@@ -26,12 +26,9 @@ from vis_agent.designer.syntax import parse
 from vis_agent.models import DataBrief, Intent
 from vis_agent.render.base import Rendered as RenderResult, RendererUnavailable, RenderFailed
 
+from .corpus_tools.select import TASK_TO_INTENT
+
 CASES_PATH = Path(__file__).with_name("cases.json")
-# Private copy until Task 1's corpus_tools.select.TASK_TO_INTENT is merged.
-_TASK_TO_INTENT: dict[str, Intent] = {
-    "single_value": "share", "comparison": "compare", "ranking": "rank",
-    "composition": "composition", "distribution": "distribution",
-}
 RUBRIC = {"type": "The chart type fits the intent and the shape of the result.",
           "roles": "The right columns hold the right roles.",
           "title": "The title says what is shown, in the caller's language, and is true.",
@@ -97,6 +94,7 @@ def reference_charts(report: AnalysisReport, intent: Intent | None) -> list[str]
     if not candidates:
         return []
     nearby = {c.name for c in candidates if c.score >= 0 and c.score >= candidates[0].score - 1}
+    # A swap partner counts only when the rules listed it as a candidate with a non-negative score.
     for first, second in (("bar", "column"), ("grouped_bar", "grouped_column"),
                           ("stacked_bar", "stacked_column"), ("pie", "donut")):
         if nearby.intersection((first, second)):
@@ -107,7 +105,7 @@ def reference_charts(report: AnalysisReport, intent: Intent | None) -> list[str]
 @dataclass
 class IntentPlausible(Evaluator[dict, DesignReport, dict]):
     def evaluate(self, ctx: EvaluatorContext[dict, DesignReport, dict]) -> float:
-        intent = _TASK_TO_INTENT.get((ctx.metadata or {}).get("task"))
+        intent = TASK_TO_INTENT.get((ctx.metadata or {}).get("task"))
         if intent is None:
             return 1.0
         return float(ctx.output.design is not None and ctx.output.design.intent == intent)
