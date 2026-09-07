@@ -113,7 +113,8 @@ def build_prompt(store: DatasetStore, profile: DatasetProfile, question: str, la
                     f"WHERE {quote_identifier(stats.name)} IS NOT NULL ORDER BY 1").fetchall()]
             columns.append(ColumnFacts(
                 name=stats.name, physical_type=stats.physical_type,
-                measurement_levels=stats.measurement_levels,
+                # Only the two localized levels reach the prompt; the generic ones are noise for the analyst.
+                measurement_levels=[level for level in stats.measurement_levels if level in ("hijri", "arabic_digits")],
                 role=semantic.role if semantic else None, meaning=semantic.meaning if semantic else None,
                 unit=semantic.unit if semantic else None, code_meanings=semantic.code_meanings if semantic else None,
                 brief_conflict=semantic.brief_conflict if semantic else None,
