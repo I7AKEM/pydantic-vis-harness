@@ -1,7 +1,10 @@
-# Phase 1: Profiler as the pilot agent
+# Phase 2: Data analyst
 
-The design is in docs/superpowers/specs/2026-09-06-vis-agent-design.md. This phase builds the
+The Phase 1 design is in docs/superpowers/specs/2026-09-06-vis-agent-design.md. It introduced the
 profiler as the model for every later agent, plus the lead skeleton, the upload path, and the store.
+
+The Phase 2 design is in docs/superpowers/specs/2026-09-07-phase-2-analyst-design.md.
+It adds the data analyst to answer questions about profiled datasets.
 
 - Use Python 3.12, uv, Pydantic AI, OpenRouter, and the built-in Web Chat UI.
 - Keep code small, explicit, and readable. Application code lives in the `vis_agent` package, one subpackage per agent (`vis_agent/profiler/` today); tests and evals mirror it.
@@ -15,6 +18,9 @@ profiler as the model for every later agent, plus the lead skeleton, the upload 
 - Preserve the Advisor and TemporalDurability capabilities on the lead. CodeMode was removed after
   Phase 1 because no lead tool runs inside its sandbox yet; bring it back when the analyst's query tool does.
 - Do not add chart rendering, a planner, additional agents, Docker, or a generic orchestration layer.
+- The analyst writes one SELECT; code parses, allow-lists, runs, and checks it. The model never sees raw rows.
+- Each agent's rulebook is `vis_agent/<agent>/rulebook.md`; every confirmed mistake becomes an eval case plus a check or a rulebook line.
+- Run the evals before every merge.
 
 Run with:
 
