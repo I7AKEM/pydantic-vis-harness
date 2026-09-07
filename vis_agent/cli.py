@@ -6,15 +6,15 @@ import json
 import sys
 from pathlib import Path
 
-from profile_models import DataBrief
-from profiler import profile_dataset
+from vis_agent.models import DataBrief
+from vis_agent.profiler.agent import profile_dataset
 
 
 def resources():
     """Import the wired application lazily so tests and --help never touch the real data directory."""
-    import main
+    import vis_agent.app
 
-    return main.agent, main.deps, main.store, main.profiler
+    return vis_agent.app.agent, vis_agent.app.deps, vis_agent.app.store, vis_agent.app.profiler
 
 
 def build_parser() -> argparse.ArgumentParser:

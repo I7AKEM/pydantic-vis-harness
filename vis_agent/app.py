@@ -7,10 +7,11 @@ from pathlib import Path
 import logfire
 from dotenv import load_dotenv
 
-from dataset_store import DatasetStore
-from lead import create_lead
-from profiler import DEFAULT_PROFILER_MODEL, AppDeps, create_profiler, profile_dataset
-from uploads import add_upload_routes
+from vis_agent.store import DatasetStore
+from vis_agent.lead import create_lead
+from vis_agent.deps import AppDeps
+from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, create_profiler, profile_dataset
+from vis_agent.uploads import add_upload_routes
 
 load_dotenv()
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
@@ -18,7 +19,7 @@ logfire.configure(send_to_logfire="if-token-present", service_name="vis-agent", 
 logfire.instrument_pydantic_ai()
 
 model = os.getenv("PYDANTIC_AI_MODEL", "openrouter:anthropic/claude-sonnet-4.6")
-data_directory = Path(os.getenv("DATA_DIRECTORY", str(Path(__file__).parent / "data")))
+data_directory = Path(os.getenv("DATA_DIRECTORY", str(Path(__file__).parent.parent / "data")))
 database = Path(os.environ["DUCKDB_PATH"]) if os.getenv("DUCKDB_PATH") else None
 
 store = DatasetStore(
@@ -38,5 +39,5 @@ async def auto_profile(dataset_id: str) -> None:
         logging.getLogger("uploads").exception("Automatic profiling failed for %s", dataset_id)
 
 
-app = agent.to_web(deps=deps, html_source=Path(__file__).with_name("chat.html"))
+app = agent.to_web(deps=deps, html_source=Path(__file__).with_name("static") / "chat.html")
 add_upload_routes(app, store, auto_profile=auto_profile)

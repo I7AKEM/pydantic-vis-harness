@@ -7,8 +7,8 @@ from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from profile_models import DataBrief
-from uploads import add_upload_routes
+from vis_agent.models import DataBrief
+from vis_agent.uploads import add_upload_routes
 
 SALES = b"id,region,date,amount\n001,East,2026-01-01,10\n002,West,2026-01-02,20\n"
 
@@ -52,7 +52,7 @@ def test_brief_field_is_stored_and_validated(store):
 
 
 def test_size_is_enforced_before_parsing_and_errors_are_clean(tmp_path):
-    from dataset_store import DatasetStore
+    from vis_agent.store import DatasetStore
 
     small = DatasetStore(tmp_path, max_upload_bytes=64)
     with TestClient(app_with_catch_all(small)) as client:

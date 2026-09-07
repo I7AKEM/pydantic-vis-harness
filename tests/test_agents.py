@@ -3,9 +3,10 @@ from pydantic_ai.messages import ModelResponse, RetryPromptPart, TextPart, ToolC
 from pydantic_ai.models.function import FunctionModel
 from pydantic_ai.models.test import TestModel
 
-from lead import create_lead
-from profile_models import DatasetProfile
-from profiler import AppDeps, create_profiler
+from vis_agent.lead import create_lead
+from vis_agent.profiler.models import DatasetProfile
+from vis_agent.deps import AppDeps
+from vis_agent.profiler.agent import create_profiler
 
 SALES = b"id,region,date,amount\n001,East,2026-01-01,10\n002,West,2026-01-02,20\n"
 

@@ -1,4 +1,4 @@
-from measurements import compute_statistics
+from vis_agent.profiler.measurements import compute_statistics
 
 
 def profile_of(store, name, content):
@@ -113,7 +113,7 @@ def test_unique_values_are_neither_ordinal_nor_codes(store):
 
 
 def test_columns_beyond_the_detail_cap_send_metadata_only(store):
-    from measurements import MAX_DETAILED_COLUMNS
+    from vis_agent.profiler.measurements import MAX_DETAILED_COLUMNS
 
     names = [f"c{i}" for i in range(MAX_DETAILED_COLUMNS + 3)]
     header = ",".join(names)

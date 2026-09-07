@@ -3,13 +3,13 @@
 import math
 import re
 
-from dataset_store import DatasetStore, quote_identifier
-from profile_models import (
+from vis_agent.store import DatasetStore, quote_identifier
+from vis_agent.models import UploadedDataset
+from vis_agent.profiler.models import (
     ColumnStatistics,
     DeterministicProfile,
     GeographicRole,
     NumericStatistics,
-    UploadedDataset,
     ValueCount,
 )
 

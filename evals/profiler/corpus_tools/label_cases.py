@@ -6,9 +6,9 @@ import asyncio, json, sys, tempfile
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv(Path.cwd() / ".env")
-from dataset_store import DatasetStore
-from profile_models import DataBrief
-from profiler import create_profiler, profile_dataset
+from vis_agent.store import DatasetStore
+from vis_agent.models import DataBrief
+from vis_agent.profiler.agent import create_profiler, profile_dataset
 OUT = Path(sys.argv[1]); CASES = Path(sys.argv[2]); MODELS = sys.argv[3:]
 names = sorted(p.stem for p in CASES.glob("*.csv"))
 

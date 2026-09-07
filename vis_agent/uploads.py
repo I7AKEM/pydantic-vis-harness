@@ -13,8 +13,8 @@ from starlette.requests import Request
 from starlette.responses import FileResponse, JSONResponse, Response
 from starlette.routing import Route
 
-from dataset_store import DatasetStore
-from profile_models import DataBrief
+from vis_agent.store import DatasetStore
+from vis_agent.models import DataBrief
 
 AutoProfile = Callable[[str], Awaitable[None]]
 BODY_SLACK = 65536
@@ -96,7 +96,7 @@ def add_upload_routes(app: Starlette, store: DatasetStore, auto_profile: AutoPro
         return JSONResponse([summary.model_dump(mode="json") for summary in summaries])
 
     async def chat_upload_script(request: Request) -> Response:
-        return FileResponse(Path(__file__).with_name("chat_upload.js"), media_type="text/javascript")
+        return FileResponse(Path(__file__).with_name("static") / "chat_upload.js", media_type="text/javascript")
 
     async def profile(request: Request) -> Response:
         try:

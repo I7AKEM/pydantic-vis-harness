@@ -204,8 +204,9 @@ No new tables. The report is returned and traced, not saved. Saving comes with a
 
 ## 12. Models, limits, and cost
 
-The analyst's model comes from `PYDANTIC_AI_ANALYST_MODEL`. The default is chosen by the Phase 2 benchmark on the
-evaluation set, the way Phase 1 chose the profiler's: candidates are the models that did well on the profiler
+The analyst's model comes from `PYDANTIC_AI_ANALYST_MODEL`. Until the Phase 2 benchmark runs, the default is the
+profiler's Gemma, so development stays fast. The benchmark then picks the default, the way Phase 1 chose the
+profiler's: candidates are the models that did well on the profiler
 (Gemma 4 31B, GPT-5.4 mini, Qwen, Mistral) plus the lead's model, scored on table correctness, repair turns, and
 seconds per question. Thinking is benchmarked on and off; SQL may benefit from it where interpretation did not.
 Temperature stays at zero.
@@ -248,30 +249,27 @@ Through the agent with fake models, never with a hand-built run context:
 
 ## 15. Files
 
-Following the Phase 1 convention of application modules at the project root, unless the layout decision below says
-otherwise:
+The application lives in the `vis_agent` package, one subpackage per agent, with tests and evaluations mirroring
+it. Phase 2 adds:
 
 | File | Purpose |
 |---|---|
-| `analysis_models.py` | Contracts: the analysis, the clarification, the query result, the report |
-| `query_guard.py` | Parse, validate, run with timeout and caps, cap cells |
-| `result_checks.py` | The checks of section 8 |
-| `analyst.py` | The agent, its rulebook, `run_query`, the output functions, `analyze_dataset`, the lead tool |
-| `lead.py`, `cli.py` | Register the tool; add `vis ask` |
+| `vis_agent/analyst/models.py` | Contracts: the analysis, the clarification, the query result, the report |
+| `vis_agent/analyst/query.py` | Parse, validate, run with timeout and caps, cap cells |
+| `vis_agent/analyst/checks.py` | The checks of section 8 |
+| `vis_agent/analyst/agent.py` | The agent, its rulebook, `run_query`, the output functions, `analyze_dataset`, the lead tool |
+| `vis_agent/deps.py`, `vis_agent/lead.py`, `vis_agent/cli.py` | Add the analyst to the lead's dependencies; register the tool; add `vis ask` |
 | `evals/analyst/` | Cases, reference SQL, expected tables, runner |
-| `tests/test_query_guard.py`, `tests/test_result_checks.py`, `tests/test_analyst.py` | As section 14 |
+| `tests/analyst/test_query.py`, `tests/analyst/test_checks.py`, `tests/analyst/test_agent.py` | As section 14 |
 
-## 16. Decisions needed before the plan
+## 16. Decisions taken before the plan
 
-1. **Package layout.** The analyst adds four root modules and a second agent. Recommended: move the application
-   into a `vis_agent` package first, one subpackage per agent (`profiler`, `analyst`) plus `store`, `lead`, and
-   `app`, with tests and evals mirroring it. The alternative is to stay flat at about fifteen root modules and move
-   later, when the designer and renderers arrive. Moving is cheapest now.
-2. **Analyst default model.** Recommended: decide by the benchmark on the evaluation set, and until then run with
-   the profiler's Gemma so development stays fast. The alternative is to start from GPT-5.4 mini, the most accurate
-   small model in the profiler benchmark.
-3. **Keeping results.** Recommended: no new table in Phase 2; the trace holds every run. The alternative is a small
-   `analyses` table now, which would also give the evaluation replay a source.
+1. **Package layout.** Decided: the application moves into the `vis_agent` package before Phase 2 starts, one
+   subpackage per agent, tests and evaluations mirroring it. Done on branch `phase-2-prep`.
+2. **Analyst default model.** Decided: the profiler's Gemma until the Phase 2 benchmark on the evaluation set picks
+   the default; the model stays selectable through `PYDANTIC_AI_ANALYST_MODEL`.
+3. **Keeping results.** Recommended and assumed: no new table in Phase 2; the trace holds every run. Say so if you
+   want a small `analyses` table now.
 
 ## 17. Lessons to record
 
@@ -279,7 +277,30 @@ Where SQL fails and how often the repair turn is needed. Which questions need cl
 whether any label error got through them. Seconds and cost per question by model. Whether the summary check
 rejected true sentences because of rounding.
 
-## 18. Effort
+## 18. Capturing mistakes so they do not return
+
+What Phase 1 already does: at run time, the code checks catch a mistake and send it back once; what still fails is
+saved with the profile and traced. Across runs, the evaluation sets catch systematic mistakes whenever they are run,
+and every confirmed mistake became a detector, a check, an instruction line, or a label decision, with the story in
+the lessons file. What Phase 1 lacks: a file per agent that holds the rules learned from its mistakes and that the
+agent itself reads, and a habit of turning every confirmed mistake into a case.
+
+Standing rules from Phase 2 on, for every agent:
+
+1. **One rulebook file per agent.** `vis_agent/<agent>/rulebook.md` is the instruction text the agent loads when it
+   is created. It is the agent's own rules file, the way an assistant reads its instructions file: each rule
+   states the mistake it prevents and names the evaluation case that reproduces it. The instruction optimizer
+   reads and writes this file. The profiler's instruction string moves there.
+2. **Every confirmed mistake becomes a case.** A mistake seen in a trace, a saved profile, or an evaluation run gets
+   an evaluation case that reproduces it, plus a code check or detector when code can catch it, otherwise a
+   rulebook line. A paragraph in the lessons file alone does not count as a fix.
+3. **Evaluations run before every merge.** All three profiler sets take about two minutes on Gemma. A merge that
+   lowers a set's score names the columns it lost and why.
+4. **Recurring run-time failures surface without reading traces.** Failed checks are already saved with every
+   profile; a small terminal command lists them by check name across saved datasets, so a check that keeps
+   failing is noticed. Optional in Phase 2; it is one query and a few lines.
+
+## 19. Effort
 
 Six to nine working days for the agent, the tool, the checks, and the entry points, as the main design estimated,
 plus two days for the evaluation set and the benchmark.

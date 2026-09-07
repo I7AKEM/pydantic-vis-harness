@@ -20,10 +20,11 @@ from dotenv import load_dotenv
 from pydantic_evals import Case, Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext
 
-from dataset_store import DatasetStore
-from profile_models import DataBrief, DatasetProfile
-from profile_review import failed_checks
-from profiler import DEFAULT_PROFILER_MODEL, create_profiler, profile_dataset
+from vis_agent.store import DatasetStore
+from vis_agent.models import DataBrief
+from vis_agent.profiler.models import DatasetProfile
+from vis_agent.profiler.review import failed_checks
+from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, create_profiler, profile_dataset
 
 CASES_DIR = Path(__file__).with_name("cases")
 

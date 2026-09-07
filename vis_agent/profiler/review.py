@@ -1,6 +1,7 @@
 """Code checks of an interpretation against the measurements and the brief."""
 
-from profile_models import DataBrief, DeterministicProfile, ProfileCheck, SemanticProfile
+from vis_agent.models import DataBrief
+from vis_agent.profiler.models import DeterministicProfile, ProfileCheck, SemanticProfile
 
 TIME_TYPES = ("DATE", "TIMESTAMP", "TIME")
 IDENTIFIER_UNIQUENESS = 0.95

@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-import cli
-from profile_models import DataBrief
+import vis_agent.cli as cli
+from vis_agent.models import DataBrief
 
 SALES = b"id,region,date,amount\n001,East,2026-01-01,10\n"
 

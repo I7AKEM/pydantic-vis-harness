@@ -14,10 +14,10 @@ from typing import Literal
 from dotenv import load_dotenv; load_dotenv(Path.cwd() / ".env")
 import dspy
 from pydantic import BaseModel
-from dataset_store import DatasetStore
-from measurements import compute_statistics
-from profile_models import DataBrief
-from profiler import DEFAULT_PROFILER_MODEL, PROFILER_INSTRUCTIONS, ProfilerInput
+from vis_agent.store import DatasetStore
+from vis_agent.profiler.measurements import compute_statistics
+from vis_agent.models import DataBrief
+from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, PROFILER_INSTRUCTIONS, ProfilerInput
 EVALS = Path(__file__).parent
 KEY = os.environ["OPENROUTER_API_KEY"]
 TASK_MODEL = (os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL).removeprefix("openrouter:")

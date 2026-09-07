@@ -1,11 +1,13 @@
 from datetime import datetime, timezone
 
-from profile_models import (
+from vis_agent.models import (
+    DataBrief,
+    DatasetSummary,
+)
+from vis_agent.profiler.models import (
     PROFILE_VERSION,
     ColumnSemantics,
     ColumnStatistics,
-    DataBrief,
-    DatasetSummary,
     ProfileCheck,
 )
 

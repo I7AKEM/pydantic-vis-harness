@@ -1,7 +1,7 @@
 import pytest
 from pydantic_ai import models
 
-from dataset_store import DatasetStore
+from vis_agent.store import DatasetStore
 
 
 @pytest.fixture(autouse=True)

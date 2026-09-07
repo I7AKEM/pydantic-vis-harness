@@ -1,8 +1,7 @@
-"""The profiler agent, its review tool, the profile_dataset orchestration, and the lead's tools."""
+"""The profiler agent, its review tool, the profile_dataset orchestration, and the lead's profile_csv tool."""
 
 import asyncio
 import logging
-from dataclasses import dataclass
 from datetime import datetime, timezone
 
 import duckdb
@@ -11,22 +10,21 @@ from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed, ToolOutput
 from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior
 from pydantic_ai.usage import RunUsage
 
-from dataset_store import DatasetNotFound, DatasetStore
-from measurements import compute_statistics
-from profile_models import (
+from vis_agent.deps import AppDeps
+from vis_agent.store import DatasetNotFound, DatasetStore
+from vis_agent.profiler.measurements import compute_statistics
+from vis_agent.models import DataBrief
+from vis_agent.profiler.models import (
     PROFILE_VERSION,
-    DataBrief,
     DatasetProfile,
-    DatasetSummary,
     DeterministicProfile,
     ProfileCheck,
     SemanticProfile,
 )
-from profile_review import failed_checks, run_checks
+from vis_agent.profiler.review import failed_checks, run_checks
 
 log = logging.getLogger("profiler")
 SEMANTIC_TIMEOUT_SECONDS = 90
-MAX_LISTED_DATASETS = 20
 # Concurrent callers without an explicit brief share the dataset task.
 _in_flight: dict[str, asyncio.Task[DatasetProfile]] = {}
 
@@ -227,12 +225,6 @@ async def _profile_dataset(
     return profile
 
 
-@dataclass
-class AppDeps:
-    store: DatasetStore
-    profiler: Agent[ProfilerInput, SemanticProfile]
-
-
 async def profile_csv(ctx: RunContext[AppDeps], uploaded_file_id: str) -> DatasetProfile:
     """Import an uploaded CSV and return its full deterministic and semantic profile.
 
@@ -248,15 +240,3 @@ async def profile_csv(ctx: RunContext[AppDeps], uploaded_file_id: str) -> Datase
     except duckdb.Error as exc:
         log.warning("DuckDB could not import or profile %s: %s", uploaded_file_id, exc)
         raise ToolFailed("DuckDB could not import or profile this CSV. Check its data and upload it again.") from exc
-
-
-async def find_dataset(ctx: RunContext[AppDeps], query: str = "") -> list[DatasetSummary]:
-    """List uploaded datasets, newest first, optionally filtered by ID or file name.
-
-    Args:
-        query: Text to match against the dataset ID or file name. Empty lists everything.
-    """
-    summaries = await asyncio.to_thread(ctx.deps.store.list_datasets)
-    needle = query.casefold().strip()
-    matching = [s for s in summaries if not needle or needle in s.dataset_id or needle in s.filename.casefold()]
-    return matching[:MAX_LISTED_DATASETS]

@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from dataset_store import DatasetNotFound, DatasetStore
-from profile_models import DataBrief
+from vis_agent.store import DatasetNotFound, DatasetStore
+from vis_agent.models import DataBrief
 
 SALES = b"id,region,date,amount\n001,East,2026-01-01,10\n002,West,2026-01-02,20\n"
 

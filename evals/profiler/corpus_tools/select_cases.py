@@ -7,7 +7,7 @@ Quotas per data shape are scaled from the shape counts below; edit them for a di
 import csv, json, random, shutil, sys
 from collections import defaultdict
 from pathlib import Path
-from profile_models import DataBrief
+from vis_agent.models import DataBrief
 D = Path(sys.argv[1]); OUT = Path(sys.argv[2]); OUT.mkdir(exist_ok=True); SEED = int(sys.argv[3])
 USED = {p.stem for d in sys.argv[4:] for p in Path(d).glob("*.csv")}
 rows = [r for r in csv.DictReader(open(D / "manifest.csv", encoding="utf-8"))

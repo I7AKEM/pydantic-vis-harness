@@ -1,9 +1,10 @@
 import json
 
 from evals.profiler.make_cases import write_cases
-from measurements import compute_statistics
-from profile_models import ColumnSemantics, DataBrief, SemanticProfile
-from profile_review import failed_checks, run_checks
+from vis_agent.profiler.measurements import compute_statistics
+from vis_agent.models import DataBrief
+from vis_agent.profiler.models import ColumnSemantics, SemanticProfile
+from vis_agent.profiler.review import failed_checks, run_checks
 
 
 def test_generated_cases_match_their_deterministic_expectations(store, tmp_path):

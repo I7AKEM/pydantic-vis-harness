@@ -4,7 +4,7 @@ The design is in docs/superpowers/specs/2026-09-06-vis-agent-design.md. This pha
 profiler as the model for every later agent, plus the lead skeleton, the upload path, and the store.
 
 - Use Python 3.12, uv, Pydantic AI, OpenRouter, and the built-in Web Chat UI.
-- Keep code small, explicit, and readable. Keep application modules at the project root.
+- Keep code small, explicit, and readable. Application code lives in the `vis_agent` package, one subpackage per agent (`vis_agent/profiler/` today); tests and evals mirror it.
 - Every statistic and every measurement label is a DuckDB query. Python assigns labels from results.
 - The profiler agent interprets. It never computes. review_profile is its only output tool: it runs the code
   checks and sends failed error checks back once.
@@ -18,7 +18,7 @@ profiler as the model for every later agent, plus the lead skeleton, the upload 
 
 Run with:
 
-    uv run uvicorn main:app --host 127.0.0.1 --port 7932 --reload
+    uv run uvicorn vis_agent.app:app --host 127.0.0.1 --port 7932 --reload
 
 Run tests with:
 

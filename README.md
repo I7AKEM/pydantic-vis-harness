@@ -29,7 +29,7 @@ the profiler runs with reasoning switched off. `MAX_UPLOAD_MB` defaults to 20. `
 Run the built-in Web Chat UI:
 
 ```bash
-uv run uvicorn main:app --host 127.0.0.1 --port 7932 --reload
+uv run uvicorn vis_agent.app:app --host 127.0.0.1 --port 7932 --reload
 ```
 
 Open the browser at http://127.0.0.1:7932.
@@ -42,7 +42,7 @@ In PyCharm, use **Run → Edit Configurations → + → Python**:
 
 - Interpreter: the project's `.venv` (Python 3.12).
 - Target: **Module name**, `uvicorn`.
-- Parameters: `main:app --host 127.0.0.1 --port 7932 --reload`.
+- Parameters: `vis_agent.app:app --host 127.0.0.1 --port 7932 --reload`.
 - Working directory: this project directory.
 
 Click **Run**. The app loads `.env` automatically.
@@ -68,8 +68,8 @@ measurements become warnings in the profile. `GET /datasets` lists uploads and t
 From the terminal:
 
 ```bash
-uv run python cli.py profile --upload sales.csv --brief brief.json
-uv run python cli.py chat
+uv run python -m vis_agent.cli profile --upload sales.csv --brief brief.json
+uv run python -m vis_agent.cli chat
 ```
 
 ## How profiling works
@@ -99,15 +99,17 @@ without it, tracing stays local.
 
 | File | Purpose |
 | --- | --- |
-| `main.py` | Environment wiring: store, profiler, lead, tracing, web app |
-| `lead.py` | The lead agent and its instructions |
-| `profiler.py` | Profiler agent, `review_profile`, `profile_dataset`, lead tools |
-| `measurements.py` | Every statistic and measurement label, via DuckDB |
-| `profile_review.py` | Code checks of an interpretation |
-| `profile_models.py` | Contracts: brief, statistics, semantics, checks, profile |
-| `dataset_store.py` | Uploads, DuckDB tables, briefs, profiles, listing |
-| `uploads.py` | Upload API, dataset list, profile JSON, background profiling |
-| `cli.py` | Terminal chat and one-shot profiling |
+| `vis_agent/app.py` | Environment wiring: store, profiler, lead, tracing, web app |
+| `vis_agent/lead.py` | The lead agent, its instructions, and dataset listing |
+| `vis_agent/deps.py` | What the lead's tools receive |
+| `vis_agent/models.py` | Contracts shared by the store, the lead, and every agent |
+| `vis_agent/profiler/agent.py` | Profiler agent, `review_profile`, `profile_dataset`, `profile_csv` |
+| `vis_agent/profiler/measurements.py` | Every statistic and measurement label, via DuckDB |
+| `vis_agent/profiler/review.py` | Code checks of an interpretation |
+| `vis_agent/profiler/models.py` | Contracts: statistics, semantics, checks, profile |
+| `vis_agent/store.py` | Uploads, DuckDB tables, briefs, profiles, listing |
+| `vis_agent/uploads.py` | Upload API, dataset list, profile JSON, background profiling |
+| `vis_agent/cli.py` | Terminal chat and one-shot profiling |
 | `evals/profiler/` | Evaluation set and real-model runner |
 
 Run the tests without model API calls:

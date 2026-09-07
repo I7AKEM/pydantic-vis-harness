@@ -7,10 +7,10 @@ from pydantic_ai.models.function import FunctionModel
 from pydantic_ai.models.test import TestModel
 from pydantic_ai.usage import RunUsage
 
-from dataset_store import DatasetStore
-from measurements import compute_statistics
-from profile_models import DataBrief
-from profiler import create_profiler, profile_dataset
+from vis_agent.store import DatasetStore
+from vis_agent.profiler.measurements import compute_statistics
+from vis_agent.models import DataBrief
+from vis_agent.profiler.agent import create_profiler, profile_dataset
 
 SALES = (
     b"id,region,date,amount\n"
@@ -187,7 +187,7 @@ def test_invalid_semantic_columns_save_partial_then_retry(store, profiler):
 
 
 def test_unknown_and_malformed_ids(store, profiler):
-    from dataset_store import DatasetNotFound
+    from vis_agent.store import DatasetNotFound
 
     with pytest.raises(DatasetNotFound):
         run(store, profiler, "ds_" + "0" * 32)
@@ -242,7 +242,7 @@ def test_concurrent_callers_share_one_profiling_run(store, profiler):
 
 
 def test_profiling_retries_once_after_a_timeout(store, profiler, monkeypatch):
-    import profiler as profiler_module
+    import vis_agent.profiler.agent as profiler_module
 
     monkeypatch.setattr(profiler_module, "SEMANTIC_TIMEOUT_SECONDS", 0.2)
     source = store.save_upload("sales.csv", SALES)

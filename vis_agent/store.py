@@ -12,7 +12,8 @@ from uuid import uuid4
 
 import duckdb
 
-from profile_models import DataBrief, DatasetProfile, DatasetSummary, UploadedDataset
+from vis_agent.models import DataBrief, DatasetSummary, UploadedDataset
+from vis_agent.profiler.models import DatasetProfile
 
 
 def quote_identifier(name: str) -> str:
