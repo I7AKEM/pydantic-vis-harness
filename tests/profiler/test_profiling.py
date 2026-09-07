@@ -12,6 +12,17 @@ from vis_agent.profiler.measurements import compute_statistics
 from vis_agent.models import DataBrief
 from vis_agent.profiler.agent import create_profiler, profile_dataset
 
+
+def test_profiler_rulebook_is_a_file():
+    from pathlib import Path
+
+    from vis_agent.profiler.agent import PROFILER_INSTRUCTIONS
+
+    text = Path("vis_agent/profiler/rulebook.md").read_text(encoding="utf-8")
+    assert PROFILER_INSTRUCTIONS == text
+    assert "review_profile" in text
+
+
 SALES = (
     b"id,region,date,amount\n"
     b"001,East,2026-01-01,10\n"
