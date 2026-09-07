@@ -609,6 +609,57 @@ def test_time_labels_are_text_with_consistent_precision(values, expected, chart)
     assert [row[0] for row in result.rows] == values
 
 
+@pytest.mark.parametrize("values", [
+    ["1447-02", "1447-03", "1447-04"],
+    ["صفر 1447", "ربيع الأول 1447", "ربيع الآخر 1447"],
+    ["١٤٤٧-٠٢", "١٤٤٧-٠٣", "١٤٤٧-٠٤"],
+    ["1447-02-01", "1447-03-01", "1447-04-01"],
+    ["1446", "1447", "1448"],
+])
+@pytest.mark.parametrize("chart", ["line", "column"])
+@pytest.mark.parametrize("direction", ["ltr", "rtl"])
+@pytest.mark.parametrize("sort", [None, "none"])
+def test_hijri_time_labels_and_analyst_order_are_preserved(values, chart, direction, sort):
+    columns = [column("period", "time"), column("value", "measure")]
+    result = table(columns, [[label, value] for label, value in zip(values, [20, 10, 30])])
+    role = "time" if chart == "line" else "category"
+    spec = Spec(type=chart, bind={role: "period", "value": "value"},
+                language="ar", direction=direction, sort=sort)
+    resolved = resolve(spec, columns, result)
+    assert resolved.config["data"] == [
+        {role: label, "value": value} for label, value in result.rows
+    ]
+    assert "domain" not in resolved.overrides.get("scale", {}).get("x", {})
+    assert [row[0] for row in result.rows] == values
+
+
+@pytest.mark.parametrize("value", [
+    "1447-03-01", "1599-01-01T00:00:00", "١٤٤٧-٠٣-٠١", "٢٠٢٤-٠٣-٠١",
+    "2024-03-01T٠٠:00:00", "ربيع الأول 1447", "March 2024",
+])
+def test_one_non_gregorian_label_keeps_the_whole_time_column_unchanged(value):
+    columns = [column("period", "time"), column("value", "measure")]
+    result = table(columns, [["2024-02-01T00:00:00", 20], [value, 10]])
+    spec = Spec(type="line", bind={"time": "period", "value": "value"}, sort="none")
+    resolved = resolve(spec, columns, result)
+    assert resolved.config["data"] == [
+        {"time": label, "value": measure} for label, measure in result.rows
+    ]
+
+
+@pytest.mark.parametrize("year", ["1600", "2024"])
+def test_gregorian_monthly_series_still_shortens_in_analyst_order(year):
+    columns = [column("period", "time"), column("value", "measure")]
+    result = table(columns, [[f"{year}-02-01", 20], [f"{year}-03-01", 10]])
+    spec = Spec(type="line", bind={"time": "period", "value": "value"},
+                sort="none", direction="rtl")
+    resolved = resolve(spec, columns, result)
+    assert resolved.config["data"] == [
+        {"time": f"{year}-02", "value": 20}, {"time": f"{year}-03", "value": 10},
+    ]
+    assert "domain" not in resolved.overrides.get("scale", {}).get("x", {})
+
+
 def test_numeric_categories_and_groups_use_text_for_sort_rtl_emphasis_and_other():
     columns, _ = cities()
     result = table(columns, [[2, 20], [10.0, 30], [1.25, 10], ["2.0", 5]])

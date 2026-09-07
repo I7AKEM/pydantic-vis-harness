@@ -45,6 +45,7 @@ Choosing when the rules cannot:
   with sort value desc and limit 20: check_spec counts the categories after the limit.
 
 Filling the spec:
+- A Hijri bucket column (a year or year-month in the Hijri calendar, kind time) binds to time like a Gregorian one; sort none; write the Hijri year or month in the title when the question asks for it.
 - bind every role the chart needs to a result column by its exact name.
 - When the result holds a code column beside its label column (F beside Female), bind the label and
   leave the code out; it is not a group.
