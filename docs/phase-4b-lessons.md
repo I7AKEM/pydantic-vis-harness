@@ -272,8 +272,11 @@ A second machine then showed a needless question on a file that holds a percenta
 and the total: "do you mean the percentage column, or the count over the total?", two readings with the same
 numbers. Here the same file answered ten times out of ten, so the difference between machines was not
 reproduced, but the rulebook now says so explicitly: do not ask when the readings give the same numbers;
-use the column the question names and record the choice under assumptions. The analyst eval stays at 69 of
-69 with that line, the eight cases that must still ask included.
+use the column the question names and record the choice under assumptions. The same machine then asked
+whether to spell out the F and M codes, a presentation question, so the rule now names the only two reasons
+to ask (a column that cannot answer, a term with no definition) and rules out presentation and equivalent
+readings. The analyst eval holds at 68 to 69 of 69 with that wording, the eight cases that must still ask
+included.
 
 ## Left for later
 
