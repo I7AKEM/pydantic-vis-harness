@@ -1343,7 +1343,7 @@ def test_lead_answers_a_question_through_the_analyst(store, people):
         returns = [p for m in messages for p in m.parts if isinstance(p, ToolReturnPart)]
         if not returns:
             return ModelResponse(parts=[ToolCallPart(tool_name="answer_question", args={"dataset_id": dataset, "question": "Total by region"})])
-        answer = returns[-1].content
+        answer = returns[-1].model_response_object()  # the tool returns a Pydantic object; read its serialized form
         assert answer["summary"] == "West leads with 65." and answer["rows"] == [["West", 65], ["East", 40]]
         assert answer["row_count"] == 2 and answer["sql"].startswith("SELECT") and answer["clarification"] is None
         return ModelResponse(parts=[TextPart(content="West leads with 65.")])
