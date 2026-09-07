@@ -119,8 +119,13 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
 
             if column.kind == "measure" and numbers is not None and column.aggregate in ("sum", "count"):
                 if column.aggregate == "sum" and source is not None and source.numeric is not None:
-                    (raw_total,) = connection.execute(
-                        f"SELECT sum(CAST({quote_identifier(source.name)} AS DOUBLE)) FROM {table}").fetchone()
+                    name = quote_identifier(source.name)
+                    number = f"CAST({name} AS DOUBLE)"
+                    if source.physical_type == "VARCHAR":
+                        # Arabic-digit text sums after the same normalisation the profiler measured it with.
+                        digits = f"translate(CAST({name} AS VARCHAR), '٠١٢٣٤٥٦٧٨٩٫٬', '0123456789.,')"
+                        number = f"TRY_CAST(replace({digits}, ',', '') AS DOUBLE)"
+                    (raw_total,) = connection.execute(f"SELECT sum({number}) FROM {table}").fetchone()
                 elif column.aggregate == "count":
                     raw_total = (profile.deterministic.row_count - source.null_count) if source is not None \
                         else profile.deterministic.row_count
