@@ -17,6 +17,7 @@ from evals.designer.agent.corpus_tools.select import CORPUS, read_manifest
 from vis_agent.analyst.agent import DEFAULT_ANALYST_MODEL, create_analyst
 from vis_agent.deps import AppDeps
 from vis_agent.designer.agent import DEFAULT_DESIGNER_MODEL, DEFAULT_FALLBACK_DESIGNER_MODEL, create_designer
+import vis_agent.lead
 from vis_agent.lead import create_lead
 from vis_agent.models import DataBrief
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, create_profiler, profile_dataset
@@ -152,6 +153,13 @@ async def run_case(case: dict, lead, profiler, analyst, designer, designer_fallb
     return record
 
 
+def use_instructions(path: Path) -> str:
+    """Run the lead with candidate instructions (an optimizer's output) instead of the source's, for this process."""
+    text = path.read_text(encoding="utf-8")
+    vis_agent.lead.LEAD_INSTRUCTIONS = text
+    return text
+
+
 async def evaluate(cases: list[dict]) -> dict:
     profiler = create_profiler(os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL)
     analyst = create_analyst(os.getenv("PYDANTIC_AI_ANALYST_MODEL") or DEFAULT_ANALYST_MODEL)
@@ -185,11 +193,15 @@ def main() -> None:
     parser.add_argument("--corpus", action="store_true", help="Append ten corpus cases sampled with seed 11.")
     parser.add_argument("--out", type=Path, default=Path("results.json"), help="Write results here (default: results.json).")
     parser.add_argument("--only", metavar="NAME", help="Run only this named case.")
+    parser.add_argument("--instructions", type=Path, metavar="PATH",
+                        help="Run the lead with these instructions instead of the source's (an optimizer's output).")
     args = parser.parse_args()
     load_dotenv(ROOT / ".env")
     cases = load_cases()
     if args.corpus:
         cases += corpus_cases()
+    if args.instructions:
+        use_instructions(args.instructions)
     if args.only:
         cases = [case for case in cases if case["name"] == args.only]
         if not cases:

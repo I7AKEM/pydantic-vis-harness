@@ -137,3 +137,14 @@ def test_a_turn_may_accept_either_continuation():
     assert revised['tool_ok'] and revised['outcome_ok'] and revised['redo_ok'] is True
     drawn = runner().score_turn(expected, messages('draw', {'artifact': {'artifact_id': 'art_c'}}))
     assert not drawn['tool_ok']
+
+
+def test_candidate_instructions_replace_the_leads_for_the_process(tmp_path, monkeypatch):
+    import vis_agent.lead
+    from evals.lead.run import use_instructions
+
+    monkeypatch.setattr(vis_agent.lead, "LEAD_INSTRUCTIONS", "the source's instructions")
+    path = tmp_path / "instructions.txt"
+    path.write_text("Candidate instructions from the optimizer.", encoding="utf-8")
+    assert use_instructions(path) == "Candidate instructions from the optimizer."
+    assert vis_agent.lead.LEAD_INSTRUCTIONS == "Candidate instructions from the optimizer."
