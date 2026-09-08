@@ -23,6 +23,10 @@ from vis_agent.models import DataBrief, Intent
 from vis_agent.profiler.agent import profile_dataset
 from vis_agent.render import gptvis
 from vis_agent.render.base import RenderFailed, RendererUnavailable
+from vis_agent.requests.models import Caller
+from vis_agent.requests.runner import answer_request, create_request, run_request
+from vis_agent.requests.store import ArtifactNotFound, RequestNotFound
+from vis_agent.store import DatasetNotFound
 
 
 def resources():
@@ -34,7 +38,7 @@ def resources():
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="vis", description="Visualization agent, phase 4.")
+    parser = argparse.ArgumentParser(prog="vis", description="Visualization agent, phase 6.")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("chat", help="Talk to the lead agent in the terminal.")
     profile = commands.add_parser("profile", help="Profile a dataset and print the profile as JSON.")
@@ -46,6 +50,24 @@ def build_parser() -> argparse.ArgumentParser:
     ask.add_argument("question", help="The question to answer.")
     ask.add_argument("--upload", type=Path, help="A CSV file to upload first.")
     ask.add_argument("--brief", type=Path, help="A JSON file holding a data brief.")
+    draw = commands.add_parser("draw", help="Draw a chart for a question and print the outcome as JSON.")
+    draw.add_argument("dataset_id", nargs="?", help="An existing ds_ ID.")
+    draw.add_argument("question", help="The question to answer with a chart.")
+    draw.add_argument("--upload", type=Path, help="A CSV file to upload first.")
+    draw.add_argument("--brief", type=Path, help="A JSON file holding a data brief.")
+    revise = commands.add_parser("revise", help="Revise an artifact into a new linked version.")
+    revise.add_argument("artifact_id", help="The art_ ID to change.")
+    revise.add_argument("change", help="What must differ.")
+    revise.add_argument("--redo-analysis", action="store_true", help="The data must change, not only the chart.")
+    resume = commands.add_parser("resume", help="Continue a request, answering its question when one is given.")
+    resume.add_argument("request_id", help="The rq_ ID.")
+    resume.add_argument("--answer", help="The answer to the pending question.")
+    requests = commands.add_parser("requests", help="List requests, newest first.")
+    requests.add_argument("--dataset", help="Only this dataset.")
+    artifacts = commands.add_parser("artifacts", help="List a dataset's artifacts, newest first.")
+    artifacts.add_argument("dataset_id")
+    suggest = commands.add_parser("suggest", help="Ask the lead for three to five questions worth asking.")
+    suggest.add_argument("dataset_id")
     commands.add_parser("failures", help="List failed checks across saved profiles.")
     recommend = commands.add_parser("recommend", help="Rank chart candidates for an analysis report.")
     recommend.add_argument("report", type=Path)
@@ -152,6 +174,68 @@ def design_command(args: argparse.Namespace) -> int:
     return 0
 
 
+SUGGEST_PROMPT = ("Suggest three to five questions worth asking about dataset {dataset_id}, each with a reason, "
+                  "using only columns that exist in its profile. Do not draw anything.")
+TERMINAL = Caller(kind="terminal")
+
+
+def _exit_code(outcome) -> int:
+    return {"done": 0, "waiting": 3}.get(outcome.status, 1)
+
+
+def draw_command(args: argparse.Namespace) -> int:
+    _agent, deps, store, *_ = resources()
+    if not args.dataset_id and not args.upload:
+        raise ValueError("give a dataset_id or --upload a CSV file")
+    brief = DataBrief.model_validate_json(args.brief.read_text()) if args.brief else None
+    dataset_id = args.dataset_id
+    if args.upload:
+        dataset_id = store.save_upload(args.upload.name, args.upload.read_bytes(), brief).dataset_id
+    request = create_request(deps, type="new", dataset_id=dataset_id, question=args.question, caller=TERMINAL)
+    outcome = asyncio.run(run_request(deps, request.request_id))
+    _print_json(outcome)
+    return _exit_code(outcome)
+
+
+def revise_command(args: argparse.Namespace) -> int:
+    _agent, deps, *_ = resources()
+    dataset_id = deps.requests.get_artifact(args.artifact_id).dataset_id
+    request = create_request(deps, type="revise", dataset_id=dataset_id, question=args.change, caller=TERMINAL,
+                             parent_artifact_id=args.artifact_id, redo_analysis=args.redo_analysis)
+    outcome = asyncio.run(run_request(deps, request.request_id))
+    _print_json(outcome)
+    return _exit_code(outcome)
+
+
+def resume_command(args: argparse.Namespace) -> int:
+    _agent, deps, *_ = resources()
+    if args.answer:
+        outcome = asyncio.run(answer_request(deps, args.request_id, args.answer, "terminal"))
+    else:
+        outcome = asyncio.run(run_request(deps, args.request_id))
+    _print_json(outcome)
+    return _exit_code(outcome)
+
+
+def requests_command(args: argparse.Namespace) -> int:
+    _agent, deps, *_ = resources()
+    _print_json([s.model_dump(mode="json") for s in deps.requests.list_requests(dataset_id=args.dataset)])
+    return 0
+
+
+def artifacts_command(args: argparse.Namespace) -> int:
+    _agent, deps, *_ = resources()
+    _print_json([s.model_dump(mode="json") for s in deps.requests.list_artifacts(dataset_id=args.dataset_id)])
+    return 0
+
+
+def suggest_command(args: argparse.Namespace) -> int:
+    agent, deps, *_ = resources()
+    result = asyncio.run(agent.run(SUGGEST_PROMPT.format(dataset_id=args.dataset_id), deps=deps))
+    print(result.output)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -164,6 +248,14 @@ def main(argv: list[str] | None = None) -> int:
             _print_json({"error": str(error)})
             return 1
         except (OSError, ValidationError, ValueError, ResolveError) as error:
+            _print_json({"error": str(error)})
+            return 2
+    request_commands = {"draw": draw_command, "revise": revise_command, "resume": resume_command,
+                        "requests": requests_command, "artifacts": artifacts_command, "suggest": suggest_command}
+    if args.command in request_commands:
+        try:
+            return request_commands[args.command](args)
+        except (DatasetNotFound, RequestNotFound, ArtifactNotFound, OSError, ValidationError, ValueError) as error:
             _print_json({"error": str(error)})
             return 2
     if args.command == "chat":
