@@ -59,11 +59,17 @@ def error(message: str, status: int) -> Response:
     return JSONResponse({"error": message}, status_code=status)
 
 
-async def read_json(request: HttpRequest, model):
-    """Parse a JSON body into a model. Raises ValueError for a bad body; the content type is checked first."""
+def require_json(request: HttpRequest) -> None:
+    """The control the built-in chat endpoint uses: a JSON content type forces a browser preflight, so a page
+    the user happens to visit cannot start, answer, or resume a request. Raises TypeError otherwise."""
     media_type = request.headers.get("content-type", "").split(";")[0].strip().lower()
     if media_type != JSON_MEDIA_TYPE:
         raise TypeError(f"Expected Content-Type: {JSON_MEDIA_TYPE}, got {media_type or 'no content type'}")
+
+
+async def read_json(request: HttpRequest, model):
+    """Parse a JSON body into a model. Raises ValueError for a bad body; the content type is checked first."""
+    require_json(request)
     try:
         return model.model_validate_json(await request.body())
     except ValidationError as exc:
@@ -74,15 +80,17 @@ def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.A
     client = http or httpx.AsyncClient(timeout=CALLBACK_TIMEOUT_SECONDS)
 
     async def notify(request_id: str) -> None:
-        """Post the request record to the caller's return address once. Failures are logged, never retried."""
-        record = requests_of(deps).get_request(request_id)
-        if not record.caller.return_address:
-            return
+        """Post the request record to the caller's return address once. Any failure is logged, never retried,
+        and never leaves the background task."""
         try:
-            response = await client.post(record.caller.return_address, json=shown(record), timeout=CALLBACK_TIMEOUT_SECONDS)
+            record = requests_of(deps).get_request(request_id)
+            if not record.caller.return_address:
+                return
+            response = await client.post(record.caller.return_address, json=shown(record),
+                                         timeout=CALLBACK_TIMEOUT_SECONDS)
             response.raise_for_status()
-        except httpx.HTTPError as exc:
-            log.warning("The callback for %s to %s failed: %s", request_id, record.caller.return_address, exc)
+        except Exception as exc:
+            log.warning("The callback for %s failed: %s", request_id, exc)
 
     async def run_then_notify(request_id: str, answer: str | None = None) -> None:
         try:
@@ -147,7 +155,10 @@ def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.A
     async def post_resume(request: HttpRequest) -> Response:
         request_id = request.path_params["request_id"]
         try:
+            require_json(request)
             record = requests_of(deps).get_request(request_id)
+        except TypeError as exc:
+            return error(str(exc), 415)
         except RequestNotFound as exc:
             return error(str(exc), 404)
         except ValueError as exc:

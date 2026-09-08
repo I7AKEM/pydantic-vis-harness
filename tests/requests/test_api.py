@@ -1,4 +1,3 @@
-import asyncio
 import re
 
 import httpx
@@ -110,7 +109,8 @@ def test_resume_continues_a_failed_request(app, deps, dataset_id, fake_models, f
     with TestClient(app) as client:
         request_id = client.post("/requests", json=body(dataset_id)).json()["request_id"]
         assert client.get(f"/requests/{request_id}").json()["status"] == "failed"
-        assert client.post(f"/requests/{request_id}/resume").status_code == 202
+        assert client.post(f"/requests/{request_id}/resume").status_code == 415
+        assert client.post(f"/requests/{request_id}/resume", headers=JSON).status_code == 202
         assert client.get(f"/requests/{request_id}").json()["status"] == "done"
 
 
@@ -123,3 +123,19 @@ def test_a_program_asks_the_lead_a_question(app, agents):
     with lead.override(model=FunctionModel(reply)), TestClient(app) as client:
         answer = client.post("/agents/ask", json={"question": "What can you do?", "caller": {"identity": "reporter"}})
         assert answer.status_code == 200 and answer.json()["answer"] == "I draw charts."
+
+
+def test_a_broken_callback_is_logged_not_raised(deps, agents, dataset_id, fake_models, fake_render, caplog):
+    _profiler, _analyst, _designer, lead = agents
+
+    class Broken:
+        async def post(self, *args, **kwargs):
+            raise RuntimeError("the return address exploded")
+
+    app = Starlette(routes=[])
+    add_request_routes(app, deps, lead, http=Broken())
+    with TestClient(app) as client:
+        request_id = client.post("/requests", json=body(dataset_id)).json()["request_id"]
+        shown = client.get(f"/requests/{request_id}").json()
+    assert shown["status"] == "done" and shown["artifact_id"]
+    assert any("callback" in message and "exploded" in message for message in caplog.messages)
