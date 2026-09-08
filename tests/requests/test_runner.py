@@ -193,6 +193,7 @@ def test_latest_unfinished_finds_the_conversation_request(deps, dataset_id, fake
     waiting = create_request(deps, type="new", dataset_id=dataset_id, question="Later", caller=CHAT)
     assert latest_unfinished(deps, "chat-1").request_id == waiting.request_id
     assert latest_unfinished(deps, "chat-2") is None
+    assert latest_unfinished(deps, None) is None and latest_unfinished(deps, "") is None
 
 
 def test_the_budget_is_a_plain_failure(deps, dataset_id, fake_models, monkeypatch):

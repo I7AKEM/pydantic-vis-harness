@@ -61,6 +61,8 @@ class RequestStore:
         self.datasets.get_upload(dataset_id)
         if type == "revise" and parent_artifact_id is None:
             raise ValueError("A revision names the artifact to change.")
+        if type == "new" and parent_artifact_id is not None:
+            raise ValueError("A new request does not name a parent artifact; ask for a revision instead.")
         if parent_artifact_id is not None and self.get_artifact(parent_artifact_id).dataset_id != dataset_id:
             raise ValueError("The artifact belongs to another dataset.")
         if not question or not question.strip():

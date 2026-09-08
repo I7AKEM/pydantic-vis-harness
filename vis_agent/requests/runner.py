@@ -79,6 +79,9 @@ def outcome_for(deps: AppDeps, request: Request, warnings: list[str] | None = No
 
 
 def latest_unfinished(deps: AppDeps, conversation_id: str | None) -> Request | None:
+    """The newest unfinished request of a conversation; nothing without a conversation, so callers never cross them."""
+    if not conversation_id:
+        return None
     store = requests_of(deps)
     for summary in store.list_requests(conversation_id=conversation_id, unfinished_only=True, limit=1):
         return store.get_request(summary.request_id)

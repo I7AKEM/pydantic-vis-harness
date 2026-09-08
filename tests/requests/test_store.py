@@ -51,6 +51,8 @@ def test_new_request_checks_its_inputs(requests, dataset_id):
         requests.new_request("new", dataset_id, "   ", CHAT)
     with pytest.raises(ValueError, match="artifact"):
         requests.new_request("revise", dataset_id, "Make it blue", CHAT)
+    with pytest.raises(ValueError, match="revision"):
+        requests.new_request("new", dataset_id, "q", CHAT, parent_artifact_id="art_" + "0" * 32)
 
 
 def test_a_revision_must_name_an_artifact_of_the_same_dataset(requests, store, dataset_id):
