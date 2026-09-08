@@ -31,3 +31,10 @@ def test_placeholder_units_become_null(unit):
 
     column = ResultColumn(name="Graduates", meaning="Graduates", kind="measure", unit=unit)
     assert column.unit is None
+
+
+@pytest.mark.parametrize("source", ["null", "None", "", "-"])
+def test_placeholder_sources_become_null(source):
+    column = ResultColumn(name="share_under_15", meaning="Share of people under 15", kind="share", source=source,
+                          denominator="null")
+    assert column.source is None and column.denominator == "not stated"

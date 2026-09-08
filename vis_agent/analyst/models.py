@@ -28,10 +28,11 @@ class ResultColumn(BaseModel):
     aggregate: Aggregate = Field(default="none", description="How the source was aggregated, or none.")
     denominator: str | None = Field(default=None, description="For a share: what the share is of, in words.")
 
-    @field_validator("unit", mode="before")
+    @field_validator("unit", "source", "denominator", mode="before")
     @classmethod
-    def _placeholder_unit_is_null(cls, value):
-        # Models sometimes write the word null, or a dash, instead of a JSON null; the picture would print it.
+    def _placeholder_is_null(cls, value):
+        # Models sometimes write the word null, or a dash, instead of a JSON null. A unit like that would be
+        # printed on the picture, and a source like that fails the column check and can end a run.
         if isinstance(value, str) and value.strip().lower() in {"", "null", "none", "n/a", "na", "-"}:
             return None
         return value
