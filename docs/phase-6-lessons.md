@@ -284,6 +284,38 @@ them repeated after the user's answer, where the lead resumed a second time and 
 run on the stricter first version the designer looped for real on "average income by gender" and was cut at
 three requests instead of nine.
 
+### Open-weight models tried after the loop
+
+On 2026-09-09 the owner asked for an open-weight alternative to Gemma 4 31B for the specialists. The lead
+runs on Sonnet 4.6; Gemma is the profiler, analyst, and designer because the two inherit the profiler's
+default. Candidates came from OpenRouter's live list: open weights (a Hugging Face id), tool calling, input
+under one dollar per million tokens, then the recent and plausible ones. Each ran the 31-case designer
+evaluation once under the new budgets; the four that matched or nearly matched Gemma as designer also ran
+the 70-case analyst evaluation.
+
+| Model | Designer, delivered | Requests | Seconds | Analyst, tables right | Price in/out per M |
+|---|---|---|---|---|---|
+| Gemma 4 31B (current) | 31/31 | 3.6 | 4.8 | 67 to 70/70, 7 s | 0.09 / 0.34 |
+| Kimi K2.6 | 31/31 | 3.5 | 5.8 | 61/70, 13 s, six timeouts | 0.95 / 4.00 |
+| DeepSeek V4 Pro | 31/31 | 3.3 | 9.1 | 66/70, 7.9 s | 0.58 / 1.74 |
+| Qwen 3.8 Flash | 30/31 (a rate limit) | 3.7 | 15.7 | failed nearly every delivery | 0.15 / 0.47 |
+| MiniMax M3 | 30/31 | 3.4 | 6.1 | 61/70, 7.0 s | 0.30 / 1.20 |
+| MiMo V2.5 | 30/31 | 3.5 | 12.0 | not run | 0.14 / 0.28 |
+| Gemma 4 26B MoE | 28/31 | 3.7 | 5.7 | not run | 0.07 / 0.34 |
+| DeepSeek V4 Flash | 27/31 | 3.9 | 10.3 | not run | 0.07 / 0.18 |
+| Mistral Small 4 | 22/31 | 4.4 | 7.9 | not run | 0.15 / 0.60 |
+
+GLM 5.3 Flash and gpt-oss-120b cannot run at all: their endpoints refuse a request with reasoning
+disabled, which the designer and analyst set; testing them needs an agent variant that allows reasoning.
+Nemotron 3.5 Lightning was rate-limited upstream on both attempts. No candidate looped. The analyst misses of
+the candidates are extra rows and columns the question did not ask for and vague questions answered
+instead of asked, the same kinds Gemma makes, only more often.
+
+Reading: nothing cheaper than Gemma beats it on either evaluation; the two that match it as designer cost
+six to ten times more and are worse as analyst. Gemma stays, with the budgets and the fallback designer
+covering its loops. The closest all-rounder for a later switch is DeepSeek V4 Pro; a decision should rest
+on the two-hundred-case scale set, since one run of 31 cases cannot see a one-in-twenty loop rate.
+
 ## Left for later
 
 - The analyst sometimes returns a clarification question for a plain question (about one case in
