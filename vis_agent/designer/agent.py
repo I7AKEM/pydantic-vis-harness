@@ -9,26 +9,23 @@ from hashlib import sha256
 from pathlib import Path
 from typing import get_args
 
-import duckdb
 from pydantic import BaseModel
-from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed, ToolOutput
+from pydantic_ai import Agent, ModelRetry, RunContext, ToolOutput
 from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded
 from pydantic_ai.usage import RunUsage, UsageLimits
 
-from vis_agent.analyst.agent import ARABIC, analyze_dataset
+from vis_agent.analyst.agent import ARABIC
 from vis_agent.analyst.checks import summary_numbers_exist
 from vis_agent.analyst.models import Aggregate, AnalysisReport, Cell, Clarification, ColumnKind
-from vis_agent.deps import AppDeps
 from vis_agent.models import DataBrief, Intent, QuestionAnswer
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL
 from vis_agent.render import gptvis
-from vis_agent.render.base import RENDERERS, Rendered, RendererUnavailable, RenderFailed
-from vis_agent.store import DatasetNotFound
+from vis_agent.render.base import RENDERERS, Rendered
 
 from . import models
 from .catalogue import CATALOGUE
 from .check import check_spec as run_check
-from .models import Candidate, ChartType, Compromise, Design, DesignReport, PreviousDesign, Rejection, SpecCheck
+from .models import Candidate, Design, DesignReport, PreviousDesign, Rejection, SpecCheck
 from .recommend import recommend_charts as rank_charts
 from .shape import describe
 from .syntax import KEYS, STYLE_KEYS, parse, to_text
@@ -359,68 +356,3 @@ def render_design(
             f"line {v.line or 1}: {v.rule}: {v.message}. {v.fix}" for v in check.violations
         ))
     return gptvis.render(parse(design.spec), columns, result, out_dir, compromises=check.compromises)
-
-
-class LeadChart(BaseModel):
-    """What the lead sees: a checked design and its rendered URLs, or a clarification."""
-
-    dataset_id: str
-    question: str
-    chart: ChartType | None = None
-    spec: str | None = None
-    explanation: str | None = None
-    summary: str | None = None
-    clarification: Clarification | None = None
-    compromises: list[Compromise] = []
-    warnings: list[str] = []
-    render_id: str | None = None
-    png_url: str | None = None
-    html_url: str | None = None
-
-
-async def make_chart(ctx: RunContext[AppDeps], dataset_id: str, question: str) -> LeadChart:
-    """Answer a question about a dataset with a chart: the picture's URL, the spec, and a two-sentence explanation, or the question the analyst or the designer needs answered first.
-
-    Args:
-        dataset_id: The ds_ ID of an uploaded dataset.
-        question: The user's question, as they wrote it.
-    """
-    store = ctx.deps.store
-    try:
-        report = await analyze_dataset(store, ctx.deps.profiler, ctx.deps.analyst, dataset_id, question,
-                                       usage=ctx.usage)
-    except DatasetNotFound as exc:
-        raise ToolFailed(str(exc)) from exc
-    except ValueError as exc:
-        raise ModelRetry(str(exc)) from exc
-    except duckdb.Error as exc:
-        log.warning("DuckDB failed while answering %r on %s: %s", question, dataset_id, exc)
-        raise ToolFailed("DuckDB could not run the analysis on this dataset.") from exc
-
-    answer = LeadChart(dataset_id=report.dataset_id, question=report.question,
-                       summary=report.analysis.summary if report.analysis else None,
-                       clarification=report.clarification, warnings=report.warnings)
-    if report.clarification is not None or report.analysis is None or report.result is None:
-        return answer
-
-    brief = (await asyncio.to_thread(store.get_upload, dataset_id)).brief
-    designed = await design_chart(report, ctx.deps.designer, brief, usage=ctx.usage)
-    answer.warnings.extend(designed.warnings)
-    answer.clarification = designed.clarification
-    if designed.clarification is not None or designed.design is None:
-        return answer
-
-    design = designed.design
-    answer.chart, answer.spec, answer.explanation = design.chart, design.spec, design.explanation
-    answer.compromises = design.compromises
-    identifier = render_id(design.spec, report)
-    try:
-        rendered = await asyncio.to_thread(render_design, report, design, store.directory / "renders" / identifier)
-    except (RendererUnavailable, RenderFailed) as exc:
-        answer.warnings.append(f"The chart could not be rendered: {exc}")
-        return answer
-    answer.compromises = rendered.compromises
-    answer.render_id = identifier
-    answer.png_url = f"/renders/{identifier}/chart.png"
-    answer.html_url = f"/renders/{identifier}/chart.html"
-    return answer

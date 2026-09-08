@@ -1,5 +1,3 @@
-import re
-
 import pytest
 
 from pydantic_ai import capture_run_messages
@@ -69,10 +67,13 @@ def test_lead_profiles_a_csv_through_the_agent(store):
     assert store.get_profile(source.dataset_id).status == "complete"
 
 
-@pytest.mark.parametrize("tool_name", ["profile_csv", "make_chart"])
+@pytest.mark.parametrize("tool_name", ["profile_csv", "draw"])
 def test_unknown_id_is_a_failed_tool_result_not_a_retry(store, tool_name):
+    from vis_agent.requests.store import RequestStore
+
     lead, profiler = create_lead("test"), create_profiler("test")
-    deps = AppDeps(store=store, profiler=profiler, analyst=create_analyst("test"), designer=create_designer("test"))
+    deps = AppDeps(store=store, profiler=profiler, analyst=create_analyst("test"), designer=create_designer("test"),
+                   requests=RequestStore(store))
     args = ({"uploaded_file_id": "ds_" + "0" * 32} if tool_name == "profile_csv"
             else {"dataset_id": "ds_" + "0" * 32, "question": "Total by region"})
     drive = call_then_summarize(tool_name, args,
@@ -84,10 +85,13 @@ def test_unknown_id_is_a_failed_tool_result_not_a_retry(store, tool_name):
     assert not [p for m in messages for p in m.parts if isinstance(p, RetryPromptPart)]
 
 
-@pytest.mark.parametrize("tool_name", ["profile_csv", "make_chart"])
+@pytest.mark.parametrize("tool_name", ["profile_csv", "draw"])
 def test_malformed_id_asks_the_model_to_correct_it(store, tool_name):
+    from vis_agent.requests.store import RequestStore
+
     lead, profiler = create_lead("test"), create_profiler("test")
-    deps = AppDeps(store=store, profiler=profiler, analyst=create_analyst("test"), designer=create_designer("test"))
+    deps = AppDeps(store=store, profiler=profiler, analyst=create_analyst("test"), designer=create_designer("test"),
+                   requests=RequestStore(store))
     attempts = []
 
     def drive(messages, info):
@@ -213,32 +217,47 @@ def designer_chart_drive(messages, info):
 
 
 @pytest.fixture
-def chart_run(store):
-    from vis_agent.designer.agent import LeadChart
-    from vis_agent.models import DataBrief
+def conversation(store, monkeypatch):
+    """A lead with fake specialists and a fake renderer, run the way the web chat runs it."""
+    from vis_agent.render.base import Rendered
+    from vis_agent.requests.store import RequestStore
 
-    source = store.save_upload("sales.csv", SALES, DataBrief(suggested_chart_type="bar"))
+    source = store.save_upload("sales.csv", SALES)
     lead, profiler = create_lead("test"), create_profiler("test")
     analyst, designer = create_analyst("test"), create_designer("test")
-    deps = AppDeps(store=store, profiler=profiler, analyst=analyst, designer=designer)
+    deps = AppDeps(store=store, profiler=profiler, analyst=analyst, designer=designer, requests=RequestStore(store))
 
-    def run(analyst_drive=analyst_chart_drive, designer_drive=designer_chart_drive):
-        drive = call_then_summarize("make_chart", {"dataset_id": source.dataset_id, "question": "Total by region"},
-                                    lambda part: LeadChart.model_validate(part.model_response_object()).model_dump_json())
+    def render(report, design, out_dir, renderer="gptvis"):
+        out_dir.mkdir(parents=True, exist_ok=True)
+        (out_dir / "chart.png").write_bytes(b"png")
+        return Rendered(png=out_dir / "chart.png", html=out_dir / "chart.html", config=out_dir / "config.json",
+                        width=2400, height=1350, seconds=0.1, non_background_share=0.2, compromises=[],
+                        drawn_rows=2, folded_rows=0, dropped_rows=0)
+
+    monkeypatch.setattr("vis_agent.requests.runner.render_design", render)
+
+    def run(message, drive, analyst_drive=analyst_chart_drive, designer_drive=designer_chart_drive, **kwargs):
         with profiler.override(model=TestModel(call_tools=[], custom_output_args=semantic_output(source.headers))), \
                 analyst.override(model=FunctionModel(analyst_drive)), \
                 designer.override(model=FunctionModel(designer_drive)), lead.override(model=FunctionModel(drive)):
-            result = lead.run_sync("Chart total by region", deps=deps)
-        return LeadChart.model_validate_json(result.output), result
+            return lead.run_sync(message, deps=deps, **kwargs)
 
-    return run
+    return source.dataset_id, deps, run
 
 
-def test_lead_exposes_make_chart(store):
+def outcome_of(part):
+    from vis_agent.requests.models import RequestOutcome
+
+    return RequestOutcome.model_validate(part.model_response_object())
+
+
+def test_lead_exposes_the_phase_6_tools(store):
     lead = create_lead("test")
 
     def drive(messages, info):
-        assert "make_chart" in {tool.name for tool in info.function_tools}
+        names = {tool.name for tool in info.function_tools}
+        assert {"profile_csv", "find_dataset", "answer_question", "draw", "revise", "resume", "find_artifact"} <= names
+        assert "make_chart" not in names
         return ModelResponse(parts=[TextPart(content="ok")])
 
     deps = AppDeps(store=store, profiler=create_profiler("test"), analyst=create_analyst("test"),
@@ -247,115 +266,85 @@ def test_lead_exposes_make_chart(store):
         assert lead.run_sync("hello", deps=deps).output == "ok"
 
 
-def test_lead_makes_a_chart_through_the_agent(store, chart_run, monkeypatch):
-    from vis_agent.designer.agent import render_id
-    from vis_agent.designer.models import Compromise
-    from vis_agent.render.base import Rendered
+def test_draw_delivers_an_artifact_and_records_the_conversation(conversation):
+    dataset_id, deps, run = conversation
+    drive = call_then_summarize("draw", {"dataset_id": dataset_id, "question": "Total by region"},
+                                lambda part: outcome_of(part).model_dump_json())
+    result = run("Chart total by region", drive, conversation_id="chat-1")
+    from vis_agent.requests.models import RequestOutcome
 
-    compromise = Compromise(key="test", message="A renderer compromise.")
+    outcome = RequestOutcome.model_validate_json(result.output)
+    assert outcome.status == "done" and outcome.artifact.chart == "bar" and outcome.artifact.rows == [["West", 20], ["East", 10]]
+    assert outcome.artifact.png_url.startswith("/renders/")
+    request = deps.requests.get_request(outcome.request_id)
+    assert request.caller.kind == "chat" and request.caller.conversation_id == "chat-1"
 
-    def render(report, design, out_dir, renderer="gptvis"):
-        assert out_dir == store.directory / "renders" / render_id(design.spec, report)
-        out_dir.mkdir(parents=True)
-        (out_dir / "chart.png").write_bytes(b"fake png")
-        return Rendered(png=out_dir / "chart.png", html=out_dir / "chart.html", config=out_dir / "config.json",
-                        width=640, height=480, seconds=0, non_background_share=0.5,
-                        compromises=[*design.compromises, compromise], drawn_rows=2, folded_rows=0, dropped_rows=0)
 
-    def designer_drive(messages, info):
-        import json
+def test_draw_returns_the_question_and_resume_answers_it(conversation):
+    import json
 
+    dataset_id, deps, run = conversation
+
+    def asking(messages, info):
         prompt = json.loads(messages[0].parts[-1].content)
-        assert prompt["suggested_chart_type"] == "bar"
-        return designer_chart_drive(messages, info)
+        if not prompt.get("clarifications"):
+            return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification",
+                                                     args={"question": "Which amount?", "reason": "Two."})])
+        assert prompt["clarifications"][0]["answer"] == "The amount column"
+        return analyst_chart_drive(messages, info)
 
-    monkeypatch.setattr("vis_agent.designer.agent.render_design", render)
-    chart, result = chart_run(designer_drive=designer_drive)
-    assert re.search(r"/renders/[0-9a-f]{12}/chart\.png", result.output)
-    assert "vis bar" in result.output and chart.spec.startswith("vis bar\n")
-    assert chart.png_url == f"/renders/{chart.render_id}/chart.png"
-    assert chart.html_url == f"/renders/{chart.render_id}/chart.html"
-    assert (store.directory / chart.png_url.lstrip("/")).read_bytes() == b"fake png"
-    assert chart.chart == "bar" and chart.explanation == CHART_EXPLANATION
-    assert chart.summary == "West leads with 20." and chart.warnings == []
-    assert compromise in chart.compromises and chart.clarification is None
-    assert result.usage.requests == 8  # lead + profiler + analyst + designer share the run's usage
+    drive = call_then_summarize("draw", {"dataset_id": dataset_id, "question": "Total by region"},
+                                lambda part: outcome_of(part).model_dump_json())
+    from vis_agent.requests.models import RequestOutcome
 
-
-def test_make_chart_returns_the_analyst_clarification(chart_run, monkeypatch):
-    def clarify(messages, info):
-        return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification", args={
-            "question": "Which amount do you mean?", "reason": "The measure is ambiguous.",
-        })])
-
-    def unexpected(*args, **kwargs):
-        pytest.fail("An analyst clarification must stop before design or rendering")
-
-    monkeypatch.setattr("vis_agent.designer.agent.render_design", unexpected)
-    chart, _ = chart_run(analyst_drive=clarify, designer_drive=unexpected)
-    assert chart.clarification.question == "Which amount do you mean?"
-    assert chart.spec is None and chart.png_url is None and chart.html_url is None
+    first = RequestOutcome.model_validate_json(run("Chart total by region", drive, analyst_drive=asking,
+                                                   conversation_id="chat-1").output)
+    assert first.status == "waiting" and first.clarification.question == "Which amount?"
+    resume = call_then_summarize("resume", {"request_id": "", "answer": "The amount column"},
+                                 lambda part: outcome_of(part).model_dump_json())
+    second = RequestOutcome.model_validate_json(run("The amount column", resume, analyst_drive=asking,
+                                                    conversation_id="chat-1").output)
+    assert second.status == "done" and second.request_id == first.request_id and second.artifact.chart == "bar"
 
 
-@pytest.mark.parametrize("failure", ["RenderFailed", "RendererUnavailable"])
-def test_make_chart_reports_a_render_failure_as_a_warning(chart_run, monkeypatch, failure):
-    from vis_agent.render import base
+def test_revise_links_a_new_version(conversation):
+    dataset_id, deps, run = conversation
+    from vis_agent.requests.models import RequestOutcome
 
-    def render(*args, **kwargs):
-        raise getattr(base, failure)("Renderer unavailable for this test.")
-
-    monkeypatch.setattr("vis_agent.designer.agent.render_design", render)
-    chart, _ = chart_run()
-    assert chart.spec.startswith("vis bar\n") and chart.explanation == CHART_EXPLANATION
-    assert chart.png_url is None and chart.html_url is None
-    assert len(chart.warnings) == 1 and "Renderer unavailable for this test." in chart.warnings[0]
-
-
-def test_make_chart_returns_the_designer_clarification(chart_run, monkeypatch):
-    def clarify(messages, info):
-        return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification", args={
-            "question": "Which colors can I use?", "reason": "The colors lack contrast.",
-        })])
-
-    def unexpected(*args, **kwargs):
-        pytest.fail("A designer clarification must stop before rendering")
-
-    monkeypatch.setattr("vis_agent.designer.agent.render_design", unexpected)
-    chart, _ = chart_run(designer_drive=clarify)
-    assert chart.clarification.question == "Which colors can I use?"
-    assert chart.summary == "West leads with 20."
-    assert chart.spec is None and chart.png_url is None
+    draw = call_then_summarize("draw", {"dataset_id": dataset_id, "question": "Total by region"},
+                               lambda part: outcome_of(part).model_dump_json())
+    v1 = RequestOutcome.model_validate_json(run("Chart total by region", draw).output).artifact
+    revise = call_then_summarize("revise", {"artifact_id": v1.artifact_id, "change": "Make it blue", "redo_analysis": False},
+                                 lambda part: outcome_of(part).model_dump_json())
+    v2 = RequestOutcome.model_validate_json(run("Make it blue", revise).output).artifact
+    assert v2.version == 2 and v2.parent_artifact_id == v1.artifact_id and v2.change == "Make it blue"
+    found = call_then_summarize("find_artifact", {"artifact_id": v1.artifact_id, "dataset_id": ""},
+                                lambda part: str(len(part.content)))
+    assert run("Show the versions", found).output == "2"
 
 
-@pytest.mark.parametrize("stage", ["analyst", "designer"])
-def test_make_chart_preserves_warnings_when_an_agent_cannot_finish(chart_run, monkeypatch, stage):
-    from pydantic_ai.exceptions import ModelAPIError
+def test_lead_tools_report_unknown_ids_as_failures(conversation):
+    dataset_id, deps, run = conversation
 
-    def fail(messages, info):
-        raise ModelAPIError("test", "Cannot finish this test.")
+    def drive(messages, info):
+        returns = tool_returns(messages)
+        if not returns:
+            return ModelResponse(parts=[ToolCallPart(tool_name="revise", args={
+                "artifact_id": "art_" + "0" * 32, "change": "x", "redo_analysis": False})])
+        assert "not found" in str(returns[-1].content).lower()
+        return ModelResponse(parts=[TextPart(content="No such artifact.")])
 
-    def unexpected(*args, **kwargs):
-        pytest.fail("An incomplete report must stop before rendering")
-
-    monkeypatch.setattr("vis_agent.designer.agent.render_design", unexpected)
-    chart, _ = chart_run(**{f"{stage}_drive": fail})
-    assert chart.spec is None and chart.png_url is None
-    assert len(chart.warnings) == 1 and "Cannot finish this test." in chart.warnings[0]
+    assert run("Change it", drive).output == "No such artifact."
 
 
-def test_make_chart_reports_a_database_failure_without_retry(store, monkeypatch):
-    import duckdb
+def test_resume_without_a_request_in_the_conversation_is_a_failure(conversation):
+    dataset_id, deps, run = conversation
 
-    async def fail(*args, **kwargs):
-        raise duckdb.Error("Database unavailable.")
+    def drive(messages, info):
+        returns = tool_returns(messages)
+        if not returns:
+            return ModelResponse(parts=[ToolCallPart(tool_name="resume", args={"request_id": "", "answer": ""})])
+        assert "no unfinished request" in str(returns[-1].content).lower()
+        return ModelResponse(parts=[TextPart(content="Nothing to continue.")])
 
-    monkeypatch.setattr("vis_agent.designer.agent.analyze_dataset", fail)
-    deps = AppDeps(store=store, profiler=create_profiler("test"), analyst=create_analyst("test"),
-                   designer=create_designer("test"))
-    lead = create_lead("test")
-    drive = call_then_summarize("make_chart", {"dataset_id": "ds_" + "0" * 32, "question": "Total by region"},
-                                lambda part: f"outcome={part.outcome}: {part.content}")
-    with lead.override(model=FunctionModel(drive)), capture_run_messages() as messages:
-        result = lead.run_sync("Chart total by region", deps=deps)
-    assert result.output == "outcome=failed: DuckDB could not run the analysis on this dataset."
-    assert not [p for m in messages for p in m.parts if isinstance(p, RetryPromptPart)]
+    assert run("continue", drive, conversation_id="chat-9").output == "Nothing to continue."
