@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import datetime, timezone
 from hashlib import sha256
 from pathlib import Path
@@ -365,3 +366,135 @@ def test_render_subcommand_preserves_check_compromises(report_path, tmp_path, ca
     expected = ("The value axis starts at 100 instead of zero." if chart == "line"
                 else "tables are drawn as the package draws them")
     assert any(c["message"] == expected for c in compromises)
+
+
+class FakeRequests:
+    def __init__(self):
+        self.summaries, self.artifacts = [], []
+
+    def list_requests(self, dataset_id=None, conversation_id=None, unfinished_only=False, limit=50):
+        return self.summaries
+
+    def list_artifacts(self, dataset_id=None, artifact_id=None, limit=50):
+        return self.artifacts
+
+    def get_artifact(self, artifact_id):
+        from types import SimpleNamespace
+
+        return SimpleNamespace(dataset_id="ds_" + "1" * 32, artifact_id=artifact_id)
+
+
+class FakeDeps:
+    def __init__(self):
+        self.requests = FakeRequests()
+
+
+def outcome(status="done", **fields):
+    from vis_agent.requests.models import RequestOutcome
+
+    return RequestOutcome(request_id="rq_" + "a" * 32, status=status, **fields)
+
+
+@pytest.fixture
+def request_cli(monkeypatch, store):
+    from types import SimpleNamespace
+
+    deps, calls = FakeDeps(), []
+    request = SimpleNamespace(request_id="rq_" + "a" * 32)
+
+    def fake_create(deps_arg, **kwargs):
+        calls.append(("create", kwargs))
+        return request
+
+    async def fake_run(deps_arg, request_id, usage=None):
+        calls.append(("run", request_id))
+        return outcome()
+
+    async def fake_answer(deps_arg, request_id, answer, answered_by, usage=None):
+        calls.append(("answer", request_id, answer, answered_by))
+        return outcome("waiting")
+
+    monkeypatch.setattr(cli, "resources", lambda: (None, deps, store, None, None, None))
+    monkeypatch.setattr(cli, "create_request", fake_create)
+    monkeypatch.setattr(cli, "run_request", fake_run)
+    monkeypatch.setattr(cli, "answer_request", fake_answer)
+    return deps, calls
+
+
+def test_draw_creates_and_runs_a_request(request_cli, store, tmp_path, capsys):
+    deps, calls = request_cli
+    dataset_id = store.save_upload("sales.csv", SALES).dataset_id
+    assert cli.main(["draw", dataset_id, "Total by region"]) == 0
+    printed = json.loads(capsys.readouterr().out)
+    assert printed["status"] == "done" and printed["request_id"].startswith("rq_")
+    kind, kwargs = calls[0]
+    assert kind == "create" and kwargs["type"] == "new" and kwargs["dataset_id"] == dataset_id
+    assert kwargs["question"] == "Total by region" and kwargs["caller"].kind == "terminal"
+    assert calls[1] == ("run", "rq_" + "a" * 32)
+
+
+def test_draw_uploads_first(request_cli, tmp_path, capsys):
+    deps, calls = request_cli
+    csv = tmp_path / "sales.csv"
+    csv.write_bytes(SALES)
+    assert cli.main(["draw", "--upload", str(csv), "Total by region"]) == 0
+    assert re.fullmatch(r"ds_[0-9a-f]{32}", calls[0][1]["dataset_id"])
+
+
+def test_revise_names_the_parent_and_the_change(request_cli, capsys):
+    deps, calls = request_cli
+    assert cli.main(["revise", "art_" + "b" * 32, "Make it blue", "--redo-analysis"]) == 0
+    kind, kwargs = calls[0]
+    assert kwargs["type"] == "revise" and kwargs["parent_artifact_id"] == "art_" + "b" * 32
+    assert kwargs["question"] == "Make it blue" and kwargs["redo_analysis"] is True
+    assert kwargs["dataset_id"] == "ds_" + "1" * 32
+
+
+def test_resume_with_an_answer_exits_three_while_waiting(request_cli, capsys):
+    deps, calls = request_cli
+    assert cli.main(["resume", "rq_" + "a" * 32, "--answer", "The amount column"]) == 3
+    assert calls == [("answer", "rq_" + "a" * 32, "The amount column", "terminal")]
+    assert json.loads(capsys.readouterr().out)["status"] == "waiting"
+    assert cli.main(["resume", "rq_" + "a" * 32]) == 0
+
+
+def test_requests_and_artifacts_print_lists(request_cli, capsys):
+    from datetime import datetime, timezone
+
+    from vis_agent.requests.models import ArtifactSummary, RequestSummary
+
+    deps, _calls = request_cli
+    moment = datetime.now(timezone.utc)
+    deps.requests.summaries = [RequestSummary(request_id="rq_" + "a" * 32, type="new", dataset_id="ds_" + "1" * 32,
+                                              question="q", status="done", created_at=moment, updated_at=moment)]
+    deps.requests.artifacts = [ArtifactSummary(artifact_id="art_" + "b" * 32, request_id="rq_" + "a" * 32,
+                                               dataset_id="ds_" + "1" * 32, version=1, question="q", created_at=moment)]
+    assert cli.main(["requests"]) == 0
+    assert json.loads(capsys.readouterr().out)[0]["request_id"] == "rq_" + "a" * 32
+    assert cli.main(["artifacts", "ds_" + "1" * 32]) == 0
+    assert json.loads(capsys.readouterr().out)[0]["artifact_id"] == "art_" + "b" * 32
+
+
+def test_suggest_runs_the_lead_once(monkeypatch, capsys):
+    from types import SimpleNamespace
+
+    seen = {}
+
+    class Lead:
+        async def run(self, prompt, deps=None):
+            seen["prompt"] = prompt
+            return SimpleNamespace(output="1. Total by region, because the amounts vary.")
+
+    monkeypatch.setattr(cli, "resources", lambda: (Lead(), object(), None, None, None, None))
+    assert cli.main(["suggest", "ds_" + "1" * 32]) == 0
+    assert "ds_" + "1" * 32 in seen["prompt"] and "three to five" in seen["prompt"]
+    assert "Total by region" in capsys.readouterr().out
+
+
+def test_request_errors_print_json_and_exit_two(request_cli, monkeypatch, capsys):
+    def failing(deps_arg, **kwargs):
+        raise ValueError("The request needs a question or a change.")
+
+    monkeypatch.setattr(cli, "create_request", failing)
+    assert cli.main(["draw", "ds_" + "1" * 32, "  "]) == 2
+    assert "question" in json.loads(capsys.readouterr().out)["error"]
