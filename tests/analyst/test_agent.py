@@ -9,7 +9,7 @@ from pydantic_ai.models.function import FunctionModel
 from pydantic_ai.models.test import TestModel
 from pydantic_ai.usage import RunUsage
 
-from vis_agent.analyst.agent import AnalystDeps, ColumnFacts, MAX_QUERY_CALLS, analyze_dataset, build_prompt, create_analyst, detect_language
+from vis_agent.analyst.agent import AnalystDeps, ColumnFacts, MAX_QUERY_CALLS, analyze_dataset, build_prompt, prompt_json, create_analyst, detect_language
 from vis_agent.analyst.models import Analysis, Clarification
 from vis_agent.models import DataBrief
 from vis_agent.profiler.agent import create_profiler, profile_dataset
@@ -320,3 +320,40 @@ def test_a_spent_query_budget_with_no_pass_ends_in_a_clarification(store, people
     assert result.output.question.startswith("لم أتمكن")
     assert "Describe exactly the result columns" in result.output.reason
     assert deps.query_calls == MAX_QUERY_CALLS
+
+
+def test_answers_and_previous_work_reach_the_prompt(store, people):
+    from vis_agent.analyst.models import PreviousAnalysis, ResultColumn
+    from vis_agent.models import QuestionAnswer
+
+    dataset, profile = people
+    plain = build_prompt(store, profile, "Total amount by region", "English")
+    assert plain.clarifications == [] and plain.previous is None
+    assert '"clarifications"' not in prompt_json(plain) and '"previous"' not in prompt_json(plain)
+    prompt = build_prompt(
+        store, profile, "Total amount by region", "English",
+        clarifications=[QuestionAnswer(question="Which amount?", answer="The amount column")],
+        previous=PreviousAnalysis(sql="SELECT 1", columns=[ResultColumn(name="one", meaning="One", kind="measure")],
+                                  change="Only the East"),
+    )
+    assert prompt.clarifications[0].answer == "The amount column" and prompt.previous.change == "Only the East"
+    assert '"clarifications"' in prompt_json(prompt) and '"previous"' in prompt_json(prompt)
+
+
+def test_revise_rules_reach_the_model_only_with_answers_or_previous_work(store, people, agents):
+    from vis_agent.models import QuestionAnswer
+
+    dataset, profile = people
+    _profiler, analyst = agents
+    seen = {}
+
+    def drive(messages, info):
+        seen["instructions"] = messages[0].instructions or ""
+        return tool_call("ask_clarification", question="Which amount?", reason="Checking the instructions.")
+
+    for clarifications, expected in ([], False), ([QuestionAnswer(question="Which?", answer="This")], True):
+        prompt = build_prompt(store, profile, "Total amount by region", "English", clarifications=clarifications)
+        deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+        with analyst.override(model=FunctionModel(drive)):
+            asyncio.run(analyst.run(prompt_json(prompt), deps=deps))
+        assert ("Answers and revisions" in seen["instructions"]) is expected

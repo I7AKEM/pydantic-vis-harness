@@ -19,7 +19,7 @@ from vis_agent.analyst.agent import ARABIC, analyze_dataset
 from vis_agent.analyst.checks import summary_numbers_exist
 from vis_agent.analyst.models import Aggregate, AnalysisReport, Cell, Clarification, ColumnKind
 from vis_agent.deps import AppDeps
-from vis_agent.models import DataBrief, Intent
+from vis_agent.models import DataBrief, Intent, QuestionAnswer
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL
 from vis_agent.render import gptvis
 from vis_agent.render.base import RENDERERS, Rendered, RendererUnavailable, RenderFailed
@@ -28,7 +28,7 @@ from vis_agent.store import DatasetNotFound
 from . import models
 from .catalogue import CATALOGUE
 from .check import check_spec as run_check
-from .models import Candidate, ChartType, Compromise, Design, DesignReport, Rejection, SpecCheck
+from .models import Candidate, ChartType, Compromise, Design, DesignReport, PreviousDesign, Rejection, SpecCheck
 from .recommend import recommend_charts as rank_charts
 from .shape import describe
 from .syntax import KEYS, STYLE_KEYS, parse, to_text
@@ -36,6 +36,7 @@ from .syntax import KEYS, STYLE_KEYS, parse, to_text
 log = logging.getLogger("designer")
 DEFAULT_DESIGNER_MODEL = DEFAULT_PROFILER_MODEL
 DESIGNER_RULEBOOK = Path(__file__).with_name("rulebook.md").read_text(encoding="utf-8")
+REVISE_INSTRUCTIONS = Path(__file__).with_name("rulebook-revise.md").read_text(encoding="utf-8")
 DESIGN_TIMEOUT_SECONDS = 90
 MAX_RECOMMEND_CALLS = 2
 MAX_CHECK_CALLS = 3
@@ -80,6 +81,8 @@ class DesignerPrompt(BaseModel):
     row_count: int
     preview: list[list[Cell]]
     preview_is_partial: bool
+    clarifications: list[QuestionAnswer] = []
+    previous: PreviousDesign | None = None
 
 
 class Shortlist(BaseModel):
@@ -107,7 +110,10 @@ class DesignerDeps:
     delivery_attempts: int = 0
 
 
-def build_prompt(report: AnalysisReport, brief: DataBrief | None) -> DesignerPrompt:
+def build_prompt(
+    report: AnalysisReport, brief: DataBrief | None,
+    clarifications: list[QuestionAnswer] | None = None, previous: PreviousDesign | None = None,
+) -> DesignerPrompt:
     shape = describe(report.analysis.columns, report.result)
     columns = []
     for column in report.analysis.columns:
@@ -135,7 +141,14 @@ def build_prompt(report: AnalysisReport, brief: DataBrief | None) -> DesignerPro
         columns=columns, row_count=report.result.row_count,
         preview=[[cut(cell) for cell in row] for row in rows[:PREVIEW_ROWS]],
         preview_is_partial=len(rows) > PREVIEW_ROWS,
+        clarifications=list(clarifications or []), previous=previous,
     )
+
+
+def prompt_json(prompt: DesignerPrompt) -> str:
+    """The prompt as the model sees it. Empty answers and an absent previous analysis are left out, so ordinary runs are unchanged."""
+    exclude = {name for name in ("clarifications", "previous") if not getattr(prompt, name)}
+    return prompt.model_dump_json(exclude=exclude or None)
 
 
 def grammar() -> str:
@@ -264,6 +277,13 @@ def create_designer(model: str) -> Agent[DesignerDeps, Design | Clarification]:
     )
     agent.tool(recommend_charts)
     agent.tool(check_spec)
+
+    @agent.instructions
+    def revise_rules(ctx: RunContext[DesignerDeps]) -> str | None:
+        if ctx.deps.prompt.clarifications or ctx.deps.prompt.previous is not None:
+            return REVISE_INSTRUCTIONS
+        return None
+
     return agent
 
 
@@ -273,6 +293,8 @@ async def design_chart(
     brief: DataBrief | None = None,
     renderer: str = "gptvis",
     usage: RunUsage | None = None,
+    clarifications: list[QuestionAnswer] | None = None,
+    previous: PreviousDesign | None = None,
 ) -> DesignReport:
     """Design a chart from a saved analysis, returning a checked design, a clarification, or a warning."""
     started = time.perf_counter()
@@ -285,7 +307,7 @@ async def design_chart(
             seconds=time.perf_counter() - started, created_at=datetime.now(timezone.utc),
         )
 
-    prompt = build_prompt(report, brief)
+    prompt = build_prompt(report, brief, clarifications=clarifications, previous=previous)
     deps = DesignerDeps(report=report, prompt=prompt, suggested=prompt.suggested_chart_type, renderer=renderer)
     output: Design | Clarification | None = None
     model_name = None
@@ -295,7 +317,7 @@ async def design_chart(
     try:
         async with asyncio.timeout(DESIGN_TIMEOUT_SECONDS):
             result = await designer.run(
-                prompt.model_dump_json(), deps=deps, usage=run_usage,
+                prompt_json(prompt), deps=deps, usage=run_usage,
                 usage_limits=UsageLimits(request_limit=starting_requests + MAX_REQUESTS),
             )
         output = result.output

@@ -46,6 +46,16 @@ class ResultColumn(BaseModel):
         return self
 
 
+class PreviousAnalysis(BaseModel):
+    """The analysis being revised: what produced the earlier result, and what must differ."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    sql: str
+    columns: list[ResultColumn]
+    change: str
+
+
 class QueryResult(BaseModel):
     """What run_query returns when the statement ran: the bounded table and the checks."""
 
