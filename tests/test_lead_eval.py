@@ -148,3 +148,17 @@ def test_candidate_instructions_replace_the_leads_for_the_process(tmp_path, monk
     path.write_text("Candidate instructions from the optimizer.", encoding="utf-8")
     assert use_instructions(path) == "Candidate instructions from the optimizer."
     assert vis_agent.lead.LEAD_INSTRUCTIONS == "Candidate instructions from the optimizer."
+
+
+def test_a_retry_after_a_specialist_failure_is_scored_by_the_last_call():
+    failed = {'status': 'failed', 'artifact': None, 'clarification': None, 'error': 'The analyst could not answer: TimeoutError'}
+    delivered = {'artifact': {'artifact_id': 'art_b'}, 'request_id': 'rq_b'}
+    turn = [ModelResponse(parts=[ToolCallPart('draw', {'question': 'q'}, tool_call_id='first')]),
+            ModelRequest(parts=[ToolReturnPart('draw', failed, tool_call_id='first')]),
+            ModelResponse(parts=[ToolCallPart('profile_csv', {}, tool_call_id='look')]),
+            ModelRequest(parts=[ToolReturnPart('profile_csv', {'status': 'complete'}, tool_call_id='look')]),
+            ModelResponse(parts=[ToolCallPart('draw', {'question': 'q'}, tool_call_id='second')]),
+            ModelRequest(parts=[ToolReturnPart('draw', delivered, tool_call_id='second')])]
+    scored = runner().score_turn({'tool': 'draw', 'outcome': 'artifact'}, turn)
+    assert scored['tool'] == 'draw' and scored['tool_ok'] and scored['outcome_ok']
+    assert scored['artifact_id'] == 'art_b' and scored['tools_called'] == ['draw', 'profile_csv', 'draw']

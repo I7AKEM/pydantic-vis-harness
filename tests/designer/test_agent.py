@@ -445,7 +445,7 @@ def test_timeout_is_a_warning(monkeypatch):
 
     result = run(report(*gender_share()), FunctionModel(drive))
     assert result.design is None and len(result.warnings) == 1
-    assert "The designer could not finish" in result.warnings[0]
+    assert "The designer could not finish" in result.warnings[0] and "TimeoutError" in result.warnings[0]
 
 
 @pytest.mark.parametrize("missing", ["analysis", "result"])

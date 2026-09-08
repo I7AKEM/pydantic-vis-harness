@@ -231,7 +231,7 @@ async def analyze(deps: AppDeps, request: Request, usage: RunUsage, budget: int 
     if report.clarification is not None:
         raise Pause("analyze", report.clarification)
     if report.analysis is None or report.result is None:
-        raise Failure("The analyst could not answer: " + ("; ".join(report.warnings) or "no result"))
+        raise Failure("; ".join(report.warnings) or "The analyst returned no result")
     return report.model_dump(mode="json")
 
 

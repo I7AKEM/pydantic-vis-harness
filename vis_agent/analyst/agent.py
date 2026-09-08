@@ -297,7 +297,7 @@ async def analyze_dataset(
         model_name = result.response.model_name
     except (ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded, TimeoutError) as exc:
         log.warning("The analyst could not answer %r on %s: %s", question, dataset_id, exc, exc_info=exc)
-        warnings.append(f"The analyst could not answer: {exc}")
+        warnings.append(f"The analyst could not answer: {str(exc) or type(exc).__name__}")
 
     analysis = output if isinstance(output, Analysis) else None
     checks: list[ProfileCheck] = []

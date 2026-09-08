@@ -51,9 +51,13 @@ def corpus_cases(corpus: Path = CORPUS) -> list[dict]:
 def score_turn(expected: dict, messages: list) -> dict:
     parts = [part for message in messages for part in message.parts]
     calls = [part for part in parts if isinstance(part, ToolCallPart)]
-    call = next((part for part in calls if part.tool_name in DATA_TOOLS), None)
-    returned = next((part for part in parts if isinstance(part, ToolReturnPart) and call is not None
-                     and part.tool_call_id == call.tool_call_id and part.tool_name == call.tool_name), None)
+    data_calls = [part for part in calls if part.tool_name in DATA_TOOLS]
+    # The tool choice is the first data call of the turn; the outcome is the last one's, since a lead that
+    # retries after a specialist failure delivers what the user sees.
+    call = data_calls[0] if data_calls else None
+    last = data_calls[-1] if data_calls else None
+    returned = next((part for part in parts if isinstance(part, ToolReturnPart) and last is not None
+                     and part.tool_call_id == last.tool_call_id and part.tool_name == last.tool_name), None)
     content = returned.content if returned is not None else None
     if hasattr(content, "model_dump"):
         content = content.model_dump(mode="json")
@@ -65,6 +69,7 @@ def score_turn(expected: dict, messages: list) -> dict:
     value = content if isinstance(content, dict) else {}
     tool = call.tool_name if call is not None else "none"
     args = call.args_as_dict() if call is not None else {}
+    last_tool = last.tool_name if last is not None else "none"
     artifact = value.get("artifact")
     outcomes = {
         "artifact": artifact is not None,
@@ -72,8 +77,8 @@ def score_turn(expected: dict, messages: list) -> dict:
         "artifact_or_question": artifact is not None or value.get("clarification") is not None,
         # A corpus question over a result-table export may be drawn, asked about, or answered with a table.
         "answered": artifact is not None or value.get("clarification") is not None
-        or (tool == "answer_question" and bool(value.get("rows"))),
-        "table": tool == "answer_question" and bool(value.get("rows")),
+        or (last_tool == "answer_question" and bool(value.get("rows"))),
+        "table": last_tool == "answer_question" and bool(value.get("rows")),
         # The lead answered in words: no data tool, or one that returned neither an artifact nor a question
         # (a resume with nothing to continue, for example).
         "text": call is None or (artifact is None and value.get("clarification") is None),

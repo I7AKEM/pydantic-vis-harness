@@ -338,7 +338,7 @@ async def design_chart(
         model_name = result.response.model_name
     except (ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded, TimeoutError) as exc:
         log.warning("The designer could not finish %r on %s: %s", report.question, report.dataset_id, exc, exc_info=exc)
-        detail = str(exc)
+        detail = str(exc) or type(exc).__name__
         if isinstance(exc, UnexpectedModelBehavior) and exc.__cause__ is not None:
             detail += f": {exc.__cause__}"
         warnings.append(f"The designer could not finish: {detail}")
