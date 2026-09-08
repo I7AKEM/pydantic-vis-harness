@@ -24,7 +24,11 @@ from vis_agent.profiler.agent import profile_dataset
 from vis_agent.render import gptvis
 from vis_agent.render.base import RenderFailed, RendererUnavailable
 from vis_agent.requests.models import Caller
-from vis_agent.requests.runner import answer_request, create_request, run_request
+from dataclasses import replace
+
+from pydantic_ai.usage import UsageLimits
+
+from vis_agent.requests.runner import REQUEST_LIMIT, answer_request, create_request, run_request
 from vis_agent.requests.store import ArtifactNotFound, RequestNotFound
 from vis_agent.store import DatasetNotFound
 
@@ -231,7 +235,8 @@ def artifacts_command(args: argparse.Namespace) -> int:
 
 def suggest_command(args: argparse.Namespace) -> int:
     agent, deps, *_ = resources()
-    result = asyncio.run(agent.run(SUGGEST_PROMPT.format(dataset_id=args.dataset_id), deps=deps))
+    result = asyncio.run(agent.run(SUGGEST_PROMPT.format(dataset_id=args.dataset_id), deps=replace(deps, caller_kind="terminal"),
+                                   usage_limits=UsageLimits(request_limit=REQUEST_LIMIT)))
     print(result.output)
     return 0
 
@@ -260,7 +265,7 @@ def main(argv: list[str] | None = None) -> int:
             return 2
     if args.command == "chat":
         agent, deps, _store, _profiler, _analyst, _designer = resources()
-        agent.to_cli_sync(deps=deps, prog_name="vis")
+        agent.to_cli_sync(deps=replace(deps, caller_kind="terminal"), prog_name="vis")
         return 0
     if args.command == "failures":
         _agent, _deps, store, _profiler, _analyst, _designer = resources()

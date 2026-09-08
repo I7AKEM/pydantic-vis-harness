@@ -1,6 +1,7 @@
 import asyncio
 from datetime import timedelta
 
+import duckdb
 import pytest
 from pydantic_ai.messages import ModelResponse, ToolCallPart
 
@@ -210,3 +211,91 @@ def test_runner_needs_the_request_store(store, agents, dataset_id):
     bare = AppDeps(store=store, profiler=profiler, analyst=analyst, designer=designer)
     with pytest.raises(RuntimeError):
         create_request(bare, type="new", dataset_id=dataset_id, question="q", caller=CHAT)
+
+
+def test_the_budget_holds_across_a_resume(deps, dataset_id, fake_models, fake_render, agents, monkeypatch):
+    """A standalone run counts every model request on the request: the profiler's one, the analyst's asking
+    turn, then the resumed analyst's two; the designer then finds the budget of four spent."""
+    _profiler, analyst, _designer, _lead = agents
+    from pydantic_ai.models.function import FunctionModel
+    from tests.requests.conftest import analyst_drive
+
+    def ask_then_answer(messages, info):
+        if not prompt_of(messages).get("clarifications"):
+            return asking_drive(messages, info)
+        return analyst_drive(messages, info)
+
+    monkeypatch.setattr(runner, "REQUEST_LIMIT", 4)
+    with analyst.override(model=FunctionModel(ask_then_answer)):
+        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+        assert run(run_request(deps, request.request_id)).status == "waiting"
+        assert deps.requests.get_request(request.request_id).requests_used == 2
+        outcome = run(answer_request(deps, request.request_id, "The amount column", "chat"))
+    assert outcome.status == "failed" and "budget" in outcome.error
+    assert deps.requests.get_request(request.request_id).requests_used == 4
+
+
+def test_a_database_failure_is_a_plain_failure(deps, dataset_id, fake_models, monkeypatch):
+    async def broken(*args, **kwargs):
+        raise duckdb.Error("boom")
+
+    monkeypatch.setattr(runner, "analyze_dataset", broken)
+    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+    outcome = run(run_request(deps, request.request_id))
+    assert outcome.status == "failed" and outcome.error == "DuckDB could not run this step."
+    assert "analyze" not in deps.requests.get_request(request.request_id).steps
+
+
+def test_a_designer_that_cannot_finish_delivers_the_table(deps, dataset_id, fake_models, fake_render, monkeypatch):
+    from vis_agent.designer.models import DesignReport
+
+    async def unfinished(report, designer, brief, **kwargs):
+        return DesignReport(dataset_id=report.dataset_id, question=report.question, language=report.language,
+                            warnings=["The designer could not finish: it timed out"], seconds=0,
+                            created_at=report.created_at)
+
+    monkeypatch.setattr(runner, "design_chart", unfinished)
+    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+    outcome = run(run_request(deps, request.request_id))
+    assert outcome.status == "done" and outcome.artifact.chart is None and outcome.artifact.rows
+    assert "could not finish" in outcome.artifact.no_chart_reason and not fake_render
+
+
+def test_the_artifact_carries_the_renderers_compromises(deps, dataset_id, fake_models, monkeypatch):
+    from vis_agent.designer.models import Compromise
+    from vis_agent.render.base import Rendered
+
+    def render(report, design, out_dir, renderer="gptvis"):
+        out_dir.mkdir(parents=True, exist_ok=True)
+        (out_dir / "chart.png").write_bytes(b"png")
+        return Rendered(png=out_dir / "chart.png", html=out_dir / "chart.html", config=out_dir / "config.json",
+                        width=2400, height=1350, seconds=0.1, non_background_share=0.2,
+                        compromises=[Compromise(key="bind", message="Dropped 1 rows with null measures.")],
+                        drawn_rows=1, folded_rows=0, dropped_rows=1)
+
+    monkeypatch.setattr(runner, "render_design", render)
+    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+    outcome = run(run_request(deps, request.request_id))
+    assert [c.message for c in outcome.artifact.compromises] == ["Dropped 1 rows with null measures."]
+    assert deps.requests.get_artifact(outcome.artifact.artifact_id).compromises[0].key == "bind"
+
+
+def test_a_revision_speaks_the_language_of_the_change(deps, dataset_id, fake_models, fake_render, agents):
+    _profiler, _analyst, designer, _lead = agents
+    from pydantic_ai.models.function import FunctionModel
+    from tests.requests.conftest import designer_drive
+
+    first = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+    v1 = run(run_request(deps, first.request_id)).artifact
+    seen = {}
+
+    def revising(messages, info):
+        seen["language"] = prompt_of(messages)["language"]
+        return designer_drive(messages, info)
+
+    with designer.override(model=FunctionModel(revising)):
+        second = create_request(deps, type="revise", dataset_id=dataset_id, question="اجعله أزرق", caller=CHAT,
+                                parent_artifact_id=v1.artifact_id)
+        run(run_request(deps, second.request_id))
+    assert seen["language"] == "Arabic"
+    assert deps.requests.get_request(second.request_id).language == "Arabic"

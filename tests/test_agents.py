@@ -236,11 +236,11 @@ def conversation(store, monkeypatch):
 
     monkeypatch.setattr("vis_agent.requests.runner.render_design", render)
 
-    def run(message, drive, analyst_drive=analyst_chart_drive, designer_drive=designer_chart_drive, **kwargs):
+    def run(message, drive, analyst_drive=analyst_chart_drive, designer_drive=designer_chart_drive, run_deps=None, **kwargs):
         with profiler.override(model=TestModel(call_tools=[], custom_output_args=semantic_output(source.headers))), \
                 analyst.override(model=FunctionModel(analyst_drive)), \
                 designer.override(model=FunctionModel(designer_drive)), lead.override(model=FunctionModel(drive)):
-            return lead.run_sync(message, deps=deps, **kwargs)
+            return lead.run_sync(message, deps=run_deps or deps, **kwargs)
 
     return source.dataset_id, deps, run
 
@@ -350,3 +350,16 @@ def test_resume_without_a_request_in_the_conversation_is_a_failure(conversation)
         return ModelResponse(parts=[TextPart(content="Nothing to continue.")])
 
     assert run("continue", drive, conversation_id="chat-9").output == "Nothing to continue."
+
+
+def test_the_lead_records_the_callers_kind_from_its_deps(conversation):
+    from dataclasses import replace
+
+    from vis_agent.requests.models import RequestOutcome
+
+    dataset_id, deps, run = conversation
+    drive = call_then_summarize("draw", {"dataset_id": dataset_id, "question": "Total by region"},
+                                lambda part: outcome_of(part).model_dump_json())
+    result = run("Chart total by region", drive, run_deps=replace(deps, caller_kind="terminal"))
+    outcome = RequestOutcome.model_validate_json(result.output)
+    assert deps.requests.get_request(outcome.request_id).caller.kind == "terminal"

@@ -82,8 +82,9 @@ question is appended to `clarifications` with the step that asked and a deadline
 the question. A request may ask at most two questions; a third ends the request as `failed` with the
 question as the reason, so the caller sees why.
 
-A run that dies leaves the request `running` with the steps that completed. Nothing else is needed for the
-exit test: resuming skips them.
+A run killed from outside leaves the request `running` with the steps that completed; a step that raises
+leaves it `failed` with the reason. Resuming treats both alike and skips the saved steps. A standalone run's
+budget of model requests is counted on the request itself, so it holds across pauses and resumes.
 
 ## 5. Resume
 
@@ -120,8 +121,9 @@ short list, and never a rewritten question: the raw question stays the raw quest
 Every question carries a deadline, twenty-four hours by default. After it the request stays `waiting`; the
 status shows `overdue`, and the lead says so when it finds such a request in a conversation.
 
-Inbound: a program may ask the lead a question with no chart involved through `/agents/ask`. The lead
-answers from what it knows and its tools; no request record and no artifact are created.
+Inbound: a program may ask the lead a question through `/agents/ask`. The lead answers from what it knows
+and its tools, once, under the same cap as a channel request; a question that asks for a chart is drawn and
+recorded as that program's request.
 
 ## 8. The agent channel
 
@@ -264,19 +266,22 @@ Through the agents with fake models, never around them, as in every phase:
 
 ## 17. The evaluation set and the exit test
 
-The lead evaluation holds twenty cases: ten scripted conversations in `evals/lead/cases.json` over CSVs
-already in the repository, and ten corpus questions the runner adds with `--corpus`. A scripted case lists the messages
+The lead evaluation holds twenty-one cases: eleven scripted conversations in `evals/lead/cases.json` over
+CSVs already in the repository, and ten corpus questions the runner adds with `--corpus`. A scripted case lists the messages
 in the order the web chat would send them (the upload line included), the expected tool per message
 (`draw`, `answer_question`, `revise` with the expected `redo_analysis`, `resume`), and the expected
-outcome (an artifact, a table, a question). The corpus ten are the Phase 4b lead sample's questions; the scripted
-ten are: numbers only, a chart then a colour change, a chart then a new filter, a question that must be
-asked then answered, "continue", a dataset with no question, and an Arabic revision. `evals/lead/run.py`
-runs them with real models and scores the tool choice and the outcome.
+outcome (an artifact, a table, a question). The corpus ten are the Phase 4b lead sample's questions over
+result-table exports, so a corpus turn counts when the lead draws, asks, or answers with a table. The scripted
+eleven are: numbers only, a chart then a colour change, a chart then a new filter, a question about a column the
+file lacks that the analyst must ask about and then the answer, a vague term the analyst may ask about or state
+an assumption for, "continue", a dataset with no question, an Arabic revision, a table then a chart, and artifact
+recall. `evals/lead/run.py` runs them with real models and scores the tool choice and the outcome per turn and
+per case.
 
 Exit test, from the Phase 1 design plus the tool choice: a request killed mid-run resumes from its last
 checkpoint; a revise produces a linked version; a clarification round-trips with a human in the chat and
-with a program over the channel; and on the twenty cases the lead picks the expected tool at least
-eighteen times.
+with a program over the channel; and on the twenty-one cases the lead picks the expected tool in at least
+eighteen cases.
 
 ## 18. Files
 

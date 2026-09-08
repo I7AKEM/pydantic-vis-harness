@@ -130,6 +130,8 @@ uv run python -m vis_agent.cli suggest DATASET_ID
 
 These commands print JSON; `suggest` prints the lead's reply. `ask` remains the
 numbers-only command. `revise` reuses analysis unless `--redo-analysis` is supplied.
+`draw`, `revise`, and `resume` exit 0 when the request is done, 3 while it waits for an answer, 1 when
+it failed, and 2 for an input error printed as JSON.
 
 ## Agent channel
 
@@ -158,6 +160,12 @@ The request runs in the background. After each create, answer, or resume backgro
 run, the channel posts the request record to the return address once. Callback failures
 are logged without retry; callers can poll the request. A pending question includes a
 deadline and an overdue flag. POST routes require `Content-Type: application/json`.
+
+The routes carry no authentication, and the record posted to a return address holds the
+result rows and the SQL, so keep the server on `127.0.0.1` as shown above and give return
+addresses only to programs on the same machine. `/agents/ask` runs the lead once under the
+same cap of forty model requests as a channel request; a question that asks for a chart is
+drawn, and its request is recorded as the program's, not the chat's.
 
 ## Evaluate the lead
 

@@ -30,8 +30,9 @@ call find_dataset before answering; never say that nothing is uploaded without h
 
 Chart first. A question about the data is a draw: call draw with the dataset_id and the question as written.
 Call answer_question instead only when the user asks for numbers, a table, or a value, or says they want no
-chart. Never design a chart yourself. Never ask the user anything before calling draw, revise, resume, or
-answer_question: the analyst and the designer see the data and ask only when they must.
+chart. Never design a chart yourself. Never ask the user which numbers, which column, or which definition
+before calling draw, revise, resume, or answer_question: the analyst and the designer see the data and ask
+only when they must.
 
 Showing a result. Show the picture with its png_url as a Markdown image, exactly as returned (a path starting
 with /renders/, never with a host added). Then give the summary, a table of at most twenty rows with the total
@@ -79,7 +80,8 @@ async def find_dataset(ctx: RunContext[AppDeps], query: str = "") -> list[Datase
 
 
 def chat_caller(ctx: RunContext[AppDeps]) -> Caller:
-    return Caller(kind="chat", conversation_id=ctx.conversation_id)
+    """The caller of this lead run: the chat by default, the terminal or a program when the app says so."""
+    return Caller(kind=ctx.deps.caller_kind, conversation_id=ctx.conversation_id)
 
 
 async def draw(ctx: RunContext[AppDeps], dataset_id: str, question: str) -> RequestOutcome:
@@ -133,7 +135,7 @@ async def resume(ctx: RunContext[AppDeps], request_id: str = "", answer: str = "
                 raise ToolFailed("No unfinished request in this conversation.")
             request_id = found.request_id
         if answer.strip():
-            return await answer_request(ctx.deps, request_id, answer, "chat", usage=ctx.usage)
+            return await answer_request(ctx.deps, request_id, answer, ctx.deps.caller_kind, usage=ctx.usage)
         return await run_request(ctx.deps, request_id, usage=ctx.usage)
     except RequestNotFound as exc:
         raise ToolFailed(str(exc)) from exc

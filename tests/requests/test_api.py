@@ -2,7 +2,7 @@ import re
 
 import httpx
 import pytest
-from pydantic_ai.messages import ModelResponse, TextPart, ToolCallPart
+from pydantic_ai.messages import ModelResponse, TextPart, ToolCallPart, ToolReturnPart
 from pydantic_ai.models.function import FunctionModel
 from starlette.applications import Starlette
 from starlette.requests import Request as HttpRequest
@@ -139,3 +139,28 @@ def test_a_broken_callback_is_logged_not_raised(deps, agents, dataset_id, fake_m
         shown = client.get(f"/requests/{request_id}").json()
     assert shown["status"] == "done" and shown["artifact_id"]
     assert any("callback" in message and "exploded" in message for message in caplog.messages)
+
+
+def test_a_program_question_that_draws_is_recorded_as_the_programs(app, deps, agents, dataset_id, fake_models, fake_render):
+    _profiler, _analyst, _designer, lead = agents
+
+    def drawing(messages, info):
+        returns = [part for message in messages for part in message.parts if isinstance(part, ToolReturnPart)]
+        if not returns:
+            return ModelResponse(parts=[ToolCallPart(tool_name="draw", args={"dataset_id": dataset_id,
+                                                                            "question": "Total by region"})])
+        return ModelResponse(parts=[TextPart(content="Drawn.")])
+
+    with lead.override(model=FunctionModel(drawing)), TestClient(app) as client:
+        answer = client.post("/agents/ask", json={"question": "Chart total by region", "dataset_id": dataset_id,
+                                                  "caller": {"identity": "reporter"}})
+        assert answer.status_code == 200 and answer.json()["answer"] == "Drawn."
+    summaries = deps.requests.list_requests(dataset_id=dataset_id)
+    assert len(summaries) == 1
+    assert deps.requests.get_request(summaries[0].request_id).caller.kind == "agent"
+
+
+def test_deadlines_are_bounded(app, dataset_id):
+    with TestClient(app) as client:
+        assert client.post("/requests", json=body(dataset_id, deadline_seconds=0)).status_code == 400
+        assert client.post("/requests", json=body(dataset_id, deadline_seconds=40 * 24 * 3600)).status_code == 400

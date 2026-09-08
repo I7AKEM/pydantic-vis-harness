@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from vis_agent.designer.models import Design
     from vis_agent.profiler.agent import ProfilerInput
     from vis_agent.profiler.models import SemanticProfile
+    from vis_agent.requests.models import CallerKind
     from vis_agent.requests.store import RequestStore
 
 
@@ -26,3 +27,5 @@ class AppDeps:
     analyst: Agent[AnalystDeps, Analysis | Clarification]
     designer: Agent[DesignerDeps, Design | Clarification]
     requests: RequestStore | None = None
+    caller_kind: CallerKind = "chat"
+    """Who talks to the lead in this run: the chat, the terminal, or a program; recorded on the requests it makes."""

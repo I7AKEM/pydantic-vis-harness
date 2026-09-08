@@ -1,10 +1,13 @@
 """The agent channel: JSON routes for requests, answers, artifacts, and inbound questions, with one callback."""
 
+import asyncio
 import logging
+from dataclasses import replace
 
 import httpx
-from pydantic import BaseModel, ConfigDict, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from pydantic_ai import Agent
+from pydantic_ai.usage import UsageLimits
 from starlette.applications import Starlette
 from starlette.background import BackgroundTask
 from starlette.requests import Request as HttpRequest
@@ -13,7 +16,7 @@ from starlette.routing import Route
 
 from vis_agent.deps import AppDeps
 from vis_agent.requests.models import DEFAULT_DEADLINE_SECONDS, Caller, RequestType
-from vis_agent.requests.runner import answer_request, create_request, requests_of, run_request
+from vis_agent.requests.runner import REQUEST_LIMIT, answer_request, create_request, requests_of, run_request
 from vis_agent.requests.store import ArtifactNotFound, RequestNotFound, now
 from vis_agent.store import DatasetNotFound
 
@@ -38,7 +41,7 @@ class CreateRequestInput(BaseModel):
     parent_artifact_id: str | None = None
     redo_analysis: bool = False
     caller: CallerInput
-    deadline_seconds: int = DEFAULT_DEADLINE_SECONDS
+    deadline_seconds: int = Field(default=DEFAULT_DEADLINE_SECONDS, gt=0, le=30 * 24 * 60 * 60)
 
 
 class AnswerInput(BaseModel):
@@ -83,7 +86,7 @@ def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.A
         """Post the request record to the caller's return address once. Any failure is logged, never retried,
         and never leaves the background task."""
         try:
-            record = requests_of(deps).get_request(request_id)
+            record = await asyncio.to_thread(requests_of(deps).get_request, request_id)
             if not record.caller.return_address:
                 return
             response = await client.post(record.caller.return_address, json=shown(record),
@@ -127,7 +130,7 @@ def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.A
 
     async def get_request(request: HttpRequest) -> Response:
         try:
-            record = requests_of(deps).get_request(request.path_params["request_id"])
+            record = await asyncio.to_thread(requests_of(deps).get_request, request.path_params["request_id"])
         except RequestNotFound as exc:
             return error(str(exc), 404)
         except ValueError as exc:
@@ -138,7 +141,7 @@ def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.A
         request_id = request.path_params["request_id"]
         try:
             data = await read_json(request, AnswerInput)
-            record = requests_of(deps).get_request(request_id)
+            record = await asyncio.to_thread(requests_of(deps).get_request, request_id)
         except TypeError as exc:
             return error(str(exc), 415)
         except RequestNotFound as exc:
@@ -156,7 +159,7 @@ def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.A
         request_id = request.path_params["request_id"]
         try:
             require_json(request)
-            record = requests_of(deps).get_request(request_id)
+            record = await asyncio.to_thread(requests_of(deps).get_request, request_id)
         except TypeError as exc:
             return error(str(exc), 415)
         except RequestNotFound as exc:
@@ -172,7 +175,7 @@ def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.A
 
     async def get_artifact(request: HttpRequest) -> Response:
         try:
-            artifact = requests_of(deps).get_artifact(request.path_params["artifact_id"])
+            artifact = await asyncio.to_thread(requests_of(deps).get_artifact, request.path_params["artifact_id"])
         except ArtifactNotFound as exc:
             return error(str(exc), 404)
         except ValueError as exc:
@@ -184,7 +187,7 @@ def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.A
         if not dataset_id:
             return error("Give a dataset_id.", 400)
         try:
-            summaries = requests_of(deps).list_artifacts(dataset_id=dataset_id)
+            summaries = await asyncio.to_thread(requests_of(deps).list_artifacts, dataset_id=dataset_id)
         except ValueError as exc:
             return error(str(exc), 400)
         return JSONResponse([s.model_dump(mode="json") for s in summaries])
@@ -197,7 +200,10 @@ def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.A
         except ValueError as exc:
             return error(str(exc), 400)
         prompt = data.question if not data.dataset_id else f"{data.question}\n\nDataset: {data.dataset_id}"
-        result = await lead.run(prompt, deps=deps)
+        # A program's question runs the lead once, capped like a channel request; anything the lead draws on
+        # the way is recorded as that program's request, not the chat's.
+        result = await lead.run(prompt, deps=replace(deps, caller_kind="agent"),
+                                usage_limits=UsageLimits(request_limit=REQUEST_LIMIT))
         return JSONResponse({"answer": result.output, "caller": data.caller.identity})
 
     app.router.routes[0:0] = [

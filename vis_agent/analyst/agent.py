@@ -263,11 +263,14 @@ async def analyze_dataset(
     usage: RunUsage | None = None,
     clarifications: list[QuestionAnswer] | None = None,
     previous: PreviousAnalysis | None = None,
+    language: str | None = None,
 ) -> AnalysisReport:
-    """Profile if needed, then answer one question. Raises DatasetNotFound, ValueError, or duckdb.Error."""
+    """Profile if needed, then answer one question. Raises DatasetNotFound, ValueError, or duckdb.Error.
+
+    The caller's language is detected from the question unless given, as a request does for a revision."""
     started = time.perf_counter()
     profile = await profile_dataset(store, profiler, dataset_id, brief=brief, usage=usage)
-    language = detect_language(question, profile.source.brief, [c.name for c in profile.deterministic.columns])
+    language = language or detect_language(question, profile.source.brief, [c.name for c in profile.deterministic.columns])
     prompt = await asyncio.to_thread(build_prompt, store, profile, question, language,
                                      clarifications=clarifications, previous=previous)
     deps = AnalystDeps(store=store, profile=profile, prompt=prompt)

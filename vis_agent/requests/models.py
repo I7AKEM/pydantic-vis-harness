@@ -78,6 +78,7 @@ class Request(BaseModel):
     deadline_seconds: int = DEFAULT_DEADLINE_SECONDS
     language: str | None = None
     status: RequestStatus = "running"
+    requests_used: int = 0
     steps: dict[str, Any] = Field(default_factory=dict)
     clarifications: list[Exchange] = Field(default_factory=list)
     artifact_id: str | None = None
@@ -147,6 +148,7 @@ class Artifact(BaseModel):
     change: str | None = None
     report: AnalysisReport
     design: Design | None = None
+    compromises: list[Compromise] = Field(default_factory=list)
     no_chart_reason: str | None = None
     render_id: str | None = None
     png_url: str | None = None
@@ -204,7 +206,7 @@ class LeadArtifact(BaseModel):
             sql=analysis.sql if analysis else None,
             chart=design.chart if design else None, spec=design.spec if design else None,
             explanation=design.explanation if design else None,
-            compromises=design.compromises if design else [],
+            compromises=list(artifact.compromises),
             no_chart_reason=artifact.no_chart_reason, png_url=artifact.png_url, html_url=artifact.html_url,
             warnings=list(artifact.report.warnings),
         )

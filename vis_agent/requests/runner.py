@@ -18,6 +18,7 @@ from vis_agent.designer.models import DesignReport, PreviousDesign
 from vis_agent.models import QuestionAnswer
 from vis_agent.profiler.agent import profile_dataset
 from vis_agent.render.base import RenderFailed, RendererUnavailable
+from vis_agent.designer.models import Compromise
 from vis_agent.requests.models import (
     DEFAULT_DEADLINE_SECONDS, MAX_QUESTIONS, Artifact, Caller, CallerKind, Exchange, LeadArtifact, Lineage,
     Request, RequestOutcome, RequestType, StepName,
@@ -92,7 +93,7 @@ async def answer_request(deps: AppDeps, request_id: str, answer: str, answered_b
                          usage: RunUsage | None = None) -> RequestOutcome:
     """Record the answer to the pending question, then continue the request."""
     store = requests_of(deps)
-    request = store.get_request(request_id)
+    request = await asyncio.to_thread(store.get_request, request_id)
     pending = request.pending()
     if pending is None:
         raise ValueError("This request is not waiting for an answer.")
@@ -100,14 +101,14 @@ async def answer_request(deps: AppDeps, request_id: str, answer: str, answered_b
         raise ValueError("The answer is empty.")
     pending.answer, pending.answered_at, pending.answered_by = answer.strip(), now(), answered_by
     request.status = "running"
-    store.save_request(request)
+    await asyncio.to_thread(store.save_request, request)
     return await run_request(deps, request_id, usage=usage)
 
 
 async def run_request(deps: AppDeps, request_id: str, usage: RunUsage | None = None) -> RequestOutcome:
     """Run every step that has no saved output, in order. Safe to call again after a pause, a failure, or a kill."""
     store = requests_of(deps)
-    request = store.get_request(request_id)
+    request = await asyncio.to_thread(store.get_request, request_id)
     if request.status == "done":
         return outcome_for(deps, request)
     if request.status == "waiting":
@@ -117,38 +118,50 @@ async def run_request(deps: AppDeps, request_id: str, usage: RunUsage | None = N
     _running.add(request_id)
     try:
         request.status, request.error = "running", None
-        store.save_request(request)
+        await asyncio.to_thread(store.save_request, request)
         budget = REQUEST_LIMIT if usage is None else None
         run_usage = usage if usage is not None else RunUsage()
+        # The model requests this invocation spends are added to the request's own count after every step,
+        # so the budget of a standalone run holds across pauses, failures, and resumes.
+        used_before, requests_at_start = request.requests_used, run_usage.requests
         while (step := request.next_step()) is not None:
             try:
                 output = await STEP_FUNCTIONS[step](deps, request, run_usage, budget)
             except Pause as pause:
-                return _pause(deps, request, pause)
+                _count_requests(request, run_usage, used_before, requests_at_start)
+                return await _pause(deps, request, pause)
             except (DatasetNotFound, Failure, ValueError) as exc:
-                return _fail(deps, request, str(exc))
+                _count_requests(request, run_usage, used_before, requests_at_start)
+                return await _fail(deps, request, str(exc))
             except duckdb.Error as exc:
                 log.warning("DuckDB failed in step %s of %s: %s", step, request_id, exc)
-                return _fail(deps, request, "DuckDB could not run this step.")
+                _count_requests(request, run_usage, used_before, requests_at_start)
+                return await _fail(deps, request, "DuckDB could not run this step.")
             except Exception as exc:
                 log.exception("Step %s of %s died", step, request_id)
-                _fail(deps, request, f"The {step} step died: {exc}")
+                _count_requests(request, run_usage, used_before, requests_at_start)
+                await _fail(deps, request, f"The {step} step died: {exc}")
                 raise
             request.steps[step] = output
-            store.save_request(request)
+            _count_requests(request, run_usage, used_before, requests_at_start)
+            await asyncio.to_thread(store.save_request, request)
         request.status = "done"
-        store.save_request(request)
+        await asyncio.to_thread(store.save_request, request)
         return outcome_for(deps, request)
     finally:
         _running.discard(request_id)
 
 
-def _pause(deps: AppDeps, request: Request, pause: Pause) -> RequestOutcome:
+def _count_requests(request: Request, usage: RunUsage, used_before: int, requests_at_start: int) -> None:
+    request.requests_used = used_before + (usage.requests - requests_at_start)
+
+
+async def _pause(deps: AppDeps, request: Request, pause: Pause) -> RequestOutcome:
     store = requests_of(deps)
     if len(request.clarifications) >= MAX_QUESTIONS:
         request.status = "failed"
         request.error = f"The request already asked {MAX_QUESTIONS} questions; the next was: {pause.clarification.question}"
-        store.save_request(request)
+        await asyncio.to_thread(store.save_request, request)
         return outcome_for(deps, request)
     moment = now()
     request.clarifications.append(Exchange(
@@ -156,18 +169,19 @@ def _pause(deps: AppDeps, request: Request, pause: Pause) -> RequestOutcome:
         asked_at=moment, deadline=moment + timedelta(seconds=request.deadline_seconds),
     ))
     request.status = "waiting"
-    store.save_request(request)
+    await asyncio.to_thread(store.save_request, request)
     return outcome_for(deps, request)
 
 
-def _fail(deps: AppDeps, request: Request, error: str) -> RequestOutcome:
+async def _fail(deps: AppDeps, request: Request, error: str) -> RequestOutcome:
     request.status, request.error = "failed", error
-    requests_of(deps).save_request(request)
+    await asyncio.to_thread(requests_of(deps).save_request, request)
     return outcome_for(deps, request)
 
 
-def _check_budget(usage: RunUsage, budget: int | None) -> None:
-    if budget is not None and usage.requests >= budget:
+def _check_budget(request: Request, usage: RunUsage, budget: int | None) -> None:
+    """A standalone run's cap covers the whole request: what earlier invocations spent counts too."""
+    if budget is not None and request.requests_used >= budget:
         raise Failure(f"The request used its budget of {budget} model requests.")
 
 
@@ -186,7 +200,8 @@ async def understand(deps: AppDeps, request: Request, usage: RunUsage, budget: i
     if request.type == "revise":
         parent = requests_of(deps).get_artifact(request.parent_artifact_id)
         output.update(root_question=parent.question, parent_version=parent.version, change=request.question)
-    request.language = detect_language(output.get("root_question", request.question), dataset.brief, dataset.headers)
+    # The language of the caller's latest words: the change, for a revision, so the reply follows the caller.
+    request.language = detect_language(request.question, dataset.brief, dataset.headers)
     output["language"] = request.language
     return output
 
@@ -201,7 +216,8 @@ async def analyze(deps: AppDeps, request: Request, usage: RunUsage, budget: int 
     store = requests_of(deps)
     parent = store.get_artifact(request.parent_artifact_id) if request.parent_artifact_id else None
     if parent is not None and not request.redo_analysis:
-        return parent.report.model_dump(mode="json")
+        copied = parent.report.model_copy(update={"language": request.language or parent.report.language})
+        return copied.model_dump(mode="json")
     question, previous = request.question, None
     if parent is not None:
         if parent.report.analysis is None:
@@ -209,9 +225,10 @@ async def analyze(deps: AppDeps, request: Request, usage: RunUsage, budget: int 
         question = parent.question
         previous = PreviousAnalysis(sql=parent.report.analysis.sql, columns=parent.report.analysis.columns,
                                     change=request.question)
-    _check_budget(usage, budget)
+    _check_budget(request, usage, budget)
     report = await analyze_dataset(deps.store, deps.profiler, deps.analyst, request.dataset_id, question,
-                                   usage=usage, clarifications=pairs(request), previous=previous)
+                                   usage=usage, clarifications=pairs(request), previous=previous,
+                                   language=request.language)
     if report.clarification is not None:
         raise Pause("analyze", report.clarification)
     if report.analysis is None or report.result is None:
@@ -229,7 +246,7 @@ async def design(deps: AppDeps, request: Request, usage: RunUsage, budget: int |
         if parent.design is not None:
             previous = PreviousDesign(spec=parent.design.spec, change=request.question)
     brief = (await asyncio.to_thread(deps.store.get_upload, request.dataset_id)).brief
-    _check_budget(usage, budget)
+    _check_budget(request, usage, budget)
     designed = await design_chart(report, deps.designer, brief, usage=usage, clarifications=pairs(request),
                                   previous=previous)
     if designed.clarification is not None:
@@ -262,7 +279,7 @@ async def review(deps: AppDeps, request: Request, usage: RunUsage, budget: int |
 
 async def deliver(deps: AppDeps, request: Request, usage: RunUsage, budget: int | None) -> dict[str, Any]:
     store = requests_of(deps)
-    existing = store.artifact_for_request(request.request_id)
+    existing = await asyncio.to_thread(store.artifact_for_request, request.request_id)
     if existing is not None:
         request.artifact_id = existing.artifact_id
         return {"artifact_id": existing.artifact_id}
@@ -271,11 +288,16 @@ async def deliver(deps: AppDeps, request: Request, usage: RunUsage, budget: int 
     designed = DesignReport.model_validate(design_step) if "skipped" not in design_step else None
     parent = store.get_artifact(request.parent_artifact_id) if request.parent_artifact_id else None
     catalogue_version, rules_version = versions()
+    # The renderer's list holds the check's compromises plus its own (dropped rows, a still picture).
+    if "rendered" in render_step:
+        compromises = [Compromise.model_validate(c) for c in render_step["rendered"].get("compromises", [])]
+    else:
+        compromises = list(designed.design.compromises) if designed else []
     artifact = Artifact(
         artifact_id=store.new_artifact_id(), request_id=request.request_id, dataset_id=request.dataset_id,
         version=parent.version + 1 if parent else 1, parent_artifact_id=parent.artifact_id if parent else None,
         question=parent.question if parent else request.question, change=request.question if parent else None,
-        report=report, design=designed.design if designed else None,
+        report=report, design=designed.design if designed else None, compromises=compromises,
         no_chart_reason=design_step.get("skipped") or render_step.get("skipped"),
         render_id=render_step.get("render_id"), png_url=render_step.get("png_url"), html_url=render_step.get("html_url"),
         review=request.steps["review"], clarifications=list(request.clarifications),
@@ -285,7 +307,7 @@ async def deliver(deps: AppDeps, request: Request, usage: RunUsage, budget: int 
                         analyst_model=report.model, designer_model=designed.model if designed else None),
         created_at=now(),
     )
-    store.save_artifact(artifact)
+    await asyncio.to_thread(store.save_artifact, artifact)
     request.artifact_id = artifact.artifact_id
     return {"artifact_id": artifact.artifact_id}
 

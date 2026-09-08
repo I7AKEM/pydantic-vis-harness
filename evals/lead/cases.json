@@ -84,6 +84,22 @@
   ]
  },
  {
+  "name": "missing-column-resume",
+  "csv": "evals/profiler/cases/citizens.csv",
+  "turns": [
+   {
+    "message": "Chart the number of citizens by region.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "question"
+   },
+   {
+    "message": "There is no region column; use gender instead.",
+    "tool": "resume",
+    "outcome": "artifact"
+   }
+  ]
+ },
+ {
   "name": "clarification-resume",
   "csv": "evals/profiler/cases/citizens.csv",
   "turns": [

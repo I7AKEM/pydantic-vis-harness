@@ -73,6 +73,8 @@ def score_turn(expected: dict, messages: list) -> dict:
         "answered": artifact is not None or value.get("clarification") is not None
         or (tool == "answer_question" and bool(value.get("rows"))),
         "table": tool == "answer_question" and bool(value.get("rows")),
+        # The lead answered in words: no data tool, or one that returned neither an artifact nor a question
+        # (a resume with nothing to continue, for example).
         "text": call is None or (artifact is None and value.get("clarification") is None),
     }
     accepted = expected["tool"] if isinstance(expected["tool"], list) else [expected["tool"]]
@@ -164,11 +166,13 @@ async def evaluate(cases: list[dict]) -> dict:
 
     results = await asyncio.gather(*(bounded(case) for case in cases))
     turns = [turn for case in results for turn in case["turns"]]
-    summary = {"turns": len(turns), "tool_ok": sum(t["tool_ok"] for t in turns),
+    cases_ok = sum(all(t["tool_ok"] and t["outcome_ok"] for t in case["turns"]) for case in results)
+    summary = {"cases": len(results), "cases_ok": cases_ok,
+               "turns": len(turns), "tool_ok": sum(t["tool_ok"] for t in turns),
                "outcome_ok": sum(t["outcome_ok"] for t in turns),
                "redo_turns": sum(t["redo_ok"] is not None for t in turns),
                "redo_ok": sum(t["redo_ok"] is True for t in turns)}
-    print(f"tool choice {summary['tool_ok']}/{summary['turns']}, "
+    print(f"cases {summary['cases_ok']}/{summary['cases']}, tool choice {summary['tool_ok']}/{summary['turns']}, "
           f"outcome {summary['outcome_ok']}/{summary['turns']}, "
           f"redo analysis {summary['redo_ok']}/{summary['redo_turns']}")
     return {"model": model, "summary": summary, "cases": results}

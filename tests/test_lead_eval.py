@@ -23,7 +23,7 @@ def messages(name, content, args=None):
 
 def test_cases():
     cases = json.loads((ROOT / 'evals/lead/cases.json').read_text())
-    assert len(cases) == len({c['name'] for c in cases}) == 10
+    assert len(cases) == len({c['name'] for c in cases}) == 11
     for case in cases:
         csv = ROOT / case['csv']
         assert csv.is_file()
