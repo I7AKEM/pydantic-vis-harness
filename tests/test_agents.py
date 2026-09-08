@@ -278,6 +278,8 @@ def test_draw_delivers_an_artifact_and_records_the_conversation(conversation):
     assert outcome.artifact.png_url.startswith("/renders/")
     request = deps.requests.get_request(outcome.request_id)
     assert request.caller.kind == "chat" and request.caller.conversation_id == "chat-1"
+    # The specialists' model requests count against the lead's run: lead 2, profiler 1, analyst 2, designer 3.
+    assert result.usage.requests == 8
 
 
 def test_draw_returns_the_question_and_resume_answers_it(conversation):

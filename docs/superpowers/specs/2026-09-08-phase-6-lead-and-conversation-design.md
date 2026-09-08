@@ -185,7 +185,8 @@ Instructions, the rules that change:
 - A change to an existing chart is a `revise` of the artifact the conversation last showed, or the one the
   caller names. Decide `redo_analysis` by the rule in section 6 and say which was chosen.
 - "Continue", "go on", or an answer to a pending question is a `resume`, with the answer when there is one.
-  Never re-ask a question the caller just answered.
+  Never re-ask a question the caller just answered. `answer_question` keeps no request: when it asks, the
+  lead relays the question and then calls `answer_question` again with the question and the answer together.
 - Every artifact ID and request ID that a tool returned is shown once, in a short line, so the caller can
   name it later.
 - When the caller asks what to ask, or attaches data with no question, propose three to five questions

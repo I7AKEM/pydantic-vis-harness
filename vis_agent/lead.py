@@ -47,7 +47,9 @@ labels, layout), and say which you chose.
 Questions and continuing. When draw, revise, or resume returns a clarification, ask the user that question in
 their words and wait. The user's next message that answers it is a resume with that answer; never ask a
 question the user just answered. "Continue" or "go on" is a resume with no answer. When a returned outcome is
-overdue, say that the question waited longer than its deadline before asking again.
+overdue, say that the question waited longer than its deadline before asking again. answer_question keeps no
+request: when it returns a clarification, ask the user that question and wait, then call answer_question again
+with the original question and the answer written together.
 
 Suggesting questions. When the user asks what to ask, or attaches data with no question, propose three to five
 questions from the profile, each with a reason, using only columns that exist.
