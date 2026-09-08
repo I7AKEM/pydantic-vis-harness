@@ -360,6 +360,58 @@ defects on a noisy run; gpt-oss-120b is out until its reasoning stops leaking in
 the top two with nothing else running, then a browser session, since one run of 21 cases cannot separate
 a good model from a good hour.
 
+### The lead on Gemma, and a DSPy round on its instructions
+
+On 2026-09-09 the lead's default model became the specialists' Gemma 4 31B (commit 53bf02d), with the
+fallback designer named explicitly. Two runtime baselines alone: 18 and 20 of 21, tool choice 28 of 29
+both times, and the same miss both times: "write a report about the population" answered from the profile
+because the instructions treated a report request as a request to describe the file.
+
+The owner then asked for a DSPy round with a strong reflection model. `evals/lead/optimize_instructions.py`
+mirrors the Phase 4b designer optimizer: a `dspy.Predict` proxy of the lead's first action (message plus a
+small JSON state in, one tool with its arguments out), seeded with `LEAD_INSTRUCTIONS`; 480 deterministic
+examples built by `evals/lead/proxy_cases.py` from forty corpus datasets outside the evaluation's seed-11
+sample, twelve situations each (attached question, bare attachment, numbers only, picture and data
+revisions, an answer while waiting, "continue" while waiting and after a delivered chart, artifact recall,
+a file not uploaded, a new question after a chart, and a report or overview request); a metric of tool
+choice, arguments as written, and no pre-asking with feedback in the runtime's words; GEPA light with Gemma
+as the task model. On the proxy's 120 dev examples the seed scored 85.4; GPT-5.6 sol's reflection reached
+99.0 and Opus 5's 100.0, each in under five minutes and a few dollars. Both texts, though, are written for
+the proxy: they describe a `state` JSON and an "action object" the real lead never sees, and they doubled
+the length. The transplant therefore had three candidates on the runtime: the two raw texts and a merged
+version that folds the rules they found into the lead's own instructions in the runtime's terms.
+
+The first runtime pass of the merged text scored tool choice 29 of 29 but five turns "wrong", and every one
+of them was the analyst timing out at ninety seconds on a slow Gemma route, after which the lead retried and
+delivered; the evaluation scored the first call. Two fixes came out of that: a specialist timeout now names
+itself in the warning instead of an empty string (and the runner no longer doubles the "could not answer"
+prefix), and a turn's outcome is now judged by its last data call, since a lead that recovers from a
+specialist failure delivers what the user sees; tool choice stays on the first call.
+
+Runtime validation, the 21-case lead evaluation with Gemma as lead, one run at a time, all under the
+last-call scorer:
+
+| Instructions | Cases | Tool choice | Lead defects |
+|---|---|---|---|
+| Seed (the source before the round) | 20/21 | 28/29 | 1, the report request answered from the profile |
+| Merged (adopted, commit a881150) | 21/21 | 29/29 | 0 |
+| Raw Opus 5 text | 21/21 | 29/29 | 0 |
+| Raw GPT-5.6 sol text | 14/21 | 19/29 | 11, Gemma wrote the "action object" as text instead of calling a tool |
+
+The merged text was adopted: it is the runtime's own vocabulary, 1070 words against the raw texts' 1300
+to 1500, and it fixed the one repeatable miss. The raw Opus text would also have worked; the raw sol text
+shows what proxy framing can do to a small model. The browser check on an isolated instance of the branch
+passed: a chart with an attached file, a picture change through revise with the numbers kept, "continue"
+after the chart answered in words with no tool call, the Arabic report request drawn with an Arabic summary
+and table, and a clarification round trip in which the first resume met a 90-second analyst timeout, the
+failed request could not be resumed, and the lead drew again with the answer folded in and delivered the
+chart with its assumption. That timeout was the third of the night on the Gemma route; the analyst's speed,
+not the lead's judgement, is now the weak point of the chat.
+
+Two conventions this round settled: the reflection models (GPT-5.6 sol, Opus 5) run only inside DSPy, never
+at runtime; and an optimizer's text is transplanted only after it is rewritten in the runtime's terms and
+beats the seed on the runtime evaluation, then checked in the browser.
+
 ## Left for later
 
 - The analyst sometimes returns a clarification question for a plain question (about one case in
