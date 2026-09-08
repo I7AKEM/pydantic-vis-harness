@@ -93,7 +93,8 @@ async def draw(ctx: RunContext[AppDeps], dataset_id: str, question: str) -> Requ
         question: The user's question, as they wrote it.
     """
     try:
-        request = create_request(ctx.deps, type="new", dataset_id=dataset_id, question=question, caller=chat_caller(ctx))
+        request = await asyncio.to_thread(create_request, ctx.deps, type="new", dataset_id=dataset_id,
+                                          question=question, caller=chat_caller(ctx))
     except DatasetNotFound as exc:
         raise ToolFailed(str(exc)) from exc
     except ValueError as exc:
@@ -112,8 +113,9 @@ async def revise(ctx: RunContext[AppDeps], artifact_id: str, change: str, redo_a
     """
     try:
         dataset_id = (await asyncio.to_thread(requests_of(ctx.deps).get_artifact, artifact_id)).dataset_id
-        request = create_request(ctx.deps, type="revise", dataset_id=dataset_id, question=change,
-                                 caller=chat_caller(ctx), parent_artifact_id=artifact_id, redo_analysis=redo_analysis)
+        request = await asyncio.to_thread(create_request, ctx.deps, type="revise", dataset_id=dataset_id,
+                                          question=change, caller=chat_caller(ctx), parent_artifact_id=artifact_id,
+                                          redo_analysis=redo_analysis)
     except (ArtifactNotFound, DatasetNotFound) as exc:
         raise ToolFailed(str(exc)) from exc
     except ValueError as exc:
