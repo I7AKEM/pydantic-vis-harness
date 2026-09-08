@@ -61,7 +61,7 @@ def error(message: str, status: int) -> Response:
 
 def require_json(request: HttpRequest) -> None:
     """The control the built-in chat endpoint uses: a JSON content type forces a browser preflight, so a page
-    the user happens to visit cannot start, answer, or resume a request. Raises TypeError otherwise."""
+    the user happens to visit cannot start, answer, or resume a request, or ask one. Raises TypeError otherwise."""
     media_type = request.headers.get("content-type", "").split(";")[0].strip().lower()
     if media_type != JSON_MEDIA_TYPE:
         raise TypeError(f"Expected Content-Type: {JSON_MEDIA_TYPE}, got {media_type or 'no content type'}")
