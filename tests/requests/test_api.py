@@ -157,7 +157,8 @@ def test_a_program_question_that_draws_is_recorded_as_the_programs(app, deps, ag
         assert answer.status_code == 200 and answer.json()["answer"] == "Drawn."
     summaries = deps.requests.list_requests(dataset_id=dataset_id)
     assert len(summaries) == 1
-    assert deps.requests.get_request(summaries[0].request_id).caller.kind == "agent"
+    caller = deps.requests.get_request(summaries[0].request_id).caller
+    assert caller.kind == "agent" and caller.identity == "reporter"
 
 
 def test_deadlines_are_bounded(app, dataset_id):

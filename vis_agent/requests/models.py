@@ -206,7 +206,7 @@ class LeadArtifact(BaseModel):
             sql=analysis.sql if analysis else None,
             chart=design.chart if design else None, spec=design.spec if design else None,
             explanation=design.explanation if design else None,
-            compromises=list(artifact.compromises),
+            compromises=list(artifact.compromises) or (list(design.compromises) if design else []),
             no_chart_reason=artifact.no_chart_reason, png_url=artifact.png_url, html_url=artifact.html_url,
             warnings=list(artifact.report.warnings),
         )

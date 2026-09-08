@@ -7,6 +7,7 @@ from dataclasses import replace
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from pydantic_ai import Agent
+from pydantic_ai.exceptions import UsageLimitExceeded
 from pydantic_ai.usage import UsageLimits
 from starlette.applications import Starlette
 from starlette.background import BackgroundTask
@@ -116,7 +117,7 @@ def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.A
         try:
             data = await read_json(request, CreateRequestInput)
             caller = Caller(kind="agent", identity=data.caller.identity, return_address=data.caller.return_address)
-            record = create_request(deps, type=data.type, dataset_id=data.dataset_id, question=data.question,
+            record = await asyncio.to_thread(create_request, deps, type=data.type, dataset_id=data.dataset_id, question=data.question,
                                     caller=caller, parent_artifact_id=data.parent_artifact_id,
                                     redo_analysis=data.redo_analysis, deadline_seconds=data.deadline_seconds)
         except TypeError as exc:
@@ -202,8 +203,11 @@ def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.A
         prompt = data.question if not data.dataset_id else f"{data.question}\n\nDataset: {data.dataset_id}"
         # A program's question runs the lead once, capped like a channel request; anything the lead draws on
         # the way is recorded as that program's request, not the chat's.
-        result = await lead.run(prompt, deps=replace(deps, caller_kind="agent"),
-                                usage_limits=UsageLimits(request_limit=REQUEST_LIMIT))
+        try:
+            result = await lead.run(prompt, deps=replace(deps, caller_kind="agent", caller_identity=data.caller.identity),
+                                    usage_limits=UsageLimits(request_limit=REQUEST_LIMIT))
+        except UsageLimitExceeded:
+            return error(f"The question used its budget of {REQUEST_LIMIT} model requests; ask a narrower question.", 400)
         return JSONResponse({"answer": result.output, "caller": data.caller.identity})
 
     app.router.routes[0:0] = [

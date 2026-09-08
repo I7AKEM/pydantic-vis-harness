@@ -14,11 +14,10 @@ from vis_agent.analyst.agent import analyze_dataset, detect_language
 from vis_agent.analyst.models import AnalysisReport, Clarification, PreviousAnalysis
 from vis_agent.deps import AppDeps
 from vis_agent.designer.agent import design_chart, render_design, render_id
-from vis_agent.designer.models import DesignReport, PreviousDesign
+from vis_agent.designer.models import Compromise, DesignReport, PreviousDesign
 from vis_agent.models import QuestionAnswer
 from vis_agent.profiler.agent import profile_dataset
 from vis_agent.render.base import RenderFailed, RendererUnavailable
-from vis_agent.designer.models import Compromise
 from vis_agent.requests.models import (
     DEFAULT_DEADLINE_SECONDS, MAX_QUESTIONS, Artifact, Caller, CallerKind, Exchange, LeadArtifact, Lineage,
     Request, RequestOutcome, RequestType, StepName,
@@ -67,11 +66,11 @@ def versions() -> tuple[str, str]:
     return digest("catalogue.json"), digest("rules.py")
 
 
-def outcome_for(deps: AppDeps, request: Request, warnings: list[str] | None = None) -> RequestOutcome:
+async def outcome_for(deps: AppDeps, request: Request, warnings: list[str] | None = None) -> RequestOutcome:
     pending = request.pending()
     artifact = None
     if request.artifact_id:
-        artifact = LeadArtifact.from_artifact(requests_of(deps).get_artifact(request.artifact_id))
+        artifact = LeadArtifact.from_artifact(await asyncio.to_thread(requests_of(deps).get_artifact, request.artifact_id))
     return RequestOutcome(
         request_id=request.request_id, status=request.status, artifact=artifact,
         clarification=Clarification(question=pending.question, reason=pending.reason) if pending else None,
@@ -110,11 +109,11 @@ async def run_request(deps: AppDeps, request_id: str, usage: RunUsage | None = N
     store = requests_of(deps)
     request = await asyncio.to_thread(store.get_request, request_id)
     if request.status == "done":
-        return outcome_for(deps, request)
+        return await outcome_for(deps, request)
     if request.status == "waiting":
-        return outcome_for(deps, request, ["The request is waiting for an answer; resume it with the answer."])
+        return await outcome_for(deps, request, ["The request is waiting for an answer; resume it with the answer."])
     if request_id in _running:
-        return outcome_for(deps, request, ["The request is still running."])
+        return await outcome_for(deps, request, ["The request is still running."])
     _running.add(request_id)
     try:
         request.status, request.error = "running", None
@@ -147,7 +146,7 @@ async def run_request(deps: AppDeps, request_id: str, usage: RunUsage | None = N
             await asyncio.to_thread(store.save_request, request)
         request.status = "done"
         await asyncio.to_thread(store.save_request, request)
-        return outcome_for(deps, request)
+        return await outcome_for(deps, request)
     finally:
         _running.discard(request_id)
 
@@ -162,7 +161,7 @@ async def _pause(deps: AppDeps, request: Request, pause: Pause) -> RequestOutcom
         request.status = "failed"
         request.error = f"The request already asked {MAX_QUESTIONS} questions; the next was: {pause.clarification.question}"
         await asyncio.to_thread(store.save_request, request)
-        return outcome_for(deps, request)
+        return await outcome_for(deps, request)
     moment = now()
     request.clarifications.append(Exchange(
         step=pause.step, question=pause.clarification.question, reason=pause.clarification.reason,
@@ -170,16 +169,16 @@ async def _pause(deps: AppDeps, request: Request, pause: Pause) -> RequestOutcom
     ))
     request.status = "waiting"
     await asyncio.to_thread(store.save_request, request)
-    return outcome_for(deps, request)
+    return await outcome_for(deps, request)
 
 
 async def _fail(deps: AppDeps, request: Request, error: str) -> RequestOutcome:
     request.status, request.error = "failed", error
     await asyncio.to_thread(requests_of(deps).save_request, request)
-    return outcome_for(deps, request)
+    return await outcome_for(deps, request)
 
 
-def _check_budget(request: Request, usage: RunUsage, budget: int | None) -> None:
+def _check_budget(request: Request, budget: int | None) -> None:
     """A standalone run's cap covers the whole request: what earlier invocations spent counts too."""
     if budget is not None and request.requests_used >= budget:
         raise Failure(f"The request used its budget of {budget} model requests.")
@@ -198,7 +197,7 @@ async def understand(deps: AppDeps, request: Request, usage: RunUsage, budget: i
     dataset = await asyncio.to_thread(deps.store.get_upload, request.dataset_id)
     output: dict[str, Any] = {"question": request.question}
     if request.type == "revise":
-        parent = requests_of(deps).get_artifact(request.parent_artifact_id)
+        parent = await asyncio.to_thread(requests_of(deps).get_artifact, request.parent_artifact_id)
         output.update(root_question=parent.question, parent_version=parent.version, change=request.question)
     # The language of the caller's latest words: the change, for a revision, so the reply follows the caller.
     request.language = detect_language(request.question, dataset.brief, dataset.headers)
@@ -214,7 +213,7 @@ async def profile(deps: AppDeps, request: Request, usage: RunUsage, budget: int 
 
 async def analyze(deps: AppDeps, request: Request, usage: RunUsage, budget: int | None) -> dict[str, Any]:
     store = requests_of(deps)
-    parent = store.get_artifact(request.parent_artifact_id) if request.parent_artifact_id else None
+    parent = await asyncio.to_thread(store.get_artifact, request.parent_artifact_id) if request.parent_artifact_id else None
     if parent is not None and not request.redo_analysis:
         copied = parent.report.model_copy(update={"language": request.language or parent.report.language})
         return copied.model_dump(mode="json")
@@ -225,7 +224,7 @@ async def analyze(deps: AppDeps, request: Request, usage: RunUsage, budget: int 
         question = parent.question
         previous = PreviousAnalysis(sql=parent.report.analysis.sql, columns=parent.report.analysis.columns,
                                     change=request.question)
-    _check_budget(request, usage, budget)
+    _check_budget(request, budget)
     report = await analyze_dataset(deps.store, deps.profiler, deps.analyst, request.dataset_id, question,
                                    usage=usage, clarifications=pairs(request), previous=previous,
                                    language=request.language)
@@ -242,11 +241,11 @@ async def design(deps: AppDeps, request: Request, usage: RunUsage, budget: int |
         return {"skipped": "The answer is a single number; it needs no chart."}
     previous = None
     if request.parent_artifact_id:
-        parent = requests_of(deps).get_artifact(request.parent_artifact_id)
+        parent = await asyncio.to_thread(requests_of(deps).get_artifact, request.parent_artifact_id)
         if parent.design is not None:
             previous = PreviousDesign(spec=parent.design.spec, change=request.question)
     brief = (await asyncio.to_thread(deps.store.get_upload, request.dataset_id)).brief
-    _check_budget(request, usage, budget)
+    _check_budget(request, budget)
     designed = await design_chart(report, deps.designer, brief, usage=usage, clarifications=pairs(request),
                                   previous=previous)
     if designed.clarification is not None:
@@ -286,7 +285,7 @@ async def deliver(deps: AppDeps, request: Request, usage: RunUsage, budget: int 
     report = AnalysisReport.model_validate(request.steps["analyze"])
     design_step, render_step, profile_step = request.steps["design"], request.steps["render"], request.steps["profile"]
     designed = DesignReport.model_validate(design_step) if "skipped" not in design_step else None
-    parent = store.get_artifact(request.parent_artifact_id) if request.parent_artifact_id else None
+    parent = await asyncio.to_thread(store.get_artifact, request.parent_artifact_id) if request.parent_artifact_id else None
     catalogue_version, rules_version = versions()
     # The renderer's list holds the check's compromises plus its own (dropped rows, a still picture).
     if "rendered" in render_step:

@@ -28,4 +28,5 @@ class AppDeps:
     designer: Agent[DesignerDeps, Design | Clarification]
     requests: RequestStore | None = None
     caller_kind: CallerKind = "chat"
+    caller_identity: str | None = None
     """Who talks to the lead in this run: the chat, the terminal, or a program; recorded on the requests it makes."""

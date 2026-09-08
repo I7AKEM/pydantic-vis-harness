@@ -81,7 +81,7 @@ async def find_dataset(ctx: RunContext[AppDeps], query: str = "") -> list[Datase
 
 def chat_caller(ctx: RunContext[AppDeps]) -> Caller:
     """The caller of this lead run: the chat by default, the terminal or a program when the app says so."""
-    return Caller(kind=ctx.deps.caller_kind, conversation_id=ctx.conversation_id)
+    return Caller(kind=ctx.deps.caller_kind, conversation_id=ctx.conversation_id, identity=ctx.deps.caller_identity)
 
 
 async def draw(ctx: RunContext[AppDeps], dataset_id: str, question: str) -> RequestOutcome:
@@ -111,7 +111,7 @@ async def revise(ctx: RunContext[AppDeps], artifact_id: str, change: str, redo_a
             False when only the picture changes (title, colours, chart type, labels, layout).
     """
     try:
-        dataset_id = requests_of(ctx.deps).get_artifact(artifact_id).dataset_id
+        dataset_id = (await asyncio.to_thread(requests_of(ctx.deps).get_artifact, artifact_id)).dataset_id
         request = create_request(ctx.deps, type="revise", dataset_id=dataset_id, question=change,
                                  caller=chat_caller(ctx), parent_artifact_id=artifact_id, redo_analysis=redo_analysis)
     except (ArtifactNotFound, DatasetNotFound) as exc:
@@ -130,7 +130,7 @@ async def resume(ctx: RunContext[AppDeps], request_id: str = "", answer: str = "
     """
     try:
         if not request_id:
-            found = latest_unfinished(ctx.deps, ctx.conversation_id)
+            found = await asyncio.to_thread(latest_unfinished, ctx.deps, ctx.conversation_id)
             if found is None:
                 raise ToolFailed("No unfinished request in this conversation.")
             request_id = found.request_id
@@ -153,8 +153,8 @@ async def find_artifact(ctx: RunContext[AppDeps], artifact_id: str = "", dataset
     store = requests_of(ctx.deps)
     try:
         if artifact_id:
-            return store.list_artifacts(artifact_id=artifact_id, limit=MAX_LISTED_ARTIFACTS)
-        return store.list_artifacts(dataset_id=dataset_id or None, limit=MAX_LISTED_ARTIFACTS)
+            return await asyncio.to_thread(store.list_artifacts, artifact_id=artifact_id, limit=MAX_LISTED_ARTIFACTS)
+        return await asyncio.to_thread(store.list_artifacts, dataset_id=dataset_id or None, limit=MAX_LISTED_ARTIFACTS)
     except ArtifactNotFound as exc:
         raise ToolFailed(str(exc)) from exc
     except ValueError as exc:

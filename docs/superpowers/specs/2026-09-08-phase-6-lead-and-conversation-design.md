@@ -272,7 +272,7 @@ in the order the web chat would send them (the upload line included), the expect
 (`draw`, `answer_question`, `revise` with the expected `redo_analysis`, `resume`), and the expected
 outcome (an artifact, a table, a question). The corpus ten are the Phase 4b lead sample's questions over
 result-table exports, so a corpus turn counts when the lead draws, asks, or answers with a table. The scripted
-eleven are: numbers only, a chart then a colour change, a chart then a new filter, a question about a column the
+eleven are: numbers only, a chart, a chart then a colour change, a chart then a new filter, a question about a column the
 file lacks that the analyst must ask about and then the answer, a vague term the analyst may ask about or state
 an assumption for, "continue", a dataset with no question, an Arabic revision, a table then a chart, and artifact
 recall. `evals/lead/run.py` runs them with real models and scores the tool choice and the outcome per turn and
@@ -280,8 +280,8 @@ per case.
 
 Exit test, from the Phase 1 design plus the tool choice: a request killed mid-run resumes from its last
 checkpoint; a revise produces a linked version; a clarification round-trips with a human in the chat and
-with a program over the channel; and on the twenty-one cases the lead picks the expected tool in at least
-eighteen cases.
+with a program over the channel; and on the twenty-one cases the lead picks the expected tool and reaches the
+expected outcome in at least eighteen cases.
 
 ## 18. Files
 

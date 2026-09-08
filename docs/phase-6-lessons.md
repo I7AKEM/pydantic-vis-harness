@@ -125,11 +125,10 @@ without new analysis costs the lead's two plus the designer's three. Tokens and 
 
 - After a single-number result the lead delivers the number without a chart, as designed, but then offers
   chart ideas instead of stopping; if the evaluation shows it often, add one sentence to the instructions.
-- On the vague "youth" question the lead asked for the definition itself, before any tool ran. The analyst
-  would have asked the same with the data in view; either is acceptable, but the design gives the asking to
-  the specialist, so the lead's instructions may need "call draw first; the analyst asks".
-- The forty-request budget of a standalone run resets on every resume, so a request that pauses twice can
-  spend three budgets. A persisted usage total on the request would close that.
+- On the vague "youth" question the lead asked for the definition itself, before any tool ran. The
+  instructions now say the specialists ask; the lead still pre-empts an obvious missing column it can see in
+  the profile (the evaluation's `missing-column-resume` case), which is right for the user but skips the
+  request and its pause.
 - `resume` with no ID needs a conversation ID; the terminal always names the request, and the chat adapter
   always supplies one, so the gap is only in a program that calls the lead directly.
 - Overdue questions are reported, never expired; nothing moves a waiting request to stopped on its own.

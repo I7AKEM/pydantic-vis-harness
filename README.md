@@ -169,7 +169,7 @@ drawn, and its request is recorded as the program's, not the chat's.
 
 ## Evaluate the lead
 
-Run the ten scripted conversations before merging a change to the lead:
+Run the eleven scripted conversations before merging a change to the lead:
 
 ```bash
 uv run python -m evals.lead.run
