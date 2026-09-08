@@ -191,6 +191,13 @@ not a successful PNG; inspect its `no_chart_reason` and the web chat separately.
 CSV, database, and render files are removed after each case. Results and manual checks
 belong in `docs/phase-6-lessons.md`.
 
+Before a longer optimization, run `uv run python -m evals.lead.optimize_instructions check`; then use
+`uv run python -m evals.lead.optimize_instructions run light OUT_DIR` (or `medium`) to tune the lead's
+first-action proxy. Set `OPTIMIZE_REFLECTION_MODEL` to choose the reflection model, or pass
+`--reflection MODEL`. Adopt the saved instructions into `LEAD_INSTRUCTIONS` only when
+`uv run python -m evals.lead.run --corpus` on the runtime improves against the seed on the same day and
+the browser check passes.
+
 ## Render a chart
 
 The chart commands use a saved analysis report and call no model. Install Node 22 LTS on

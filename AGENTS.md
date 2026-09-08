@@ -63,6 +63,7 @@ Requests package file map:
   `vis_agent/designer/rulebook-revise.md` and reach the model per run only.
 - `make_chart` is gone; `draw` returns the table with the chart. Use `answer_question` for numbers only.
 - Run `uv run python -m evals.lead.run` before a merge that touches the lead.
+- The lead optimizer (`uv run python -m evals.lead.optimize_instructions run light OUT_DIR`) tunes a proxy of the lead's decision; adopt its instructions into `LEAD_INSTRUCTIONS` only when `uv run python -m evals.lead.run --corpus` on the runtime improves against the seed on the same day and the browser check passes.
 - The analyst writes one SELECT; code parses, allow-lists, runs, and checks it. The model never sees raw rows.
 - Each agent's rulebook is `vis_agent/<agent>/rulebook.md`; every confirmed mistake becomes an eval case plus a check or a rulebook line.
 - Run the evals before every merge, including `evals/designer/run.py` (`uv run python -m evals.designer.run`).
