@@ -316,6 +316,50 @@ six to ten times more and are worse as analyst. Gemma stays, with the budgets an
 covering its loops. The closest all-rounder for a later switch is DeepSeek V4 Pro; a decision should rest
 on the two-hundred-case scale set, since one run of 31 cases cannot see a one-in-twenty loop rate.
 
+### Open-weight models tried for the lead
+
+The lead runs on Sonnet 4.6. On 2026-09-09 ten open-weight models ran the 21-case lead evaluation with
+everything else fixed: Gemma specialists, the Sonnet fallback designer, the same advisor. Reasoning models
+are allowed here because the lead sets no thinking-off setting. Failed turns were split into three kinds:
+a turn stuck behind a needless analyst question (the open item; identical draw questions got different
+analyst answers across runs, so this is the analyst's route variance, not the lead), the known one-cell
+corpus files, and defects only a lead can cause.
+
+| Lead model | Cases | Tool choice | Stuck behind an analyst question | Lead defects | Price in/out per M |
+|---|---|---|---|---|---|
+| Sonnet 4.6 (current, closed) | 17/21 | 27/29 | 2 | 0 | 3.00 / 15.00 |
+| Gemma 4 31B (the specialists' model) | 18/21 | 28/29 | 1 | 1, skipped the draw on one corpus file | 0.09 / 0.34 |
+| Kimi K3 | 21/21 | 29/29 | 0 | 0 | 3.00 / 15.00 |
+| GLM 5.3 Flash | 21/21 | 29/29 | 0 | 0 | 0.07 / 0.25 |
+| DeepSeek V4 Pro | 17/21 | 27/29 | 6 | 0 | 0.58 / 1.74 |
+| Kimi K2.6 | 17/21 | 26/29 | 5 | 0 | 0.95 / 4.00 |
+| GLM 5.3 | 16/21 | 27/29 | 7 | 0 | 1.40 / 4.40 |
+| Qwen 3.8 2.4T | 16/21 | 26/29 | 6 | 1, skipped the draw on one corpus file | 2.00 / 6.00 |
+| gpt-oss-120b | 17/21 | 26/29 | 0 | 4, reasoning text leaked into three replies, one doubled revise | 0.04 / 0.17 |
+| MiniMax M3 | 14/21 | 26/29 | 7 | 1, drew the same chart twice | 0.30 / 1.20 |
+
+Sonnet's own five runs on this set range from 16 to 18 of 21, so cases and tool choice alone separate
+nothing but the bottom. The two perfect runs, Kimi K3 and GLM 5.3 Flash, were also the two that ran last,
+with fewer evaluations loading the Gemma route at the same time, and they met no analyst question at all:
+their scores are partly the analyst's good hour. They also called a data tool on the one-cell corpus files
+where Sonnet answers from the profile. A probe of the analyst alone (four runs each of the "Chart average
+income by gender" question, both phrasings) gave four tables out of four, so the phrasing is not the
+trigger; the load is the working theory.
+
+Latency, one fixed chart turn, three runs per model, one at a time: the lead's own model time per turn (median of three; the
+turn also holds the specialists and the render): Sonnet 4.6 9.0 s over 3 requests; Kimi K2.6 9.1 s over 2;
+Kimi K3 11.3 s; GLM 5.3 16.3 s; gpt-oss-120b 20.0 s; DeepSeek V4 Pro 22.7 s with the longest replies;
+GLM 5.3 Flash 30.6 s, about 12 s per request because it reasons before every tool call, and one of its three
+turns ended without a chart. Gemma 4 31B as lead: 2.9 s over 2 requests, the fastest by far; it ran alone, and one of its
+three turns waited 103 s for an analyst timeout and still delivered the chart.
+
+Reading: the surprise is Gemma 4 31B itself, 18 of 21 with one lead defect, three seconds of lead time
+per turn, at a thirtieth of Sonnet's price; GLM 5.3 Flash had the clean run but is ten times slower per
+turn than Gemma and three times slower than Sonnet; DeepSeek V4 Pro is the safe mid-price choice with no
+defects on a noisy run; gpt-oss-120b is out until its reasoning stops leaking into the reply. A switch needs a repeat run of
+the top two with nothing else running, then a browser session, since one run of 21 cases cannot separate
+a good model from a good hour.
+
 ## Left for later
 
 - The analyst sometimes returns a clarification question for a plain question (about one case in
