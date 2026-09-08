@@ -8,7 +8,7 @@ import logfire
 from dotenv import load_dotenv
 
 from vis_agent.analyst.agent import DEFAULT_ANALYST_MODEL, create_analyst
-from vis_agent.designer.agent import DEFAULT_DESIGNER_MODEL, create_designer
+from vis_agent.designer.agent import DEFAULT_DESIGNER_MODEL, DEFAULT_FALLBACK_DESIGNER_MODEL, create_designer
 from vis_agent.store import DatasetStore
 from vis_agent.lead import create_lead
 from vis_agent.deps import AppDeps
@@ -23,7 +23,7 @@ logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
 logfire.configure(send_to_logfire="if-token-present", service_name="vis-agent", console=False)
 logfire.instrument_pydantic_ai()
 
-model = os.getenv("PYDANTIC_AI_MODEL", "openrouter:anthropic/claude-sonnet-4.6")
+model = os.getenv("PYDANTIC_AI_MODEL") or DEFAULT_PROFILER_MODEL  # the lead on the specialists' model, measured 2026-09-09
 data_directory = Path(os.getenv("DATA_DIRECTORY", str(Path(__file__).parent.parent / "data")))
 database = Path(os.environ["DUCKDB_PATH"]) if os.getenv("DUCKDB_PATH") else None
 
@@ -36,7 +36,7 @@ requests = RequestStore(store)
 profiler = create_profiler(os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL)
 analyst = create_analyst(os.getenv("PYDANTIC_AI_ANALYST_MODEL") or DEFAULT_ANALYST_MODEL)
 designer = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_MODEL") or DEFAULT_DESIGNER_MODEL)
-designer_fallback = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_FALLBACK_MODEL") or model)
+designer_fallback = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_FALLBACK_MODEL") or DEFAULT_FALLBACK_DESIGNER_MODEL)
 deps = AppDeps(store=store, profiler=profiler, analyst=analyst, designer=designer, requests=requests,
                designer_fallback=designer_fallback)
 agent = create_lead(model, advisor_model=os.getenv("PYDANTIC_AI_ADVISOR_MODEL", "openrouter:openai/gpt-5.6-sol"))

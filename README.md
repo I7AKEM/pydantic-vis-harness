@@ -13,8 +13,9 @@ cp .env.example .env
 ```
 
 Set `OPENROUTER_API_KEY` in `.env` to your OpenRouter API key. Set
-`PYDANTIC_AI_MODEL` to choose a model; the default is
-`openrouter:anthropic/claude-sonnet-4.6`.
+`PYDANTIC_AI_MODEL` to choose the lead's model; the default is the specialists' model,
+`openrouter:google/gemma-4-31b-it:nitro`, which scored 18 of 21 on the lead evaluation at three
+seconds per turn (2026-09-09); `openrouter:anthropic/claude-sonnet-4.6` was the previous default.
 
 Evaluation sets live under `evals/profiler`: twelve hand-made cases, fifty held-out corpus cases, and 150
 corpus training cases; `docs/phase-1-lessons.md` records every result. The profiler's instructions were

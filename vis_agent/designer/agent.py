@@ -33,6 +33,8 @@ from .syntax import KEYS, STYLE_KEYS, parse, to_text
 
 log = logging.getLogger("designer")
 DEFAULT_DESIGNER_MODEL = DEFAULT_PROFILER_MODEL
+# The runner retries a failed design once on this model; any strong designer works, this one is the one measured.
+DEFAULT_FALLBACK_DESIGNER_MODEL = "openrouter:anthropic/claude-sonnet-4.6"
 DESIGNER_RULEBOOK = Path(__file__).with_name("rulebook.md").read_text(encoding="utf-8")
 REVISE_INSTRUCTIONS = Path(__file__).with_name("rulebook-revise.md").read_text(encoding="utf-8")
 DESIGN_TIMEOUT_SECONDS = 90

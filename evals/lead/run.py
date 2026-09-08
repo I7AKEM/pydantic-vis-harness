@@ -16,7 +16,7 @@ from pydantic_ai.messages import ToolCallPart, ToolReturnPart
 from evals.designer.agent.corpus_tools.select import CORPUS, read_manifest
 from vis_agent.analyst.agent import DEFAULT_ANALYST_MODEL, create_analyst
 from vis_agent.deps import AppDeps
-from vis_agent.designer.agent import DEFAULT_DESIGNER_MODEL, create_designer
+from vis_agent.designer.agent import DEFAULT_DESIGNER_MODEL, DEFAULT_FALLBACK_DESIGNER_MODEL, create_designer
 from vis_agent.lead import create_lead
 from vis_agent.models import DataBrief
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, create_profiler, profile_dataset
@@ -156,10 +156,10 @@ async def evaluate(cases: list[dict]) -> dict:
     profiler = create_profiler(os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL)
     analyst = create_analyst(os.getenv("PYDANTIC_AI_ANALYST_MODEL") or DEFAULT_ANALYST_MODEL)
     designer = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_MODEL") or DEFAULT_DESIGNER_MODEL)
-    model = os.getenv("PYDANTIC_AI_MODEL") or "openrouter:anthropic/claude-sonnet-4.6"
+    model = os.getenv("PYDANTIC_AI_MODEL") or DEFAULT_PROFILER_MODEL
     lead = create_lead(model, advisor_model="openrouter:openai/gpt-5.6-sol")
     # The runner retries a failed design once on this model, as the app does.
-    designer_fallback = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_FALLBACK_MODEL") or model)
+    designer_fallback = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_FALLBACK_MODEL") or DEFAULT_FALLBACK_DESIGNER_MODEL)
     semaphore = asyncio.Semaphore(3)
 
     async def bounded(case):
