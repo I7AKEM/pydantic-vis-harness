@@ -15,6 +15,8 @@ from vis_agent.deps import AppDeps
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, create_profiler, profile_dataset
 from vis_agent.uploads import add_upload_routes
 from vis_agent.renders import add_render_routes
+from vis_agent.requests.api import add_request_routes
+from vis_agent.requests.store import RequestStore
 
 load_dotenv()
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
@@ -30,10 +32,11 @@ store = DatasetStore(
     max_upload_bytes=int(os.getenv("MAX_UPLOAD_MB", "20")) * 1024 * 1024,
     database=database,
 )
+requests = RequestStore(store)
 profiler = create_profiler(os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL)
 analyst = create_analyst(os.getenv("PYDANTIC_AI_ANALYST_MODEL") or DEFAULT_ANALYST_MODEL)
 designer = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_MODEL") or DEFAULT_DESIGNER_MODEL)
-deps = AppDeps(store=store, profiler=profiler, analyst=analyst, designer=designer)
+deps = AppDeps(store=store, profiler=profiler, analyst=analyst, designer=designer, requests=requests)
 agent = create_lead(model, advisor_model=os.getenv("PYDANTIC_AI_ADVISOR_MODEL", "openrouter:openai/gpt-5.6-sol"))
 
 
@@ -47,3 +50,4 @@ async def auto_profile(dataset_id: str) -> None:
 app = agent.to_web(deps=deps, html_source=Path(__file__).with_name("static") / "chat.html")
 add_upload_routes(app, store, auto_profile=auto_profile)
 add_render_routes(app, store)
+add_request_routes(app, deps, agent)
