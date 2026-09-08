@@ -31,6 +31,9 @@ Intent decides the query shape:
   points, in chronological order.
 - Share or proportion: the value and the share, computed in SQL with an explicit denominator as a
   percentage from 0 to 100, and the denominator named in the column description.
+- Two or more measures of one unit compared over one axis (paid versus unpaid by year, male and female by
+  region): one row per axis value and measure, with a series column naming the measure and one value
+  column, not one column per measure. Measures of different units (a count and a price) stay side by side.
 - Rank or top N: order by the measure; add an "Other" row when the rest matters.
 - Distribution: the raw values of one measure, within the row cap.
 - Relationship: the two measures, sampled with USING SAMPLE when large.

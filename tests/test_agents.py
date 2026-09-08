@@ -122,6 +122,16 @@ def test_find_dataset_lists_uploads(store):
     assert result.output == first.dataset_id
 
 
+def test_find_dataset_says_when_nothing_matches(store):
+    store.save_upload("first.csv", SALES)
+    lead, profiler = create_lead("test"), create_profiler("test")
+    deps = AppDeps(store=store, profiler=profiler, analyst=create_analyst("test"), designer=create_designer("test"))
+    drive = call_then_summarize("find_dataset", {"query": "sales.csv"}, lambda part: str(part.content))
+    with lead.override(model=FunctionModel(drive)):
+        result = lead.run_sync("Chart sales.csv", deps=deps)
+    assert result.output == "No dataset matches 'sales.csv'. It has to be uploaded first; do not call draw or answer_question for it."
+
+
 def test_lead_answers_a_question_through_the_analyst(store, people):
     from pydantic_ai.messages import ModelResponse, TextPart, ToolCallPart, ToolReturnPart
     from pydantic_ai.models.function import FunctionModel
@@ -363,3 +373,28 @@ def test_the_lead_records_the_callers_kind_from_its_deps(conversation):
     result = run("Chart total by region", drive, run_deps=replace(deps, caller_kind="terminal"))
     outcome = RequestOutcome.model_validate_json(result.output)
     assert deps.requests.get_request(outcome.request_id).caller.kind == "terminal"
+
+
+def test_draw_accepts_the_uploaded_file_name(conversation):
+    from vis_agent.requests.models import RequestOutcome
+
+    dataset_id, deps, run = conversation
+    drive = call_then_summarize("draw", {"dataset_id": "sales.csv", "question": "Total by region"},
+                                lambda part: outcome_of(part).model_dump_json())
+    outcome = RequestOutcome.model_validate_json(run("Chart total by region in sales.csv", drive).output)
+    assert outcome.status == "done" and outcome.artifact.dataset_id == dataset_id
+
+
+def test_an_unknown_file_name_is_a_plain_failure_not_a_guess(conversation):
+    dataset_id, deps, run = conversation
+
+    def drive(messages, info):
+        returns = tool_returns(messages)
+        if not returns:
+            return ModelResponse(parts=[ToolCallPart(tool_name="draw", args={"dataset_id": "nothing.csv",
+                                                                            "question": "Total by region"})])
+        assert "no uploaded dataset is named" in str(returns[-1].content).lower()
+        return ModelResponse(parts=[TextPart(content="Upload nothing.csv first.")])
+
+    assert run("Chart nothing.csv", drive).output == "Upload nothing.csv first."
+    assert deps.requests.list_requests() == []

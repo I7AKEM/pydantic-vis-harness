@@ -134,9 +134,15 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
                 if raw_total:
                     total = sum(numbers)
                     if abs(total - raw_total) > TOTAL_TOLERANCE * abs(raw_total):
-                        checks.append(_check(column.name, "total_explained", "warning", False,
-                                             f"{column.name}: the result sums to {total:g}; the column's total is "
-                                             f"{raw_total:g}. The query filtered or excluded rows."))
+                        if re.search(r"\bwhere\b", result.sql, re.IGNORECASE):
+                            # A filter the query states is not a leak: say what the number covers.
+                            message = (f"{column.name}: the result covers {total:g} of the column's total {raw_total:g}, "
+                                       f"because the query keeps only the rows its WHERE clause names; expected when the "
+                                       f"question asks for a subset.")
+                        else:
+                            message = (f"{column.name}: the result sums to {total:g}; the column's total is {raw_total:g}. "
+                                       f"The query dropped rows without a filter the question named.")
+                        checks.append(_check(column.name, "total_explained", "warning", False, message))
 
             if column.kind == "time":
                 present = [v for v in values if v is not None]
