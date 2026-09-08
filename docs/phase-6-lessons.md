@@ -86,6 +86,87 @@ The averaged shares were the analyst's rulebook: "average percentages, never sum
 whole add; the rule now says so when the brief or the column meaning says the percentages share one
 denominator, and the Turkish file is an analyst evaluation case with its brief.
 
+## Thirty conversations in the browser
+
+Run on 2026-09-08 through the chat page in the in-app browser, against a second server instance on port 7933
+with its own data folder and database, so the owner's server and data were untouched. Twelve datasets were
+uploaded through `/datasets/upload` with their briefs, exactly as the Upload CSV button does, and every message
+was typed into the composer with the attachment line the button adds. Thirty cases, 43 turns, twelve
+cases with follow-ups. Verdicts: 23 cases passed outright, 5 passed with a note, 2 failed on a turn
+(34 turns passed, 7 with a note, 2 failed).
+
+| Case | Dataset | Turns | Verdict | What happened |
+| --- | --- | ---: | --- | --- |
+| 1 | Turkish population (with brief) | 3 | pass | draw: grouped_column, shares summed (0-14 = 33.33), table, notes, IDs, picture shown Then: revise picture only: version 2 linked, grouped_bar, second picture shown; the reply omitted the table on a picture-only change Then: artifact recall: both versions listed with IDs and types, from the conversation, no tool call needed |
+| 2 | Turkish population (with brief) | 1 | pass | answer_question: 114, no chart; the analyst's total-check warning about excluded rows reads oddly for a deliberate filter |
+| 3 | Turkish population (with brief) | 1 | pass | draw: gender shares summed per population, English reply, picture shown, caveats from the brief |
+| 4 | Turkish population (with brief) | 1 | pass | continue with a fresh attachment: nothing to continue, the lead proposed five questions with reasons instead of failing |
+| 5 | citizens.csv | 2 | pass | draw: grouped chart shown, table with code meanings from the brief, warnings explained Then: revise with redo_analysis true: filtered to females, version 2, second picture, the lead said the analysis was re-run |
+| 6 | citizens.csv | 1 | pass | answer_question: averages by gender, no chart |
+| 7 | citizens.csv | 2 | fail | missing column: the lead listed the columns and asked which to use itself (no draw, no request); a fair question, but it pre-empts the analyst Then: draw after the answer: analyst fine (4 F / 4 M) but the designer hit its request limit on a two-row result; table delivered with the reason, no picture |
+| 8 | citizens.csv | 2 | pass | draw: the analyst took the wealthy flag as high earner and said so; single number 50%, no chart by design; the lead offered follow-ups Then: revise with redo: income above 60000, single number again, assumption restated, no chart by design |
+| 9 | arabic.csv | 2 | fail | draw: Arabic bar by city, picture, table, totals summed across dates and said so Then: title-only revision: two revisions came back without a chart (designer exceeded output retries), the lead reworded and retried, the third drew with the new title; two stray artifacts |
+| 10 | arabic.csv | 1 | pass | monthly trend on one month of data: single row, no chart, honest explanation and alternatives offered |
+| 11 | arabic.csv | 1 | pass | answer_question: top city Riyadh 3,150, no chart |
+| 12 | conflict_codes.csv | 2 | pass | draw: tickets by status with code meanings from the brief, picture, notes the unused code Then: revise picture only: donut 2 True, second picture, table repeated |
+| 13 | seeded-13 (Arabic categories) | 2 | pass | draw: Arabic region categories, picture, table with unit Then: revise with redo: sorted descending, the three regions are all there are and the lead said so, second picture |
+| 14 | seeded-13 (Arabic categories) | 1 | note | attachment only: profile summary with columns and statistics (the file's own diacritics kept), but one suggested question instead of three to five |
+| 15 | seeded-19 (Hijri years, 22k rows) | 1 | note | draw over 65 Hijri years: the designer delivered a table type, the lead revised it to a line on its own, final line with two series shown, 20-row table with the total |
+| 16 | seeded-19 (Hijri years, 22k rows) | 1 | pass | answer_question: total paid violations 857,421, no chart |
+| 17 | seeded-01 (Hijri dates, 22k rows) | 2 | note | draw over 22k rows: Hijri months bucketed as text (769 months), designer chose a table for that many buckets, table picture shown, the lead offered a line for a period Then: revise with redo: yearly averages over 65 Hijri years, correct numbers, but the designer chose a table again (year-like column not treated as time), the lead offered a line |
+| 18 | fines corpus file (1000 rows) | 2 | pass | draw: total fine by district over 1000 rows, values match the analyst evaluation's expected table, picture, warnings shown Then: revise with redo: top five districts, second picture, the lead said the numbers changed and why |
+| 19 | fines corpus file (1000 rows) | 1 | pass | draw: violations per month in Arabic, picture, partial-month caveat |
+| 20 | regions corpus file | 1 | pass | the home-machine question: draw with no question asked, 16-row table, percentage column used with the assumption stated, picture |
+| 21 | citizens/residents corpus file | 2 | pass | draw: donut as asked, citizens vs residents with shares, picture Then: revise picture only: pie labels on percent, second picture |
+| 22 | gender by region corpus file | 2 | pass | draw: gender shares by region from the percentage column, 16-row table, picture Then: revise with redo: top five regions by female share, second picture, assumptions stated |
+| 23 | population report corpus file | 1 | pass | report request: draw plus answer_question, a chart with a written analysis in Arabic |
+| 24 | Turkish population (with brief) | 1 | pass | unknown artifact id: the lead said the id does not exist and offered three questions; no invented chart (it reasoned from the fresh conversation rather than calling revise) |
+| 25 | none | 1 | note | file never uploaded: find_dataset called, then one draw call that errored, then the right answer (upload it first); nothing invented |
+| 26 | citizens.csv | 1 | pass | Arabic question on an English file: draw, Arabic reply, averages by gender, picture |
+| 27 | Turkish population (with brief) | 1 | pass | two numbers asked: answer_question, 33.33 vs 32.31 with shares summed, no needless chart |
+| 28 | fines corpus file (1000 rows) | 1 | pass | draw: average fine by violation type, long Arabic labels kept with translations, picture, assumption stated |
+| 29 | seeded-19 (Hijri years, 22k rows) | 2 | note | draw over 65 Hijri years: line [('السنة الهجرية', 'ordinal'), ('إجمالي المخالفات المدفوعة', 'measure')], picture, 20-row table with the total Then: revise with redo added the second series, but the designer returned a table (two-series line over 65 years exceeds its limit); the lead explained and offered a shorter range, bucketing, or two charts |
+| 30 | citizens.csv + arabic.csv | 1 | pass | two attachments: the lead drew from the Arabic file as asked, picture, table |
+
+The two failures and what was done:
+
+- Case 9, a title-only revision: the designer's delivery check refused an explanation that mentioned the year
+  from the caller's own title ("The summary mentions 2026, which is not in the result"), twice; the lead
+  retried with rewordings and finally changed the data to make the check pass, leaving two chartless
+  artifacts. Fixed in 6d89cd7: numbers the caller wrote in the change or in an answer count as wording, in
+  the designer's and the analyst's number checks. Rerun after the fix: one revision, the new title, version 2.
+- Case 7, a chart after a missing-column answer: the designer hit its eight-request budget on a two-row
+  gender count and the runner delivered the table with the reason. The same report designs cleanly in three
+  requests when run again, so this was provider variance in the designer's model; the graceful path held.
+  Rerun after the fix: the lead called `draw`, the analyst asked which column stands for region, the answer
+  went through `resume`, and the chart was drawn.
+
+The notes, in order of weight:
+
+- Long Hijri series: the designer chose the table type for 65 years with two series (cases 15, 29) and for
+  769 or 65 buckets with two measures (case 17), while a single series over 65 years drew as a line (case 29
+  turn 1). The lead explained each time and either revised to a line itself or offered a shorter range. The
+  designer's limits on multi-series lines and its treatment of year-like ordinals are the next designer work.
+- The lead pre-empts an obvious missing column from the profile in some runs (case 7 first run) and lets the
+  analyst ask in others (the rerun); both end well.
+- With a dataset attached and no question the lead summarized the profile but proposed one question instead
+  of three to five (case 14).
+- A picture-only revision sometimes omits the table under the new picture (case 1 turn 2); the numbers are
+  unchanged, so nothing is lost.
+- An analyst warning about rows excluded by a deliberate filter reads oddly to a user (case 2).
+- On a file that was never uploaded the lead called `find_dataset`, then one `draw` that errored, before
+  answering correctly (case 25).
+
+Everything else behaved as designed: chart first with the table, IDs shown once, revisions deciding
+`redo_analysis` correctly (picture-only for horizontal bars, donut, pie, title; re-run for filters, sums,
+top-N, added series), numbers-only questions answered without a chart, single-number answers without a
+chart, Arabic and English replies following the question, code meanings from briefs, a fresh "continue"
+turned into suggestions, an unknown artifact ID refused plainly, and the right file chosen when two were
+attached.
+
+A setup lesson: the project's `.env` pins `DUCKDB_PATH`, so a second instance started with only
+`DATA_DIRECTORY` wrote its dataset rows into the main database; set both variables for an isolated instance.
+
 ## What the runner records for a killed run
 
 Scratch script `killed_run.py`: a fresh store, the Turkish CSV with its brief, a terminal request, and the run
