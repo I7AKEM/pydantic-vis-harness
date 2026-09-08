@@ -223,6 +223,8 @@ def ask_clarification(ctx: RunContext[AnalystDeps], question: str, reason: str) 
     """Ask the caller one question, in the caller's language, when the columns cannot answer the question or a
     term in it has no definition. Say in reason what is missing.
     """
+    if not question.strip():
+        raise ModelRetry("The question is empty. Ask one question the caller can answer, or answer with SQL.")
     return Clarification(question=question, reason=reason)
 
 

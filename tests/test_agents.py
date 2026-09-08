@@ -398,3 +398,22 @@ def test_an_unknown_file_name_is_a_plain_failure_not_a_guess(conversation):
 
     assert run("Chart nothing.csv", drive).output == "Upload nothing.csv first."
     assert deps.requests.list_requests() == []
+
+
+def test_an_empty_clarification_is_sent_back_to_the_model(store, people):
+    from vis_agent.analyst.agent import analyze_dataset
+
+    dataset_id, _profile = people
+    profiler, analyst = create_profiler("test"), create_analyst("test")
+    attempts = []
+
+    def drive(messages, info):
+        attempts.append(any(isinstance(p, RetryPromptPart) for p in messages[-1].parts))
+        question = "" if len(attempts) == 1 else "Which amount?"
+        return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification", args={"question": question, "reason": "Two."})])
+
+    with analyst.override(model=FunctionModel(drive)):
+        import asyncio
+        report = asyncio.run(analyze_dataset(store, profiler, analyst, dataset_id, "Total by region"))
+    assert attempts == [False, True]
+    assert report.clarification.question == "Which amount?"
