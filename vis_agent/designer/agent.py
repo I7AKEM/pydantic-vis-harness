@@ -218,6 +218,15 @@ DEAD_END = {
 }
 
 
+def wording_context(deps: DesignerDeps) -> str:
+    """The question, the caller's change and answers, and the result's column names: a number written there is
+    wording the caller chose, not a claim about the data ("sales in 2026", "income above 60000")."""
+    prompt = deps.prompt
+    pieces = [deps.report.question, *(pair.answer for pair in prompt.clarifications),
+              prompt.previous.change if prompt.previous else "", *deps.report.result.columns]
+    return " ".join(piece for piece in pieces if piece)
+
+
 def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -> Design | Clarification:
     """Deliver a checked spec and a two-sentence explanation in the caller's language using supported numbers."""
     deps = ctx.deps
@@ -235,8 +244,7 @@ def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -
         if arabic_title != (report.language == "Arabic"):
             failures.append(f"Write the title in {report.language}.")
     failures[:0] = [f"line {v.line or 1}: {v.rule}: {v.message}. {v.fix}" for v in check.violations]
-    context = " ".join([report.question, *report.result.columns])
-    number_check = summary_numbers_exist(explanation, report.result, context)
+    number_check = summary_numbers_exist(explanation, report.result, wording_context(deps))
     if not number_check.passed:
         failures.append(number_check.message)
     if failures:

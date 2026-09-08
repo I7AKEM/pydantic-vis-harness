@@ -357,3 +357,16 @@ def test_revise_rules_reach_the_model_only_with_answers_or_previous_work(store, 
         with analyst.override(model=FunctionModel(drive)):
             asyncio.run(analyst.run(prompt_json(prompt), deps=deps))
         assert ("Answers and revisions" in seen["instructions"]) is expected
+
+
+def test_the_change_and_the_answers_count_as_wording(store, people):
+    from vis_agent.analyst.agent import _context
+    from vis_agent.analyst.models import PreviousAnalysis
+    from vis_agent.models import QuestionAnswer
+
+    dataset, profile = people
+    prompt = build_prompt(store, profile, "Total amount by region", "English",
+                          clarifications=[QuestionAnswer(question="Which?", answer="income above 60000")],
+                          previous=PreviousAnalysis(sql="SELECT 1", columns=[], change="Only 2026"))
+    context = _context(AnalystDeps(store=store, profile=profile, prompt=prompt))
+    assert "60000" in context and "2026" in context and "Total amount by region" in context

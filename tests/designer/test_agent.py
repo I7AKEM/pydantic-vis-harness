@@ -439,3 +439,19 @@ def test_designer_revise_rules_reach_the_model_only_with_previous_work():
         with designer.override(model=FunctionModel(drive)):
             asyncio.run(designer.run(prompt_json(prompt), deps=deps))
         assert ("Answers and revisions" in seen["instructions"]) is expected
+
+
+def test_numbers_the_caller_wrote_are_wording_not_claims():
+    from tests.designer.conftest import gender_share
+    from vis_agent.designer.agent import DesignerDeps, build_prompt, wording_context
+    from vis_agent.designer.models import PreviousDesign
+    from vis_agent.models import QuestionAnswer
+
+    source = report(*gender_share())
+    plain = DesignerDeps(report=source, prompt=build_prompt(source, None), suggested=None)
+    assert "2026" not in wording_context(plain)
+    revised = DesignerDeps(report=source, suggested=None, prompt=build_prompt(
+        source, None, clarifications=[QuestionAnswer(question="Which threshold?", answer="income above 60000")],
+        previous=PreviousDesign(spec="vis donut\n", change="Change the title to: sales of cities in 2026")))
+    context = wording_context(revised)
+    assert "2026" in context and "60000" in context and source.question in context

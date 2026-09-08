@@ -181,9 +181,13 @@ async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[Result
 
 
 def _context(deps: AnalystDeps) -> str:
-    """The question and the result's column names: numbers written there are wording, not claims."""
+    """The question, the caller's change and answers, and the result's column names: a number written there is
+    wording the caller chose, not a claim about the data ("income above 60000")."""
+    prompt = deps.prompt
     columns = deps.passed.result.columns if deps.passed else []
-    return " ".join([deps.prompt.question, *columns])
+    pieces = [prompt.question, *(pair.answer for pair in prompt.clarifications),
+              prompt.previous.change if prompt.previous else "", *columns]
+    return " ".join(piece for piece in pieces if piece)
 
 
 DEAD_END = {
