@@ -9,7 +9,7 @@ data/
 *.duckdb.wal
 .logfire/
 .superpowers/
-node_modules/
+node_modules
 tests/render/images/*.png
 evals/designer/agent/renders/
 .worktrees/
