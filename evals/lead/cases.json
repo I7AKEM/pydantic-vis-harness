@@ -1,150 +1,150 @@
 [
-  {
-    "name": "numbers-only",
-    "csv": "evals/profiler/cases/citizens.csv",
-    "turns": [
-      {
-        "message": "Give me a table of average income by gender, numbers only and no chart.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
-        "tool": "answer_question",
-        "outcome": "table"
-      }
-    ]
-  },
-  {
-    "name": "chart",
-    "csv": "evals/profiler/cases/citizens.csv",
-    "turns": [
-      {
-        "message": "Chart average income by gender.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
-        "tool": "draw",
-        "outcome": "artifact"
-      }
-    ]
-  },
-  {
-    "name": "colour-change",
-    "csv": "evals/profiler/cases/citizens.csv",
-    "turns": [
-      {
-        "message": "Chart average income by gender.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
-        "tool": "draw",
-        "outcome": "artifact"
-      },
-      {
-        "message": "Change the chart colour to dark blue (#174A7E).",
-        "tool": "revise",
-        "outcome": "artifact",
-        "redo_analysis": false
-      }
-    ]
-  },
-  {
-    "name": "new-filter",
-    "csv": "evals/profiler/cases/citizens.csv",
-    "turns": [
-      {
-        "message": "Chart average income by gender.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
-        "tool": "draw",
-        "outcome": "artifact"
-      },
-      {
-        "message": "Now include only citizens whose wealthy value is true.",
-        "tool": "revise",
-        "outcome": "artifact",
-        "redo_analysis": true
-      }
-    ]
-  },
-  {
-    "name": "arabic-title",
-    "csv": "evals/profiler/cases/arabic.csv",
-    "turns": [
-      {
-        "message": "ارسم مجموع المبيعات حسب المدينة.\n\nAttached CSV: [arabic.csv](/datasets/{dataset_id}/profile)",
-        "tool": "draw",
-        "outcome": "artifact"
-      },
-      {
-        "message": "غيّر عنوان الرسم إلى «المبيعات حسب المدينة».",
-        "tool": "revise",
-        "outcome": "artifact",
-        "redo_analysis": false
-      }
-    ]
-  },
-  {
-    "name": "attachment-only",
-    "csv": "evals/designer/agent/scale/seeded/seeded-13-arabic-categories.csv",
-    "turns": [
-      {
-        "message": "\n\nAttached CSV: [seeded-13-arabic-categories.csv](/datasets/{dataset_id}/profile)",
-        "tool": "none",
-        "outcome": "text"
-      }
-    ]
-  },
-  {
-    "name": "clarification-resume",
-    "csv": "evals/profiler/cases/citizens.csv",
-    "turns": [
-      {
-        "message": "Chart the count of high-income citizens by gender. Ask me what income threshold to use before calculating.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
-        "tool": "draw",
-        "outcome": "question"
-      },
-      {
-        "message": "Use income greater than 50000.",
-        "tool": "resume",
-        "outcome": "artifact"
-      }
-    ]
-  },
-  {
-    "name": "continue",
-    "csv": "evals/designer/agent/scale/seeded/seeded-13-arabic-categories.csv",
-    "turns": [
-      {
-        "message": "Chart population_count by region.\n\nAttached CSV: [seeded-13-arabic-categories.csv](/datasets/{dataset_id}/profile)",
-        "tool": "draw",
-        "outcome": "artifact"
-      },
-      {
-        "message": "Continue.",
-        "tool": "resume",
-        "outcome": "artifact"
-      }
-    ]
-  },
-  {
-    "name": "table-then-draw",
-    "csv": "evals/designer/agent/scale/seeded/seeded-19-hijri-year.csv",
-    "turns": [
-      {
-        "message": "Give me a table of total paid_violations by hijri_year. Keep the Hijri years as labels; no chart.\n\nAttached CSV: [seeded-19-hijri-year.csv](/datasets/{dataset_id}/profile)",
-        "tool": "answer_question",
-        "outcome": "table"
-      },
-      {
-        "message": "Now draw it.",
-        "tool": "draw",
-        "outcome": "artifact"
-      }
-    ]
-  },
-  {
-    "name": "artifact-recall",
-    "csv": "evals/profiler/cases/conflict_codes.csv",
-    "turns": [
-      {
-        "message": "Chart the number of tickets by status, keeping the literal status codes as labels.\n\nAttached CSV: [conflict_codes.csv](/datasets/{dataset_id}/profile)",
-        "tool": "draw",
-        "outcome": "artifact"
-      },
-      {
-        "message": "What did we make?",
-        "tool": "none",
-        "outcome": "text"
-      }
-    ]
-  }
+ {
+  "name": "numbers-only",
+  "csv": "evals/profiler/cases/citizens.csv",
+  "turns": [
+   {
+    "message": "Give me a table of average income by gender, numbers only and no chart.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
+    "tool": "answer_question",
+    "outcome": "table"
+   }
+  ]
+ },
+ {
+  "name": "chart",
+  "csv": "evals/profiler/cases/citizens.csv",
+  "turns": [
+   {
+    "message": "Chart average income by gender.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "artifact"
+   }
+  ]
+ },
+ {
+  "name": "colour-change",
+  "csv": "evals/profiler/cases/citizens.csv",
+  "turns": [
+   {
+    "message": "Chart average income by gender.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "artifact"
+   },
+   {
+    "message": "Change the chart colour to dark blue (#174A7E).",
+    "tool": "revise",
+    "outcome": "artifact",
+    "redo_analysis": false
+   }
+  ]
+ },
+ {
+  "name": "new-filter",
+  "csv": "evals/profiler/cases/citizens.csv",
+  "turns": [
+   {
+    "message": "Chart average income by gender.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "artifact"
+   },
+   {
+    "message": "Now include only citizens whose wealthy value is true.",
+    "tool": "revise",
+    "outcome": "artifact",
+    "redo_analysis": true
+   }
+  ]
+ },
+ {
+  "name": "arabic-title",
+  "csv": "evals/profiler/cases/arabic.csv",
+  "turns": [
+   {
+    "message": "ارسم مجموع المبيعات حسب المدينة.\n\nAttached CSV: [arabic.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "artifact"
+   },
+   {
+    "message": "غيّر عنوان الرسم إلى «المبيعات حسب المدينة».",
+    "tool": "revise",
+    "outcome": "artifact",
+    "redo_analysis": false
+   }
+  ]
+ },
+ {
+  "name": "attachment-only",
+  "csv": "evals/designer/agent/scale/seeded/seeded-13-arabic-categories.csv",
+  "turns": [
+   {
+    "message": "Profile this CSV and summarize the result.\n\nAttached CSV: [seeded-13-arabic-categories.csv](/datasets/{dataset_id}/profile)",
+    "tool": "none",
+    "outcome": "text"
+   }
+  ]
+ },
+ {
+  "name": "clarification-resume",
+  "csv": "evals/profiler/cases/citizens.csv",
+  "turns": [
+   {
+    "message": "Chart the count of high-income citizens by gender. Ask me what income threshold to use before calculating.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "question"
+   },
+   {
+    "message": "Use income greater than 50000.",
+    "tool": "resume",
+    "outcome": "artifact"
+   }
+  ]
+ },
+ {
+  "name": "continue",
+  "csv": "evals/designer/agent/scale/seeded/seeded-13-arabic-categories.csv",
+  "turns": [
+   {
+    "message": "Chart population_count by region.\n\nAttached CSV: [seeded-13-arabic-categories.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "artifact"
+   },
+   {
+    "message": "Continue.",
+    "tool": "resume",
+    "outcome": "artifact"
+   }
+  ]
+ },
+ {
+  "name": "table-then-draw",
+  "csv": "evals/designer/agent/scale/seeded/seeded-19-hijri-year.csv",
+  "turns": [
+   {
+    "message": "Give me a table of total paid_violations by hijri_year. Keep the Hijri years as labels; no chart.\n\nAttached CSV: [seeded-19-hijri-year.csv](/datasets/{dataset_id}/profile)",
+    "tool": "answer_question",
+    "outcome": "table"
+   },
+   {
+    "message": "Now draw it.",
+    "tool": "draw",
+    "outcome": "artifact"
+   }
+  ]
+ },
+ {
+  "name": "artifact-recall",
+  "csv": "evals/profiler/cases/conflict_codes.csv",
+  "turns": [
+   {
+    "message": "Chart the number of tickets by status, keeping the literal status codes as labels.\n\nAttached CSV: [conflict_codes.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "artifact"
+   },
+   {
+    "message": "What did we make?",
+    "tool": "none",
+    "outcome": "text"
+   }
+  ]
+ }
 ]

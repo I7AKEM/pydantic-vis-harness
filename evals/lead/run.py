@@ -132,10 +132,13 @@ async def run_case(case: dict, lead, profiler, analyst, designer) -> dict:
             record["turns"].append(turn)
             show_turn(case["name"], index, turn)
         # The temporary files disappear; retain the records and IDs for controller review.
-        record["requests"] = [requests.get_request(item.request_id).model_dump(mode="json")
-                              for item in requests.list_requests(dataset_id=uploaded.dataset_id)]
-        record["artifacts"] = [item.model_dump(mode="json")
-                               for item in requests.list_artifacts(dataset_id=uploaded.dataset_id)]
+        try:
+            record["requests"] = [requests.get_request(item.request_id).model_dump(mode="json")
+                                  for item in requests.list_requests(dataset_id=uploaded.dataset_id)]
+            record["artifacts"] = [item.model_dump(mode="json")
+                                   for item in requests.list_artifacts(dataset_id=uploaded.dataset_id)]
+        except Exception as exc:  # one case's records must not abort the others
+            record["records_error"] = f"{type(exc).__name__}: {exc}"
     return record
 
 

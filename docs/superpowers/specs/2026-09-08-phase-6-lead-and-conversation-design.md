@@ -264,11 +264,12 @@ Through the agents with fake models, never around them, as in every phase:
 
 ## 17. The evaluation set and the exit test
 
-`evals/lead/cases.json` holds twenty cases, each a scripted conversation over a corpus CSV: the messages
+The lead evaluation holds twenty cases: ten scripted conversations in `evals/lead/cases.json` over CSVs
+already in the repository, and ten corpus questions the runner adds with `--corpus`. A scripted case lists the messages
 in the order the web chat would send them (the upload line included), the expected tool per message
 (`draw`, `answer_question`, `revise` with the expected `redo_analysis`, `resume`), and the expected
-outcome (an artifact, a table, a question). Ten cases are the Phase 4b lead sample's questions; ten are
-scripted: numbers only, a chart then a colour change, a chart then a new filter, a question that must be
+outcome (an artifact, a table, a question). The corpus ten are the Phase 4b lead sample's questions; the scripted
+ten are: numbers only, a chart then a colour change, a chart then a new filter, a question that must be
 asked then answered, "continue", a dataset with no question, and an Arabic revision. `evals/lead/run.py`
 runs them with real models and scores the tool choice and the outcome.
 
