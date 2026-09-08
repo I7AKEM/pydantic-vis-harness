@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from vis_agent.designer.models import Design
     from vis_agent.profiler.agent import ProfilerInput
     from vis_agent.profiler.models import SemanticProfile
+    from vis_agent.requests.store import RequestStore
 
 
 @dataclass
@@ -24,3 +25,4 @@ class AppDeps:
     profiler: Agent[ProfilerInput, SemanticProfile]
     analyst: Agent[AnalystDeps, Analysis | Clarification]
     designer: Agent[DesignerDeps, Design | Clarification]
+    requests: RequestStore | None = None
