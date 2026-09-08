@@ -1,4 +1,4 @@
-# Phase 4b: Evaluation at scale
+# Phase 6: The lead and the conversation
 
 The Phase 1 design is in docs/superpowers/specs/2026-09-06-vis-agent-design.md. It introduced the
 profiler as the model for every later agent, plus the lead skeleton, the upload path, and the store.
@@ -15,6 +15,17 @@ It adds the chart designer agent, checked delivery, rendering, and the lead's ch
 The Phase 4b design is in docs/superpowers/specs/2026-09-07-phase-4b-evaluation-at-scale-design.md.
 It adds the two-hundred-case scale set, the Hijri and Arabic seeded cases, the DSPy optimizer, and the
 lessons in docs/phase-4b-lessons.md.
+
+The Phase 6 design is in docs/superpowers/specs/2026-09-08-phase-6-lead-and-conversation-design.md.
+It adds chart-first conversation, saved requests and artifact versions, clarification and resume,
+terminal commands, the agent channel, and the lead evaluation in `evals/lead/`.
+
+Requests package file map:
+
+- `vis_agent/requests/models.py`: request records, step names, callers, exchanges, and artifacts.
+- `vis_agent/requests/store.py`: requests and artifact versions in the datasets database.
+- `vis_agent/requests/runner.py`: the fixed step order, saved outputs, answers, and resume.
+- `vis_agent/requests/api.py`: the seven JSON routes and return-address callback.
 
 - Use Python 3.12, uv, Pydantic AI, OpenRouter, and the built-in Web Chat UI.
 - Keep code small, explicit, and readable. Application code lives in the `vis_agent` package, one subpackage per agent; tests and evals mirror it.
@@ -37,8 +48,14 @@ lessons in docs/phase-4b-lessons.md.
 - Tests use fake models through agent.override and never hand-build RunContext.
 - Preserve the Advisor and TemporalDurability capabilities on the lead. CodeMode was removed after
   Phase 1 because no lead tool runs inside its sandbox yet; bring it back when the analyst's query tool does.
-- Do not add a planner, additional agents, Docker, a second renderer, or a generic orchestration layer.
-  The lead gains one tool per phase; `make_chart` in Phase 4. Request types, checkpoints, and clarification round trips wait for Phase 6.
+- The request runner is code with a fixed step order and a saved output per step:
+  understand, profile, analyze, design, render, review, deliver. Resume reuses completed steps.
+- No workflow engine, no external A2A package, no new agents. Do not add a planner, Docker,
+  a second renderer, or a generic orchestration layer.
+- The analyst's and designer's revise rules live in `vis_agent/analyst/rulebook-revise.md` and
+  `vis_agent/designer/rulebook-revise.md` and reach the model per run only.
+- `make_chart` is gone; `draw` returns the table with the chart. Use `answer_question` for numbers only.
+- Run `uv run python -m evals.lead.run` before a merge that touches the lead.
 - The analyst writes one SELECT; code parses, allow-lists, runs, and checks it. The model never sees raw rows.
 - Each agent's rulebook is `vis_agent/<agent>/rulebook.md`; every confirmed mistake becomes an eval case plus a check or a rulebook line.
 - Run the evals before every merge, including `evals/designer/run.py` (`uv run python -m evals.designer.run`).

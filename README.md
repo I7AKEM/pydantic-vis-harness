@@ -74,9 +74,9 @@ uv run python -m vis_agent.cli chat
 
 ## Ask a question
 
-After uploading a CSV, ask a question about it in the chat. Name the file or its dataset ID
-if you have uploaded more than one. The lead passes your question to the analyst.
-The dataset is profiled first if needed.
+For numbers only, ask explicitly for a table, a value, or no chart. Name the file or its
+dataset ID if you have uploaded more than one. The lead calls `answer_question`; the
+dataset is profiled first if needed. Other data questions default to a chart.
 
 The chat shows a table of up to twenty rows and the total row count. It gives a two-sentence
 summary in your language, the assumptions, and any warnings. Ask to see the SQL.
@@ -96,6 +96,91 @@ checks, warnings, and SQL. Analysis reports are returned but are not saved.
 The analyst's rules forbid inventing numbers or adding filters that the question or brief
 did not state. Its query tool cannot read files. If a term is unclear or a needed column
 is missing, it asks you a question instead of guessing.
+
+## Ask for a chart
+
+Upload a CSV and ask, for example, “Chart average income by gender.” The lead calls
+`draw`: it profiles the file if needed, computes the answer, and returns a chart with
+the table behind it, a summary, assumptions, compromises, and warnings. A single number
+or a result that cannot be charted comes back as a table with an explanation.
+
+The reply shows an artifact ID (`art_…`) and request ID (`rq_…`). Name the artifact to
+revise it, or simply say “Change the colours to dark blue.” A title, colour, or layout
+change reuses the saved analysis; a new filter, grouping, measure, or period recomputes
+it. Each revision creates a linked artifact version.
+
+If the request asks a question, answer in the next message. Say “continue” to resume
+unfinished work, or name its request ID. Completed steps are saved and reused. Ask
+“What did we make?” to look up saved artifacts. Attaching data without a question
+gets three to five suggested questions based on its profile.
+
+The terminal exposes the same operations. Replace the example IDs with returned IDs;
+`draw` also accepts an existing dataset ID and optional `--brief brief.json`:
+
+```bash
+uv run python -m vis_agent.cli draw --upload evals/profiler/cases/citizens.csv "Chart average income by gender."
+uv run python -m vis_agent.cli revise ARTIFACT_ID "Change the colours to dark blue."
+uv run python -m vis_agent.cli revise ARTIFACT_ID "Include only wealthy citizens." --redo-analysis
+uv run python -m vis_agent.cli resume REQUEST_ID --answer "Use income greater than 50000."
+uv run python -m vis_agent.cli resume REQUEST_ID
+uv run python -m vis_agent.cli requests --dataset DATASET_ID
+uv run python -m vis_agent.cli artifacts DATASET_ID
+uv run python -m vis_agent.cli suggest DATASET_ID
+```
+
+These commands print JSON; `suggest` prints the lead's reply. `ask` remains the
+numbers-only command. `revise` reuses analysis unless `--redo-analysis` is supplied.
+
+## Agent channel
+
+Programs use these seven JSON routes on the same application:
+
+| Method and route | Purpose |
+| --- | --- |
+| `POST /requests` | Create a new chart request or a revision; return its ID with HTTP 202. |
+| `GET /requests/{request_id}` | Read status, saved steps, artifact ID, and any pending question. |
+| `POST /requests/{request_id}/answer` | Submit `{"answer":"…"}` to a waiting request. |
+| `POST /requests/{request_id}/resume` | Continue saved work; a waiting request needs an answer first. |
+| `GET /artifacts?dataset_id=DATASET_ID` | List the dataset's artifact summaries. |
+| `GET /artifacts/{artifact_id}` | Read a complete artifact and its lineage. |
+| `POST /agents/ask` | Ask the lead with `question`, optional `dataset_id`, and `caller`; return its reply. |
+
+Upload a CSV through `/datasets/upload` first, then use its dataset ID. For example,
+create a request with a return address:
+
+```bash
+curl http://127.0.0.1:7932/requests \
+  -H 'Content-Type: application/json' \
+  -d '{"type":"new","dataset_id":"DATASET_ID","question":"Chart average income by gender.","caller":{"identity":"report-agent","return_address":"http://127.0.0.1:9000/results"}}'
+```
+
+The request runs in the background. After each create, answer, or resume background
+run, the channel posts the request record to the return address once. Callback failures
+are logged without retry; callers can poll the request. A pending question includes a
+deadline and an overdue flag. POST routes require `Content-Type: application/json`.
+
+## Evaluate the lead
+
+Run the ten scripted conversations before merging a change to the lead:
+
+```bash
+uv run python -m evals.lead.run
+uv run python -m evals.lead.run --corpus --out results.json
+uv run python -m evals.lead.run --only colour-change --out colour-results.json
+```
+
+The runner uses real models and the renderer setup below. It runs three cases at a
+time, each with a fresh temporary dataset and request store. `--corpus` appends ten
+manifest questions sampled with seed 11 from `CORPUS` in
+`evals/designer/agent/corpus_tools/select.py`; that external corpus must exist locally.
+`--help` imports and parses arguments without a model call.
+
+Each turn scores the first data tool, the revision's `redo_analysis` flag when relevant,
+and its returned outcome. `results.json` saves replies, tool calls and returns, request
+records, artifact summaries, and IDs. An artifact score requires a returned artifact,
+not a successful PNG; inspect its `no_chart_reason` and the web chat separately. Temporary
+CSV, database, and render files are removed after each case. Results and manual checks
+belong in `docs/phase-6-lessons.md`.
 
 ## Render a chart
 
@@ -188,7 +273,6 @@ renderer runtime failures exit 1.
 Without `--out`, files go to `DATA_DIRECTORY/renders/<render_id>/`, where the ID is the
 first twelve hex characters of SHA-256 of the UTF-8 spec followed by the serialized
 analysis report JSON. `--renderer gptvis` selects the default and only renderer.
-You can also ask for a chart in the chat and the lead calls the designer.
 
 `PYDANTIC_AI_DESIGNER_MODEL` selects the designer model. When empty, it uses the profiler's
 default, `openrouter:google/gemma-4-31b-it:nitro`, pending the Phase 4 benchmark.
@@ -451,7 +535,11 @@ The analyst runs with reasoning switched off and temperature zero.
 | File | Purpose |
 | --- | --- |
 | `vis_agent/app.py` | Environment wiring: store, profiler, analyst, lead, tracing, web app |
-| `vis_agent/lead.py` | The lead agent, its instructions, and dataset listing |
+| `vis_agent/lead.py` | Chart-first lead, revisions, resume, numbers-only answers, and dataset/artifact lookup |
+| `vis_agent/requests/models.py` | Request, checkpoint, clarification, caller, and artifact contracts |
+| `vis_agent/requests/store.py` | Requests and artifact versions in the datasets database |
+| `vis_agent/requests/runner.py` | Fixed steps, saved outputs, clarification answers, and resume |
+| `vis_agent/requests/api.py` | Seven agent-channel routes and one callback per background run |
 | `vis_agent/deps.py` | What the lead's tools receive |
 | `vis_agent/models.py` | Contracts shared by the store, the lead, and every agent |
 | `vis_agent/profiler/agent.py` | Profiler agent, `review_profile`, `profile_dataset`, `profile_csv` |
@@ -484,7 +572,8 @@ The analyst runs with reasoning switched off and temperature zero.
 | `vis_agent/store.py` | Uploads, DuckDB tables, briefs, profiles, listing |
 | `vis_agent/uploads.py` | Upload API, dataset list, profile JSON, background profiling |
 | `vis_agent/renders.py` | Read-only routes for chart PNGs, pages, and configurations |
-| `vis_agent/cli.py` | Terminal chat, profiling, questions, `recommend`, `check`, `render`, `design`, `doctor`; `vis failures` (`uv run python -m vis_agent.cli failures`) lists failed checks in saved profiles |
+| `vis_agent/cli.py` | Terminal chat, profiling, questions, `draw`, `revise`, `resume`, `requests`, `artifacts`, `suggest`, `recommend`, `check`, `render`, `design`, `doctor`; `vis failures` (`uv run python -m vis_agent.cli failures`) lists failed checks in saved profiles |
+| `evals/lead/` | Scripted conversation cases, corpus sample, and lead evaluation runner |
 | `evals/profiler/` | Evaluation set and real-model runner |
 | `evals/analyst/` | Analyst evaluation set and real-model runner |
 | `evals/designer/agent/` | Designer model evaluation on saved analysis reports and chart judgments |
@@ -508,4 +597,4 @@ uv run python -m evals.profiler.run
 uv run python -m evals.analyst.run
 ```
 
-> Temporal support is installed and `TemporalDurability()` is attached. At this stage, Web Chat calls the agent normally, so runs are not yet durable. True durable execution starts when the agent is called inside a Temporal workflow and worker, which is intentionally deferred to the next design phase.
+> Temporal support is installed and `TemporalDurability()` is attached. At this stage, Web Chat calls the agent normally, so runs are not yet durable. True durable execution starts when the agent is called inside a Temporal workflow and worker, which remains deferred. Phase 6 saves request step outputs in DuckDB; it does not add a Temporal worker.
