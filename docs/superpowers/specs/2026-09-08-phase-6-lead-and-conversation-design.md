@@ -218,7 +218,8 @@ and `DesignerPrompt` gain the two optional fields. Nothing else in the two agent
 - Terminal: `vis draw DATASET "question"`, `vis draw --upload FILE [--brief BRIEF] "question"`,
   `vis revise ARTIFACT "change" [--redo-analysis]`, `vis resume REQUEST [--answer TEXT]`, `vis requests
   [--dataset DATASET]`, `vis artifacts DATASET`, and `vis suggest DATASET`, which runs the lead once with a
-  fixed prompt. Each prints JSON like `vis ask`. `vis chat` and the Phase 4 commands stay.
+  fixed prompt. Each prints JSON like `vis ask`, except `vis suggest`, which prints the lead's text. `vis chat`
+  and the Phase 4 commands stay.
 - Program: `run_request(deps, request_id) -> RequestOutcome`, `create_request(...)`, and the channel of
   section 8.
 
