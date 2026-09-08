@@ -43,7 +43,9 @@ Rules that hold in every shape:
 - Group by exactly what the question compares, nothing more.
 - Filter only on what the question or the brief states. Never add a filter silently.
 - The aggregate comes from the column's role and unit: sum additive quantities, average rates, prices,
-  and percentages, count identifiers. Never sum a percentage.
+  and percentages, count identifiers. Never sum a percentage, except a share of one whole: when the brief or
+  the column meaning says a column's percentages share one denominator, its rows are parts of that whole,
+  adding them gives a combined part's share, and averaging would halve it.
 - Codes are relabelled only from the profile's code meanings or the brief. Keep the code column in the
   result next to its label; the checks verify the pairing.
 - Keep results small: about fifty rows for categories, about a thousand for time or scatter. Beyond

@@ -1,0 +1,30 @@
+{
+ "raw_question": "ما هي الخصائص الديموغرافية الأساسية للسكان الأتراك (مثل التوزيع العمري والنوعي) مقارنة بالمتوسط العام في المملكة؟",
+ "intent": "compare",
+ "column_descriptions": {
+  "population_type": "Which population the row belongs to: السكان الأتراك (residents of Turkish nationality) or متوسط المملكة (all residents of the Kingdom in the same snapshot; the label says average, but it is the kingdom-wide distribution).",
+  "gender": "Gender code: M or F.",
+  "age_group": "Age band in years, in this order: 0-14, 15-24, 25-34, 35-44, 45-54, 55-64, 65+.",
+  "count": "Number of persons of that population type, gender, and age band in the latest population snapshot.",
+  "percentage": "Share of the row's persons within its own population_type, in percent: count × 100 / total persons of that population_type. The shares of one population_type add up to 100."
+ },
+ "units": {
+  "count": "persons",
+  "percentage": "%"
+ },
+ "code_meanings": {
+  "gender": {
+   "M": "ذكور",
+   "F": "إناث"
+  },
+  "population_type": {
+   "السكان الأتراك": "residents of Turkish nationality",
+   "متوسط المملكة": "all residents of the Kingdom (kingdom-wide distribution, not an average)"
+  }
+ },
+ "caveats": [
+  "percentage uses the total of its own population_type as the denominator (114 persons for السكان الأتراك, 5,565 for متوسط المملكة), so the shares of the two population types are directly comparable and can be summed across gender or across age groups within one population type.",
+  "The counts are small for a kingdom-wide extract; compare shares, not counts, and do not present the counts as national totals.",
+  "Both population types come from the same snapshot; the Turkish rows are a subset of the kingdom rows."
+ ]
+}
