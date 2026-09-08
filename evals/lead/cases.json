@@ -111,7 +111,7 @@
    {
     "message": "Continue.",
     "tool": "resume",
-    "outcome": "artifact"
+    "outcome": "text"
    }
   ]
  },

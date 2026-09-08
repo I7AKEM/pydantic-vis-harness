@@ -42,6 +42,7 @@ def test_cases():
     ('draw', {'clarification': {'question': 'Which?'}}, 'artifact_or_question'),
     ('answer_question', {'rows': [[1]]}, 'table'),
     ('find_artifact', [{'artifact_id': 'art_a'}], 'text'),
+    ('resume', {'error': 'No unfinished request'}, 'text'),
 ])
 def test_outcomes(tool, content, outcome):
     expected = 'none' if tool == 'find_artifact' else tool
@@ -65,7 +66,7 @@ def test_first_call_and_matching_return():
     ('draw', {'artifact': None}, 'artifact', {}),
     ('draw', {'rows': [[1]]}, 'table', {}),
     ('answer_question', {'rows': []}, 'table', {}),
-    ('resume', {'error': 'No unfinished request'}, 'text', {}),
+    ('resume', {'artifact': {'artifact_id': 'art_a'}}, 'text', {}),
     ('revise', {'artifact': {}}, 'artifact', {}),
 ])
 def test_failures(tool, content, outcome, args):

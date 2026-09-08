@@ -70,7 +70,7 @@ def score_turn(expected: dict, messages: list) -> dict:
         "question": value.get("clarification") is not None,
         "artifact_or_question": artifact is not None or value.get("clarification") is not None,
         "table": tool == "answer_question" and bool(value.get("rows")),
-        "text": call is None,
+        "text": call is None or (artifact is None and value.get("clarification") is None),
     }
     return {
         "tool": tool, "tool_ok": tool == expected["tool"],
