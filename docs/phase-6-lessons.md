@@ -298,7 +298,7 @@ the 70-case analyst evaluation.
 | Gemma 4 31B (current) | 31/31 | 3.6 | 4.8 | 67 to 70/70, 7 s | 0.09 / 0.34 |
 | Kimi K2.6 | 31/31 | 3.5 | 5.8 | 61/70, 13 s, six timeouts | 0.95 / 4.00 |
 | DeepSeek V4 Pro | 31/31 | 3.3 | 9.1 | 66/70, 7.9 s | 0.58 / 1.74 |
-| Qwen 3.8 Flash | 30/31 (a rate limit) | 3.7 | 15.7 | failed nearly every delivery | 0.15 / 0.47 |
+| Qwen 3.8 Flash | 30/31 (a rate limit) | 3.7 | 15.7 | 4/70, 23 s, delivery failed on the rest | 0.15 / 0.47 |
 | MiniMax M3 | 30/31 | 3.4 | 6.1 | 61/70, 7.0 s | 0.30 / 1.20 |
 | MiMo V2.5 | 30/31 | 3.5 | 12.0 | not run | 0.14 / 0.28 |
 | Gemma 4 26B MoE | 28/31 | 3.7 | 5.7 | not run | 0.07 / 0.34 |
