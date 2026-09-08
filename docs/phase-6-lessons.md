@@ -16,9 +16,11 @@ Date: 2026-09-08. Models: lead `openrouter:anthropic/claude-sonnet-4.6` with the
   question.
 - Tool choice on the twenty evaluation cases: see the table below.
 
-Unit suite at the end of the phase: 963 tests. Analyst evaluation 70 of 70 (up from 69 cases; the new case is
-`age_group_share_summed`). Designer agent evaluation 31 of 31 with every automatic score 1.00; the model-free
-designer set 37 of 37.
+Unit suite at the end of the phase: 975 tests. Analyst evaluation 70 of 70 tables (up from 69 cases; the new
+case is `age_group_share_summed`); in the last run, after the rulebook's aggregate sentence was reworded, every
+table still matched and one case (`monthly_violations_2025`) failed its checks-clean assertion on the summary,
+which is the run-to-run variance seen in Phase 4b. Designer agent evaluation 31 of 31 with every automatic
+score 1.00; the model-free designer set 37 of 37.
 
 ## Lead evaluation
 
