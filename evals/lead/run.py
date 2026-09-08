@@ -72,10 +72,15 @@ def score_turn(expected: dict, messages: list) -> dict:
         "table": tool == "answer_question" and bool(value.get("rows")),
         "text": call is None or (artifact is None and value.get("clarification") is None),
     }
+    accepted = expected["tool"] if isinstance(expected["tool"], list) else [expected["tool"]]
+    # redo_analysis is judged only when a revision was expected and made; a turn that accepts resume or
+    # revise (an answer that may continue a question or change a delivered chart) judges it on revise alone.
+    redo_ok = None
+    if "redo_analysis" in expected and (tool == "revise" or not isinstance(expected["tool"], list)):
+        redo_ok = tool == "revise" and args.get("redo_analysis") is expected["redo_analysis"]
     return {
-        "tool": tool, "tool_ok": tool == expected["tool"],
-        "redo_ok": (tool == "revise" and args.get("redo_analysis") is expected["redo_analysis"])
-        if "redo_analysis" in expected else None,
+        "tool": tool, "tool_ok": tool in accepted,
+        "redo_ok": redo_ok,
         "outcome_ok": outcomes[expected["outcome"]],
         "tools_called": [part.tool_name for part in calls],
         "tool_args": args, "tool_return": content,

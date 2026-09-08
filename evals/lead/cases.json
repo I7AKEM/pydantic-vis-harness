@@ -88,14 +88,18 @@
   "csv": "evals/profiler/cases/citizens.csv",
   "turns": [
    {
-    "message": "Chart the count of high-income citizens by gender. Ask me what income threshold to use before calculating.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
+    "message": "Chart how many citizens are above the poverty line, by gender.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
     "tool": "draw",
-    "outcome": "question"
+    "outcome": "artifact_or_question"
    },
    {
-    "message": "Use income greater than 50000.",
-    "tool": "resume",
-    "outcome": "artifact"
+    "message": "Take the poverty line as an income of 30000.",
+    "tool": [
+     "resume",
+     "revise"
+    ],
+    "outcome": "artifact",
+    "redo_analysis": true
    }
   ]
  },

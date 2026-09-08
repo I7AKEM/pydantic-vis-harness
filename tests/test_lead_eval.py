@@ -30,9 +30,10 @@ def test_cases():
         assert case['turns'][0]['message'].endswith(
             '\n\nAttached CSV: [' + csv.name + '](/datasets/{dataset_id}/profile)')
         for turn in case['turns']:
-            assert turn['tool'] in {'draw', 'answer_question', 'revise', 'resume', 'none'}
-            assert turn['outcome'] in {'artifact', 'table', 'question', 'text'}
-            assert ('redo_analysis' in turn) == (turn['tool'] == 'revise')
+            tools = turn['tool'] if isinstance(turn['tool'], list) else [turn['tool']]
+            assert set(tools) <= {'draw', 'answer_question', 'revise', 'resume', 'none'}
+            assert turn['outcome'] in {'artifact', 'table', 'question', 'text', 'artifact_or_question'}
+            assert ('redo_analysis' in turn) == ('revise' in tools)
     assert runner().load_cases() == cases
 
 
@@ -124,3 +125,13 @@ def test_turn_history_and_capture(monkeypatch):
     assert all(t['tools_called'] == ['draw'] for t in result['turns'])
     assert len(histories[2]) > len(histories[0])
     assert result['turns'][1]['reply'] == 'Here is the chart.'
+
+
+def test_a_turn_may_accept_either_continuation():
+    expected = {'tool': ['resume', 'revise'], 'outcome': 'artifact', 'redo_analysis': True}
+    resumed = runner().score_turn(expected, messages('resume', {'artifact': {'artifact_id': 'art_a'}}))
+    assert resumed['tool_ok'] and resumed['outcome_ok'] and resumed['redo_ok'] is None
+    revised = runner().score_turn(expected, messages('revise', {'artifact': {'artifact_id': 'art_b'}}, {'redo_analysis': True}))
+    assert revised['tool_ok'] and revised['outcome_ok'] and revised['redo_ok'] is True
+    drawn = runner().score_turn(expected, messages('draw', {'artifact': {'artifact_id': 'art_c'}}))
+    assert not drawn['tool_ok']
