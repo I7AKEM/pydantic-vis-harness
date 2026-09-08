@@ -1121,10 +1121,10 @@ def test_a_question_pauses_and_the_answer_reaches_the_analyst(deps, dataset_id, 
         assert timedelta(hours=23) < pending.deadline - pending.asked_at <= timedelta(hours=24)
         again = run(run_request(deps, request.request_id))
         assert again.status == "waiting" and again.warnings
-        done = run(answer_request(deps, request.request_id, "The amount column", "human"))
+        done = run(answer_request(deps, request.request_id, "The amount column", "chat"))
     assert done.status == "done" and seen["pairs"] == [{"question": "Which amount?", "answer": "The amount column"}]
     exchange = deps.requests.get_artifact(done.artifact.artifact_id).clarifications[0]
-    assert exchange.answer == "The amount column" and exchange.answered_by == "human"
+    assert exchange.answer == "The amount column" and exchange.answered_by == "chat"
 
 
 def test_a_third_question_fails_the_request(deps, dataset_id, fake_models, agents):
@@ -1134,11 +1134,11 @@ def test_a_third_question_fails_the_request(deps, dataset_id, fake_models, agent
     with analyst.override(model=FunctionModel(asking_drive)):
         request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
         assert run(run_request(deps, request.request_id)).status == "waiting"
-        assert run(answer_request(deps, request.request_id, "one", "human")).status == "waiting"
-        outcome = run(answer_request(deps, request.request_id, "two", "human"))
+        assert run(answer_request(deps, request.request_id, "one", "chat")).status == "waiting"
+        outcome = run(answer_request(deps, request.request_id, "two", "chat"))
     assert outcome.status == "failed" and "Which amount?" in outcome.error
     with pytest.raises(ValueError):
-        run(answer_request(deps, request.request_id, "three", "human"))
+        run(answer_request(deps, request.request_id, "three", "chat"))
 
 
 def test_revise_without_new_analysis_reuses_the_report_and_links_the_version(deps, dataset_id, fake_models, fake_render, agents):
@@ -2395,7 +2395,7 @@ async def resume(ctx: RunContext[AppDeps], request_id: str = "", answer: str = "
                 raise ToolFailed("No unfinished request in this conversation.")
             request_id = found.request_id
         if answer.strip():
-            return await answer_request(ctx.deps, request_id, answer, "human", usage=ctx.usage)
+            return await answer_request(ctx.deps, request_id, answer, "chat", usage=ctx.usage)
         return await run_request(ctx.deps, request_id, usage=ctx.usage)
     except RequestNotFound as exc:
         raise ToolFailed(str(exc)) from exc
