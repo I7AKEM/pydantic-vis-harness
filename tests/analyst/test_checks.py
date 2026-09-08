@@ -149,3 +149,34 @@ def test_total_check_sums_arabic_digit_text(store, hijri):
     assert result.rows == [[1285.0]]
     columns = [column("total", "measure", "amount", "sum")]
     assert failed_checks(check_result(store, profile, columns, result)) == []
+
+
+def test_an_ordinal_column_must_follow_its_scale(store):
+    from datetime import datetime, timezone
+
+    from vis_agent.profiler.measurements import compute_statistics
+    from vis_agent.profiler.models import DatasetProfile
+
+    source = store.save_upload("population.csv", (
+        "person_type,age_group,population_count\n"
+        "Saudi,أقل من 15,863\nSaudi,15-30,556\nSaudi,30-45,492\nSaudi,45-60,461\nSaudi,أكثر من 60,378\n"
+        "Alien,أقل من 15,935\nAlien,15-30,586\nAlien,30-45,467\nAlien,45-60,430\nAlien,أكثر من 60,397\n"
+    ).encode("utf-8"))
+    store.import_csv(source.dataset_id)
+    statistics = compute_statistics(store, source)
+    assert next(c for c in statistics.columns if c.name == "age_group").ordinal_pattern == "أقل من 15 < 15-30 < 30-45 < 45-60 < أكثر من 60"
+    profile = DatasetProfile(source=source, status="complete", deterministic=statistics, created_at=datetime.now(timezone.utc))
+    dataset = source.dataset_id
+    columns = [column("person_type", "category", "person_type"), column("age_group", "ordinal", "age_group"),
+               column("population_count", "measure", "population_count", "sum")]
+
+    by_text = run(store, dataset, f'SELECT person_type, age_group, sum(population_count) AS population_count FROM "{dataset}" '
+                                  f"GROUP BY 1, 2 ORDER BY 1, 2")
+    failed = failed_checks(check_result(store, profile, columns, by_text))
+    assert names(failed) == ["ordinal_in_order"] and failed[0].severity == "error"
+    assert "ORDER BY CASE" in failed[0].message and "أقل من 15 < 15-30" in failed[0].message
+
+    by_scale = run(store, dataset, f'SELECT person_type, age_group, sum(population_count) AS population_count FROM "{dataset}" '
+                                   f"GROUP BY 1, 2 ORDER BY 1, CASE age_group WHEN 'أقل من 15' THEN 1 WHEN '15-30' THEN 2 "
+                                   f"WHEN '30-45' THEN 3 WHEN '45-60' THEN 4 WHEN 'أكثر من 60' THEN 5 END")
+    assert failed_checks(check_result(store, profile, columns, by_scale)) == []

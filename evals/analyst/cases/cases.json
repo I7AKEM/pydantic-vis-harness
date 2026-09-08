@@ -627,5 +627,13 @@
   },
   "reference_sql": "SELECT age_group, population_type, sum(percentage) AS share FROM dataset GROUP BY 1, 2 ORDER BY 1, 2",
   "expect": "table"
+ },
+ {
+  "name": "population_by_age_group_in_scale_order",
+  "csv": "../../profiler/corpus_cases/vizcsv-9e75e9ae40758227.csv",
+  "question": "How many people are there in each age group, for Saudis and non-Saudis?",
+  "brief": null,
+  "reference_sql": "SELECT person_type, age_group, sum(population_count) AS population_count FROM dataset GROUP BY 1, 2 ORDER BY 1, CASE age_group WHEN 'أقل من 15' THEN 1 WHEN '15-30' THEN 2 WHEN '30-45' THEN 3 WHEN '45-60' THEN 4 WHEN 'أكثر من 60' THEN 5 END",
+  "expect": "table"
  }
 ]

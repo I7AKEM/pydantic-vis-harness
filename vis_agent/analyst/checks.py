@@ -144,6 +144,24 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
                                        f"The query dropped rows without a filter the question named.")
                         checks.append(_check(column.name, "total_explained", "warning", False, message))
 
+            if (source is not None and source.ordinal_pattern and column.aggregate == "none"
+                    and column.kind in GROUPING_KINDS and column.kind != "time"):
+                # The profiler measured the scale ("under 15 < 15-30 < ... < over 60"); the result must follow it,
+                # not the text order, which puts digits before letters.
+                levels = source.ordinal_pattern.split(" < ")
+                seen: list[str] = []
+                for value in values:
+                    if value is not None and str(value) not in seen:
+                        seen.append(str(value))
+                if all(v in levels for v in seen):
+                    positions = [levels.index(v) for v in seen]
+                    if positions != sorted(positions):
+                        when = " ".join(f"WHEN {level!r} THEN {i + 1}" for i, level in enumerate(levels))
+                        checks.append(_check(column.name, "ordinal_in_order", "error", False,
+                                             f"{column.name}: the rows do not follow the column's scale "
+                                             f"{source.ordinal_pattern}. Order by the scale, not the text: "
+                                             f"ORDER BY CASE {quote_identifier(source.name)} {when} END."))
+
             if column.kind == "time":
                 present = [v for v in values if v is not None]
                 # Fixed-width YYYY and YYYY-MM text sorts chronologically, including Hijri 13xx/14xx.

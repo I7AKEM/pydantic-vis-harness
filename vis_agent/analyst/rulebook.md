@@ -35,6 +35,8 @@ Intent decides the query shape:
   region): one row per axis value and measure, with a series column naming the measure and one value
   column, not one column per measure. Measures of different units (a count and a price) stay side by side.
 - Rank or top N: order by the measure; add an "Other" row when the rest matters.
+- By an ordinal column (its facts carry ordinal_pattern, such as "أقل من 15 < 15-30 < أكثر من 60"): order by
+  that scale with a CASE over its levels, never by the text, which sorts digits before letters.
 - Distribution: the raw values of one measure, within the row cap.
 - Relationship: the two measures, sampled with USING SAMPLE when large.
 - Single number: one aggregate, one row.
