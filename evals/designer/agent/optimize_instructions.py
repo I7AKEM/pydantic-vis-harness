@@ -26,7 +26,7 @@ from pydantic import BaseModel, ValidationError
 from vis_agent.analyst.agent import ARABIC
 from vis_agent.analyst.checks import summary_numbers_exist
 from vis_agent.analyst.models import AnalysisReport
-from vis_agent.designer.agent import DEFAULT_DESIGNER_MODEL, build_prompt, instructions
+from vis_agent.designer.agent import DEFAULT_DESIGNER_MODEL, build_prompt, instructions, prompt_json
 from vis_agent.designer.check import check_spec
 from vis_agent.designer.models import SpecError
 from vis_agent.designer.recommend import recommend_charts
@@ -84,7 +84,7 @@ def load(cases_path: Path, split: str) -> list[dspy.Example]:
             continue  # the analyst asked a question instead; the runner lists such cases, the optimizer skips them
         brief = DataBrief.model_validate(case["brief"]) if case.get("brief") else None
         examples.append(dspy.Example(
-            name=case["name"], prompt=build_prompt(report, brief).model_dump_json(),
+            name=case["name"], prompt=prompt_json(build_prompt(report, brief)),
             report=str(path), language=case["language"], intent=brief.intent if brief else None,
             task=(case.get("metadata") or {}).get("task"),
         ).with_inputs("prompt"))

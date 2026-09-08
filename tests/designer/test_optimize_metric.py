@@ -6,7 +6,7 @@ import pytest
 
 from evals.designer.agent import optimize_instructions as optimizer
 from vis_agent.analyst.models import Analysis, AnalysisReport
-from vis_agent.designer.agent import build_prompt, instructions
+from vis_agent.designer.agent import build_prompt, instructions, prompt_json
 from vis_agent.designer.models import Candidate, Recommendation
 from vis_agent.models import DataBrief
 
@@ -150,7 +150,7 @@ def test_load_uses_runtime_prompt_and_carries_only_gold_context(scale):
         assert gold.intent == "share"
         assert gold.task == "composition"
         report = AnalysisReport.model_validate_json((scale.parent / f"{name}.json").read_text())
-        assert gold.prompt == build_prompt(report, DataBrief(intent="share")).model_dump_json()
+        assert gold.prompt == prompt_json(build_prompt(report, DataBrief(intent="share")))
         assert dict(gold.inputs()) == {"prompt": gold.prompt}
         assert "chosen_chart" not in gold
 
