@@ -42,7 +42,7 @@ def corpus_cases(corpus: Path = CORPUS) -> list[dict]:
             "name": "corpus-" + row["dataset_id"], "csv": str(csv),
             "turns": [{"message": question + "\n\nAttached CSV: [" + csv.name
                        + "](/datasets/{dataset_id}/profile)",
-                       "tool": "draw", "outcome": "artifact_or_question"}],
+                       "tool": ["draw", "answer_question"], "outcome": "answered"}],
         })
     return cases
 
@@ -69,6 +69,9 @@ def score_turn(expected: dict, messages: list) -> dict:
         "artifact": artifact is not None,
         "question": value.get("clarification") is not None,
         "artifact_or_question": artifact is not None or value.get("clarification") is not None,
+        # A corpus question over a result-table export may be drawn, asked about, or answered with a table.
+        "answered": artifact is not None or value.get("clarification") is not None
+        or (tool == "answer_question" and bool(value.get("rows"))),
         "table": tool == "answer_question" and bool(value.get("rows")),
         "text": call is None or (artifact is None and value.get("clarification") is None),
     }

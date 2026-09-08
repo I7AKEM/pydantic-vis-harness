@@ -32,7 +32,7 @@ def test_cases():
         for turn in case['turns']:
             tools = turn['tool'] if isinstance(turn['tool'], list) else [turn['tool']]
             assert set(tools) <= {'draw', 'answer_question', 'revise', 'resume', 'none'}
-            assert turn['outcome'] in {'artifact', 'table', 'question', 'text', 'artifact_or_question'}
+            assert turn['outcome'] in {'artifact', 'table', 'question', 'text', 'artifact_or_question', 'answered'}
             assert ('redo_analysis' in turn) == ('revise' in tools)
     assert runner().load_cases() == cases
 
@@ -42,6 +42,8 @@ def test_cases():
     ('draw', {'clarification': {'question': 'Which?'}}, 'question'),
     ('draw', {'clarification': {'question': 'Which?'}}, 'artifact_or_question'),
     ('answer_question', {'rows': [[1]]}, 'table'),
+    ('answer_question', {'rows': [[1]]}, 'answered'),
+    ('draw', {'artifact': {'artifact_id': 'art_a'}}, 'answered'),
     ('find_artifact', [{'artifact_id': 'art_a'}], 'text'),
     ('resume', {'error': 'No unfinished request'}, 'text'),
 ])
@@ -88,7 +90,7 @@ def test_corpus_sample(tmp_path):
     cases = runner().corpus_cases(tmp_path)
     import random
     assert [c['name'] for c in cases] == ['corpus-' + r['dataset_id'] for r in random.Random(11).sample(rows, 10)]
-    assert all(c['turns'][0]['outcome'] == 'artifact_or_question' for c in cases)
+    assert all(c['turns'][0]['outcome'] == 'answered' and c['turns'][0]['tool'] == ['draw', 'answer_question'] for c in cases)
 
 
 def test_help_offline():
