@@ -93,6 +93,15 @@ class Compromise(BaseModel):
     message: str
 
 
+class PreviousDesign(BaseModel):
+    """The design being revised: the spec that was delivered, and what must differ."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    spec: str
+    change: str
+
+
 class RuleScore(BaseModel):
     rule: str
     score: int

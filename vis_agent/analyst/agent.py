@@ -17,10 +17,10 @@ from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior, Usage
 from pydantic_ai.usage import RunUsage, UsageLimits
 
 from vis_agent.analyst.checks import check_result, summary_numbers_exist
-from vis_agent.analyst.models import Analysis, AnalysisReport, Clarification, QueryError, QueryResult, ResultColumn
+from vis_agent.analyst.models import Analysis, AnalysisReport, Clarification, PreviousAnalysis, QueryError, QueryResult, ResultColumn
 from vis_agent.analyst.query import run_sql
 from vis_agent.deps import AppDeps
-from vis_agent.models import DataBrief
+from vis_agent.models import DataBrief, QuestionAnswer
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, ProfilerInput, profile_dataset
 from vis_agent.profiler.models import DatasetProfile, ProfileCheck, SemanticProfile
 from vis_agent.profiler.review import failed_checks
@@ -33,6 +33,7 @@ ANALYST_INSTRUCTIONS = Path(__file__).with_name("rulebook.md").read_text(encodin
 """The analyst's rulebook. Edit the file, not this module."""
 LOCALIZED_INSTRUCTIONS = Path(__file__).with_name("rulebook-localized.md").read_text(encoding="utf-8")
 """Rules for Hijri dates and Arabic-Indic digits, added per run only when a column carries those levels."""
+REVISE_INSTRUCTIONS = Path(__file__).with_name("rulebook-revise.md").read_text(encoding="utf-8")
 ANALYSIS_TIMEOUT_SECONDS = 90
 MAX_QUERY_CALLS = 3
 MAX_REQUESTS = 8
@@ -73,6 +74,8 @@ class AnalystPrompt(BaseModel):
     question: str
     language: str
     brief: DataBrief | None = None
+    clarifications: list[QuestionAnswer] = []
+    previous: PreviousAnalysis | None = None
 
 
 @dataclass
@@ -101,7 +104,10 @@ def detect_language(question: str, brief: DataBrief | None, column_names: list[s
     return "English"
 
 
-def build_prompt(store: DatasetStore, profile: DatasetProfile, question: str, language: str) -> AnalystPrompt:
+def build_prompt(
+    store: DatasetStore, profile: DatasetProfile, question: str, language: str,
+    clarifications: list[QuestionAnswer] | None = None, previous: PreviousAnalysis | None = None,
+) -> AnalystPrompt:
     semantics = {c.name: c for c in profile.semantic.columns} if profile.semantic else {}
     table = quote_identifier(store.table_name(profile.source.dataset_id))
     columns = []
@@ -130,7 +136,14 @@ def build_prompt(store: DatasetStore, profile: DatasetProfile, question: str, la
                 geographic_role=stats.geographic_role, values_omitted=stats.values_omitted,
             ))
     return AnalystPrompt(table=table, row_count=profile.deterministic.row_count, columns=columns,
-                         question=question, language=language, brief=profile.source.brief)
+                         question=question, language=language, brief=profile.source.brief,
+                         clarifications=list(clarifications or []), previous=previous)
+
+
+def prompt_json(prompt: AnalystPrompt) -> str:
+    """The prompt as the model sees it. Empty answers and an absent previous analysis are left out, so ordinary runs are unchanged."""
+    exclude = {name for name in ("clarifications", "previous") if not getattr(prompt, name)}
+    return prompt.model_dump_json(exclude=exclude or None)
 
 
 async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[ResultColumn]) -> QueryResult | QueryError:
@@ -231,6 +244,12 @@ def create_analyst(model: str) -> Agent[AnalystDeps, Analysis | Clarification]:
             return LOCALIZED_INSTRUCTIONS
         return None
 
+    @agent.instructions
+    def revise_rules(ctx: RunContext[AnalystDeps]) -> str | None:
+        if ctx.deps.prompt.clarifications or ctx.deps.prompt.previous is not None:
+            return REVISE_INSTRUCTIONS
+        return None
+
     return agent
 
 
@@ -242,19 +261,22 @@ async def analyze_dataset(
     question: str,
     brief: DataBrief | None = None,
     usage: RunUsage | None = None,
+    clarifications: list[QuestionAnswer] | None = None,
+    previous: PreviousAnalysis | None = None,
 ) -> AnalysisReport:
     """Profile if needed, then answer one question. Raises DatasetNotFound, ValueError, or duckdb.Error."""
     started = time.perf_counter()
     profile = await profile_dataset(store, profiler, dataset_id, brief=brief, usage=usage)
     language = detect_language(question, profile.source.brief, [c.name for c in profile.deterministic.columns])
-    prompt = await asyncio.to_thread(build_prompt, store, profile, question, language)
+    prompt = await asyncio.to_thread(build_prompt, store, profile, question, language,
+                                     clarifications=clarifications, previous=previous)
     deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
     output: Analysis | Clarification | None = None
     model_name = None
     warnings: list[str] = []
     try:
         async with asyncio.timeout(ANALYSIS_TIMEOUT_SECONDS):
-            result = await analyst.run(prompt.model_dump_json(), deps=deps, usage=usage,
+            result = await analyst.run(prompt_json(prompt), deps=deps, usage=usage,
                                        usage_limits=UsageLimits(request_limit=(usage.requests if usage is not None else 0) + MAX_REQUESTS))
         output = result.output
         model_name = result.response.model_name

@@ -32,6 +32,15 @@ class DataBrief(BaseModel):
         return hashlib.sha256(self.model_dump_json(exclude_none=True).encode()).hexdigest()[:16]
 
 
+class QuestionAnswer(BaseModel):
+    """A question an agent asked and the caller's answer. Answers are the caller's decisions, never facts about the data."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    question: str
+    answer: str
+
+
 class UploadedDataset(BaseModel):
     dataset_id: str
     filename: str

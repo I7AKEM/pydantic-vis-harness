@@ -404,3 +404,38 @@ def test_a_spent_check_budget_with_no_pass_ends_in_a_clarification():
     assert result.clarification.question.startswith("I could not find a chart that passes")
     assert "C6" in result.clarification.question and "C6" in result.clarification.reason
     assert result.check_calls == 3 and result.warnings == []
+
+
+def test_previous_design_and_answers_reach_the_designer_prompt():
+    from vis_agent.designer.agent import build_prompt, prompt_json
+    from vis_agent.designer.models import PreviousDesign
+    from vis_agent.models import QuestionAnswer
+
+    source = report(*gender_share())
+    plain = build_prompt(source, None)
+    assert plain.previous is None and plain.clarifications == []
+    assert '"previous"' not in prompt_json(plain) and '"clarifications"' not in prompt_json(plain)
+    prompt = build_prompt(source, None, clarifications=[QuestionAnswer(question="Donut or pie?", answer="Donut")],
+                          previous=PreviousDesign(spec="vis donut\ntitle Share\n", change="Make it blue"))
+    assert prompt.previous.change == "Make it blue" and prompt.clarifications[0].answer == "Donut"
+
+
+def test_designer_revise_rules_reach_the_model_only_with_previous_work():
+    from vis_agent.designer.agent import DesignerDeps, build_prompt, create_designer, prompt_json
+    from vis_agent.designer.models import PreviousDesign
+
+    source = report(*gender_share())
+    designer = create_designer("test")
+    seen = {}
+
+    def drive(messages, info):
+        seen["instructions"] = messages[0].instructions or ""
+        return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification",
+                                                 args={"question": "Which?", "reason": "Checking."})])
+
+    for previous, expected in (None, False), (PreviousDesign(spec="vis donut\n", change="Blue"), True):
+        prompt = build_prompt(source, None, previous=previous)
+        deps = DesignerDeps(report=source, prompt=prompt, suggested=None)
+        with designer.override(model=FunctionModel(drive)):
+            asyncio.run(designer.run(prompt_json(prompt), deps=deps))
+        assert ("Answers and revisions" in seen["instructions"]) is expected
