@@ -141,21 +141,54 @@ The two failures and what was done:
   Rerun after the fix: the lead called `draw`, the analyst asked which column stands for region, the answer
   went through `resume`, and the chart was drawn.
 
-The notes, in order of weight:
+The notes, in order of weight, and what was done about each before the merge:
 
 - Long Hijri series: the designer chose the table type for 65 years with two series (cases 15, 29) and for
   769 or 65 buckets with two measures (case 17), while a single series over 65 years drew as a line (case 29
-  turn 1). The lead explained each time and either revised to a line itself or offered a shorter range. The
-  designer's limits on multi-series lines and its treatment of year-like ordinals are the next designer work.
-- The lead pre-empts an obvious missing column from the profile in some runs (case 7 first run) and lets the
-  analyst ask in others (the rerun); both end well.
-- With a dataset attached and no question the lead summarized the profile but proposed one question instead
-  of three to five (case 14).
-- A picture-only revision sometimes omits the table under the new picture (case 1 turn 2); the numbers are
-  unchanged, so nothing is lost.
-- An analyst warning about rows excluded by a deliberate filter reads oddly to a user (case 2).
+  turn 1). The cause was upstream of the designer: the analyst returned one column per measure (paid, unpaid),
+  which the designer cannot draw as two series. The analyst's rulebook now asks for long format when two or
+  more measures of one unit are compared over one axis (one row per axis value and measure, a series column,
+  one value column); measures of different units stay side by side. Case 15 rerun: 130 rows in long format
+  and a two-series line. Case 17's 769 buckets stay a table by the designer's own limit.
+- With a dataset attached and no question the lead proposed one question instead of three to five (case
+  14). The instructions now ask for a numbered list of three to five, each with a reason, using only columns
+  that exist. Rerun: three suggestions with reasons.
+- A picture-only revision sometimes omitted the table under the new picture (case 1 turn 2). The
+  instructions now say every artifact gets its table, a picture-only revision included. Rerun: the table
+  is repeated under the new picture.
+- The analyst's note about rows excluded by a deliberate filter read oddly (case 2). The `total_explained`
+  check now names the WHERE clause when the query filtered on purpose ("expected when the question asks
+  for a subset") and keeps the "dropped rows" wording for a query with no filter.
 - On a file that was never uploaded the lead called `find_dataset`, then one `draw` that errored, before
-  answering correctly (case 25).
+  answering correctly (case 25). Two changes: `draw` and `answer_question` accept an upload's file name
+  through one `resolve_dataset` (a name that matches nothing is a plain failure that tells the lead to ask
+  for the upload, a malformed ID is still a retry), and `find_dataset` returns a sentence when nothing
+  matches instead of an empty list. A wording rule alone did not stop the extra call: with the empty list
+  the lead still tried `draw` in two reruns; with the sentence it stopped. Rerun: one `find_dataset` call
+  and the right answer.
+- Found while re-running the lead evaluation after these changes: on "now draw it" after a numbers-only
+  answer the lead called `resume` thirteen times because the failure said only that nothing was unfinished.
+  The message now says to treat the message as a new question and call `draw` or `answer_question`, and
+  the instructions say to call `resume` at most once for a message. Browser check: "numbers only" then
+  "now draw it" gives `answer_question` then `draw`.
+- The lead pre-empts an obvious missing column from the profile in some runs (case 7 first run) and lets
+  the analyst ask in others (the rerun); both end well. Left as is.
+
+After the fixes: the unit suite passes (980 tests), and the lead evaluation on the final code is at its
+earlier level: 18 of 21 cases, 27 of 29 turns on the expected tool, 26 of 29 outcomes, redo 3 of 3. The
+analyst evaluation with the long-format rule gave 69 of 70 tables with every check clean on its first run.
+Two later runs gave 67 of 70 each: the first while the lead evaluation, the browser runs, and the unit
+suite shared the provider (three times the usual time per case, three semantic profiles timed out, one
+lost), the second alone at normal speed. The misses were not the long-format rule: in each run two or
+three plain questions came back as clarification questions, a different set each time (whether "singles"
+includes the divorced, whether an overall share should be split by date, how to spell Jeddah in Arabic,
+a question that only restated the user's question, and once a question with nothing in it). Rerunning
+those six cases four times gave the same rate before and after a rulebook clause against each of them
+(three asks in twelve attempts either way), so the clause was dropped. The empty question is now sent
+back to the model as a retry. The spurious questions started in the evening's runs after four runs at
+69 or 70 without one, on the same analyst code, so the provider's route for the model is the first thing
+to check; the lead handles such a question gracefully, but the user is asked something the data already
+answers. It is the first item under "Left for later".
 
 Everything else behaved as designed: chart first with the table, IDs shown once, revisions deciding
 `redo_analysis` correctly (picture-only for horizontal bars, donut, pie, title; re-run for filters, sums,
@@ -204,6 +237,11 @@ without new analysis costs the lead's two plus the designer's three. Tokens and 
 
 ## Left for later
 
+- The analyst sometimes returns a clarification question for a plain question (about one case in
+  twenty-five in the evening's runs, none in the afternoon's), including questions that restate the
+  user's question. Check the provider's route for the analyst model first, then consider a check that
+  refuses a clarification whose question repeats the user's question, and a tuning round on the
+  analyst's rulebook with the analyst evaluation as the metric.
 - After a single-number result the lead delivers the number without a chart, as designed, but then offers
   chart ideas instead of stopping; if the evaluation shows it often, add one sentence to the instructions.
 - On the vague "youth" question the lead asked for the definition itself, before any tool ran. The
