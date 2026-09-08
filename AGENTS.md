@@ -45,6 +45,13 @@ Requests package file map:
   they cost three of 69 ordinary questions.
 - Values from oversized, WKT, and geometry-named columns never reach a model.
 - Failures the model cannot fix are ToolFailed. Fixable mistakes are ModelRetry, once.
+- A tool budget is enforced by the framework, never by a message: the tool's `prepare` hook withdraws it once
+  its calls are spent, so a model that still names it gets one unknown-tool retry and then the run ends; an
+  over-budget call inside one response is a ModelRetry on a tool registered with `retries=1`. Never answer a
+  repeated call with a retry prompt: a small model repeats it. The test for every budget drives a model that
+  ignores the message and asserts the run ends within a fixed number of requests.
+- When the designer fails, the request runner runs the design step once more on `AppDeps.designer_fallback`
+  (`PYDANTIC_AI_DESIGNER_FALLBACK_MODEL`, the lead's model by default) and says so in a warning.
 - Tests use fake models through agent.override and never hand-build RunContext.
 - Preserve the Advisor and TemporalDurability capabilities on the lead. CodeMode was removed after
   Phase 1 because no lead tool runs inside its sandbox yet; bring it back when the analyst's query tool does.

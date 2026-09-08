@@ -312,8 +312,16 @@ def test_draw_returns_the_question_and_resume_answers_it(conversation):
     first = RequestOutcome.model_validate_json(run("Chart total by region", drive, analyst_drive=asking,
                                                    conversation_id="chat-1").output)
     assert first.status == "waiting" and first.clarification.question == "Which amount?"
-    resume = call_then_summarize("resume", {"request_id": "", "answer": "The amount column"},
-                                 lambda part: outcome_of(part).model_dump_json())
+
+    def resume(messages, info):
+        returns = tool_returns(messages)
+        if not returns:
+            assert "resume" in [t.name for t in info.function_tools]
+            return ModelResponse(parts=[ToolCallPart(tool_name="resume", args={
+                "request_id": "", "answer": "The amount column",
+            })])
+        return ModelResponse(parts=[TextPart(content=outcome_of(returns[-1]).model_dump_json())])
+
     second = RequestOutcome.model_validate_json(run("The amount column", resume, analyst_drive=asking,
                                                     conversation_id="chat-1").output)
     assert second.status == "done" and second.request_id == first.request_id and second.artifact.chart == "bar"
@@ -349,17 +357,27 @@ def test_lead_tools_report_unknown_ids_as_failures(conversation):
     assert run("Change it", drive).output == "No such artifact."
 
 
-def test_resume_without_a_request_in_the_conversation_is_a_failure(conversation):
+def test_resume_is_not_offered_without_an_unfinished_request(conversation):
     dataset_id, deps, run = conversation
 
     def drive(messages, info):
-        returns = tool_returns(messages)
-        if not returns:
-            return ModelResponse(parts=[ToolCallPart(tool_name="resume", args={"request_id": "", "answer": ""})])
-        assert "no unfinished request" in str(returns[-1].content).lower()
+        assert "resume" not in [t.name for t in info.function_tools]
         return ModelResponse(parts=[TextPart(content="Nothing to continue.")])
 
     assert run("continue", drive, conversation_id="chat-9").output == "Nothing to continue."
+
+
+def test_resume_stays_offered_for_the_terminal(conversation):
+    from dataclasses import replace
+
+    dataset_id, deps, run = conversation
+
+    def drive(messages, info):
+        assert "resume" in [t.name for t in info.function_tools]
+        return ModelResponse(parts=[TextPart(content="Name the request to continue.")])
+
+    result = run("continue", drive, run_deps=replace(deps, caller_kind="terminal"))
+    assert result.output == "Name the request to continue."
 
 
 def test_the_lead_records_the_callers_kind_from_its_deps(conversation):

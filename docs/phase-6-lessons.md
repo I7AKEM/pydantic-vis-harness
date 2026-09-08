@@ -235,6 +235,55 @@ designer three) and nine to twelve with real ones when the analyst or designer r
 without new analysis costs the lead's two plus the designer's three. Tokens and money per run are in Logfire
 (project vis-harness), not in the results files; the evaluation runner records tool calls and IDs only.
 
+## The designer's loop
+
+Logfire raised an issue on the evening of 2026-09-08: `UsageLimitExceeded`, "request_limit of 14", on the
+web chat's Arabic question about population by age group and gender in Riyadh. The trace showed the whole
+story. The lead spent two requests, the analyst four and answered correctly, and then the designer (Gemma
+4 31B, temperature 0) called `recommend_charts(intent="composition")` eight times in a row, sixteen output
+tokens each. Calls one and two returned a valid shortlist with grouped bars on top; calls three to eight got
+the refusal text, and the model re-emitted the same call until the request cap (the six requests already
+spent plus the designer's eight). The user got the table and no chart. Logfire showed the same signature in
+three of the 68 designer runs of the previous two weeks, one of them in the afternoon's browser run, where
+it went by as "the designer could not finish" without being chased.
+
+Root cause. The budget was advisory: after two calls the tool stayed in the model's tool list and the
+"you have used your calls" message came back as a normal, successful tool result, which the library counts
+as success. A small model at temperature 0 that repeats once repeats forever, and nothing in the code
+broke the repetition. Codex, asked for a second opinion at high effort, agreed and added two things: the
+rulebook never told the model the two-call limit or forbade repeating, and the code accepted the same
+intent twice as a valid call. The analyst's `run_query`, the designer's `check_spec`, and the lead's
+`resume` used the same soft pattern; `check_spec` had already been ignored twice, and `resume` had once
+looped thirteen times before a wording fix.
+
+The fix, on the `fix/tool-budgets` branch, uses what Pydantic AI 2.38 provides and nothing else: the
+tool's `prepare` hook returns `None` once its calls are spent, so the tool is withdrawn from the following
+requests, and a model that still names it gets one unknown-tool retry before the run ends with
+`UnexpectedModelBehavior`, which the callers already catch; an over-budget call inside one response is a
+`ModelRetry` on a tool registered with `retries=1`. A first version also answered a repeated intent with a
+retry prompt: the designer evaluation dropped from 31 to 25 delivered, because Gemma answers a retry prompt
+by repeating the call, so a benign second call became a dead run. The prompt was removed; a second call
+within the budget is simply accepted. Applied to `recommend_charts`, `check_spec`, `run_query`, and `resume` (withdrawn while the chat
+conversation has nothing unfinished; the terminal and programs keep it). The request runner now runs the
+design step once more on a fallback designer when the first run fails (`PYDANTIC_AI_DESIGNER_FALLBACK_MODEL`,
+the lead's model by default) and says so in a warning, and the "could not finish" prefix is no longer
+doubled. The library has no detector for repeated identical calls, and `tool_calls_limit` is a global cap;
+neither replaces the hooks.
+
+The lesson that outlasts the patch: the old tests certified the bug. They asserted that the third call
+returned a refusal message, so they proved the model was told, not that it was stopped. The test for every
+budget now drives a model that ignores the message and asserts the run ends within a fixed number of
+requests. And a specialist that "could not finish" in a test run is a defect to trace, not a note; one
+Logfire query on agent-run exceptions shows the count in seconds.
+
+Evaluations after the fix: unit suite 989 passed; model-free designer evaluation 37/37; designer agent
+evaluation 31/31 delivered with every score at 1.00 and 3.4 requests per run; lead evaluation 17/21 cases,
+tool choice 27/29, outcome 25/29, redo analysis 3/3. The four misses are the two one-cell corpus files the
+lead answers from the profile (known) and two needless analyst clarifications (the open item below), one of
+them repeated after the user's answer, where the lead resumed a second time and the chart was drawn. In the
+run on the stricter first version the designer looped for real on "average income by gender" and was cut at
+three requests instead of nine.
+
 ## Left for later
 
 - The analyst sometimes returns a clarification question for a plain question (about one case in

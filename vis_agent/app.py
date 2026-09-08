@@ -36,7 +36,9 @@ requests = RequestStore(store)
 profiler = create_profiler(os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL)
 analyst = create_analyst(os.getenv("PYDANTIC_AI_ANALYST_MODEL") or DEFAULT_ANALYST_MODEL)
 designer = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_MODEL") or DEFAULT_DESIGNER_MODEL)
-deps = AppDeps(store=store, profiler=profiler, analyst=analyst, designer=designer, requests=requests)
+designer_fallback = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_FALLBACK_MODEL") or model)
+deps = AppDeps(store=store, profiler=profiler, analyst=analyst, designer=designer, requests=requests,
+               designer_fallback=designer_fallback)
 agent = create_lead(model, advisor_model=os.getenv("PYDANTIC_AI_ADVISOR_MODEL", "openrouter:openai/gpt-5.6-sol"))
 
 

@@ -5,6 +5,7 @@ import re
 
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed
 from pydantic_ai.durable_exec.temporal import TemporalDurability
+from pydantic_ai.tools import ToolDefinition
 from pydantic_ai_harness import Advisor
 
 from vis_agent.analyst.agent import LeadAnswer
@@ -54,8 +55,8 @@ labels, layout), and say which you chose.
 
 Questions and continuing. When draw, revise, or resume returns a clarification, ask the user that question in
 their words and wait. The user's next message that answers it is a resume with that answer; never ask a
-question the user just answered. "Continue" or "go on" is a resume with no answer. Call resume at most once for
-a message: when it reports no unfinished request, the message is a new question, so call draw or
+question the user just answered. "Continue" or "go on" is a resume with no answer. resume is offered only while
+this conversation has an unfinished request; when it is not offered, the message is a new question: call draw or
 answer_question. When a returned outcome is
 overdue, say that the question waited longer than its deadline before asking again. answer_question keeps no
 request: when it returns a clarification, ask the user that question and wait, then call answer_question again
@@ -166,6 +167,15 @@ async def revise(ctx: RunContext[AppDeps], artifact_id: str, change: str, redo_a
     return await run_request(ctx.deps, request.request_id, usage=ctx.usage)
 
 
+async def offer_resume(ctx: RunContext[AppDeps], tool_def: ToolDefinition) -> ToolDefinition | None:
+    """Offer resume only while this conversation has an unfinished request. The terminal and programs keep it,
+    since they may name a request ID."""
+    if ctx.deps.caller_kind != "chat" or ctx.deps.requests is None:
+        return tool_def
+    unfinished = await asyncio.to_thread(latest_unfinished, ctx.deps, ctx.conversation_id)
+    return tool_def if unfinished is not None else None
+
+
 async def resume(ctx: RunContext[AppDeps], request_id: str = "", answer: str = "") -> RequestOutcome:
     """Continue a request: after "continue", after a failure, or with the user's answer to the question it asked.
 
@@ -223,7 +233,7 @@ def create_lead(model: str, advisor_model: str | None = None) -> Agent[AppDeps, 
     agent.tool(answer_question, sequential=True)
     agent.tool(draw, sequential=True)
     agent.tool(revise, sequential=True)
-    agent.tool(resume, sequential=True)
+    agent.tool(resume, sequential=True, prepare=offer_resume)
     agent.tool(find_dataset)
     agent.tool(find_artifact)
     return agent

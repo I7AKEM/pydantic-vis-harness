@@ -416,7 +416,8 @@ Code checks the result against the data and profile:
 | `summary_numbers_exist` | Summary numbers occur in the result or its row count, allowing rounding and percentages. Western and Arabic-Indic digits are supported. |
 
 Query errors and failed error checks go back to the analyst for repair. It has at most three
-query calls. Code attaches the last query that passed its error checks to the answer.
+query calls. The tool is withdrawn once they are spent. Code attaches the last query that passed
+its error checks to the answer.
 It checks the summary numbers at submission and sends a failure back once. If that check
 still fails, the report records it and includes a warning.
 
@@ -523,7 +524,11 @@ the spec and carries the checker compromises into the rendered result.
 
 Each run allows two recommendation calls, three check calls, one repair send-back, eight model
 requests, and ninety seconds. An empty result returns a clarification without calling a model.
-Model failures or exhausted limits return warnings without a design.
+Model failures or exhausted limits return warnings without a design. A tool is withdrawn once
+its calls are spent; a model that still names it gets one retry and then the run ends. When the
+designer fails, the design step runs once more on the fallback model
+(`PYDANTIC_AI_DESIGNER_FALLBACK_MODEL`, the lead's model by default) and the chart carries a
+warning saying so.
 
 The rulebook lives in `vis_agent/designer/rulebook.md`; code appends the grammar and catalogue
 to its instructions. Confirmed mistakes become evaluation cases and checks or rulebook lines.
@@ -537,6 +542,10 @@ without it, tracing stays local.
 `PYDANTIC_AI_ANALYST_MODEL` selects the analyst model. When empty, it uses
 `openrouter:google/gemma-4-31b-it:nitro`, pending the Phase 2 benchmark.
 The analyst runs with reasoning switched off and temperature zero.
+
+`PYDANTIC_AI_DESIGNER_MODEL` selects the designer model. When empty, it uses the profiler's
+default. `PYDANTIC_AI_DESIGNER_FALLBACK_MODEL` selects the model used for one retry of a failed
+design step. When empty, it uses `PYDANTIC_AI_MODEL`.
 
 ## Code
 

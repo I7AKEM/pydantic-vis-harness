@@ -14,7 +14,7 @@ from vis_agent.analyst.checks import summary_numbers_exist
 from vis_agent.analyst.models import Analysis, AnalysisReport
 from vis_agent.designer import models, syntax
 from vis_agent.designer.agent import (
-    DESIGNER_RULEBOOK, EMPTY_RESULT, MAX_REQUESTS, Refused, build_prompt,
+    DESIGNER_RULEBOOK, EMPTY_RESULT, MAX_REQUESTS, build_prompt,
     create_designer, design_chart, grammar, instructions, render_design, render_id,
 )
 from vis_agent.designer.check import check_spec as run_check
@@ -318,32 +318,101 @@ def test_empty_result_short_circuits(language, row_count):
     assert result.requests == 0 and result.check_calls == 0 and result.model is None
 
 
-def test_tool_caps():
-    steps = ["recommend_charts"] * 3 + ["check_spec"] * 4 + ["deliver_design"]
-    attempts = []
+def test_a_model_that_repeats_recommend_charts_is_stopped_at_the_fourth_request():
+    offered = []
 
     def drive(messages, info):
-        step = len(attempts)
-        if step == 3:
-            assert isinstance(last_return(messages).content, Refused)
-        if step == 7:
-            assert isinstance(last_return(messages).content, Refused)
-        attempts.append(1)
-        if steps[step] == "recommend_charts":
-            return tool_call(steps[step], intent="share" if step == 0 else "compare")
-        if steps[step] == "check_spec":
-            return tool_call(steps[step], spec=DONUT)
-        return tool_call(steps[step], spec=DONUT, explanation=EXPLANATION)
+        offered.append([t.name for t in info.function_tools])
+        return tool_call("recommend_charts", intent="share")
 
     result = run(report(*gender_share()), FunctionModel(drive))
-    assert result.design is not None and result.check_calls == 3 and result.requests == 8
-    assert result.design.intent == "compare" and result.warnings == []
+    assert result.design is None and result.requests == 4
+    assert "exceeded max retries" in result.warnings[0]
+    assert "recommend_charts" in offered[1] and "recommend_charts" not in offered[2]
+
+
+def test_a_second_identical_call_is_accepted_and_then_the_tool_is_withdrawn():
+    offered = []
+
+    def drive(messages, info):
+        offered.append([t.name for t in info.function_tools])
+        if len(offered) <= 2:
+            return tool_call("recommend_charts", intent="share")
+        assert "recommend_charts" not in offered[-1]
+        if len(offered) == 3:
+            assert last_return(messages).model_response_object()["intent"] == "share"
+            return tool_call("check_spec", spec=DONUT)
+        return tool_call("deliver_design", spec=DONUT, explanation=EXPLANATION)
+
+    result = run(report(*gender_share()), FunctionModel(drive))
+    assert result.design is not None and result.requests == 4 and result.warnings == []
+
+
+def test_recommend_charts_is_withdrawn_after_two_intents():
+    offered = []
+
+    def drive(messages, info):
+        offered.append([t.name for t in info.function_tools])
+        if len(offered) == 1:
+            return tool_call("recommend_charts", intent="share")
+        if len(offered) == 2:
+            assert "recommend_charts" in offered[-1]
+            return tool_call("recommend_charts", intent="compare")
+        assert "recommend_charts" not in offered[-1] and "check_spec" in offered[-1]
+        if len(offered) == 3:
+            return tool_call("check_spec", spec=DONUT)
+        return tool_call("deliver_design", spec=DONUT, explanation=EXPLANATION)
+
+    result = run(report(*gender_share()), FunctionModel(drive))
+    assert result.design is not None and result.design.intent == "compare"
+    assert result.requests == 4 and result.warnings == []
+
+
+def test_two_recommendations_in_one_response_past_the_budget_get_one_retry():
+    calls = []
+
+    def drive(messages, info):
+        calls.append(1)
+        if len(calls) == 1:
+            return tool_call("recommend_charts", intent="share")
+        if len(calls) == 2:
+            return ModelResponse(parts=[ToolCallPart(tool_name="recommend_charts", args={"intent": "compare"}),
+                                        ToolCallPart(tool_name="recommend_charts", args={"intent": "trend"})])
+        if len(calls) == 3:
+            retry = [p for p in messages[-1].parts if isinstance(p, RetryPromptPart)]
+            assert retry and "recommendation calls" in retry[0].model_response()
+            return tool_call("check_spec", spec=DONUT)
+        return tool_call("deliver_design", spec=DONUT, explanation=EXPLANATION)
+
+    result = run(report(*gender_share()), FunctionModel(drive))
+    assert result.design is not None and result.design.intent == "compare" and result.warnings == []
+
+
+def test_check_spec_is_withdrawn_after_three_calls():
+    calls = []
+
+    def drive(messages, info):
+        calls.append(1)
+        if len(calls) == 1:
+            return tool_call("recommend_charts", intent="share")
+        if len(calls) <= 4:
+            return tool_call("check_spec", spec=DONUT)
+        assert "check_spec" not in [t.name for t in info.function_tools]
+        return tool_call("deliver_design", spec=DONUT, explanation=EXPLANATION)
+
+    result = run(report(*gender_share()), FunctionModel(drive))
+    assert result.design is not None
+    assert result.check_calls == 3
+    assert result.requests == 5
+    assert result.warnings == []
 
 
 @pytest.mark.parametrize("starting_requests", [None, 7])
-def test_request_cap(starting_requests):
+def test_request_cap(starting_requests, monkeypatch):
+    monkeypatch.setattr("vis_agent.designer.agent.MAX_CHECK_CALLS", 100)
+
     def drive(messages, info):
-        return tool_call("recommend_charts", intent="share")
+        return tool_call("check_spec", spec=DONUT)
 
     usage = RunUsage(requests=starting_requests) if starting_requests is not None else None
     result = run(report(*gender_share()), FunctionModel(drive), usage=usage)
@@ -393,10 +462,9 @@ def test_a_spent_check_budget_with_no_pass_ends_in_a_clarification():
 
     def drive(messages, info):
         calls.append(1)
-        if len(calls) <= 4:  # three checks fail, the fourth is refused
+        if len(calls) <= 3:
             return tool_call("check_spec", spec=one_colour)
-        refused = last_return(messages).model_response_object()
-        assert "none passed" in refused["message"]
+        assert "check_spec" not in [t.name for t in info.function_tools]
         return tool_call("deliver_design", spec=one_colour, explanation=EXPLANATION)
 
     result = run(report(*gender_share()), FunctionModel(drive))

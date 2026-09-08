@@ -12,6 +12,7 @@ from typing import get_args
 from pydantic import BaseModel
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolOutput
 from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded
+from pydantic_ai.tools import ToolDefinition
 from pydantic_ai.usage import RunUsage, UsageLimits
 
 from vis_agent.analyst.agent import ARABIC
@@ -86,10 +87,6 @@ class Shortlist(BaseModel):
     intent: Intent
     candidates: list[Candidate]
     rejected: list[Rejection]
-
-
-class Refused(BaseModel):
-    message: str
 
 
 @dataclass
@@ -176,12 +173,22 @@ def instructions() -> str:
     return DESIGNER_RULEBOOK + "\n\nGrammar:\n" + grammar() + "\n\nCatalogue:\n" + CATALOGUE.describe()
 
 
-async def recommend_charts(ctx: RunContext[DesignerDeps], intent: Intent) -> Shortlist | Refused:
-    """Rank charts for your reading of the question's intent, with bindings and the rules behind each score."""
+def offer_recommend_charts(ctx: RunContext[DesignerDeps], tool_def: ToolDefinition) -> ToolDefinition | None:
+    """Withdraw the tool once its calls are spent: a model cannot repeat what it is not offered."""
+    return None if ctx.deps.recommend_calls >= MAX_RECOMMEND_CALLS else tool_def
+
+
+def offer_check_spec(ctx: RunContext[DesignerDeps], tool_def: ToolDefinition) -> ToolDefinition | None:
+    return None if ctx.deps.check_calls >= MAX_CHECK_CALLS else tool_def
+
+
+async def recommend_charts(ctx: RunContext[DesignerDeps], intent: Intent) -> Shortlist:
+    """Rank charts for your reading of the question's intent, with bindings and the rules behind each score.
+    Call it once; a second call is only for a changed intent."""
     deps = ctx.deps
     if deps.recommend_calls >= MAX_RECOMMEND_CALLS:
-        return Refused(message=f"You have used the {MAX_RECOMMEND_CALLS} recommendation calls of this run. "
-                               "Choose among the candidates you already have.")
+        raise ModelRetry(f"You have used the {MAX_RECOMMEND_CALLS} recommendation calls of this run. "
+                         "Choose among the candidates you already have.")
     deps.recommend_calls += 1
     deps.intent = intent
     ranked = rank_charts(deps.report.analysis.columns, deps.report.result, intent=intent, suggested=deps.suggested)
@@ -190,16 +197,16 @@ async def recommend_charts(ctx: RunContext[DesignerDeps], intent: Intent) -> Sho
     return Shortlist(intent=intent, candidates=candidates, rejected=ranked.rejected)
 
 
-async def check_spec(ctx: RunContext[DesignerDeps], spec: str) -> SpecCheck | Refused:
+async def check_spec(ctx: RunContext[DesignerDeps], spec: str) -> SpecCheck:
     """Check a draft chart spec and return violations with fixes, or its canonical text and compromises."""
     deps = ctx.deps
     if deps.check_calls >= MAX_CHECK_CALLS:
         if deps.last_check is None:
-            return Refused(message="You have used the three check calls of this run and none passed. Call "
-                                   "deliver_design with your best spec, or ask_clarification with the conflict; "
-                                   "a spec that still fails ends in a question to the caller.")
-        return Refused(message="You have used the three check calls of this run. "
-                               "Deliver the spec that passed, or ask the caller a question.")
+            raise ModelRetry("You have used the three check calls of this run and none passed. Call "
+                             "deliver_design with your best spec, or ask_clarification with the conflict; "
+                             "a spec that still fails ends in a question to the caller.")
+        raise ModelRetry("You have used the three check calls of this run. "
+                         "Deliver the spec that passed, or ask the caller a question.")
     deps.check_calls += 1
     check = run_check(spec, deps.report.analysis.columns, deps.report.result, deps.renderer)
     if check.ok:
@@ -280,8 +287,8 @@ def create_designer(model: str) -> Agent[DesignerDeps, Design | Clarification]:
         instructions=instructions(),
         model_settings={"thinking": False, "temperature": 0.0},
     )
-    agent.tool(recommend_charts)
-    agent.tool(check_spec)
+    agent.tool(recommend_charts, retries=1, prepare=offer_recommend_charts)
+    agent.tool(check_spec, retries=1, prepare=offer_check_spec)
 
     @agent.instructions
     def revise_rules(ctx: RunContext[DesignerDeps]) -> str | None:

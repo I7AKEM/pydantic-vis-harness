@@ -248,10 +248,18 @@ async def design(deps: AppDeps, request: Request, usage: RunUsage, budget: int |
     _check_budget(request, budget)
     designed = await design_chart(report, deps.designer, brief, usage=usage, clarifications=pairs(request),
                                   previous=previous)
+    if designed.design is None and designed.clarification is None and deps.designer_fallback is not None:
+        first = "; ".join(designed.warnings) or "no design"
+        log.warning("The designer failed on %s (%s); running the design step once more on the fallback model",
+                    request.request_id, first)
+        _check_budget(request, budget)
+        designed = await design_chart(report, deps.designer_fallback, brief, usage=usage,
+                                      clarifications=pairs(request), previous=previous)
+        designed.warnings.insert(0, f"The first designer run failed ({first}); this chart comes from the fallback model.")
     if designed.clarification is not None:
         raise Pause("design", designed.clarification)
     if designed.design is None:
-        return {"skipped": "The designer could not finish: " + ("; ".join(designed.warnings) or "no design"),
+        return {"skipped": "; ".join(designed.warnings) or "The designer returned no design",
                 "warnings": designed.warnings}
     return designed.model_dump(mode="json")
 
@@ -284,6 +292,8 @@ async def deliver(deps: AppDeps, request: Request, usage: RunUsage, budget: int 
         return {"artifact_id": existing.artifact_id}
     report = AnalysisReport.model_validate(request.steps["analyze"])
     design_step, render_step, profile_step = request.steps["design"], request.steps["render"], request.steps["profile"]
+    if "skipped" not in design_step:
+        report.warnings.extend(design_step.get("warnings", []))
     designed = DesignReport.model_validate(design_step) if "skipped" not in design_step else None
     parent = await asyncio.to_thread(store.get_artifact, request.parent_artifact_id) if request.parent_artifact_id else None
     catalogue_version, rules_version = versions()

@@ -30,3 +30,5 @@ class AppDeps:
     caller_kind: CallerKind = "chat"
     caller_identity: str | None = None
     """Who talks to the lead in this run: the chat, the terminal, or a program; recorded on the requests it makes."""
+    designer_fallback: Agent[DesignerDeps, Design | Clarification] | None = None
+    """Runs the design step once more when the designer fails; the lead's model by default."""

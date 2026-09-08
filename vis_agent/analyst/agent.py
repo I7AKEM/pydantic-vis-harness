@@ -14,6 +14,7 @@ import duckdb
 from pydantic import BaseModel
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed, ToolOutput
 from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded
+from pydantic_ai.tools import ToolDefinition
 from pydantic_ai.usage import RunUsage, UsageLimits
 
 from vis_agent.analyst.checks import check_result, summary_numbers_exist
@@ -146,6 +147,11 @@ def prompt_json(prompt: AnalystPrompt) -> str:
     return prompt.model_dump_json(exclude=exclude or None)
 
 
+def offer_run_query(ctx: RunContext[AnalystDeps], tool_def: ToolDefinition) -> ToolDefinition | None:
+    """Withdraw run_query once its calls are spent; the model then delivers or asks."""
+    return None if ctx.deps.query_calls >= MAX_QUERY_CALLS else tool_def
+
+
 async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[ResultColumn]) -> QueryResult | QueryError:
     """Run one SELECT on the dataset table and check the result against the data.
 
@@ -155,8 +161,8 @@ async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[Result
     """
     deps = ctx.deps
     if deps.query_calls >= MAX_QUERY_CALLS:
-        return QueryError(sql=sql, error=f"You have used the {MAX_QUERY_CALLS} query calls of this run. "
-                                          "Deliver the last result that passed its checks, or ask the caller a question.")
+        raise ModelRetry(f"You have used the {MAX_QUERY_CALLS} query calls of this run. Deliver the last result that "
+                         "passed its checks, or ask the caller a question.")
     deps.query_calls += 1
     result = await asyncio.to_thread(
         run_sql, deps.store, deps.profile.source.dataset_id, sql,
@@ -240,7 +246,7 @@ def create_analyst(model: str) -> Agent[AnalystDeps, Analysis | Clarification]:
         # Thinking off and temperature 0 until the Phase 2 benchmark says otherwise.
         model_settings={"thinking": False, "temperature": 0.0},
     )
-    agent.tool(run_query)
+    agent.tool(run_query, retries=1, prepare=offer_run_query)
 
     @agent.instructions
     def localized_rules(ctx: RunContext[AnalystDeps]) -> str | None:

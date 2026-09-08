@@ -130,7 +130,7 @@
    },
    {
     "message": "Continue.",
-    "tool": "resume",
+    "tool": "none",
     "outcome": "text"
    }
   ]

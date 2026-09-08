@@ -101,13 +101,13 @@ def show_turn(name: str, index: int, turn: dict) -> None:
           f"outcome={turn['outcome_ok']}{redo}{error}", flush=True)
 
 
-async def run_case(case: dict, lead, profiler, analyst, designer) -> dict:
+async def run_case(case: dict, lead, profiler, analyst, designer, designer_fallback=None) -> dict:
     record = {"name": case["name"], "csv": case["csv"], "turns": []}
     with tempfile.TemporaryDirectory(prefix="vis-lead-eval-") as directory:
         try:
             store = DatasetStore(Path(directory))
             requests = RequestStore(store)
-            deps = AppDeps(store, profiler, analyst, designer, requests)
+            deps = AppDeps(store, profiler, analyst, designer, requests, designer_fallback=designer_fallback)
             csv = ROOT / case["csv"]
             brief = DataBrief.model_validate_json((ROOT / case["brief"]).read_bytes()) if case.get("brief") else None
             uploaded = store.save_upload(csv.name, csv.read_bytes(), brief)
@@ -158,11 +158,13 @@ async def evaluate(cases: list[dict]) -> dict:
     designer = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_MODEL") or DEFAULT_DESIGNER_MODEL)
     model = os.getenv("PYDANTIC_AI_MODEL") or "openrouter:anthropic/claude-sonnet-4.6"
     lead = create_lead(model, advisor_model="openrouter:openai/gpt-5.6-sol")
+    # The runner retries a failed design once on this model, as the app does.
+    designer_fallback = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_FALLBACK_MODEL") or model)
     semaphore = asyncio.Semaphore(3)
 
     async def bounded(case):
         async with semaphore:
-            return await run_case(case, lead, profiler, analyst, designer)
+            return await run_case(case, lead, profiler, analyst, designer, designer_fallback)
 
     results = await asyncio.gather(*(bounded(case) for case in cases))
     turns = [turn for case in results for turn in case["turns"]]

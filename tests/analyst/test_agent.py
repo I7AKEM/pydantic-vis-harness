@@ -128,16 +128,41 @@ def test_repair_after_a_query_error_and_the_call_cap(store, people, agents):
         calls = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
         if calls:
             seen.append(last_return(messages).model_response_object())
-        if len(calls) < MAX_QUERY_CALLS + 1:
+        if len(calls) < MAX_QUERY_CALLS:
             return tool_call("run_query", sql=f'SELECT nope FROM "{dataset}"', columns=[{"name": "nope", "meaning": "x", "kind": "measure"}])
+        assert "run_query" not in [t.name for t in info.function_tools]
         return tool_call("ask_clarification", question="Which column holds the amount?", reason="The query kept failing.")
 
     with analyst.override(model=FunctionModel(drive)):
         report = run(store, profiler, analyst, dataset, "Total by region")
     assert "nope" in seen[0]["error"]
-    assert "query calls" in seen[MAX_QUERY_CALLS]["error"]
     assert report.clarification == Clarification(question="Which column holds the amount?", reason="The query kept failing.")
     assert report.analysis is None and report.result is None
+
+
+def test_two_queries_in_one_response_past_the_budget_get_one_retry(store, people, agents):
+    dataset, _profile = people
+    profiler, analyst = agents
+    good = f'SELECT region, sum(amount) AS total FROM "{dataset}" GROUP BY 1'
+    columns = [{"name": "region", "meaning": "Region", "kind": "geography", "source": "region"},
+               {"name": "total", "meaning": "Sum of amount", "kind": "measure", "source": "amount", "aggregate": "sum"}]
+    calls = []
+
+    def drive(messages, info):
+        calls.append(1)
+        if len(calls) < MAX_QUERY_CALLS:
+            return tool_call("run_query", sql=good, columns=columns)
+        if len(calls) == MAX_QUERY_CALLS:
+            return ModelResponse(parts=[ToolCallPart(tool_name="run_query", args={"sql": good, "columns": columns}),
+                                        ToolCallPart(tool_name="run_query", args={"sql": good, "columns": columns})])
+        retry = [p for p in messages[-1].parts if isinstance(p, RetryPromptPart)]
+        assert retry and "query calls" in retry[0].model_response()
+        assert "run_query" not in [t.name for t in info.function_tools]
+        return tool_call("deliver_analysis", summary="West leads.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        report = run(store, profiler, analyst, dataset, "Total by region")
+    assert report.analysis is not None and report.analysis.summary == "West leads."
 
 
 def test_failed_checks_come_back_in_the_tool_result_and_are_recorded(store, people, agents):

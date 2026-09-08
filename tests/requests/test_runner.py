@@ -1,15 +1,17 @@
 import asyncio
+from dataclasses import replace
 from datetime import timedelta
 
 import duckdb
 import pytest
 from pydantic_ai.messages import ModelResponse, ToolCallPart
+from pydantic_ai.models.function import FunctionModel
 
 from vis_agent.render.base import RenderFailed
 from vis_agent.requests import runner
 from vis_agent.requests.models import STEPS, Caller
 from vis_agent.requests.runner import answer_request, create_request, latest_unfinished, run_request
-from tests.requests.conftest import CHART_SPEC, prompt_of, tool_returns
+from tests.requests.conftest import CHART_SPEC, designer_drive, prompt_of, tool_returns
 
 CHAT = Caller(kind="chat", conversation_id="chat-1")
 
@@ -258,7 +260,53 @@ def test_a_designer_that_cannot_finish_delivers_the_table(deps, dataset_id, fake
     request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
     outcome = run(run_request(deps, request.request_id))
     assert outcome.status == "done" and outcome.artifact.chart is None and outcome.artifact.rows
-    assert "could not finish" in outcome.artifact.no_chart_reason and not fake_render
+    assert outcome.artifact.no_chart_reason == "The designer could not finish: it timed out"
+    assert not fake_render
+
+
+def test_a_failed_design_runs_once_more_on_the_fallback_designer(
+    deps, dataset_id, fake_models, fake_render, monkeypatch,
+):
+    from vis_agent.designer.models import DesignReport
+
+    fallback_deps = replace(deps, designer_fallback=deps.designer)
+    real_design = runner.design_chart
+    calls = []
+
+    async def with_fallback(report, designer, brief, **kwargs):
+        calls.append(designer)
+        if len(calls) == 1:
+            return DesignReport(dataset_id=report.dataset_id, question=report.question, language=report.language,
+                                warnings=["The designer could not finish: it timed out"], seconds=0,
+                                created_at=report.created_at)
+        return await real_design(report, designer, brief, **kwargs)
+
+    monkeypatch.setattr(runner, "design_chart", with_fallback)
+    request = create_request(fallback_deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+    outcome = run(run_request(fallback_deps, request.request_id))
+    assert outcome.status == "done" and outcome.artifact.chart == "bar"
+    assert calls == [deps.designer, fallback_deps.designer_fallback]
+    assert len(outcome.artifact.warnings) == 1 and "fallback model" in outcome.artifact.warnings[0]
+
+
+def test_a_looping_designer_is_cut_short_and_rescued_by_the_fallback(deps, dataset_id, fake_models, fake_render):
+    from vis_agent.designer.agent import create_designer
+
+    looping_calls = []
+
+    def looping(messages, info):
+        looping_calls.append(1)
+        return ModelResponse(parts=[ToolCallPart(tool_name="recommend_charts", args={"intent": "compare"})])
+
+    fallback = create_designer("test")
+    rescued = replace(deps, designer_fallback=fallback)
+    with deps.designer.override(model=FunctionModel(looping)), fallback.override(model=FunctionModel(designer_drive)):
+        request = create_request(rescued, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+        outcome = run(run_request(rescued, request.request_id))
+    assert len(looping_calls) == 4  # two shortlists, one unknown-tool retry, then the run ends
+    assert outcome.status == "done" and outcome.artifact.chart == "bar"
+    assert len(outcome.artifact.warnings) == 1 and "fallback model" in outcome.artifact.warnings[0]
+    assert "exceeded max retries" in outcome.artifact.warnings[0]
 
 
 def test_the_artifact_carries_the_renderers_compromises(deps, dataset_id, fake_models, monkeypatch):
