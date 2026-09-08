@@ -412,6 +412,17 @@ Two conventions this round settled: the reflection models (GPT-5.6 sol, Opus 5) 
 at runtime; and an optimizer's text is transplanted only after it is rewritten in the runtime's terms and
 beats the seed on the runtime evaluation, then checked in the browser.
 
+### An ordinal axis sorted as text
+
+The report chart from the browser check had its age groups in the order 15-30, 30-45, 45-60, "under 15",
+"over 60". The profiler had measured the scale correctly (`أقل من 15 < 15-30 < 30-45 < 45-60 < أكثر من 60`)
+and the fact reached the analyst, which still wrote `ORDER BY age_group`: text order puts digits before
+Arabic letters. The designer keeps an ordinal's order on purpose (`sort none`), and no check looked at it.
+Fixed on the branch (351f7d7): an analyst rule to order an ordinal column by its scale with a CASE over
+the levels, an error-level check `ordinal_in_order` next to `time_in_order` that sends the text order back
+with the exact ORDER BY to write, a unit test on the same rows, and an analyst evaluation case built from
+the file. On the real analyst the plain question then came back in scale order with no failed check.
+
 ## Left for later
 
 - The analyst sometimes returns a clarification question for a plain question (about one case in
