@@ -7,11 +7,14 @@ from vis_agent.designer.models import Compromise
 from vis_agent.designer.syntax import KEYS, STYLE_KEYS, parse, to_text
 from vis_agent.render.base import Capability, RENDERERS, Rendered, capability_for
 
-from .conftest import cities, gender_code_and_label, gender_share, monthly, own_share_by_region
+from .conftest import (cities, gender_code_and_label, gender_share, monthly, own_share_by_region,
+                       two_same_unit_measures, two_same_unit_measures_by_city, two_units)
 
 
 COLUMN = "vis column\ntitle Cities\ndescription Counts by city\nbind\n  category city\n  value violations\n"
 LINE = "vis line\ntitle Visits\ndescription Monthly visits\nbind\n  time month\n  value visits\n"
+MULTI_FOLD = ("vis multi_line\ntitle Injuries and deaths\ndescription Monthly injuries and deaths\nbind\n"
+              "  time month\nfold\n  - injuries\n  - deaths\n")
 
 
 def test_passing_arabic_donut_is_canonical_with_legend_compromise():
@@ -82,6 +85,50 @@ def test_c3_uses_text_keys_and_checks_false_values():
     assert len(violations) == 2
     assert "innerRadius" in violations[0].message
     assert "zero" in violations[1].message
+
+
+def test_multi_line_fold_passes_and_is_canonical():
+    check = check_spec(MULTI_FOLD, *two_same_unit_measures())
+    assert check.ok
+    assert "fold\n  - injuries\n  - deaths\n" in check.canonical
+    assert check.compromises == []
+
+
+def test_fold_refuses_explicit_group_binding_only_once():
+    text = MULTI_FOLD.replace("  time month\n", "  time month\n  group injuries\n")
+    check = check_spec(text, *two_same_unit_measures())
+    assert [(violation.rule, violation.message) for violation in check.violations] == [
+        ("C20", "fold provides the 'group' role; remove the 'group' binding."),
+    ]
+
+
+def test_line_rejects_fold_as_a_key_and_still_needs_value():
+    check = check_spec(MULTI_FOLD.replace("vis multi_line", "vis line"), *two_same_unit_measures())
+    assert {"C2", "C3"} <= {violation.rule for violation in check.violations}
+    assert any("fold" in violation.message for violation in check.violations if violation.rule == "C3")
+
+
+def test_fold_error_names_nonmeasure_column():
+    text = MULTI_FOLD.replace("  - deaths", "  - month")
+    check = check_spec(text, *two_same_unit_measures())
+    assert any(violation.rule == "C20" and "month" in violation.message for violation in check.violations)
+
+
+def test_fold_error_points_different_units_to_dual_axes():
+    text = ("vis multi_line\ntitle Visits and revenue\ndescription Monthly visits and revenue\nbind\n"
+            "  time month\nfold\n  - visits\n  - revenue\n")
+    check = check_spec(text, *two_units())
+    assert any(violation.rule == "C20" and "dual_axes" in violation.message for violation in check.violations)
+
+
+def test_emphasis_can_name_a_folded_series():
+    columns, result = two_same_unit_measures_by_city()
+    columns[1].meaning = "Total revenue"
+    text = ("vis grouped_column\ntitle Revenue and cost\ndescription Revenue and cost by city\nbind\n"
+            "  category city\nfold\n  - revenue\n  - cost\nemphasis\n  - Total revenue\n")
+    check = check_spec(text, columns, result)
+    assert check.ok
+    assert not any(violation.rule == "C9" for violation in check.violations)
 
 
 def test_c10_hard_failure_is_reported_once():

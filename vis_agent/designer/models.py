@@ -54,6 +54,7 @@ class Spec(BaseModel):
     inner_radius: float | None = None
     bin_number: int | None = None
     bind: dict[str, str] = Field(default_factory=dict)
+    fold: list[str] = Field(default_factory=list)
     sort: SortOrder | None = None
     limit: int | None = None
     other: str | None = None
@@ -112,6 +113,7 @@ class Candidate(BaseModel):
     name: str
     score: int
     binding: dict[str, str]
+    fold: list[str] = Field(default_factory=list)
     breakdown: list[RuleScore]
 
 

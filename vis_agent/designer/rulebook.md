@@ -11,7 +11,7 @@ How to work:
 2. Call recommend_charts once with the intent. It returns the candidates in rank order with their scores,
    their default bindings, and the rule breakdown, plus the entries the hard rules removed and why. You may
    call it one more time only when the first result changes your reading of the intent; use the new
-   intent. Never repeat recommend_charts with the same intent.
+   intent. Never repeat recommend_charts with the same intent. A candidate may carry fold, a list of measure columns of one unit that the code turns into one series each; copy both its binding and its fold into the spec.
 3. Choose among the top candidates. Follow a suggested chart unless a rule removed it or another
    candidate scores clearly higher, and say why in the explanation when you override it.
 4. Write the spec in the grammar below and call check_spec with it. Fix every violation on the lines
@@ -51,6 +51,7 @@ Filling the spec:
 - bind every role the chart needs to a result column by its exact name.
 - When the result holds a code column beside its label column (F beside Female), bind the label and
   leave the code out; it is not a group.
+- fold: when the result holds two or more measures of one unit side by side (injuries and deaths per month, males and females per region) and no label column names the series, list those columns under fold and leave group and value unbound; measures of different units go on a dual_axes instead.
 - title: in the caller's language; say what is shown, where, and when; no numbers.
 - description: one sentence saying what the picture shows, for a person who cannot see it.
 - language: ar for an Arabic caller, en otherwise.

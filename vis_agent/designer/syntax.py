@@ -13,7 +13,7 @@ KEYS = {
     "width": ("width", "int"), "height": ("height", "int"),
     "axisXTitle": ("axis_x_title", "text"), "axisYTitle": ("axis_y_title", "text"),
     "innerRadius": ("inner_radius", "number"), "binNumber": ("bin_number", "int"),
-    "bind": ("bind", "section:pairs"), "style": ("style", "section:pairs"),
+    "bind": ("bind", "section:pairs"), "fold": ("fold", "section:list"), "style": ("style", "section:pairs"),
     "sort": ("sort", "enum:SortOrder"), "limit": ("limit", "int"), "other": ("other", "text"), "unknown": ("unknown", "text"),
     "emphasis": ("emphasis", "section:list"), "palette": ("palette", "section:list"),
     "direction": ("direction", "enum:Direction"), "zero": ("zero", "bool"),
@@ -152,7 +152,7 @@ def parse(text: str) -> Spec:
         elif indent == 2 and parent == "style":
             style_parent = key
             read_key(number, key, value, STYLE_KEYS)
-        elif indent == 2 and parent in ("emphasis", "palette"):
+        elif indent == 2 and parent in ("emphasis", "palette", "fold"):
             read_item(number, content, parent)
         elif indent == 4 and parent == "style" and style_parent == "palette":
             read_item(number, content, "palette")

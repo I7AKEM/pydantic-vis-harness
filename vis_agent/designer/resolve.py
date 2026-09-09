@@ -12,6 +12,7 @@ import duckdb
 from vis_agent.analyst.models import QueryResult, ResultColumn
 
 from .catalogue import CATALOGUE
+from .fold import fold
 from .models import Compromise, NumberFormat, Spec
 from .rules import ACCENT, ADDITIVE, BARS, COLUMNS
 from .syntax import parse_format
@@ -236,6 +237,10 @@ def _histogram(records: list[dict], bins: int, digits: str) -> list[dict]:
 def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Resolved:
     """Resolve a checked spec, retaining row counts and render-time compromises."""
     entry = CATALOGUE.get(spec.type)
+    if spec.fold:
+        folded = fold(columns, result, spec.fold, spec.language)
+        columns, result = folded.columns, folded.result
+        spec = spec.model_copy(update={"bind": {**spec.bind, "group": folded.series, "value": folded.value}})
     defaults = LANGUAGE_DEFAULTS[spec.language]
     number = parse_format(spec.format) if spec.format is not None else NumberFormat()
     number.digits = spec.digits

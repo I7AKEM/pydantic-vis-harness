@@ -51,6 +51,14 @@ def test_keys_per_entry():
     assert "binNumber" in CATALOGUE.get("histogram").keys
 
 
+def test_fold_keys_and_time_categories_are_explicit():
+    fold_charts = {"grouped_column", "stacked_column", "grouped_bar", "stacked_bar", "multi_line", "stacked_area"}
+    assert {entry.name for entry in CATALOGUE.entries if "fold" in entry.keys} == fold_charts
+    assert "time" in CATALOGUE.get("grouped_column").roles["category"].kinds
+    assert "time" in CATALOGUE.get("stacked_column").roles["category"].kinds
+    assert "time" not in CATALOGUE.get("grouped_bar").roles["category"].kinds
+
+
 def test_prompt_text_lists_every_entry():
     text = CATALOGUE.describe()
     for entry in CATALOGUE.entries:

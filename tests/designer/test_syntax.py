@@ -91,6 +91,14 @@ def test_round_trip_is_canonical():
     assert "\n\n" not in text and not text.endswith("\n\n")
 
 
+def test_fold_round_trip_follows_bind():
+    text = ("vis multi_line\ntitle T\ndescription D\nbind\n  time month\nfold\n"
+            "  - injuries\n  - deaths\n")
+    spec = parse(text)
+    assert spec.fold == ["injuries", "deaths"]
+    assert to_text(spec) == text
+
+
 def test_serializer_writes_every_key_in_fixed_order():
     spec = Spec(type="line", title="t", bind={"time": "month", "value": "n"}, zero=False, axis_y_min=80,
                 format="0,0 SAR", labels="off", palette=["#000000"], emphasis=["a"])

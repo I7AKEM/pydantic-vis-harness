@@ -10,7 +10,8 @@ from vis_agent.designer.resolve import ResolveError, resolve
 from vis_agent.designer.syntax import parse
 
 from .conftest import (cities, column, gender_share, grouped, monthly, raw_amounts,
-                       scatter_points, single_number, table, two_units)
+                       scatter_points, single_number, table, two_same_unit_measures,
+                       two_same_unit_measures_by_city, two_units)
 
 
 def city_spec(chart="column", **kwargs):
@@ -52,6 +53,35 @@ def test_grouped_and_stacked_catalogue_options(chart, flag):
     resolved = resolve(group_spec(chart), *grouped())
     assert resolved.config[flag] is True
     assert resolved.config["data"][0] == {"category": "City4", "group": "F", "value": 14}
+
+
+def test_multi_line_fold_resolves_two_series_in_month_order():
+    columns, result = two_same_unit_measures()
+    spec = Spec(type="multi_line", bind={"time": "month"}, fold=["injuries", "deaths"])
+    resolved = resolve(spec, columns, result)
+    assert resolved.config["type"] == "line"
+    assert resolved.config["data"] == [
+        {"time": month, "group": group, "value": value}
+        for month, injuries, deaths in result.rows
+        for group, value in [("injuries", injuries), ("deaths", deaths)]
+    ]
+    assert {row["group"] for row in resolved.config["data"]} == {"injuries", "deaths"}
+    assert resolved.drawn_rows == 24
+
+
+def test_grouped_column_fold_sorts_categories_by_combined_total():
+    columns, result = two_same_unit_measures_by_city()
+    result.rows.reverse()
+    spec = Spec(type="grouped_column", bind={"category": "city"}, fold=["revenue", "cost"])
+    resolved = resolve(spec, columns, result)
+    assert [(row["category"], row["group"], row["value"]) for row in resolved.config["data"]] == [
+        ("Riyadh", "revenue", 120), ("Riyadh", "cost", 80),
+        ("Jeddah", "revenue", 100), ("Jeddah", "cost", 75),
+        ("Dammam", "revenue", 90), ("Dammam", "cost", 55),
+        ("Mecca", "revenue", 70), ("Mecca", "cost", 50),
+        ("Medina", "revenue", 60), ("Medina", "cost", 45),
+    ]
+    assert spec.fold == ["revenue", "cost"]
 
 
 @pytest.mark.parametrize("bin_number,labels,count", [

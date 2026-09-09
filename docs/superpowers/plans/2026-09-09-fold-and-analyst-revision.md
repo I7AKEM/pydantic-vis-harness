@@ -82,13 +82,20 @@ def test_fold_avoids_a_name_the_result_already_uses():
     assert folded.series == "Series 2" and folded.result.columns == ["Series", "Series 2", "Value"]
 
 
-def test_fold_keeps_shares_and_mixed_aggregates_honest():
+def test_fold_keeps_shares_as_shares_with_their_denominator():
     columns = [column("region", "category"),
                column("share_a", "share", aggregate="share", unit="%", denominator="all"),
-               column("share_b", "share", aggregate="avg", unit="%", denominator="all")]
+               column("share_b", "share", aggregate="share", unit="%", denominator="all")]
     folded = fold(columns, table(columns, [["R1", 40.0, 60.0]]), ["share_a", "share_b"])
-    assert folded.columns[-1].kind == "share" and folded.columns[-1].aggregate == "none"
+    assert folded.columns[-1].kind == "share" and folded.columns[-1].aggregate == "share"
     assert folded.columns[-1].denominator == "all"
+
+
+def test_fold_refuses_a_count_beside_an_average():
+    columns = [column("status", "category"), column("orders", "measure", aggregate="count"),
+               column("avg_price", "measure", aggregate="avg")]
+    with pytest.raises(FoldError, match="aggregated the same way"):
+        fold(columns, table(columns, [["new", 12, 250.0]]), ["orders", "avg_price"])
 
 
 @pytest.mark.parametrize("names, fragment", [
@@ -146,11 +153,12 @@ class Folded:
 
 
 def foldable(columns: list[ResultColumn]) -> list[str]:
-    """The largest set of measures or shares sharing one kind and one unit, when it has two or more; the first on a tie."""
-    groups: dict[tuple[str, str | None], list[str]] = {}
+    """The largest set of measures or shares sharing one kind, one unit, and one aggregate, when it has two or more;
+    the first on a tie. A count beside an average never folds: they are not one scale, whatever their units say."""
+    groups: dict[tuple[str, str | None, str], list[str]] = {}
     for column in columns:
         if column.kind in ("measure", "share"):
-            groups.setdefault((column.kind, column.unit), []).append(column.name)
+            groups.setdefault((column.kind, column.unit, column.aggregate), []).append(column.name)
     best = max(groups.values(), key=len, default=[])
     return best if len(best) >= 2 else []
 
@@ -180,6 +188,9 @@ def fold(columns: list[ResultColumn], result: QueryResult, names: list[str], lan
         described = ", ".join(f"{c.name} ({c.kind}{', ' + c.unit if c.unit else ''})" for c in chosen)
         raise FoldError(f"fold needs columns of one kind and one unit; these differ: {described}. "
                         "Measures of different units go on a dual_axes.")
+    if len({c.aggregate for c in chosen}) > 1:
+        described = ", ".join(f"{c.name} ({c.aggregate})" for c in chosen)
+        raise FoldError(f"fold needs columns aggregated the same way; these differ: {described}.")
     series_meaning, value_meaning = PSEUDO_NAMES.get(language, PSEUDO_NAMES["en"])
     series_name = _unique(series_meaning, set(result.columns))
     value_name = _unique(value_meaning, set(result.columns) | {series_name})
@@ -187,13 +198,11 @@ def fold(columns: list[ResultColumn], result: QueryResult, names: list[str], lan
     if len(set(labels)) != len(labels):
         labels = [c.name for c in chosen]
     first = chosen[0]
-    aggregates = {c.aggregate for c in chosen}
     kept = [c for c in columns if c.name not in names]
     folded_columns = [*kept,
                       ResultColumn(name=series_name, meaning=series_meaning, kind="category", aggregate="none"),
                       ResultColumn(name=value_name, meaning=", ".join(labels), kind=first.kind, unit=first.unit,
-                                   aggregate=aggregates.pop() if len(aggregates) == 1 else "none",
-                                   denominator=first.denominator)]
+                                   aggregate=first.aggregate, denominator=first.denominator)]
     kept_index = [result.columns.index(c.name) for c in kept]
     fold_index = [result.columns.index(name) for name in names]
     rows = []

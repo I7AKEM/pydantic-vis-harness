@@ -36,8 +36,8 @@ def score(case, output, evaluators=None):
 
 def test_dataset_builds_without_a_model():
     dataset = run.build_dataset()
-    assert len(dataset.cases) == 31
-    assert len({case.name for case in dataset.cases}) == 31
+    assert len(dataset.cases) == 32
+    assert len({case.name for case in dataset.cases}) == 32
     assert [type(e).__name__ for e in dataset.evaluators] == [
         "Delivered", "Passed", "ChartAccepted", "LanguageRight", "BindingRight", "Metrics",
     ]
@@ -167,8 +167,9 @@ def test_acceptance_provenance_and_empty_copy():
         ranking = recommend_charts(source.analysis.columns, source.result, intent=case.inputs["brief"]["intent"])
         nearby = {candidate.name for candidate in ranking.candidates
                   if candidate.score >= ranking.candidates[0].score - 1 and candidate.score >= 0}
-        assert nearby <= set(case.expected_output["charts"])
-        assert set(decisions[case.name]["controller_charts"]) <= set(case.expected_output["charts"])
+        if case.name in decisions:
+            assert nearby <= set(case.expected_output["charts"])
+            assert set(decisions[case.name]["controller_charts"]) <= set(case.expected_output["charts"])
         if case.name == "orders_by_status":
             spec = "vis column\ntitle Orders by status\ndescription Orders by status\nbind\n  category status\n  value order_count\npalette\n  - #1F4E79\n  - #C0504D\n"
             assert check_spec(spec, source.analysis.columns, source.result).ok

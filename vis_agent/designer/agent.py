@@ -156,6 +156,9 @@ def grammar() -> str:
         elif key == "bind":
             description = ('section; two-space-indented lines "<role> <column name>"; roles '
                            + ", ".join(models.ROLES))
+        elif key == "fold":
+            description = ('section; lines "- <column name>"; two or more measure columns of one unit, drawn as one '
+                           'series each on a chart with a group role; leave group and value unbound, the code binds them')
         elif key == "style":
             description = "section; backgroundColor <hex>"
         elif key == "axisXTitle":

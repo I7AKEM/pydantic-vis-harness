@@ -380,6 +380,8 @@
   },
   "expect": "design",
   "charts": [
+   "multi_line",
+   "stacked_area",
    "line",
    "area",
    "column",
@@ -627,5 +629,28 @@
   "bind": {},
   "emphasis": null,
   "why": "Intent: compare. copy of deaths_by_gender with rows emptied Empty result expects clarification before any model request."
+ },
+ {
+  "name": "jeddah_monthly_injuries_and_deaths",
+  "report": "reports/jeddah_monthly_injuries_and_deaths.json",
+  "brief": {
+   "intent": "trend",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "multi_line",
+   "grouped_column",
+   "stacked_area",
+   "line",
+   "area"
+  ],
+  "language": "ar",
+  "bind": {
+   "time": "الشهر"
+  },
+  "emphasis": null,
+  "why": "The incident of 2026-09-09: wide same-unit measures over months."
  }
 ]

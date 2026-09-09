@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 from tests.designer.conftest import (cities, column, gender_share, grouped, monthly,
-                                     raw_amounts, scatter_points, table, two_units)
+                                     raw_amounts, scatter_points, table, two_same_unit_measures, two_units)
 from vis_agent.designer.catalogue import CATALOGUE
 from vis_agent.designer.resolve import resolve
 from vis_agent.designer.syntax import parse
@@ -110,6 +110,15 @@ def test_every_catalogue_entry_renders(entry, tmp_path):
         assert "<table>" in rendered.html.read_text()
         assert "const interactive = false" in rendered.html.read_text()
     keep_image(rendered, entry.name)
+
+
+def test_folded_monthly_measures_render_as_two_lines(tmp_path):
+    spec = parse("vis multi_line\ntitle Injuries and deaths\nbind\n  time month\nfold\n"
+                 "  - injuries\n  - deaths\n")
+    rendered = gptvis.render(spec, *two_same_unit_measures(), tmp_path)
+    assert rendered.non_background_share > 0.02
+    config = json.loads(rendered.config.read_text())
+    assert {row["group"] for row in config["gptvis"]["data"]} == {"injuries", "deaths"}
 
 
 def test_arabic_text_and_rtl_overrides(tmp_path):

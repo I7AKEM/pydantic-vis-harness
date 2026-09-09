@@ -83,3 +83,20 @@ def two_units():
     columns = [column("month", "time"), column("visits", "measure", aggregate="sum", unit="visits"),
                column("revenue", "measure", aggregate="sum", unit="SAR")]
     return columns, table(columns, [[f"2025-{i + 1:02}", 100 + i, 1000 + i] for i in range(12)])
+
+
+def two_same_unit_measures():
+    columns = [column("month", "time"),
+               column("injuries", "measure", aggregate="sum", unit="person"),
+               column("deaths", "measure", aggregate="sum", unit="person")]
+    rows = [[f"2025-{i + 1:02}", 15 + i % 9, 1 + i % 4] for i in range(12)]
+    return columns, table(columns, rows)
+
+
+def two_same_unit_measures_by_city():
+    columns = [column("city", "category"),
+               column("revenue", "measure", aggregate="sum", unit="SAR"),
+               column("cost", "measure", aggregate="sum", unit="SAR")]
+    rows = [["Riyadh", 120, 80], ["Jeddah", 100, 75], ["Dammam", 90, 55],
+            ["Mecca", 70, 50], ["Medina", 60, 45]]
+    return columns, table(columns, rows)

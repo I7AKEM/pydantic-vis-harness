@@ -5,7 +5,8 @@ from vis_agent.designer.recommend import default_binding, recommend_charts
 from vis_agent.designer.shape import describe
 
 from .conftest import (cities, column, gender_code_and_label, gender_share, grouped, monthly,
-                       own_share_by_region, single_number, table, two_units)
+                       own_share_by_region, single_number, table, two_same_unit_measures,
+                       two_same_unit_measures_by_city, two_units)
 
 
 def test_cities_ranking_and_binding():
@@ -83,6 +84,35 @@ def test_two_units_and_single_number():
     names = [c.name for c in recommend_charts(*two_units()).candidates]
     assert "dual_axes" in names and "line" in names
     assert recommend_charts(*single_number()).candidates[0].name == "table"
+
+
+def test_same_unit_monthly_measures_fold_into_multi_line():
+    answer = recommend_charts(*two_same_unit_measures(), intent="trend")
+    assert answer.candidates[0].name == "multi_line"
+    assert answer.candidates[0].binding == {"time": "month"}
+    assert answer.candidates[0].fold == ["injuries", "deaths"]
+    line = next(candidate for candidate in answer.candidates if candidate.name == "line")
+    assert any(rule.rule == "S9" and "deaths" in rule.explanation for rule in line.breakdown)
+    dual_axes = next(rejection for rejection in answer.rejected if rejection.name == "dual_axes")
+    assert dual_axes.rule == "H10"
+
+
+def test_same_unit_city_measures_fold_into_grouped_charts():
+    answer = recommend_charts(*two_same_unit_measures_by_city(), intent="compare")
+    assert answer.candidates[0].name in {"grouped_column", "grouped_bar"}
+    assert answer.candidates[0].binding == {"category": "city"}
+    assert answer.candidates[0].fold == ["revenue", "cost"]
+    stacked = next(candidate for candidate in answer.candidates if candidate.name == "stacked_column")
+    assert stacked.fold == ["revenue", "cost"]
+
+
+def test_two_units_and_real_groups_are_not_folded():
+    answer = recommend_charts(*two_units(), intent="compare", suggested="dual_axes")
+    assert answer.candidates[0].name == "dual_axes"
+    assert all(candidate.fold == [] for candidate in answer.candidates)
+    grouped_answer = recommend_charts(*grouped(), intent="compare")
+    grouped_column = next(candidate for candidate in grouped_answer.candidates if candidate.name == "grouped_column")
+    assert grouped_column.fold == []
 
 
 def test_explanations_and_stable_order():

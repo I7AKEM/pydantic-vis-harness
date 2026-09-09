@@ -5,6 +5,7 @@ import vis_agent.render.gptvis  # noqa: F401
 from vis_agent.render.base import capability_for
 
 from .catalogue import CATALOGUE
+from .fold import FoldError, fold
 from .models import Compromise, Spec, SpecCheck, SpecError, Violation
 from .rules import LINES, check_rules
 from .shape import ColumnShape, describe
@@ -76,8 +77,21 @@ def check_spec(
         fail("C1", f"{renderer} does not draw {spec.type}: {capability.rejected['*']}",
              "Choose a catalogue entry supported by the renderer")
 
+    bind = dict(spec.bind)
+    if spec.fold and "fold" in entry.keys:
+        for role in ("group", "value"):
+            if role in bind:
+                fail("C20", f"fold provides the '{role}' role; remove the '{role}' binding.",
+                     f"Remove the '{role}' line under bind")
+        try:
+            folded = fold(columns, result, spec.fold, spec.language)
+        except FoldError as error:
+            fail("C20", f"fold: {error}", "Fold two or more measure columns of one unit, or drop fold")
+        else:
+            columns, result = folded.columns, folded.result
+            bind.update(group=folded.series, value=folded.value)
     by_name = {column.name: column for column in columns}
-    for role, name in spec.bind.items():
+    for role, name in bind.items():
         if name not in by_name:
             fail("C2", f"Bound column '{name}' for role '{role}' does not exist.",
                  f"Bind '{role}' to a column in the result")
@@ -87,7 +101,7 @@ def check_spec(
             fail("C2", f"Role '{role}' does not accept column '{name}' of kind '{by_name[name].kind}'.",
                  f"Bind '{role}' to one of these kinds: {', '.join(entry.roles[role].kinds)}")
     for role, requirement in entry.roles.items():
-        if requirement.required and role not in spec.bind:
+        if requirement.required and role not in bind:
             fail("C2", f"Required role '{role}' is missing.", f"Bind the '{role}' role")
 
     present = _present_keys(spec)
@@ -96,7 +110,7 @@ def check_spec(
             fail("C3", f"{spec.type} does not accept key '{key}'.", f"Remove '{key}'")
 
     shape = describe(columns, result)
-    binding = {role: shape.column(name) for role, name in spec.bind.items() if name in by_name}
+    binding = {role: shape.column(name) for role, name in bind.items() if name in by_name}
     # check_rules owns C10, including all hard-rule failures, so call it only once.
     violations.extend(check_rules(entry, spec, shape, binding))
     compromises = _rule_compromises(spec, binding, violations)

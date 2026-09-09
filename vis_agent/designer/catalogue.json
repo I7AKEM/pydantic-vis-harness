@@ -101,61 +101,8 @@
           "kinds": [
             "category",
             "ordinal",
-            "geography"
-          ],
-          "required": true
-        },
-        "group": {
-          "kinds": [
-            "category",
-            "ordinal",
-            "geography"
-          ],
-          "required": true
-        },
-        "value": {
-          "kinds": [
-            "measure",
-            "share"
-          ],
-          "required": true
-        }
-      },
-      "fields": {
-        "category": "category",
-        "group": "group",
-        "value": "value"
-      },
-      "rating": "recommended",
-      "keys": [
-        "axisXTitle",
-        "axisYTitle"
-      ],
-      "category_max": 50,
-      "group_max": 10,
-      "draw": {
-        "type": "column",
-        "options": {
-          "group": true
-        }
-      },
-      "summary": "Compare groups side by side within categories using category and group labels and a measure or share."
-    },
-    {
-      "name": "stacked_column",
-      "aliases": [
-        "stacked bars"
-      ],
-      "purposes": [
-        "composition",
-        "compare"
-      ],
-      "roles": {
-        "category": {
-          "kinds": [
-            "category",
-            "ordinal",
-            "geography"
+            "geography",
+            "time"
           ],
           "required": true
         },
@@ -184,7 +131,64 @@
       "keys": [
         "axisXTitle",
         "axisYTitle",
-        "percent"
+        "fold"
+      ],
+      "category_max": 50,
+      "group_max": 10,
+      "draw": {
+        "type": "column",
+        "options": {
+          "group": true
+        }
+      },
+      "summary": "Compare groups side by side within labels or time periods using category and group labels and a measure or share."
+    },
+    {
+      "name": "stacked_column",
+      "aliases": [
+        "stacked bars"
+      ],
+      "purposes": [
+        "composition",
+        "compare"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography",
+            "time"
+          ],
+          "required": true
+        },
+        "group": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "category",
+        "group": "group",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle",
+        "percent",
+        "fold"
       ],
       "category_max": 50,
       "group_max": 10,
@@ -195,7 +199,7 @@
           "stack": true
         }
       },
-      "summary": "Compare composition across categories using category and group labels and an additive value."
+      "summary": "Compare composition across labels or time periods using category and group labels and an additive value."
     },
     {
       "name": "grouped_bar",
@@ -236,7 +240,8 @@
       "rating": "recommended",
       "keys": [
         "axisXTitle",
-        "axisYTitle"
+        "axisYTitle",
+        "fold"
       ],
       "category_max": 50,
       "group_max": 10,
@@ -289,7 +294,8 @@
       "keys": [
         "axisXTitle",
         "axisYTitle",
-        "percent"
+        "percent",
+        "fold"
       ],
       "category_max": 50,
       "group_max": 10,
@@ -393,7 +399,8 @@
         "zero",
         "axisYMin",
         "axisYMax",
-        "axisYScale"
+        "axisYScale",
+        "fold"
       ],
       "min_points": 3,
       "group_max": 10,
@@ -488,7 +495,8 @@
         "axisXTitle",
         "axisYTitle",
         "percent",
-        "zero"
+        "zero",
+        "fold"
       ],
       "min_points": 3,
       "group_max": 10,
