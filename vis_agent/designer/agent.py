@@ -11,6 +11,7 @@ from typing import get_args
 
 from pydantic import BaseModel
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolOutput
+from pydantic_ai.models import Model
 from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded
 from pydantic_ai.tools import ToolDefinition
 from pydantic_ai.usage import RunUsage, UsageLimits
@@ -278,7 +279,7 @@ def ask_clarification(ctx: RunContext[DesignerDeps], question: str, reason: str)
     return Clarification(question=question, reason=reason)
 
 
-def create_designer(model: str) -> Agent[DesignerDeps, Design | Clarification]:
+def create_designer(model: str | Model) -> Agent[DesignerDeps, Design | Clarification]:
     agent = Agent(
         model,
         name="designer",

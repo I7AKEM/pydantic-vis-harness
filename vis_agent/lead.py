@@ -5,6 +5,7 @@ import re
 
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed
 from pydantic_ai.durable_exec.temporal import TemporalDurability
+from pydantic_ai.models import Model
 from pydantic_ai.tools import ToolDefinition
 from pydantic_ai_harness import Advisor
 
@@ -236,7 +237,7 @@ async def find_artifact(ctx: RunContext[AppDeps], artifact_id: str = "", dataset
         raise ModelRetry(str(exc)) from exc
 
 
-def create_lead(model: str, advisor_model: str | None = None) -> Agent[AppDeps, str]:
+def create_lead(model: str | Model, advisor_model: str | None = None) -> Agent[AppDeps, str]:
     capabilities = []
     if advisor_model:
         capabilities.append(Advisor(advisor_model, mode="native"))

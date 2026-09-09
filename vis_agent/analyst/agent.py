@@ -13,6 +13,7 @@ import duckdb
 
 from pydantic import BaseModel
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed, ToolOutput
+from pydantic_ai.models import Model
 from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded
 from pydantic_ai.tools import ToolDefinition
 from pydantic_ai.usage import RunUsage, UsageLimits
@@ -234,7 +235,7 @@ def ask_clarification(ctx: RunContext[AnalystDeps], question: str, reason: str) 
     return Clarification(question=question, reason=reason)
 
 
-def create_analyst(model: str) -> Agent[AnalystDeps, Analysis | Clarification]:
+def create_analyst(model: str | Model) -> Agent[AnalystDeps, Analysis | Clarification]:
     agent = Agent(
         model,
         name="analyst",

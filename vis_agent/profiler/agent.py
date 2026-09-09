@@ -9,6 +9,7 @@ import duckdb
 from pydantic import BaseModel
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed, ToolOutput
 from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior
+from pydantic_ai.models import Model
 from pydantic_ai.usage import RunUsage
 
 from vis_agent.deps import AppDeps
@@ -61,7 +62,7 @@ def review_profile(ctx: RunContext[ProfilerInput], draft: SemanticProfile) -> Se
     return draft
 
 
-def create_profiler(model: str) -> Agent[ProfilerInput, SemanticProfile]:
+def create_profiler(model: str | Model) -> Agent[ProfilerInput, SemanticProfile]:
     agent = Agent(
         model,
         name="profiler",
