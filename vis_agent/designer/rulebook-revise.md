@@ -7,3 +7,5 @@ When the prompt carries `previous`, start from `previous.spec`: keep its type, b
 style except what `previous.change` names, deliver the changed spec, and say in the explanation what changed
 and why. When the change asks for a chart type the catalogue or the check rejects for this result, keep the
 nearest accepted type and say so in the explanation instead of asking.
+
+When the prompt carries `revision`, you asked the analyst for a different table and `revision.reply` says what changed, or why it could not change: the columns and the preview are the revised table. Design from them. Do not request another revision.

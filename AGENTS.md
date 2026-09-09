@@ -56,6 +56,7 @@ Requests package file map:
 - A spent budget with nothing passing is a technical failure that carries its diagnostics (`UnexpectedModelBehavior`, reported as a warning and then as the request's error or no-chart reason); it is never turned into a question to the caller. A question is only for a decision the caller can make.
 - When the designer fails, the request runner runs the design step once more on `AppDeps.designer_fallback`
   (`PYDANTIC_AI_DESIGNER_FALLBACK_MODEL`, the lead's model by default) and says so in a warning.
+- The design step may ask the analyst for a revised table once per request: the designer's `request_analysis_revision` output becomes an `AnalysisRevision`, the runner saves it on the request as `revision` before the analyst runs, runs the analyst with it as `previous.feedback` (loading `vis_agent/analyst/rulebook-repair.md`), keeps the earlier analysis under `steps.analyze_before_revision`, and runs the designer again with the request and the analyst's reply as `revision`. A second request, including from the fallback designer, is a failure, and a crash after the saved decision never revises again.
 - Tests use fake models through agent.override and never hand-build RunContext.
 - Preserve the Advisor and TemporalDurability capabilities on the lead. CodeMode was removed after
   Phase 1 because no lead tool runs inside its sandbox yet; bring it back when the analyst's query tool does.

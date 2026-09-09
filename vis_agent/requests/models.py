@@ -5,7 +5,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from vis_agent.analyst.models import AnalysisReport, Clarification, ResultColumn
+from vis_agent.analyst.models import AnalysisReport, AnalysisRevision, Clarification, ResultColumn
 from vis_agent.designer.models import ChartType, Compromise, Design
 
 RequestType = Literal["new", "revise"]
@@ -79,6 +79,7 @@ class Request(BaseModel):
     language: str | None = None
     status: RequestStatus = "running"
     requests_used: int = 0
+    revision: AnalysisRevision | None = None
     steps: dict[str, Any] = Field(default_factory=dict)
     clarifications: list[Exchange] = Field(default_factory=list)
     artifact_id: str | None = None

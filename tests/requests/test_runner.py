@@ -7,11 +7,12 @@ import pytest
 from pydantic_ai.messages import ModelResponse, ToolCallPart
 from pydantic_ai.models.function import FunctionModel
 
+from vis_agent.designer.agent import create_designer
 from vis_agent.render.base import RenderFailed
 from vis_agent.requests import runner
 from vis_agent.requests.models import STEPS, Caller
 from vis_agent.requests.runner import answer_request, create_request, latest_unfinished, run_request
-from tests.requests.conftest import CHART_SPEC, designer_drive, prompt_of, tool_returns
+from tests.requests.conftest import CHART_SPEC, Counting, analyst_drive, designer_drive, prompt_of, tool_returns
 
 CHAT = Caller(kind="chat", conversation_id="chat-1")
 
@@ -39,6 +40,7 @@ def test_a_new_request_runs_every_step_and_delivers(deps, dataset_id, fake_model
     assert artifact.summary == "West leads with 20." and fake_render
     full = deps.requests.get_artifact(artifact.artifact_id)
     assert full.lineage.catalogue_version and full.lineage.rules_version and full.review["status"] == "not_reviewed"
+    assert saved.revision is None and "analyze_before_revision" not in saved.steps
     assert run(run_request(deps, request.request_id)).artifact.artifact_id == artifact.artifact_id
 
 
@@ -347,3 +349,180 @@ def test_a_revision_speaks_the_language_of_the_change(deps, dataset_id, fake_mod
         run(run_request(deps, second.request_id))
     assert seen["language"] == "Arabic"
     assert deps.requests.get_request(second.request_id).language == "Arabic"
+
+
+def test_the_designer_can_ask_the_analyst_for_a_revised_table_once(
+    deps, dataset_id, fake_models, fake_render, agents,
+):
+    _profiler, analyst, designer, _lead = agents
+    first_sql = f'SELECT region, sum(amount) AS total FROM "{dataset_id}" GROUP BY 1 ORDER BY 2 DESC'
+    second_sql = (f'SELECT region, date AS day, sum(amount) AS total FROM "{dataset_id}" '
+                  "GROUP BY 1, 2 ORDER BY 1, 2")
+
+    def revise_analysis(messages, info):
+        prompt = prompt_of(messages)
+        feedback = prompt.get("previous", {}).get("feedback")
+        if feedback is None:
+            return analyst_drive(messages, info)
+        assert feedback["problem"] == "Need one row per region and day"
+        if not tool_returns(messages):
+            return ModelResponse(parts=[ToolCallPart(tool_name="run_query", args={
+                "sql": (f'SELECT region, date AS day, sum(amount) AS total FROM {prompt["table"]} '
+                        "GROUP BY 1, 2 ORDER BY 1, 2"),
+                "columns": [
+                    {"name": "region", "meaning": "Region", "kind": "category", "source": "region"},
+                    {"name": "day", "meaning": "Day", "kind": "ordinal", "source": "date"},
+                    {"name": "total", "meaning": "Total sales", "kind": "measure", "source": "amount",
+                     "aggregate": "sum"},
+                ],
+            })])
+        return ModelResponse(parts=[ToolCallPart(tool_name="deliver_analysis", args={
+            "summary": "Two regions on two days.", "assumptions": ["Kept the total."],
+        })])
+
+    def revise_design(messages, info):
+        prompt = prompt_of(messages)
+        if "revision" not in prompt:
+            return ModelResponse(parts=[ToolCallPart(tool_name="request_analysis_revision", args={
+                "problem": "Need one row per region and day",
+                "requested_change": "Add the day",
+                "preserve": "The total by region",
+            })])
+        assert prompt["revision"]["reply"] == "Two regions on two days. Kept the total."
+        assert prompt["revision"]["request"]["problem"] == "Need one row per region and day"
+        return designer_drive(messages, info)
+
+    analyst_runs, designer_runs = Counting(revise_analysis), Counting(revise_design)
+    with analyst.override(model=FunctionModel(analyst_runs)), designer.override(model=FunctionModel(designer_runs)):
+        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+        outcome = run(run_request(deps, request.request_id))
+
+    assert outcome.status == "done" and outcome.artifact.chart == "bar"
+    assert outcome.artifact.rows == [["East", "2026-01-01", 10], ["West", "2026-01-02", 20]]
+    assert "asked the analyst to revise the table" in outcome.artifact.warnings[0]
+    saved = deps.requests.get_request(request.request_id)
+    assert saved.revision.problem == "Need one row per region and day"
+    assert saved.steps["analyze_before_revision"]["analysis"]["sql"] == first_sql
+    assert saved.steps["analyze"]["analysis"]["sql"] == second_sql
+    assert analyst_runs.runs == 2 and designer_runs.runs == 2
+
+
+def test_a_second_revision_request_is_refused_and_the_fallback_delivers(
+    deps, dataset_id, fake_models, fake_render, agents,
+):
+    _profiler, analyst, designer, _lead = agents
+    fallback = create_designer("test")
+    rescued = replace(deps, designer_fallback=fallback)
+
+    def revise_analysis(messages, info):
+        prompt = prompt_of(messages)
+        if prompt.get("previous", {}).get("feedback") and not tool_returns(messages):
+            return ModelResponse(parts=[ToolCallPart(tool_name="run_query", args={
+                "sql": f'SELECT region, sum(amount) AS total FROM {prompt["table"]} GROUP BY 1 ORDER BY 2 DESC',
+                "columns": [
+                    {"name": "region", "meaning": "Region", "kind": "category", "source": "region"},
+                    {"name": "total", "meaning": "Total sales", "kind": "measure", "source": "amount",
+                     "aggregate": "sum"},
+                ],
+            })])
+        if prompt.get("previous", {}).get("feedback"):
+            return ModelResponse(parts=[ToolCallPart(tool_name="deliver_analysis", args={
+                "summary": "The table is unchanged.", "assumptions": ["Kept the total."],
+            })])
+        return analyst_drive(messages, info)
+
+    def request_revision(messages, info):
+        return ModelResponse(parts=[ToolCallPart(tool_name="request_analysis_revision", args={
+            "problem": "Need another table", "requested_change": "Change the shape", "preserve": "The total",
+        })])
+
+    def fallback_drive(messages, info):
+        # The fallback designer sees the revision round the first designer asked for.
+        assert prompt_of(messages)["revision"]["reply"] == "The table is unchanged. Kept the total."
+        return designer_drive(messages, info)
+
+    analyst_runs = Counting(revise_analysis)
+    with analyst.override(model=FunctionModel(analyst_runs)), \
+            designer.override(model=FunctionModel(request_revision)), \
+            fallback.override(model=FunctionModel(fallback_drive)):
+        request = create_request(rescued, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+        outcome = run(run_request(rescued, request.request_id))
+
+    assert outcome.status == "done" and outcome.artifact.chart == "bar"
+    assert analyst_runs.runs == 2
+    assert any("designer asked for a second table revision" in warning for warning in outcome.artifact.warnings)
+    assert any("fallback model" in warning for warning in outcome.artifact.warnings)
+
+
+def test_a_revision_the_analyst_cannot_make_keeps_the_first_table(
+    deps, dataset_id, fake_models, fake_render, agents,
+):
+    _profiler, analyst, designer, _lead = agents
+
+    def cannot_revise(messages, info):
+        prompt = prompt_of(messages)
+        if prompt.get("previous", {}).get("feedback"):
+            return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification", args={
+                "question": "Which day?", "reason": "The table cannot support the requested day.",
+            })])
+        return analyst_drive(messages, info)
+
+    def revise_then_deliver(messages, info):
+        prompt = prompt_of(messages)
+        if "revision" not in prompt:
+            return ModelResponse(parts=[ToolCallPart(tool_name="request_analysis_revision", args={
+                "problem": "Need a day", "requested_change": "Add the day", "preserve": "The totals",
+            })])
+        assert prompt["revision"]["reply"].startswith("The analyst did not revise the table")
+        return designer_drive(messages, info)
+
+    with analyst.override(model=FunctionModel(cannot_revise)), designer.override(model=FunctionModel(revise_then_deliver)):
+        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+        outcome = run(run_request(deps, request.request_id))
+
+    assert outcome.status == "done"
+    assert outcome.artifact.rows == [["West", 20], ["East", 10]]
+    saved = deps.requests.get_request(request.request_id)
+    assert "analyze_before_revision" not in saved.steps
+    assert saved.revision is not None
+
+
+def test_a_crash_after_the_revision_decision_never_revises_again(
+    deps, dataset_id, fake_models, fake_render, agents, monkeypatch,
+):
+    _profiler, _analyst, designer, _lead = agents
+    real_analyze = runner.analyze_dataset
+    calls = []
+    first_reports = []
+
+    async def crash_on_revision(*args, **kwargs):
+        calls.append(1)
+        if len(calls) == 2:
+            raise RuntimeError("crashed after saving the revision")
+        report = await real_analyze(*args, **kwargs)
+        first_reports.append(report.model_dump(mode="json"))
+        return report
+
+    design_runs = []
+
+    def revise_then_deliver(messages, info):
+        if not tool_returns(messages):
+            design_runs.append(1)
+        if len(design_runs) == 1:
+            return ModelResponse(parts=[ToolCallPart(tool_name="request_analysis_revision", args={
+                "problem": "Need a day", "requested_change": "Add the day", "preserve": "The total",
+            })])
+        return designer_drive(messages, info)
+
+    monkeypatch.setattr(runner, "analyze_dataset", crash_on_revision)
+    with designer.override(model=FunctionModel(revise_then_deliver)):
+        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+        original = None
+        with pytest.raises(RuntimeError, match="crashed after saving"):
+            run(run_request(deps, request.request_id))
+        saved = deps.requests.get_request(request.request_id)
+        assert saved.revision is not None and saved.steps["analyze"] == first_reports[0]
+        outcome = run(run_request(deps, request.request_id))
+
+    assert outcome.status == "done" and outcome.artifact.chart == "bar"
+    assert len(calls) == 2

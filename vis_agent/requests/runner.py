@@ -11,7 +11,7 @@ import duckdb
 from pydantic_ai.usage import RunUsage
 
 from vis_agent.analyst.agent import analyze_dataset, detect_language
-from vis_agent.analyst.models import AnalysisReport, Clarification, PreviousAnalysis
+from vis_agent.analyst.models import AnalysisReport, AnalysisRevision, Clarification, PreviousAnalysis, RevisionRound
 from vis_agent.deps import AppDeps
 from vis_agent.designer.agent import design_chart, render_design, render_id
 from vis_agent.designer.models import Compromise, DesignReport, PreviousDesign
@@ -235,6 +235,54 @@ async def analyze(deps: AppDeps, request: Request, usage: RunUsage, budget: int 
     return report.model_dump(mode="json")
 
 
+async def revise_analysis(deps: AppDeps, request: Request, report: AnalysisReport, revision: AnalysisRevision,
+                          usage: RunUsage, budget: int | None) -> tuple[AnalysisReport, RevisionRound, str]:
+    """One revised analysis for the designer's request. The decision is saved first, so a crash after it never revises again."""
+    store = requests_of(deps)
+    request.revision = revision
+    await asyncio.to_thread(store.save_request, request)
+    log.info("The designer asked the analyst to revise the table of %s: %s", request.request_id, revision.problem)
+    _check_budget(request, budget)
+    feedback = PreviousAnalysis(sql=report.analysis.sql, columns=report.analysis.columns,
+                                change=revision.requested_change, feedback=revision)
+    revised = await analyze_dataset(deps.store, deps.profiler, deps.analyst, request.dataset_id, report.question,
+                                    usage=usage, clarifications=pairs(request), previous=feedback,
+                                    language=request.language)
+    if revised.analysis is not None and revised.result is not None:
+        request.steps["analyze_before_revision"] = request.steps["analyze"]
+        request.steps["analyze"] = revised.model_dump(mode="json")
+        await asyncio.to_thread(store.save_request, request)
+        reply = " ".join([revised.analysis.summary, *revised.analysis.assumptions])
+        note = f"The designer asked the analyst to revise the table ({revision.problem}); the chart comes from the revised table."
+        return revised, RevisionRound(request=revision, reply=reply), note
+    reason = revised.clarification.question if revised.clarification else "; ".join(revised.warnings) or "no result"
+    reply = f"The analyst did not revise the table: {reason}"
+    return report, RevisionRound(request=revision, reply=reply), \
+        f"The designer asked the analyst to revise the table ({revision.problem}) and the analyst could not: {reason}"
+
+
+async def run_designer(deps: AppDeps, request: Request, designer, brief, previous, usage: RunUsage,
+                       budget: int | None, round_: RevisionRound | None = None) -> tuple[DesignReport, RevisionRound | None]:
+    """One designer run on the request's current table; when it asks for a revision and none was made yet, one more
+    run on the revised table. Returns the report and the revision round, so the fallback designer can see it too.
+    A further request is refused as a failure the fallback or the table answers."""
+    report = AnalysisReport.model_validate(request.steps["analyze"])
+    _check_budget(request, budget)
+    designed = await design_chart(report, designer, brief, usage=usage, clarifications=pairs(request),
+                                  previous=previous, revision=round_)
+    if designed.revision is not None and request.revision is None:
+        report, round_, note = await revise_analysis(deps, request, report, designed.revision, usage, budget)
+        _check_budget(request, budget)
+        designed = await design_chart(report, designer, brief, usage=usage, clarifications=pairs(request),
+                                      previous=previous, revision=round_)
+        designed.warnings.insert(0, note)
+    if designed.revision is not None:
+        designed.warnings.append("The designer asked for a second table revision, which is not allowed: "
+                                 f"{designed.revision.problem}")
+        designed.revision = None
+    return designed, round_
+
+
 async def design(deps: AppDeps, request: Request, usage: RunUsage, budget: int | None) -> dict[str, Any]:
     report = AnalysisReport.model_validate(request.steps["analyze"])
     if single_number(report):
@@ -245,16 +293,12 @@ async def design(deps: AppDeps, request: Request, usage: RunUsage, budget: int |
         if parent.design is not None:
             previous = PreviousDesign(spec=parent.design.spec, change=request.question)
     brief = (await asyncio.to_thread(deps.store.get_upload, request.dataset_id)).brief
-    _check_budget(request, budget)
-    designed = await design_chart(report, deps.designer, brief, usage=usage, clarifications=pairs(request),
-                                  previous=previous)
+    designed, round_ = await run_designer(deps, request, deps.designer, brief, previous, usage, budget)
     if designed.design is None and designed.clarification is None and deps.designer_fallback is not None:
         first = "; ".join(designed.warnings) or "no design"
         log.warning("The designer failed on %s (%s); running the design step once more on the fallback model",
                     request.request_id, first)
-        _check_budget(request, budget)
-        designed = await design_chart(report, deps.designer_fallback, brief, usage=usage,
-                                      clarifications=pairs(request), previous=previous)
+        designed, _ = await run_designer(deps, request, deps.designer_fallback, brief, previous, usage, budget, round_)
         designed.warnings.insert(0, f"The first designer run failed ({first}); this chart comes from the fallback model.")
     if designed.clarification is not None:
         raise Pause("design", designed.clarification)

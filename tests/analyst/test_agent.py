@@ -10,7 +10,7 @@ from pydantic_ai.models.test import TestModel
 from pydantic_ai.usage import RunUsage
 
 from vis_agent.analyst.agent import AnalystDeps, ColumnFacts, MAX_QUERY_CALLS, analyze_dataset, build_prompt, prompt_json, create_analyst, detect_language
-from vis_agent.analyst.models import Analysis, Clarification
+from vis_agent.analyst.models import Analysis, AnalysisRevision, Clarification, PreviousAnalysis, ResultColumn
 from vis_agent.models import DataBrief
 from vis_agent.profiler.agent import create_profiler, profile_dataset
 
@@ -393,3 +393,35 @@ def test_the_change_and_the_answers_count_as_wording(store, people):
                           previous=PreviousAnalysis(sql="SELECT 1", columns=[], change="Only 2026"))
     context = _context(AnalystDeps(store=store, profile=profile, prompt=prompt))
     assert "60000" in context and "2026" in context and "Total amount by region" in context
+
+
+def test_designer_feedback_reaches_the_analyst_and_loads_the_repair_rules(store, people, agents):
+    _dataset, profile = people
+    _profiler, analyst = agents
+    feedback = AnalysisRevision(
+        problem="The table has no series column",
+        requested_change="One row per month and measure",
+        preserve="Both measures and the monthly grain",
+    )
+    prompt = build_prompt(
+        store, profile, "Total amount by region", "English",
+        previous=PreviousAnalysis(
+            sql="SELECT 1",
+            columns=[ResultColumn(name="one", meaning="One", kind="measure")],
+            change="One row per month and measure",
+            feedback=feedback,
+        ),
+    )
+    serialized = prompt_json(prompt)
+    assert '"feedback"' in serialized and feedback.problem in serialized
+    seen = {}
+
+    def drive(messages, info):
+        seen["instructions"] = messages[0].instructions or ""
+        return tool_call("ask_clarification", question="Which amount?", reason="Checking the instructions.")
+
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+    with analyst.override(model=FunctionModel(drive)):
+        asyncio.run(analyst.run(serialized, deps=deps))
+    assert "A revision the chart designer asked for" in seen["instructions"]
+    assert "Answers and revisions" not in seen["instructions"]

@@ -47,14 +47,38 @@ class ResultColumn(BaseModel):
         return self
 
 
+class AnalysisRevision(BaseModel):
+    """The designer's request for a different result table: an internal handoff, never a question to the caller."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    problem: str
+    requested_change: str
+    preserve: str
+    evidence: list[str] = Field(default_factory=list)
+
+
+class RevisionRound(BaseModel):
+    """What the designer sees after the analyst revised the table: its own request and the analyst's reply."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    request: AnalysisRevision
+    reply: str
+
+
 class PreviousAnalysis(BaseModel):
-    """The analysis being revised: what produced the earlier result, and what must differ."""
+    """The analysis being revised: what produced the earlier result, and what must differ.
+
+    feedback is set when the change came from the chart designer, not the caller.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
     sql: str
     columns: list[ResultColumn]
     change: str
+    feedback: AnalysisRevision | None = None
 
 
 class QueryResult(BaseModel):

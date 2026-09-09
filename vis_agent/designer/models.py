@@ -5,7 +5,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from vis_agent.analyst.models import Clarification
+from vis_agent.analyst.models import AnalysisRevision, Clarification
 from vis_agent.models import Intent
 
 ChartType = Literal[
@@ -159,6 +159,7 @@ class DesignReport(BaseModel):
     language: str
     design: Design | None = None
     clarification: Clarification | None = None
+    revision: AnalysisRevision | None = None
     check: SpecCheck | None = None
     warnings: list[str] = Field(default_factory=list)
     model: str | None = None

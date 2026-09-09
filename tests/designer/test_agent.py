@@ -11,7 +11,7 @@ from pydantic_ai.models.test import TestModel
 from pydantic_ai.usage import RunUsage
 
 from vis_agent.analyst.checks import summary_numbers_exist
-from vis_agent.analyst.models import Analysis, AnalysisReport
+from vis_agent.analyst.models import Analysis, AnalysisReport, AnalysisRevision, RevisionRound
 from vis_agent.designer import models, syntax
 from vis_agent.designer.agent import (
     DESIGNER_RULEBOOK, EMPTY_RESULT, MAX_REQUESTS, build_prompt,
@@ -22,7 +22,7 @@ from vis_agent.designer.recommend import recommend_charts as rank_charts
 from vis_agent.models import DataBrief
 from vis_agent.render import gptvis
 
-from .conftest import cities, gender_share, monthly, table
+from .conftest import cities, gender_share, monthly, table, two_units
 
 DONUT = "vis donut\ntitle Gender share\ndescription Share by gender\nbind\n  category label\n  value share\nsort value desc\n"
 ARABIC_DONUT = DONUT.replace("Gender share", "الحصة حسب الجنس").replace(
@@ -523,3 +523,74 @@ def test_numbers_the_caller_wrote_are_wording_not_claims():
         previous=PreviousDesign(spec="vis donut\n", change="Change the title to: sales of cities in 2026")))
     context = wording_context(revised)
     assert "2026" in context and "60000" in context and source.question in context
+
+
+def test_request_analysis_revision_carries_the_runs_diagnostics():
+    source = report(*two_units())
+    spec = ("vis multi_line\ntitle Visits and revenue\ndescription Visits and revenue over time\n"
+            "bind\n  time month\n  value visits\nsort none\n")
+
+    def drive(messages, info):
+        returns = [p for m in messages for p in m.parts if isinstance(p, ToolReturnPart)]
+        if not returns:
+            return tool_call("recommend_charts", intent="trend")
+        if len(returns) == 1:
+            return tool_call("check_spec", spec=spec)
+        return tool_call(
+            "request_analysis_revision",
+            problem="No series column",
+            requested_change="One row per month and measure",
+            preserve="Both measures, the monthly grain",
+        )
+
+    result = run(source, FunctionModel(drive))
+    assert result.revision.problem == "No series column"
+    assert result.design is None and result.clarification is None
+    assert any("Required role 'group'" in line for line in result.revision.evidence)
+    assert any(line.startswith("stacked_area rejected") for line in result.revision.evidence)
+    assert result.requests == 3
+
+
+def test_a_revision_request_in_a_revised_run_gets_one_retry_then_the_run_ends():
+    revision = RevisionRound(
+        request=AnalysisRevision(problem="p", requested_change="c", preserve="k"),
+        reply="Nothing changed",
+    )
+    seen_retries = []
+
+    def drive(messages, info):
+        seen_retries.extend(str(part.content) for part in retries(messages))
+        return tool_call("request_analysis_revision", problem="again", requested_change="again", preserve="same")
+
+    result = run(report(*gender_share()), FunctionModel(drive), revision=revision)
+    assert result.revision is None
+    assert result.design is None
+    assert result.warnings[0].startswith("The designer could not finish")
+    assert result.requests <= 4
+    assert any("The analyst already revised the table once" in prompt for prompt in seen_retries)
+    assert any("second table revision" in warning for warning in result.warnings)
+
+
+def test_the_revision_round_reaches_the_prompt_and_loads_the_revise_rules():
+    from vis_agent.designer.agent import DesignerDeps, prompt_json
+
+    source = report(*gender_share())
+    revision = RevisionRound(
+        request=AnalysisRevision(problem="No series", requested_change="Add a series", preserve="The total"),
+        reply="Added the series column.",
+    )
+    plain = build_prompt(source, None)
+    assert '"revision"' not in prompt_json(plain)
+    prompt = build_prompt(source, None, revision=revision)
+    assert revision.reply in prompt_json(prompt)
+    seen = {}
+
+    def drive(messages, info):
+        seen["instructions"] = messages[0].instructions or ""
+        return tool_call("ask_clarification", question="Which?", reason="Checking.")
+
+    designer = create_designer("test")
+    deps = DesignerDeps(report=source, prompt=prompt, suggested=None)
+    with designer.override(model=FunctionModel(drive)):
+        asyncio.run(designer.run(prompt_json(prompt), deps=deps))
+    assert "Answers and revisions" in seen["instructions"]

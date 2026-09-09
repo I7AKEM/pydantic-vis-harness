@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from pydantic_ai import Agent
 
     from vis_agent.analyst.agent import AnalystDeps
-    from vis_agent.analyst.models import Analysis, Clarification
+    from vis_agent.analyst.models import Analysis, AnalysisRevision, Clarification
     from vis_agent.designer.agent import DesignerDeps
     from vis_agent.designer.models import Design
     from vis_agent.profiler.agent import ProfilerInput
@@ -25,10 +25,10 @@ class AppDeps:
     store: DatasetStore
     profiler: Agent[ProfilerInput, SemanticProfile]
     analyst: Agent[AnalystDeps, Analysis | Clarification]
-    designer: Agent[DesignerDeps, Design | Clarification]
+    designer: Agent[DesignerDeps, Design | Clarification | AnalysisRevision]
     requests: RequestStore | None = None
     caller_kind: CallerKind = "chat"
     caller_identity: str | None = None
     """Who talks to the lead in this run: the chat, the terminal, or a program; recorded on the requests it makes."""
-    designer_fallback: Agent[DesignerDeps, Design | Clarification] | None = None
+    designer_fallback: Agent[DesignerDeps, Design | Clarification | AnalysisRevision] | None = None
     """Runs the design step once more when the designer fails; the lead's model by default."""

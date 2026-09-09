@@ -36,6 +36,7 @@ ANALYST_INSTRUCTIONS = Path(__file__).with_name("rulebook.md").read_text(encodin
 LOCALIZED_INSTRUCTIONS = Path(__file__).with_name("rulebook-localized.md").read_text(encoding="utf-8")
 """Rules for Hijri dates and Arabic-Indic digits, added per run only when a column carries those levels."""
 REVISE_INSTRUCTIONS = Path(__file__).with_name("rulebook-revise.md").read_text(encoding="utf-8")
+REPAIR_INSTRUCTIONS = Path(__file__).with_name("rulebook-repair.md").read_text(encoding="utf-8")
 ANALYSIS_TIMEOUT_SECONDS = 90
 MAX_QUERY_CALLS = 3
 MAX_REQUESTS = 8
@@ -250,6 +251,8 @@ def create_analyst(model: str | Model) -> Agent[AnalystDeps, Analysis | Clarific
 
     @agent.instructions
     def revise_rules(ctx: RunContext[AnalystDeps]) -> str | None:
+        if ctx.deps.prompt.previous is not None and ctx.deps.prompt.previous.feedback is not None:
+            return REPAIR_INSTRUCTIONS
         if ctx.deps.prompt.clarifications or ctx.deps.prompt.previous is not None:
             return REVISE_INSTRUCTIONS
         return None

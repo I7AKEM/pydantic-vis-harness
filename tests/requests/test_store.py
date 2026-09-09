@@ -1,9 +1,10 @@
+import json
 import re
 from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from vis_agent.analyst.models import AnalysisReport
+from vis_agent.analyst.models import AnalysisReport, AnalysisRevision
 from vis_agent.requests.models import Artifact, Caller, Exchange, LeadArtifact, Lineage, Request, STEPS
 from vis_agent.requests.store import ArtifactNotFound, RequestNotFound, RequestStore
 from vis_agent.store import DatasetNotFound
@@ -157,3 +158,19 @@ def test_caller_rejects_a_return_address_that_is_not_http():
     with pytest.raises(ValueError):
         Caller(kind="agent", identity="reporter", return_address="ftp://x")
     assert Caller(kind="agent", identity="reporter", return_address="https://x/cb").return_address == "https://x/cb"
+
+
+def test_request_revision_round_trips(requests, dataset_id):
+    request = requests.new_request("new", dataset_id, "Total by region", CHAT)
+    request.revision = AnalysisRevision(problem="No series", requested_change="Add a series", preserve="The total")
+    requests.save_request(request)
+    assert requests.get_request(request.request_id).revision == request.revision
+
+
+def test_a_stored_request_without_revision_loads_as_none(requests, dataset_id):
+    request = requests.new_request("new", dataset_id, "Total by region", CHAT)
+    record = request.model_dump(mode="json")
+    record.pop("revision", None)
+    with requests.connect() as connection:
+        connection.execute("UPDATE requests SET record = ? WHERE id = ?", [json.dumps(record), request.request_id])
+    assert requests.get_request(request.request_id).revision is None

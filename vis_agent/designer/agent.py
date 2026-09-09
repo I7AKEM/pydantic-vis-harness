@@ -18,7 +18,9 @@ from pydantic_ai.usage import RunUsage, UsageLimits
 
 from vis_agent.analyst.agent import ARABIC
 from vis_agent.analyst.checks import summary_numbers_exist
-from vis_agent.analyst.models import Aggregate, AnalysisReport, Cell, Clarification, ColumnKind
+from vis_agent.analyst.models import (
+    Aggregate, AnalysisReport, AnalysisRevision, Cell, Clarification, ColumnKind, RevisionRound,
+)
 from vis_agent.models import DataBrief, Intent, QuestionAnswer
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL
 from vis_agent.render import gptvis
@@ -84,6 +86,7 @@ class DesignerPrompt(BaseModel):
     preview_is_partial: bool
     clarifications: list[QuestionAnswer] = []
     previous: PreviousDesign | None = None
+    revision: RevisionRound | None = None
 
 
 class Shortlist(BaseModel):
@@ -104,12 +107,15 @@ class DesignerDeps:
     considered: list[str] = field(default_factory=list)
     last_check: SpecCheck | None = None
     last_violations: list[str] = field(default_factory=list)
+    last_rejected: list[Rejection] = field(default_factory=list)
     delivery_attempts: int = 0
+    revision_refusals: int = 0
 
 
 def build_prompt(
     report: AnalysisReport, brief: DataBrief | None,
     clarifications: list[QuestionAnswer] | None = None, previous: PreviousDesign | None = None,
+    revision: RevisionRound | None = None,
 ) -> DesignerPrompt:
     shape = describe(report.analysis.columns, report.result)
     columns = []
@@ -138,13 +144,13 @@ def build_prompt(
         columns=columns, row_count=report.result.row_count,
         preview=[[cut(cell) for cell in row] for row in rows[:PREVIEW_ROWS]],
         preview_is_partial=len(rows) > PREVIEW_ROWS,
-        clarifications=list(clarifications or []), previous=previous,
+        clarifications=list(clarifications or []), previous=previous, revision=revision,
     )
 
 
 def prompt_json(prompt: DesignerPrompt) -> str:
     """The prompt as the model sees it. Empty answers and an absent previous analysis are left out, so ordinary runs are unchanged."""
-    exclude = {name for name in ("clarifications", "previous") if not getattr(prompt, name)}
+    exclude = {name for name in ("clarifications", "previous", "revision") if not getattr(prompt, name)}
     return prompt.model_dump_json(exclude=exclude or None)
 
 
@@ -200,6 +206,7 @@ async def recommend_charts(ctx: RunContext[DesignerDeps], intent: Intent) -> Sho
     ranked = rank_charts(deps.report.analysis.columns, deps.report.result, intent=intent, suggested=deps.suggested)
     candidates = ranked.candidates[:SHORTLIST]
     deps.considered = [candidate.name for candidate in candidates]
+    deps.last_rejected = ranked.rejected
     return Shortlist(intent=intent, candidates=candidates, rejected=ranked.rejected)
 
 
@@ -270,13 +277,29 @@ def ask_clarification(ctx: RunContext[DesignerDeps], question: str, reason: str)
     return Clarification(question=question, reason=reason)
 
 
-def create_designer(model: str | Model) -> Agent[DesignerDeps, Design | Clarification]:
+def request_analysis_revision(ctx: RunContext[DesignerDeps], problem: str, requested_change: str, preserve: str) -> AnalysisRevision:
+    """Ask the analyst for a different result table when this one cannot support the chart the question asks for:
+    a missing series or grouping column, the wrong time grain, or too many categories to draw. Not for a spec
+    mistake you can fix, and never a question to the caller. problem: why this table cannot serve the chart.
+    requested_change: what the analyst should make possible; the SQL is the analyst's. preserve: what must not
+    change (the measures, filters, time grain, and units the question names)."""
+    deps = ctx.deps
+    if deps.prompt.revision is not None:
+        deps.revision_refusals += 1
+        raise ModelRetry("The analyst already revised the table once for this request. Design from the table you "
+                         "have, or deliver a table type.")
+    evidence = [*deps.last_violations, *(f"{r.name} rejected: {r.explanation}" for r in deps.last_rejected)][:10]
+    return AnalysisRevision(problem=problem, requested_change=requested_change, preserve=preserve, evidence=evidence)
+
+
+def create_designer(model: str | Model) -> Agent[DesignerDeps, Design | Clarification | AnalysisRevision]:
     agent = Agent(
         model,
         name="designer",
         deps_type=DesignerDeps,
         output_type=[ToolOutput(deliver_design, name="deliver_design"),
-                     ToolOutput(ask_clarification, name="ask_clarification")],
+                     ToolOutput(ask_clarification, name="ask_clarification"),
+                     ToolOutput(request_analysis_revision, name="request_analysis_revision")],
         retries={"output": 2},
         instructions=instructions(),
         model_settings={"thinking": False, "temperature": 0.0},
@@ -286,7 +309,8 @@ def create_designer(model: str | Model) -> Agent[DesignerDeps, Design | Clarific
 
     @agent.instructions
     def revise_rules(ctx: RunContext[DesignerDeps]) -> str | None:
-        if ctx.deps.prompt.clarifications or ctx.deps.prompt.previous is not None:
+        if (ctx.deps.prompt.clarifications or ctx.deps.prompt.previous is not None
+                or ctx.deps.prompt.revision is not None):
             return REVISE_INSTRUCTIONS
         return None
 
@@ -295,12 +319,13 @@ def create_designer(model: str | Model) -> Agent[DesignerDeps, Design | Clarific
 
 async def design_chart(
     report: AnalysisReport,
-    designer: Agent[DesignerDeps, Design | Clarification],
+    designer: Agent[DesignerDeps, Design | Clarification | AnalysisRevision],
     brief: DataBrief | None = None,
     renderer: str = "gptvis",
     usage: RunUsage | None = None,
     clarifications: list[QuestionAnswer] | None = None,
     previous: PreviousDesign | None = None,
+    revision: RevisionRound | None = None,
 ) -> DesignReport:
     """Design a chart from a saved analysis, returning a checked design, a clarification, or a warning."""
     started = time.perf_counter()
@@ -313,9 +338,9 @@ async def design_chart(
             seconds=time.perf_counter() - started, created_at=datetime.now(timezone.utc),
         )
 
-    prompt = build_prompt(report, brief, clarifications=clarifications, previous=previous)
+    prompt = build_prompt(report, brief, clarifications=clarifications, previous=previous, revision=revision)
     deps = DesignerDeps(report=report, prompt=prompt, suggested=prompt.suggested_chart_type, renderer=renderer)
-    output: Design | Clarification | None = None
+    output: Design | Clarification | AnalysisRevision | None = None
     model_name = None
     warnings: list[str] = []
     run_usage = usage if usage is not None else RunUsage()
@@ -338,9 +363,12 @@ async def design_chart(
         warnings.append(f"The designer could not finish: {detail}")
 
     design = output if isinstance(output, Design) else None
+    if deps.revision_refusals and design is None:
+        warnings.append("The designer asked for a second table revision, which is not allowed.")
     return DesignReport(
         dataset_id=report.dataset_id, question=report.question, language=report.language,
         design=design, clarification=output if isinstance(output, Clarification) else None,
+        revision=output if isinstance(output, AnalysisRevision) else None,
         check=deps.last_check if design is not None else None, warnings=warnings, model=model_name,
         requests=run_usage.requests - starting_requests, check_calls=deps.check_calls,
         seconds=time.perf_counter() - started, created_at=datetime.now(timezone.utc),
