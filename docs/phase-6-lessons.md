@@ -423,6 +423,19 @@ the levels, an error-level check `ordinal_in_order` next to `time_in_order` that
 with the exact ORDER BY to write, a unit test on the same rows, and an analyst evaluation case built from
 the file. On the real analyst the plain question then came back in scale order with no failed check.
 
+## Two providers in one dropdown
+
+The cluster needs every agent to use its LiteLLM proxy, while laptops keep OpenRouter, chosen in the chat.
+The web UI always lists its agent's own model first with an automatic label, so the page owner has no model.
+`to_web` also gives every request one fixed `deps`, which cannot switch a whole specialist team per message.
+The durable lead, however, must have its model when it is created.
+The native advisor also requires the lead and advisor to share the OpenRouter provider.
+The answer is one complete lead-and-specialists team per provider, plus a model-less menu agent for the page.
+A route placed before the UI's `/api/chat` dispatches each request to the team named by the selected model ID.
+The first configured team remains responsible for upload profiling and the agent channel.
+The cluster check is whether the proxy supports the agents' tool calling; specialists send `reasoning_effort: none`
+and `temperature: 0`.
+
 ## Left for later
 
 - The analyst sometimes returns a clarification question for a plain question (about one case in

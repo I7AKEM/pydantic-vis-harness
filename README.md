@@ -16,6 +16,7 @@ Set `OPENROUTER_API_KEY` in `.env` to your OpenRouter API key. Set
 `PYDANTIC_AI_MODEL` to choose the lead's model; the default is the specialists' model,
 `openrouter:google/gemma-4-31b-it:nitro`, which scored 18 of 21 on the lead evaluation at three
 seconds per turn (2026-09-09); `openrouter:anthropic/claude-sonnet-4.6` was the previous default.
+The chat's dropdown offers a provider, `OpenRouter` or `LiteLLM`, and each entry runs every agent through that provider.
 
 Evaluation sets live under `evals/profiler`: twelve hand-made cases, fifty held-out corpus cases, and 150
 corpus training cases; `docs/phase-1-lessons.md` records every result. The profiler's instructions were
@@ -543,6 +544,13 @@ to its instructions. Confirmed mistakes become evaluation cases and checks or ru
 
 ## Configuration
 
+`LITELLM_BASE_URL`, `LITELLM_TOKEN`, and `LOCAL_LLM` configure a LiteLLM proxy; when the URL is set, the
+chat's dropdown gains a `LiteLLM` entry whose lead, profiler, analyst, designer, and fallback designer all run
+`LOCAL_LLM` through the proxy, without an advisor. `OPENROUTER_API_KEY` configures the `OpenRouter` entry,
+which keeps the `PYDANTIC_AI_*_MODEL` variables above. At least one provider is required. The first configured
+provider (OpenRouter when both are set) profiles uploads and serves the agent channel, so a file uploaded while
+the other entry is selected is still profiled by the first.
+
 `DUCKDB_PATH` selects the DuckDB file, default `data/datasets.duckdb`. `PYDANTIC_AI_ADVISOR_MODEL`
 selects the Advisor model; empty disables it. Set `LOGFIRE_TOKEN` to send traces to Logfire;
 without it, tracing stays local.
@@ -560,6 +568,7 @@ design step. When empty, it uses `PYDANTIC_AI_MODEL`.
 | File | Purpose |
 | --- | --- |
 | `vis_agent/app.py` | Environment wiring: store, profiler, analyst, lead, tracing, web app |
+| `vis_agent/providers.py` | One team of agents per provider; the chat route that runs the team the dropdown names |
 | `vis_agent/lead.py` | Chart-first lead, revisions, resume, numbers-only answers, and dataset/artifact lookup |
 | `vis_agent/requests/models.py` | Request, checkpoint, clarification, caller, and artifact contracts |
 | `vis_agent/requests/store.py` | Requests and artifact versions in the datasets database |
