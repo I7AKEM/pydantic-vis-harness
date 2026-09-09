@@ -208,11 +208,9 @@ async def check_spec(ctx: RunContext[DesignerDeps], spec: str) -> SpecCheck:
     deps = ctx.deps
     if deps.check_calls >= MAX_CHECK_CALLS:
         if deps.last_check is None:
-            raise ModelRetry("You have used the three check calls of this run and none passed. Call "
-                             "deliver_design with your best spec, or ask_clarification with the conflict; "
-                             "a spec that still fails ends in a question to the caller.")
-        raise ModelRetry("You have used the three check calls of this run. "
-                         "Deliver the spec that passed, or ask the caller a question.")
+            raise ModelRetry("You have used the three check calls of this run and none passed. Call deliver_design "
+                             "with your best spec; a spec that still fails ends the run.")
+        raise ModelRetry("You have used the three check calls of this run. Deliver the spec that passed.")
     deps.check_calls += 1
     check = run_check(spec, deps.report.analysis.columns, deps.report.result, deps.renderer)
     if check.ok:
@@ -220,15 +218,6 @@ async def check_spec(ctx: RunContext[DesignerDeps], spec: str) -> SpecCheck:
     else:
         deps.last_violations = [f"{v.rule}: {v.message}" for v in check.violations]
     return check
-
-
-DEAD_END = {
-    "Arabic": "لم أجد رسماً يجتاز الفحوصات لهذا الطلب؛ آخر محاولة فشلت في: {reasons}. هل تعدّل الطلب (نوع الرسم أو "
-              "الألوان مثلاً)، أم أرسم أقرب رسم يجتاز الفحوصات؟",
-    "English": "I could not find a chart that passes the checks for this request; the last attempt failed on: "
-               "{reasons}. Should I change the request (the chart type or the colours, say), or draw the closest "
-               "chart that passes?",
-}
 
 
 def wording_context(deps: DesignerDeps) -> str:
@@ -263,9 +252,8 @@ def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -
     if failures:
         message = "\n".join(failures)
         if deps.last_check is None and deps.check_calls >= MAX_CHECK_CALLS:
-            # The check budget is spent and nothing passed: ask the caller instead of looping to the request limit.
             reasons = "; ".join(deps.last_violations or failures)
-            return Clarification(question=DEAD_END[report.language].format(reasons=reasons), reason=message)
+            raise UnexpectedModelBehavior("No spec passed the three checks; the last failed on: " + reasons)
         if deps.delivery_attempts == 0:
             deps.delivery_attempts += 1
             raise ModelRetry(message)
@@ -344,7 +332,9 @@ async def design_chart(
         log.warning("The designer could not finish %r on %s: %s", report.question, report.dataset_id, exc, exc_info=exc)
         detail = str(exc) or type(exc).__name__
         if isinstance(exc, UnexpectedModelBehavior) and exc.__cause__ is not None:
-            detail += f": {exc.__cause__}"
+            # An output function that raised on purpose is wrapped as "Exceeded maximum output retries"; report its reason.
+            cause = exc.__cause__
+            detail = str(cause) if isinstance(cause, UnexpectedModelBehavior) else f"{detail}: {cause}"
         warnings.append(f"The designer could not finish: {detail}")
 
     design = output if isinstance(output, Design) else None

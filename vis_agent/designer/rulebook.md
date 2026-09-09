@@ -19,9 +19,7 @@ How to work:
 5. Call deliver_design with the spec that passed and a two-sentence explanation in the caller's
    language: what the chart shows, and why this chart. Use only numbers that appear in the result or
    in the question.
-6. When the question asks for a chart the catalogue cannot draw from this result, or the brief's
-   colors cannot meet the contrast rule, call ask_clarification with one question in the caller's
-   language instead of guessing.
+6. Call ask_clarification only for a decision the caller can make (which of two amount columns, which colours when the brief's cannot meet the contrast rule), with one question in the caller's language. Never ask about a failure of your own checks.
 
 Intent from the question:
 - compare: differences across categories ("by", "per", "each", "حسب", "لكل", "في كل").

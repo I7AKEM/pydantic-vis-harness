@@ -324,11 +324,9 @@ def test_described_names_may_carry_the_alias_quotes(store, people, agents):
     assert [column.name for column in result.output.columns] == ["region", "total"]
 
 
-def test_a_spent_query_budget_with_no_pass_ends_in_a_clarification(store, people, agents):
-    dataset, profile = people
-    _profiler, analyst = agents
-    prompt = build_prompt(store, profile, "إجمالي المبلغ حسب المنطقة", "Arabic")
-    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+def test_a_spent_query_budget_with_no_pass_ends_the_run_with_the_check_messages(store, people, agents):
+    dataset, _profile = people
+    profiler, analyst = agents
     sql = f'SELECT region, sum(amount) AS total FROM "{dataset}" GROUP BY 1'
     wrong = [{"name": "somewhere", "meaning": "Wrong name", "kind": "geography", "source": "region"},
              {"name": "total", "meaning": "Sum of amount", "kind": "measure", "source": "amount", "aggregate": "sum"}]
@@ -340,11 +338,11 @@ def test_a_spent_query_budget_with_no_pass_ends_in_a_clarification(store, people
         return tool_call("deliver_analysis", summary="لن يصل هذا الملخص.")
 
     with analyst.override(model=FunctionModel(drive)):
-        result = asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
-    assert isinstance(result.output, Clarification)
-    assert result.output.question.startswith("لم أتمكن")
-    assert "Describe exactly the result columns" in result.output.reason
-    assert deps.query_calls == MAX_QUERY_CALLS
+        report = run(store, profiler, analyst, dataset, "إجمالي المبلغ حسب المنطقة")
+    assert report.clarification is None
+    assert report.analysis is None
+    assert "Describe exactly the result columns" in report.warnings[0]
+    assert report.warnings[0].startswith("The analyst could not answer")
 
 
 def test_answers_and_previous_work_reach_the_prompt(store, people):

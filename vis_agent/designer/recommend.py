@@ -6,7 +6,7 @@ from vis_agent.models import Intent
 from .catalogue import CATALOGUE, CatalogueEntry
 from .fold import Folded, fold, foldable
 from .models import Candidate, Recommendation, Rejection, RuleScore
-from .rules import ADDITIVE, Context, HARD_RULES, SOFT_RULES
+from .rules import ADDITIVE, Context, HARD_RULES, SOFT_RULES, missing_roles
 from .shape import ColumnShape, ResultShape, describe
 
 
@@ -78,7 +78,7 @@ def recommend_charts(
             used_shape, used_fold = folded_shape, names
         if binding is None:
             rejected.append(Rejection(name=entry.name, rule="H1",
-                                      explanation="Required roles need columns of allowed kinds. Choose a chart that fits the columns."))
+                                      explanation=missing_roles(entry, shape)))
             continue
         failure = next((r for rule in HARD_RULES
                         if (r := rule(entry, used_shape, binding, context)) is not None), None)

@@ -163,7 +163,7 @@ async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[Result
     deps = ctx.deps
     if deps.query_calls >= MAX_QUERY_CALLS:
         raise ModelRetry(f"You have used the {MAX_QUERY_CALLS} query calls of this run. Deliver the last result that "
-                         "passed its checks, or ask the caller a question.")
+                         "passed its checks, or ask the caller a question only when the columns cannot answer it.")
     deps.query_calls += 1
     result = await asyncio.to_thread(
         run_sql, deps.store, deps.profile.source.dataset_id, sql,
@@ -197,13 +197,6 @@ def _context(deps: AnalystDeps) -> str:
     return " ".join(piece for piece in pieces if piece)
 
 
-DEAD_END = {
-    "ar": "لم أتمكن من إنتاج جدول يجتاز الفحوصات لهذا السؤال. هل يمكنك إعادة صياغته أو تسمية الأعمدة المطلوبة؟",
-    "en": "I could not produce a table that passes its checks for this question. Could you rephrase it or name the "
-          "columns you want?",
-}
-
-
 def deliver_analysis(
     ctx: RunContext[AnalystDeps], summary: str, assumptions: list[str] | None = None,
 ) -> Analysis | Clarification:
@@ -213,10 +206,8 @@ def deliver_analysis(
     deps = ctx.deps
     if deps.passed is None:
         if deps.query_calls >= MAX_QUERY_CALLS:
-            # The query budget is spent and nothing passed: ask the caller instead of looping to the request limit.
-            language = "ar" if deps.prompt.language.lower().startswith("ar") else "en"
-            return Clarification(question=DEAD_END[language],
-                                 reason=" ".join(deps.last_errors) or "No query passed its checks.")
+            raise UnexpectedModelBehavior(f"No query passed its checks in {MAX_QUERY_CALLS} tries: "
+                                          + (" ".join(deps.last_errors) or "no query ran"))
         raise ModelRetry("No query has passed its checks yet. Call run_query and fix every check with severity "
                          "error, or call ask_clarification when the columns cannot answer the question.")
     check = summary_numbers_exist(summary, deps.passed.result, _context(deps))
@@ -298,7 +289,12 @@ async def analyze_dataset(
         model_name = result.response.model_name
     except (ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded, TimeoutError) as exc:
         log.warning("The analyst could not answer %r on %s: %s", question, dataset_id, exc, exc_info=exc)
-        warnings.append(f"The analyst could not answer: {str(exc) or type(exc).__name__}")
+        detail = str(exc) or type(exc).__name__
+        if isinstance(exc, UnexpectedModelBehavior) and exc.__cause__ is not None:
+            # An output function that raised on purpose is wrapped as "Exceeded maximum output retries"; report its reason.
+            cause = exc.__cause__
+            detail = str(cause) if isinstance(cause, UnexpectedModelBehavior) else f"{detail}: {cause}"
+        warnings.append(f"The analyst could not answer: {detail}")
 
     analysis = output if isinstance(output, Analysis) else None
     checks: list[ProfileCheck] = []

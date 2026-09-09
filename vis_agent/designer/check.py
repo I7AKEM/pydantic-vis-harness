@@ -7,7 +7,7 @@ from vis_agent.render.base import capability_for
 from .catalogue import CATALOGUE
 from .fold import FoldError, fold
 from .models import Compromise, Spec, SpecCheck, SpecError, Violation
-from .rules import LINES, check_rules
+from .rules import LINES, check_rules, offered
 from .shape import ColumnShape, describe
 from .syntax import KEYS, STYLE_KEYS, parse, parse_format, to_text
 
@@ -90,6 +90,7 @@ def check_spec(
         else:
             columns, result = folded.columns, folded.result
             bind.update(group=folded.series, value=folded.value)
+    shape = describe(columns, result)
     by_name = {column.name: column for column in columns}
     for role, name in bind.items():
         if name not in by_name:
@@ -102,14 +103,16 @@ def check_spec(
                  f"Bind '{role}' to one of these kinds: {', '.join(entry.roles[role].kinds)}")
     for role, requirement in entry.roles.items():
         if requirement.required and role not in bind:
-            fail("C2", f"Required role '{role}' is missing.", f"Bind the '{role}' role")
+            fix = (f"Bind the '{role}' role, or use fold for measures of one unit"
+                   if "fold" in entry.keys else f"Bind the '{role}' role")
+            fail("C2", f"Required role '{role}' is missing; it takes {', '.join(requirement.kinds)}. "
+                 f"The result offers {offered(shape)}.", fix)
 
     present = _present_keys(spec)
     for key in present:
         if key not in COMMON_KEYS and key not in entry.keys:
             fail("C3", f"{spec.type} does not accept key '{key}'.", f"Remove '{key}'")
 
-    shape = describe(columns, result)
     binding = {role: shape.column(name) for role, name in bind.items() if name in by_name}
     # check_rules owns C10, including all hard-rule failures, so call it only once.
     violations.extend(check_rules(entry, spec, shape, binding))

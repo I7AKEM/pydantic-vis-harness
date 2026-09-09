@@ -31,6 +31,16 @@ class RuleResult:
     hard: bool = False
 
 
+def offered(shape) -> str:
+    """The result's columns with their kinds and units, for a message that says what is actually there."""
+    return ", ".join(f"{c.name} ({c.kind}{', ' + c.unit if c.unit else ''})" for c in shape.columns)
+
+
+def missing_roles(entry, shape) -> str:
+    needs = ", ".join(f"{name} ({'/'.join(role.kinds)})" for name, role in entry.roles.items() if role.required)
+    return f"{entry.name} needs {needs}; the result offers {offered(shape)}. Choose a chart that fits these columns."
+
+
 def _additive(value):
     return value is not None and (value.aggregate in ADDITIVE or value.kind == "share")
 
@@ -67,7 +77,7 @@ def h5_slices(entry, shape, binding, context):
 def h6_colors(entry, shape, binding, context):
     group = binding.get("group")
     if group and entry.group_max is not None and group.distinct > entry.group_max:
-        return RuleResult("H6", 0, f"{group.distinct} groups exceed the limit of {entry.group_max}.", "Keep the top groups, or use small multiples later", True)
+        return RuleResult("H6", 0, f"{group.distinct} groups exceed the limit of {entry.group_max}.", "Keep the top groups", True)
 
 
 def h7_points(entry, shape, binding, context):
@@ -91,7 +101,7 @@ def h9_raw(entry, shape, binding, context):
 
 def h10_units(entry, shape, binding, context):
     if entry.name == "dual_axes" and "value" in binding and "value2" in binding and binding["value"].unit == binding["value2"].unit:
-        return RuleResult("H10", 0, "The two measures have the same unit.", "Use a grouped column", True)
+        return RuleResult("H10", 0, "The two measures have the same unit.", "Fold them into one series: a multi_line or grouped_column with fold", True)
 
 
 def h11_many(entry, shape, binding, context):
@@ -293,6 +303,8 @@ def check_rules(
         target = "category or group" if group is not None else "category"
         fail("C9", f"Every emphasised value must exist in the bound {target}.", "Fix the spelling")
     for rule in HARD_RULES:
+        if rule is h1_shape:
+            continue
         result = rule(entry, displayed, displayed_binding, Context())
         if result is not None:
             fail("C10", f"{result.rule}: {result.explanation}", result.fix)

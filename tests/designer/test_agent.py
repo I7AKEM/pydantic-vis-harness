@@ -456,7 +456,7 @@ def test_incomplete_report_is_rejected(missing):
         run(source, TestModel())
 
 
-def test_a_spent_check_budget_with_no_pass_ends_in_a_clarification():
+def test_a_spent_check_budget_with_no_pass_ends_the_run_with_the_diagnostics():
     one_colour = DONUT + "palette\n  - #007bff\n"  # two slices, one colour: C6 fails every time
     calls = []
 
@@ -468,10 +468,10 @@ def test_a_spent_check_budget_with_no_pass_ends_in_a_clarification():
         return tool_call("deliver_design", spec=one_colour, explanation=EXPLANATION)
 
     result = run(report(*gender_share()), FunctionModel(drive))
-    assert result.design is None and result.clarification is not None
-    assert result.clarification.question.startswith("I could not find a chart that passes")
-    assert "C6" in result.clarification.question and "C6" in result.clarification.reason
-    assert result.check_calls == 3 and result.warnings == []
+    assert result.design is None and result.clarification is None
+    assert result.check_calls == 3
+    assert "C6" in result.warnings[0]
+    assert result.warnings[0].startswith("The designer could not finish")
 
 
 def test_previous_design_and_answers_reach_the_designer_prompt():

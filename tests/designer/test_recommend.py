@@ -86,6 +86,16 @@ def test_two_units_and_single_number():
     assert recommend_charts(*single_number()).candidates[0].name == "table"
 
 
+def test_missing_roles_explain_what_the_chart_needs_and_the_result_offers():
+    answer = recommend_charts(*two_units(), intent="trend")
+    stacked_area = next(rejection for rejection in answer.rejected if rejection.name == "stacked_area")
+    assert stacked_area.rule == "H1"
+    assert all(text in stacked_area.explanation for text in (
+        "needs", "group (category/ordinal/geography)", "month (time)",
+        "visits (measure, visits)", "revenue (measure, SAR)",
+    ))
+
+
 def test_same_unit_monthly_measures_fold_into_multi_line():
     answer = recommend_charts(*two_same_unit_measures(), intent="trend")
     assert answer.candidates[0].name == "multi_line"

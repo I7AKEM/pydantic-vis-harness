@@ -40,7 +40,7 @@ def test_three_semantic_violations_are_reported_together_in_order():
     check = check_spec(text, *cities())
     assert not check.ok
     assert check.canonical is None
-    assert [v.rule for v in check.violations] == ["C2", "C3", "C10"]
+    assert [v.rule for v in check.violations] == ["C2", "C3"]
     assert all(v.fix for v in check.violations)
 
 
@@ -77,6 +77,29 @@ def test_c2_missing_columns_roles_wrong_kinds_and_unsupported_roles(binding, mes
     assert len(violations) == 1
     assert message in violations[0].message
     assert not check.ok
+
+
+def test_c2_missing_role_names_allowed_kinds_and_offered_columns_once():
+    text = ("vis multi_line\ntitle Visits\ndescription Monthly visits\nbind\n"
+            "  time month\n  value visits\n")
+    check = check_spec(text, *two_units())
+    assert [violation.rule for violation in check.violations] == ["C2"]
+    message = check.violations[0].message
+    assert "Required role 'group' is missing" in message
+    assert "category, ordinal, geography" in message
+    assert "the result offers" in message.lower()
+    assert not any(violation.rule == "C10" and "H1" in violation.message for violation in check.violations)
+
+
+def test_c2_wrong_kind_is_not_repeated_as_c10_h1():
+    columns, result = two_units()
+    for index, row in enumerate(result.rows):
+        row[2] = index % 2
+    text = ("vis multi_line\ntitle Visits\ndescription Monthly visits\nbind\n"
+            "  time month\n  group revenue\n  value visits\n")
+    check = check_spec(text, columns, result)
+    assert [violation.rule for violation in check.violations] == ["C2"]
+    assert not any(violation.rule == "C10" and "H1" in violation.message for violation in check.violations)
 
 
 def test_c3_uses_text_keys_and_checks_false_values():

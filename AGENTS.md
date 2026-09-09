@@ -53,6 +53,7 @@ Requests package file map:
   over-budget call inside one response is a ModelRetry on a tool registered with `retries=1`. Never answer a
   repeated call with a retry prompt: a small model repeats it. The test for every budget drives a model that
   ignores the message and asserts the run ends within a fixed number of requests.
+- A spent budget with nothing passing is a technical failure that carries its diagnostics (`UnexpectedModelBehavior`, reported as a warning and then as the request's error or no-chart reason); it is never turned into a question to the caller. A question is only for a decision the caller can make.
 - When the designer fails, the request runner runs the design step once more on `AppDeps.designer_fallback`
   (`PYDANTIC_AI_DESIGNER_FALLBACK_MODEL`, the lead's model by default) and says so in a warning.
 - Tests use fake models through agent.override and never hand-build RunContext.

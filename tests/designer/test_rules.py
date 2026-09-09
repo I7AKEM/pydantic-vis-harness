@@ -5,7 +5,8 @@ from vis_agent.designer.rules import Context, HARD_RULES, SOFT_RULES, check_rule
 from vis_agent.designer.shape import describe
 
 from .conftest import (cities, column, gender_code_and_label, gender_share, grouped, monthly,
-                       own_share_by_region, raw_amounts, scatter_points, single_number, table, two_units)
+                       own_share_by_region, raw_amounts, scatter_points, single_number, table,
+                       two_same_unit_measures, two_units)
 
 
 def candidate(data, name, **context):
@@ -134,6 +135,9 @@ def test_h10_units():
     rejected((columns, result), "dual_axes", "H10")
     columns[1].unit = columns[2].unit = None
     rejected((columns, result), "dual_axes", "H10")
+    failure = direct("H10", "dual_axes", two_same_unit_measures())
+    assert "fold" in failure.fix
+    assert "grouped column" not in failure.fix
 
 
 def test_h11_many():
