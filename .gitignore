@@ -14,3 +14,5 @@ tests/render/images/*.png
 evals/designer/agent/renders/
 .worktrees/
 evals/designer/agent/scale/renders/
+.DS_Store
+outputs/
