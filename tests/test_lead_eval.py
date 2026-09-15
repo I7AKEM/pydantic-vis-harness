@@ -23,7 +23,7 @@ def messages(name, content, args=None):
 
 def test_cases():
     cases = json.loads((ROOT / 'evals/lead/cases.json').read_text())
-    assert len(cases) == len({c['name'] for c in cases}) == 11
+    assert len(cases) == len({c['name'] for c in cases}) == 18
     for case in cases:
         csv = ROOT / case['csv']
         assert csv.is_file()
@@ -32,13 +32,18 @@ def test_cases():
         for turn in case['turns']:
             tools = turn['tool'] if isinstance(turn['tool'], list) else [turn['tool']]
             assert set(tools) <= {'draw', 'answer_question', 'revise', 'resume', 'none'}
-            assert turn['outcome'] in {'artifact', 'table', 'question', 'text', 'artifact_or_question', 'answered'}
+            assert turn['outcome'] in {'chart', 'artifact', 'table', 'question', 'text', 'artifact_or_question', 'answered'}
             assert ('redo_analysis' in turn) == ('revise' in tools)
+            if 'revision' in turn:
+                assert isinstance(turn['revision'], bool)
+    assert {c['name'] for c in cases if c.get('heldout')} == {'repair-jeddah-monthly', 'repair-two-units'}
     assert runner().load_cases() == cases
 
 
 @pytest.mark.parametrize('tool,content,outcome', [
     ('draw', {'artifact': {'artifact_id': 'art_a'}, 'request_id': 'rq_a'}, 'artifact'),
+    ('draw', {'artifact': {'artifact_id': 'art_a', 'chart': 'line'}}, 'chart'),
+    ('draw', {'artifact': {'artifact_id': 'art_a', 'chart': None, 'rows': [['Al Olaya', 4]]}}, 'chart'),
     ('draw', {'clarification': {'question': 'Which?'}}, 'question'),
     ('draw', {'clarification': {'question': 'Which?'}}, 'artifact_or_question'),
     ('answer_question', {'rows': [[1]]}, 'table'),
@@ -67,6 +72,7 @@ def test_first_call_and_matching_return():
 
 @pytest.mark.parametrize('tool,content,outcome,args', [
     ('draw', {'artifact': None}, 'artifact', {}),
+    ('draw', {'artifact': None, 'clarification': {'question': 'Which?'}}, 'chart', {}),
     ('draw', {'rows': [[1]]}, 'table', {}),
     ('answer_question', {'rows': []}, 'table', {}),
     ('resume', {'artifact': {'artifact_id': 'art_a'}}, 'text', {}),
@@ -162,3 +168,144 @@ def test_a_retry_after_a_specialist_failure_is_scored_by_the_last_call():
     scored = runner().score_turn({'tool': 'draw', 'outcome': 'artifact'}, turn)
     assert scored['tool'] == 'draw' and scored['tool_ok'] and scored['outcome_ok']
     assert scored['artifact_id'] == 'art_b' and scored['tools_called'] == ['draw', 'profile_csv', 'draw']
+    assert scored['request_id'] == 'rq_b' and scored['questioned'] is False
+
+
+@pytest.mark.parametrize('clarification', [None, {'question': 'Which hospital?', 'reason': 'No hospital column.'}])
+def test_score_turn_reports_revision_and_question(clarification):
+    content = {'request_id': 'rq_a', 'status': 'waiting' if clarification else 'done',
+               'artifact': None if clarification else {'artifact_id': 'art_a'},
+               'clarification': clarification, 'error': None}
+    scored = runner().score_turn({'tool': 'draw', 'outcome': 'artifact_or_question'}, messages('draw', content))
+    assert scored['request_id'] == 'rq_a'
+    assert scored['questioned'] is (clarification is not None)
+
+
+def test_question_and_request_id_follow_the_last_data_call():
+    captured = messages('draw', {'request_id': 'rq_a', 'clarification': {'question': 'Which?'}})
+    captured += messages('answer_question', {'rows': [[1]]})
+    scored = runner().score_turn({'tool': 'draw', 'outcome': 'answered'}, captured)
+    assert scored['tool_ok'] and scored['outcome_ok']
+    assert scored['request_id'] is None and scored['questioned'] is False
+    empty = runner().score_turn({'tool': 'none', 'outcome': 'text'}, [])
+    assert empty['request_id'] is None and empty['questioned'] is False
+
+
+def test_records_carry_revised_and_requests_used():
+    problem = 'Need one row per month and measure'
+    record = {
+        'requests': [
+            {'request_id': 'rq_plain', 'revision': None, 'requests_used': 0},
+            {'request_id': 'rq_repaired', 'requests_used': 7,
+             'revision': {'problem': problem, 'requested_change': 'Unpivot the two measures.',
+                          'preserve': 'Keep the monthly totals.', 'evidence': []}},
+        ],
+        'turns': [
+            {'request_id': 'rq_repaired', 'expected': {'revision': True}},
+            {'request_id': 'rq_plain', 'expected': {'revision': False}},
+            {'request_id': 'rq_repaired', 'expected': {'revision': False}},
+            {'request_id': 'rq_plain', 'expected': {'revision': True}},
+            {'request_id': 'rq_repaired', 'expected': {}},
+            {'request_id': None, 'expected': {}},
+            {'request_id': 'rq_missing', 'expected': {'revision': True}},
+        ],
+    }
+    assert runner().annotate_turns(record) is None
+    turns = record['turns']
+    assert [t['revised'] for t in turns] == [problem, None, problem, None, problem, None, None]
+    assert [t['requests_used'] for t in turns] == [7, 0, 7, 0, 7, None, None]
+    assert [t['revision_ok'] for t in turns] == [True, True, False, False, None, None, False]
+    missing = {'turns': [{'request_id': None, 'expected': {'revision': False}}]}
+    runner().annotate_turns(missing)
+    assert missing['turns'][0]['requests_used'] is None
+    assert missing['turns'][0]['revised'] is None and missing['turns'][0]['revision_ok'] is True
+
+
+def test_summary_counts_revisions_false_questions_and_heldout(capsys):
+    plain = {'tool_ok': True, 'outcome_ok': True, 'redo_ok': None, 'revision_ok': None,
+             'revised': None, 'questioned': False, 'requests_used': None, 'expected': {'outcome': 'text'}}
+    records = [
+        {'name': 'regular', 'turns': [
+            {**plain, 'expected': {'outcome': 'chart'}, 'revised': 'Unpivot measures.',
+             'revision_ok': True, 'redo_ok': True, 'requests_used': 7},
+            {**plain, 'expected': {'outcome': 'question'}, 'questioned': True, 'requests_used': 2},
+        ]},
+        {'name': 'heldout-pass', 'heldout': True, 'turns': [
+            {**plain, 'expected': {'outcome': 'chart'}, 'requests_used': 0, 'revision_ok': True},
+        ]},
+        {'name': 'heldout-question', 'heldout': True, 'turns': [
+            {**plain, 'expected': {'outcome': 'chart'}, 'outcome_ok': False,
+             'questioned': True, 'requests_used': 3, 'revision_ok': False},
+        ]},
+        {'name': 'no-request', 'heldout': False, 'turns': [plain]},
+    ]
+    summary = runner().summarize(records)
+    assert summary == {
+        'cases': 4, 'cases_ok': 3, 'turns': 5, 'tool_ok': 5, 'outcome_ok': 4,
+        'redo_turns': 1, 'redo_ok': 1, 'revision_turns': 3, 'revision_ok': 2,
+        'revisions': 1, 'false_questions': 1, 'requests': 12,
+        'heldout_cases': 2, 'heldout_cases_ok': 1,
+    }
+    lines = capsys.readouterr().out.splitlines()
+    assert all(text in lines[0] for text in ('revisions: 1', 'false questions: 1', 'requests: 12',
+                                           'revision expected 2/3', 'redo analysis 1/1'))
+    assert lines[1] == 'held-out cases 1/2'
+
+
+def test_run_case_annotates_saved_requests_and_prints_fields(monkeypatch, capsys):
+    import asyncio
+    from pydantic_ai import Agent, RunContext
+    from pydantic_ai.messages import TextPart
+    from pydantic_ai.models.function import FunctionModel
+    from vis_agent.analyst.models import AnalysisRevision
+    from vis_agent.deps import AppDeps
+    from vis_agent.requests.models import Caller
+
+    module = runner()
+    async def profile(*args):
+        pass
+    monkeypatch.setattr(module, 'profile_dataset', profile)
+
+    def respond(history, info):
+        if not isinstance(history[-1].parts[0], ToolReturnPart):
+            return ModelResponse(parts=[ToolCallPart('draw', {})])
+        return ModelResponse(parts=[TextPart('Here is the chart.')])
+
+    lead = Agent('test', deps_type=AppDeps)
+    @lead.tool
+    def draw(ctx: RunContext[AppDeps]) -> dict:
+        dataset_id = ctx.deps.store.list_datasets()[0].dataset_id
+        request = ctx.deps.requests.new_request('new', dataset_id, 'q', Caller(kind='chat'))
+        request.revision = AnalysisRevision(problem='Need one row per month and measure',
+                                            requested_change='Unpivot measures.', preserve='Keep totals.')
+        request.requests_used = 7
+        ctx.deps.requests.save_request(request)
+        return {'request_id': request.request_id, 'artifact': {'artifact_id': 'art_fake'}, 'clarification': None}
+
+    case = {**module.load_cases()[1], 'heldout': True}
+    case['turns'] = [{**case['turns'][0], 'revision': True}]
+    with lead.override(model=FunctionModel(respond)):
+        record = asyncio.run(module.run_case(case, lead, None, None, None))
+    turn = record['turns'][0]
+    assert record['heldout'] is True
+    assert turn['tool_ok'] and turn['outcome_ok'] and turn['revision_ok']
+    assert turn['revised'] == 'Need one row per month and measure'
+    assert turn['requests_used'] == 7 and turn['questioned'] is False
+    printed = capsys.readouterr().out
+    assert all(text in printed for text in ('revised=', turn['revised'], 'questioned=False', 'requests=7', 'revision=True'))
+
+
+def test_run_case_profile_failure_keeps_reporting_fields(monkeypatch):
+    import asyncio
+    module = runner()
+    async def profile(*args):
+        raise RuntimeError('profile unavailable')
+    monkeypatch.setattr(module, 'profile_dataset', profile)
+    case = {**module.load_cases()[1], 'heldout': True}
+    case['turns'] = [{**case['turns'][0], 'revision': False}]
+    record = asyncio.run(module.run_case(case, None, None, None, None))
+    turn = record['turns'][0]
+    assert record['heldout'] is True
+    assert not turn['tool_ok'] and not turn['outcome_ok']
+    assert turn['revised'] is None and turn['requests_used'] is None and turn['questioned'] is False
+    assert turn['revision_ok'] is True

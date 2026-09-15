@@ -166,5 +166,86 @@
     "outcome": "text"
    }
   ]
+ },
+ {
+  "name": "repair-jeddah-monthly",
+  "csv": "evals/lead/fixtures/jeddah_monthly.csv",
+  "heldout": true,
+  "turns": [
+   {
+    "message": "ارسم التغير الشهري لعدد المصابين والوفيات في جدة\n\nAttached CSV: [jeddah_monthly.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "chart"
+   }
+  ]
+ },
+ {
+  "name": "repair-two-measures-hijri",
+  "csv": "evals/designer/agent/scale/seeded/seeded-19-hijri-year.csv",
+  "turns": [
+   {
+    "message": "Chart paid and unpaid violations per Hijri year as two lines\n\nAttached CSV: [seeded-19-hijri-year.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "chart"
+   }
+  ]
+ },
+ {
+  "name": "repair-share-as-pie",
+  "csv": "evals/profiler/cases/citizens.csv",
+  "turns": [
+   {
+    "message": "Show the share of citizens in each wealth level as a pie\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "chart"
+   }
+  ]
+ },
+ {
+  "name": "repair-two-units",
+  "csv": "evals/lead/fixtures/fines_by_city.csv",
+  "heldout": true,
+  "turns": [
+   {
+    "message": "قارن عدد المخالفات ومتوسط الغرامة لكل مدينة\n\nAttached CSV: [fines_by_city.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "chart"
+   }
+  ]
+ },
+ {
+  "name": "repair-many-categories",
+  "csv": "evals/lead/fixtures/store_districts.csv",
+  "turns": [
+   {
+    "message": "Chart the number of stores in each district\n\nAttached CSV: [store_districts.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "chart"
+   }
+  ]
+ },
+ {
+  "name": "repair-monthly-line",
+  "csv": "evals/profiler/cases/monthly.csv",
+  "turns": [
+   {
+    "message": "Draw a line of monthly active users\n\nAttached CSV: [monthly.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "chart",
+    "revision": false
+   }
+  ]
+ },
+ {
+  "name": "repair-unavailable",
+  "csv": "evals/lead/fixtures/jeddah_monthly.csv",
+  "turns": [
+   {
+    "message": "Chart injuries by hospital\n\nAttached CSV: [jeddah_monthly.csv](/datasets/{dataset_id}/profile)",
+    "tool": "draw",
+    "outcome": "question",
+    "revision": false
+   }
+  ]
  }
 ]

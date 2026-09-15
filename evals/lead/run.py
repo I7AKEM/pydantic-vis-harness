@@ -29,6 +29,7 @@ DATA_TOOLS = {"draw", "answer_question", "revise", "resume"}
 
 
 def load_cases() -> list[dict]:
+    # Cases marked heldout are evaluation-only; exclude them from any future prompt tuning.
     return json.loads((Path(__file__).with_name("cases.json")).read_text(encoding="utf-8"))
 
 
@@ -71,17 +72,20 @@ def score_turn(expected: dict, messages: list) -> dict:
     args = call.args_as_dict() if call is not None else {}
     last_tool = last.tool_name if last is not None else "none"
     artifact = value.get("artifact")
+    questioned = value.get("clarification") is not None
     outcomes = {
         "artifact": artifact is not None,
-        "question": value.get("clarification") is not None,
-        "artifact_or_question": artifact is not None or value.get("clarification") is not None,
+        # Repair cases accept a delivered artifact, including a table when a chart cannot fit.
+        "chart": artifact is not None,
+        "question": questioned,
+        "artifact_or_question": artifact is not None or questioned,
         # A corpus question over a result-table export may be drawn, asked about, or answered with a table.
-        "answered": artifact is not None or value.get("clarification") is not None
+        "answered": artifact is not None or questioned
         or (last_tool == "answer_question" and bool(value.get("rows"))),
         "table": last_tool == "answer_question" and bool(value.get("rows")),
         # The lead answered in words: no data tool, or one that returned neither an artifact nor a question
         # (a resume with nothing to continue, for example).
-        "text": call is None or (artifact is None and value.get("clarification") is None),
+        "text": call is None or (artifact is None and not questioned),
     }
     accepted = expected["tool"] if isinstance(expected["tool"], list) else [expected["tool"]]
     # redo_analysis is judged only when a revision was expected and made; a turn that accepts resume or
@@ -96,19 +100,34 @@ def score_turn(expected: dict, messages: list) -> dict:
         "tools_called": [part.tool_name for part in calls],
         "tool_args": args, "tool_return": content,
         "request_id": value.get("request_id"),
+        "questioned": questioned,
         "artifact_id": artifact.get("artifact_id") if isinstance(artifact, dict) else None,
     }
 
 
+def annotate_turns(record: dict) -> None:
+    """Attach the last data call's saved revision and request usage to each turn."""
+    requests = {request["request_id"]: request for request in record.get("requests", [])}
+    for turn in record["turns"]:
+        request = requests.get(turn["request_id"], {})
+        turn["revised"] = (request.get("revision") or {}).get("problem")
+        turn["requests_used"] = request.get("requests_used")
+        expected = turn["expected"]
+        turn["revision_ok"] = ((turn["revised"] is not None) == expected["revision"]
+                               if "revision" in expected else None)
+
+
 def show_turn(name: str, index: int, turn: dict) -> None:
     redo = "" if turn["redo_ok"] is None else f" redo={turn['redo_ok']}"
+    revision = "" if turn["revision_ok"] is None else f" revision={turn['revision_ok']}"
     error = f" error={turn['error']}" if turn.get("error") else ""
     print(f"{name} turn {index}: {turn['tool']} tool={turn['tool_ok']} "
-          f"outcome={turn['outcome_ok']}{redo}{error}", flush=True)
+          f"outcome={turn['outcome_ok']}{redo}{revision} revised={turn['revised']!r} "
+          f"questioned={turn['questioned']} requests={turn['requests_used']}{error}", flush=True)
 
 
 async def run_case(case: dict, lead, profiler, analyst, designer, designer_fallback=None) -> dict:
-    record = {"name": case["name"], "csv": case["csv"], "turns": []}
+    record = {"name": case["name"], "csv": case["csv"], "heldout": case.get("heldout", False), "turns": []}
     with tempfile.TemporaryDirectory(prefix="vis-lead-eval-") as directory:
         try:
             store = DatasetStore(Path(directory))
@@ -121,16 +140,18 @@ async def run_case(case: dict, lead, profiler, analyst, designer, designer_fallb
             await profile_dataset(store, profiler, uploaded.dataset_id)
         except Exception as exc:
             record["error"] = f"{type(exc).__name__}: {exc}"
-            for index, expected in enumerate(case["turns"], 1):
+            for expected in case["turns"]:
                 turn = {**score_turn(expected, []), "expected": expected, "reply": None,
                         "tool_ok": False, "outcome_ok": False,
                         "redo_ok": False if "redo_analysis" in expected else None, "error": record["error"]}
                 record["turns"].append(turn)
+            annotate_turns(record)
+            for index, turn in enumerate(record["turns"], 1):
                 show_turn(case["name"], index, turn)
             return record
         history = []
         conversation_id = str(uuid4())
-        for index, expected in enumerate(case["turns"], 1):
+        for expected in case["turns"]:
             prompt = expected["message"].replace("{dataset_id}", uploaded.dataset_id)
             reply, error = None, None
             history_length = len(history)
@@ -146,7 +167,6 @@ async def run_case(case: dict, lead, profiler, analyst, designer, designer_fallb
             if error:
                 turn.update(error=error, outcome_ok=False)
             record["turns"].append(turn)
-            show_turn(case["name"], index, turn)
         # The temporary files disappear; retain the records and IDs for controller review.
         try:
             record["requests"] = [requests.get_request(item.request_id).model_dump(mode="json")
@@ -155,7 +175,36 @@ async def run_case(case: dict, lead, profiler, analyst, designer, designer_fallb
                                    for item in requests.list_artifacts(dataset_id=uploaded.dataset_id)]
         except Exception as exc:  # one case's records must not abort the others
             record["records_error"] = f"{type(exc).__name__}: {exc}"
+        annotate_turns(record)
+        for index, turn in enumerate(record["turns"], 1):
+            show_turn(case["name"], index, turn)
     return record
+
+
+def summarize(results: list[dict]) -> dict:
+    """Print and return scores and repair counts, with held-out cases reported separately."""
+    turns = [turn for case in results for turn in case["turns"]]
+    passed = [all(t["tool_ok"] and t["outcome_ok"] for t in case["turns"]) for case in results]
+    summary = {"cases": len(results), "cases_ok": sum(passed),
+               "turns": len(turns), "tool_ok": sum(t["tool_ok"] for t in turns),
+               "outcome_ok": sum(t["outcome_ok"] for t in turns),
+               "redo_turns": sum(t["redo_ok"] is not None for t in turns),
+               "redo_ok": sum(t["redo_ok"] is True for t in turns),
+               "revision_turns": sum(t["revision_ok"] is not None for t in turns),
+               "revision_ok": sum(t["revision_ok"] is True for t in turns),
+               "revisions": sum(t["revised"] is not None for t in turns),
+               "false_questions": sum(t["expected"]["outcome"] == "chart" and t["questioned"] for t in turns),
+               "requests": sum(t["requests_used"] or 0 for t in turns),
+               "heldout_cases": sum(bool(case.get("heldout")) for case in results),
+               "heldout_cases_ok": sum(ok for case, ok in zip(results, passed) if case.get("heldout"))}
+    print(f"cases {summary['cases_ok']}/{summary['cases']}, tool choice {summary['tool_ok']}/{summary['turns']}, "
+          f"outcome {summary['outcome_ok']}/{summary['turns']}, "
+          f"redo analysis {summary['redo_ok']}/{summary['redo_turns']}, "
+          f"revision expected {summary['revision_ok']}/{summary['revision_turns']}, "
+          f"revisions: {summary['revisions']}, false questions: {summary['false_questions']}, "
+          f"requests: {summary['requests']}")
+    print(f"held-out cases {summary['heldout_cases_ok']}/{summary['heldout_cases']}")
+    return summary
 
 
 def use_instructions(path: Path) -> str:
@@ -180,16 +229,7 @@ async def evaluate(cases: list[dict]) -> dict:
             return await run_case(case, lead, profiler, analyst, designer, designer_fallback)
 
     results = await asyncio.gather(*(bounded(case) for case in cases))
-    turns = [turn for case in results for turn in case["turns"]]
-    cases_ok = sum(all(t["tool_ok"] and t["outcome_ok"] for t in case["turns"]) for case in results)
-    summary = {"cases": len(results), "cases_ok": cases_ok,
-               "turns": len(turns), "tool_ok": sum(t["tool_ok"] for t in turns),
-               "outcome_ok": sum(t["outcome_ok"] for t in turns),
-               "redo_turns": sum(t["redo_ok"] is not None for t in turns),
-               "redo_ok": sum(t["redo_ok"] is True for t in turns)}
-    print(f"cases {summary['cases_ok']}/{summary['cases']}, tool choice {summary['tool_ok']}/{summary['turns']}, "
-          f"outcome {summary['outcome_ok']}/{summary['turns']}, "
-          f"redo analysis {summary['redo_ok']}/{summary['redo_turns']}")
+    summary = summarize(results)
     return {"model": model, "summary": summary, "cases": results}
 
 
