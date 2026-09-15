@@ -489,3 +489,10 @@ budgets as failures, one analyst revision per request asked by the designer), Op
   after 13 requests. The reported Jeddah request drew in one pass: the fold handles two same-unit measures in code.
 - The runner now reports `revised`, `questioned`, and `requests_used` per turn and counts revisions, false
   questions, and held-out cases; two cases are held out of any prompt tuning.
+- Browser check on an isolated instance (port 7933, own data folder), 2026-09-15: the first run of "قارن عدد
+  المخالفات ومتوسط الغرامة لكل مدينة" ended in a table from the fallback designer, because the analyst wrote no
+  unit on either measure and H10 read two null units as one scale, so neither a dual-axes chart nor a fold could
+  pass; the designer's revision request changed nothing. H10 now treats two unit-less measures as one scale only
+  when they are aggregated the same way (443cd07); the rerun drew a dual-axes chart in one pass, six requests.
+  "Chart injuries by hospital" on a file without a hospital column asked which column stands for hospital, and
+  the answer "use the city column" resumed into a chart with the assumption recorded.
