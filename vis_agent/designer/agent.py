@@ -29,7 +29,7 @@ from vis_agent.render.base import RENDERERS, Rendered
 from . import models
 from .catalogue import CATALOGUE
 from .check import check_spec as run_check
-from .models import Candidate, Compromise, Design, DesignReport, PreviousDesign, Rejection, SpecCheck
+from .models import Candidate, Compromise, Design, DesignReport, PreviousDesign, Rejection, ReviewRound, SpecCheck
 from .recommend import recommend_charts as rank_charts
 from .shape import describe
 from .syntax import KEYS, STYLE_KEYS, parse, to_text
@@ -40,6 +40,7 @@ DEFAULT_DESIGNER_MODEL = DEFAULT_PROFILER_MODEL
 DEFAULT_FALLBACK_DESIGNER_MODEL = "openrouter:anthropic/claude-sonnet-4.6"
 DESIGNER_RULEBOOK = Path(__file__).with_name("rulebook.md").read_text(encoding="utf-8")
 REVISE_INSTRUCTIONS = Path(__file__).with_name("rulebook-revise.md").read_text(encoding="utf-8")
+REVIEW_INSTRUCTIONS = Path(__file__).with_name("rulebook-review.md").read_text(encoding="utf-8")
 DESIGN_TIMEOUT_SECONDS = 90
 MAX_RECOMMEND_CALLS = 2
 MAX_CHECK_CALLS = 3
@@ -88,6 +89,7 @@ class DesignerPrompt(BaseModel):
     clarifications: list[QuestionAnswer] = []
     previous: PreviousDesign | None = None
     revision: RevisionRound | None = None
+    review: ReviewRound | None = None
 
 
 class Shortlist(BaseModel):
@@ -117,6 +119,7 @@ def build_prompt(
     report: AnalysisReport, brief: DataBrief | None,
     clarifications: list[QuestionAnswer] | None = None, previous: PreviousDesign | None = None,
     revision: RevisionRound | None = None,
+    review: ReviewRound | None = None,
 ) -> DesignerPrompt:
     shape = describe(report.analysis.columns, report.result)
     columns = []
@@ -145,13 +148,13 @@ def build_prompt(
         columns=columns, row_count=report.result.row_count,
         preview=[[cut(cell) for cell in row] for row in rows[:PREVIEW_ROWS]],
         preview_is_partial=len(rows) > PREVIEW_ROWS or len(rows) < report.result.row_count,
-        clarifications=list(clarifications or []), previous=previous, revision=revision,
+        clarifications=list(clarifications or []), previous=previous, revision=revision, review=review,
     )
 
 
 def prompt_json(prompt: DesignerPrompt) -> str:
     """The prompt as the model sees it. Empty answers and an absent previous analysis are left out, so ordinary runs are unchanged."""
-    exclude = {name for name in ("clarifications", "previous", "revision") if not getattr(prompt, name)}
+    exclude = {name for name in ("clarifications", "previous", "revision", "review") if not getattr(prompt, name)}
     return prompt.model_dump_json(exclude=exclude or None)
 
 
@@ -326,10 +329,13 @@ def create_designer(model: str | Model) -> Agent[DesignerDeps, Design | Clarific
 
     @agent.instructions
     def revise_rules(ctx: RunContext[DesignerDeps]) -> str | None:
-        if (ctx.deps.prompt.clarifications or ctx.deps.prompt.previous is not None
-                or ctx.deps.prompt.revision is not None):
-            return REVISE_INSTRUCTIONS
-        return None
+        prompt = ctx.deps.prompt
+        parts = []
+        if prompt.clarifications or prompt.previous is not None or prompt.revision is not None:
+            parts.append(REVISE_INSTRUCTIONS)
+        if prompt.review is not None:
+            parts.append(REVIEW_INSTRUCTIONS)
+        return "\n\n".join(parts) or None
 
     return agent
 
@@ -343,6 +349,7 @@ async def design_chart(
     clarifications: list[QuestionAnswer] | None = None,
     previous: PreviousDesign | None = None,
     revision: RevisionRound | None = None,
+    review: ReviewRound | None = None,
 ) -> DesignReport:
     """Design a chart from a saved analysis, returning a checked design, a clarification, or a warning."""
     started = time.perf_counter()
@@ -355,7 +362,7 @@ async def design_chart(
             seconds=time.perf_counter() - started, created_at=datetime.now(timezone.utc),
         )
 
-    prompt = build_prompt(report, brief, clarifications=clarifications, previous=previous, revision=revision)
+    prompt = build_prompt(report, brief, clarifications=clarifications, previous=previous, revision=revision, review=review)
     deps = DesignerDeps(report=report, prompt=prompt, suggested=prompt.suggested_chart_type, renderer=renderer)
     output: Design | Clarification | AnalysisRevision | None = None
     model_name = None

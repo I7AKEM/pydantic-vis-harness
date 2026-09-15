@@ -6,7 +6,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from vis_agent.analyst.models import AnalysisReport, AnalysisRevision, Clarification, ResultColumn
-from vis_agent.designer.models import ChartType, Compromise, Design
+from vis_agent.designer.models import ChartType, Compromise, Design, ReviewRound
 
 RequestType = Literal["new", "revise"]
 StepName = Literal["understand", "profile", "analyze", "design", "render", "review", "deliver"]
@@ -65,6 +65,14 @@ class RequestSummary(BaseModel):
     updated_at: datetime
 
 
+class Round(BaseModel):
+    """A design-render-review round the reviewer sent back; the current round lives in the request's steps."""
+
+    design: dict[str, Any]
+    render: dict[str, Any]
+    review: dict[str, Any]
+
+
 class Request(BaseModel):
     """One piece of work about one dataset, with the saved output of every completed step."""
 
@@ -80,6 +88,8 @@ class Request(BaseModel):
     status: RequestStatus = "running"
     requests_used: int = 0
     revision: AnalysisRevision | None = None
+    rounds: list[Round] = Field(default_factory=list)
+    review_feedback: ReviewRound | None = None
     steps: dict[str, Any] = Field(default_factory=dict)
     clarifications: list[Exchange] = Field(default_factory=list)
     artifact_id: str | None = None
@@ -122,6 +132,7 @@ class Lineage(BaseModel):
     renderer: str = "gptvis"
     analyst_model: str | None = None
     designer_model: str | None = None
+    reviewer_model: str | None = None
 
 
 class ArtifactSummary(BaseModel):

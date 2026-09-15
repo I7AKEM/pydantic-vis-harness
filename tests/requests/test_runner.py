@@ -32,14 +32,15 @@ def test_a_new_request_runs_every_step_and_delivers(deps, dataset_id, fake_model
     assert outcome.status == "done" and outcome.clarification is None
     saved = deps.requests.get_request(request.request_id)
     assert list(saved.steps) == list(STEPS) and saved.language == "English"
-    assert saved.steps["review"]["status"] == "not_reviewed"
+    assert saved.steps["review"]["status"] == "reviewed"
     artifact = outcome.artifact
     assert artifact.version == 1 and artifact.parent_artifact_id is None
     assert artifact.rows == [["West", 20], ["East", 10]] and artifact.row_count == 2
     assert artifact.chart == "bar" and artifact.png_url.startswith("/renders/") and artifact.png_url.endswith("/chart.png")
     assert artifact.summary == "West leads with 20." and fake_render
     full = deps.requests.get_artifact(artifact.artifact_id)
-    assert full.lineage.catalogue_version and full.lineage.rules_version and full.review["status"] == "not_reviewed"
+    assert full.lineage.catalogue_version and full.lineage.rules_version and full.review["status"] == "reviewed"
+    assert full.review["verdict"] == "pass"
     assert saved.revision is None and "analyze_before_revision" not in saved.steps
     assert run(run_request(deps, request.request_id)).artifact.artifact_id == artifact.artifact_id
 
@@ -616,3 +617,131 @@ def test_the_outcome_carries_a_card(deps, dataset_id, fake_models, fake_render):
     outcome = run(run_request(deps, request.request_id))
     assert outcome.card and "![chart](/renders/" in outcome.card and outcome.artifact.artifact_id in outcome.card
     assert "| West | 20 |" in outcome.card and "2 of 2 rows" in outcome.card
+
+
+from pydantic_ai.messages import TextPart
+
+from tests.requests.conftest import reviewer_finding, reviewer_pass
+
+
+def test_a_clean_chart_is_reviewed_once_and_delivered(deps, dataset_id, fake_models, fake_render):
+    _analyst, designer = fake_models
+    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+    outcome = run(run_request(deps, request.request_id))
+    saved = deps.requests.get_request(request.request_id)
+    assert outcome.status == "done" and saved.steps["review"]["status"] == "reviewed"
+    assert saved.steps["review"]["verdict"] == "pass" and saved.rounds == [] and designer.runs == 1
+    artifact = deps.requests.get_artifact(outcome.artifact.artifact_id)
+    assert artifact.review["verdict"] == "pass" and artifact.review["rounds"] == []
+    assert "**Review**: pass" in outcome.card
+
+
+def test_an_error_finding_starts_a_round_and_the_designer_sees_the_findings(deps, dataset_id, fake_models, fake_render, reviewer):
+    _analyst, designer = fake_models
+    verdicts = iter([reviewer_finding(), reviewer_pass])
+    seen = {}
+
+    def review_then_pass(messages, info):
+        return next(verdicts)(messages, info)
+
+    real_drive = designer.drive
+
+    def watching(messages, info):
+        prompt = prompt_of(messages)
+        if prompt.get("review"):
+            seen["review"] = prompt["review"]
+        return real_drive(messages, info)
+
+    designer.drive = watching
+    with reviewer.override(model=FunctionModel(review_then_pass)):
+        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+        outcome = run(run_request(deps, request.request_id))
+    saved = deps.requests.get_request(request.request_id)
+    assert outcome.status == "done" and designer.runs == 2 and len(saved.rounds) == 1
+    assert seen["review"]["findings"][0]["rule"] == "R-5" and seen["review"]["spec"].startswith("vis bar")
+    assert saved.rounds[0].review["verdict"] == "revise" and saved.steps["review"]["verdict"] == "pass"
+    artifact = deps.requests.get_artifact(outcome.artifact.artifact_id)
+    assert len(artifact.review["rounds"]) == 1 and artifact.review["verdict"] == "pass"
+
+
+def test_rounds_stop_at_the_bound_and_the_chart_delivers_with_its_findings(deps, dataset_id, fake_models, fake_render, reviewer):
+    _analyst, designer = fake_models
+    with reviewer.override(model=FunctionModel(reviewer_finding(message="Bar 3 is unlabelled."))):
+        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+        outcome = run(run_request(deps, request.request_id))
+    saved = deps.requests.get_request(request.request_id)
+    assert outcome.status == "done" and designer.runs == 1 + runner.MAX_REVIEW_ROUNDS == 3
+    assert len(saved.rounds) == runner.MAX_REVIEW_ROUNDS and saved.steps["review"]["verdict"] == "revise"
+    assert outcome.artifact.png_url and outcome.clarification is None
+    assert "**Review**: revise" in outcome.card and "- Bar 3 is unlabelled." in outcome.card
+    assert any("review rounds" in w for w in outcome.artifact.warnings)
+
+
+def test_a_kill_between_render_and_review_resumes_into_the_same_round(deps, dataset_id, fake_models, fake_render, reviewer, monkeypatch):
+    _analyst, designer = fake_models
+    real_review = runner.review_chart
+    state = {"calls": 0}
+
+    async def dying(*args, **kwargs):
+        state["calls"] += 1
+        if state["calls"] == 2:
+            raise RuntimeError("the process died here")
+        return await real_review(*args, **kwargs)
+
+    monkeypatch.setattr(runner, "review_chart", dying)
+    verdicts = iter([reviewer_finding(), reviewer_pass, reviewer_pass])
+
+    def in_turn(messages, info):
+        return next(verdicts)(messages, info)
+
+    with reviewer.override(model=FunctionModel(in_turn)):
+        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+        with pytest.raises(RuntimeError):
+            run(run_request(deps, request.request_id))
+        saved = deps.requests.get_request(request.request_id)
+        assert saved.status == "failed" and len(saved.rounds) == 1 and "render" in saved.steps and "review" not in saved.steps
+        outcome = run(run_request(deps, request.request_id))
+    assert outcome.status == "done" and designer.runs == 2 and len(deps.requests.get_request(request.request_id).rounds) == 1
+
+
+def test_without_a_reviewer_the_step_records_not_reviewed(deps, dataset_id, fake_models, fake_render):
+    deps.reviewer = None
+    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+    outcome = run(run_request(deps, request.request_id))
+    review = deps.requests.get_request(request.request_id).steps["review"]
+    assert outcome.status == "done" and review["status"] == "not_reviewed" and "No reviewer" in review["reason"]
+    assert "**Review**" not in outcome.card
+
+
+def test_a_reviewer_that_fails_delivers_unreviewed_with_a_warning(deps, dataset_id, fake_models, fake_render, reviewer):
+    def talking(messages, info):
+        return ModelResponse(parts=[TextPart("Looks fine to me.")])
+
+    with reviewer.override(model=FunctionModel(talking)):
+        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+        outcome = run(run_request(deps, request.request_id))
+    review = deps.requests.get_request(request.request_id).steps["review"]
+    assert outcome.status == "done" and review["status"] == "not_reviewed" and "could not finish" in review["reason"]
+    assert any("could not finish" in w for w in outcome.artifact.warnings) and outcome.artifact.png_url
+
+
+def test_a_failed_render_is_not_reviewed(deps, dataset_id, fake_models, monkeypatch):
+    from vis_agent.render.base import RenderFailed
+
+    def broken(*args, **kwargs):
+        raise RenderFailed("Node is missing.")
+
+    monkeypatch.setattr(runner, "render_design", broken)
+    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+    outcome = run(run_request(deps, request.request_id))
+    assert outcome.status == "done" and deps.requests.get_request(request.request_id).steps["review"]["status"] == "not_reviewed"
+
+
+def test_zero_rounds_keeps_the_verdict_and_never_sends_back(deps, dataset_id, fake_models, fake_render, reviewer, monkeypatch):
+    monkeypatch.setattr(runner, "MAX_REVIEW_ROUNDS", 0)
+    _analyst, designer = fake_models
+    with reviewer.override(model=FunctionModel(reviewer_finding())):
+        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+        outcome = run(run_request(deps, request.request_id))
+    saved = deps.requests.get_request(request.request_id)
+    assert outcome.status == "done" and designer.runs == 1 and saved.rounds == [] and saved.steps["review"]["verdict"] == "revise"
