@@ -29,8 +29,9 @@ Requests package file map:
 
 - Use Python 3.12, uv, Pydantic AI, OpenRouter or a LiteLLM proxy, and the built-in Web Chat UI.
 - Providers: `vis_agent/providers.py` builds one team (lead + specialists + `AppDeps`) per configured provider,
-  OpenRouter and LiteLLM; a model-less menu agent owns the web page and the dropdown, and `add_chat_route` runs
-  the team whose lead model id the request names. The first team profiles uploads and serves the agent channel.
+  LiteLLM and OpenRouter; a model-less menu agent owns the web page and the dropdown, and `add_chat_route` runs
+  the team whose lead model id the request names. LiteLLM is the default gateway and is listed first, and the first
+  team profiles uploads and serves the agent channel.
 - Keep code small, explicit, and readable. Application code lives in the `vis_agent` package, one subpackage per agent; tests and evals mirror it.
 - `vis_agent/designer/` holds the designer's tools; `vis_agent/render/` holds the renderers.
 - Rendering requires Node 22 LTS on PATH and `npm ci --prefix vis_agent/render/gptvis`.

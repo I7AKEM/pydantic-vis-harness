@@ -89,16 +89,16 @@ def litellm_team(store: DatasetStore, requests: RequestStore) -> Team:
 
 
 def teams_from_env(store: DatasetStore, requests: RequestStore) -> list[Team]:
-    """The providers the environment configures, OpenRouter first. The first team profiles uploads and serves the
-    agent channel."""
+    """The providers the environment configures, LiteLLM first: it is the default gateway, so the dropdown opens on
+    it. The first team profiles uploads and serves the agent channel."""
     teams: list[Team] = []
-    if os.getenv("OPENROUTER_API_KEY"):
-        teams.append(openrouter_team(store, requests))
     if os.getenv("LITELLM_BASE_URL"):
         teams.append(litellm_team(store, requests))
+    if os.getenv("OPENROUTER_API_KEY"):
+        teams.append(openrouter_team(store, requests))
     if not teams:
         raise RuntimeError(
-            "No provider is configured: set OPENROUTER_API_KEY, or LITELLM_BASE_URL with LOCAL_LLM and LITELLM_TOKEN."
+            "No provider is configured: set LITELLM_BASE_URL with LOCAL_LLM and LITELLM_TOKEN, or OPENROUTER_API_KEY."
         )
     return teams
 

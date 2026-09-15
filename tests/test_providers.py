@@ -52,18 +52,18 @@ def submit(model_id: str) -> dict:
 
 
 def test_the_dropdown_lists_the_teams_by_name(store):
-    teams = [team("OpenRouter", "openrouter", store), team("LiteLLM", "litellm", store)]
+    teams = [team("LiteLLM", "litellm", store), team("OpenRouter", "openrouter", store)]
     with TestClient(chat_app(teams), base_url="http://localhost") as client:
         models = client.get("/api/configure").json()["models"]
-    assert [model["name"] for model in models] == ["OpenRouter", "LiteLLM"]
+    assert [model["name"] for model in models] == ["LiteLLM", "OpenRouter"]
     assert [model["id"] for model in models] == [team.model_id for team in teams]
 
 
 def test_a_message_runs_the_team_the_dropdown_names(store):
-    teams = [team("OpenRouter", "openrouter", store), team("LiteLLM", "litellm", store)]
+    teams = [team("LiteLLM", "litellm", store), team("OpenRouter", "openrouter", store)]
     with TestClient(chat_app(teams), base_url="http://localhost") as client:
-        local = client.post("/api/chat", json=submit(teams[1].model_id))
-        remote = client.post("/api/chat", json=submit(teams[0].model_id))
+        local = client.post("/api/chat", json=submit(teams[0].model_id))
+        remote = client.post("/api/chat", json=submit(teams[1].model_id))
     assert local.status_code == 200 and "LiteLLM lead here" in local.text
     assert remote.status_code == 200 and "OpenRouter lead here" in remote.text
 
@@ -103,19 +103,28 @@ def test_a_team_on_a_named_model_sends_the_name(store):
     assert Team("Test", create_lead("test"), deps).model_id == "test"
 
 
-def test_teams_from_env_puts_openrouter_first(store, monkeypatch):
+def test_teams_from_env_puts_litellm_first(store, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "x")
     monkeypatch.delenv("PYDANTIC_AI_MODEL", raising=False)
     monkeypatch.setenv("LITELLM_BASE_URL", "http://litellm.local:4000")
     monkeypatch.setenv("LOCAL_LLM", "google/gemma-4")
     monkeypatch.setenv("LITELLM_TOKEN", "t")
     teams = teams_from_env(store, RequestStore(store))
-    assert [team.label for team in teams] == ["OpenRouter", "LiteLLM"]
+    assert [team.label for team in teams] == ["LiteLLM", "OpenRouter"]
+    assert teams[0].model_id == "litellm:google/gemma-4"
+
+
+def test_teams_from_env_offers_openrouter_only_when_its_key_is_set(store, monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "x")
+    monkeypatch.delenv("PYDANTIC_AI_MODEL", raising=False)
+    monkeypatch.delenv("LITELLM_BASE_URL", raising=False)
+    teams = teams_from_env(store, RequestStore(store))
+    assert [team.label for team in teams] == ["OpenRouter"]
     assert teams[0].model_id == "openrouter:google/gemma-4-31b-it:nitro"
 
 
 def test_teams_from_env_needs_a_provider(store, monkeypatch):
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     monkeypatch.delenv("LITELLM_BASE_URL", raising=False)
-    with pytest.raises(RuntimeError, match="No provider is configured: set OPENROUTER_API_KEY, or LITELLM_BASE_URL"):
+    with pytest.raises(RuntimeError, match="No provider is configured: set LITELLM_BASE_URL"):
         teams_from_env(store, RequestStore(store))
