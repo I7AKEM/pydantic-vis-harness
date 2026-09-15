@@ -235,6 +235,15 @@ def _histogram(records: list[dict], bins: int, digits: str) -> list[dict]:
         decimals += 1
 
 
+def _names(title: str | None, column: ResultColumn | None) -> bool:
+    """True when the title carries the column's name or meaning."""
+    if not title or column is None:
+        return False
+    text = title.casefold()
+    meaning = column.meaning.strip().casefold()
+    return column.name.casefold() in text or (bool(meaning) and meaning in text)
+
+
 def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Resolved:
     """Resolve a checked spec, retaining row counts and render-time compromises."""
     entry = CATALOGUE.get(spec.type)
@@ -262,9 +271,12 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
                   "background": spec.background_color, "accent": spec.palette[0] if spec.palette else None}
         return Resolved(config, {}, number, [], 1, 0, 0, width, height)
     if spec.type == "table":
-        width = spec.width if spec.width is not None else 800
         table_columns = [by_name[name] for name in result.columns]
         headers = _table_headers(table_columns)
+        # Sixteen pixels a character, sixty characters at most: a long Arabic header widens the table instead of
+        # being cut by the package; two short headers stay at the old 800.
+        width = spec.width if spec.width is not None else max(
+            800, 40 + sum(max(140, 16 * min(len(header), 60)) for header in headers))
         table_formats = {header: NumberFormat(unit=_column_unit(column), digits=spec.digits).model_dump()
                          for header, column in zip(headers, table_columns)}
         config = {
@@ -274,6 +286,10 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
         }
         compromises = [Compromise(key=key, message="tables are drawn as the package draws them")
                        for key in ("labels", "legend") if getattr(spec, key) == "on"]
+        long_headers = [header for header in headers if len(header) > 24]
+        if long_headers:
+            compromises.append(Compromise(key="headers", message=f"{len(long_headers)} long table headers may be "
+                                                                  "shortened by the package: " + "; ".join(long_headers[:3])))
         return Resolved(config, {}, number, compromises, len(result.rows), 0, 0, width, height,
                         table_formats=table_formats)
 
@@ -324,9 +340,15 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     if spec.type not in WITHOUT_AXES:
         x_column = binding.get("category") or binding.get("time") or binding.get("x")
         y_column = binding.get("value") or binding.get("y")
-        x_title, y_title = spec.axis_x_title, spec.axis_y_title
+        category_title, value_title = spec.axis_x_title, spec.axis_y_title
         if spec.type in BARS:
-            x_title, y_title = y_title, x_title
+            # The spec's axisXTitle names the horizontal axis; on horizontal bars that axis holds the values.
+            category_title, value_title = value_title, category_title
+        if (_names(category_title, y_column) and not _names(category_title, x_column)
+                and _names(value_title, x_column) and not _names(value_title, y_column)):
+            # Written for the other axis: a title follows the column it names.
+            category_title, value_title = value_title, category_title
+        x_title, y_title = category_title, value_title
         for key, title, column in (("axisXTitle", x_title, x_column),
                                    ("axisYTitle", y_title, y_column)):
             if title is not None or column is not None:
@@ -348,6 +370,9 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
         labels = list(dict.fromkeys(r[color_role] for r in records)) if color_role else []
         muted = "#4E5969" if spec.theme == "dark" else "#C9CDD4"
         style["palette"] = [ACCENT if str(label) in spec.emphasis else muted for label in labels]
+    elif spec.type in SINGLE_SERIES and "group" not in binding:
+        # One series, one colour: the package would colour each bar by category, which reads as meaning.
+        style["palette"] = [ACCENT]
     if spec.type in BARS | COLUMNS:
         if spec.zero is not None:
             style["startAtZero"] = True
@@ -377,7 +402,8 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
         if spec.type in COLUMNS and axis is not None and binding[axis].kind != "time":
             scale["x"] = {"domain": categories[::-1]}
         title["align"] = "right"
-        compromises.append(Compromise(key="direction", message="the legend stays where the package puts it"))
+        if spec.direction == "rtl":
+            compromises.append(Compromise(key="direction", message="the legend stays where the package puts it"))
     if spec.subtitle is not None:
         title["subtitle"] = spec.subtitle
     if title:
@@ -410,6 +436,12 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     value = binding.get("value") or binding.get("y")
     if number.unit is None:
         number.unit = "%" if spec.percent else _column_unit(value)
+    if number.decimals is None and spec.type != "histogram":
+        smallest = min((abs(record[role]) for record in records for role in MEASURES
+                        if role in record and record[role]), default=None)
+        if smallest is not None and smallest < 0.01:
+            # Two significant digits of the smallest value, so 0.0001 prints as 0.00010, never as 0.
+            number.decimals = min(6, 1 - Decimal(str(smallest)).adjusted())
 
     number2 = None
     if spec.type == "histogram":

@@ -386,7 +386,7 @@ def test_legend_switch_overrides_package_false(switch, tmp_path):
 def test_render_merges_compromises_in_order_without_duplicates(tmp_path):
     from vis_agent.designer.models import Compromise
 
-    spec = parse(SPECS["column"][0])
+    spec = parse(SPECS["column"][0] + "\ndirection rtl")
     duplicate = resolve(spec, *arabic_cities()).compromises[0]
     first = Compromise(key="direction", message="A different check-time direction compromise")
     incoming = [first, duplicate, duplicate]

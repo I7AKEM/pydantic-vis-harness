@@ -534,7 +534,7 @@ def test_arabic_columns_reverse_final_category_domain_and_align_title(chart):
     categories = list(dict.fromkeys(r["category"] for r in resolved.config["data"]))
     assert resolved.overrides["scale"]["x"]["domain"] == categories[::-1]
     assert resolved.overrides["title"]["align"] == "right"
-    assert any(c.key == "direction" and "legend" in c.message for c in resolved.compromises)
+    assert not any(c.key == "direction" for c in resolved.compromises)
 
 
 @pytest.mark.parametrize("chart", ["bar", "grouped_bar", "stacked_bar"])
@@ -553,7 +553,7 @@ def test_arabic_bars_keep_value_desc_order_and_align_title(chart):
     assert "domain" not in resolved.overrides.get("scale", {}).get("x", {})
     assert resolved.config["data"] == expected
     assert resolved.overrides["title"]["align"] == "right"
-    assert any(c.key == "direction" and "legend" in c.message for c in resolved.compromises)
+    assert not any(c.key == "direction" for c in resolved.compromises)
 
 
 def test_arabic_explicit_ltr_overrides_language_default():
@@ -966,3 +966,59 @@ def test_hijri_time_keeps_the_analyst_order(values):
     spec = Spec(type="line", bind={"time": "period", "value": "value"})
     resolved = resolve(spec, columns, result)
     assert [record["time"] for record in resolved.config["data"]] == values
+
+
+from vis_agent.analyst.models import ResultColumn
+from vis_agent.designer.rules import ACCENT
+
+
+def test_a_single_series_gets_one_colour():
+    columns, result = cities()
+    assert resolve(city_spec(), columns, result).config["style"]["palette"] == [ACCENT]
+    columns, result = grouped()
+    assert "palette" not in resolve(group_spec(), columns, result).config.get("style", {})
+
+
+def test_generic_count_markers_leave_the_axis_and_a_named_noun_stays():
+    columns, result = cities()
+    columns[1] = column("violations", "measure", aggregate="count", unit="count")
+    assert resolve(city_spec(), columns, result).number.unit is None
+    columns[1] = column("violations", "measure", aggregate="count", unit="شخص")
+    assert resolve(city_spec(), columns, result).number.unit == "شخص"
+    columns[1] = column("violations", "measure", aggregate="sum", unit="SAR")
+    assert resolve(city_spec(), columns, result).number.unit == "SAR"
+
+
+def test_tiny_values_get_enough_decimals():
+    columns, _ = cities(3)
+    tiny = table(columns, [["A", 0.0004], ["B", 0.0002], ["C", 0.0001]], types=["VARCHAR", "DOUBLE"])
+    assert resolve(city_spec(), columns, tiny).number.decimals == 5
+    assert resolve(city_spec(), *cities()).number.decimals is None
+
+
+def test_axis_titles_follow_the_column_they_name():
+    columns, result = cities()
+    right = resolve(city_spec("bar", axis_x_title="number of violations", axis_y_title="city"), columns, result).config
+    swapped = resolve(city_spec("bar", axis_x_title="city", axis_y_title="number of violations"), columns, result).config
+    assert (right["axisXTitle"], right["axisYTitle"]) == ("city", "number of violations")
+    assert (swapped["axisXTitle"], swapped["axisYTitle"]) == ("city", "number of violations")
+    plain = resolve(city_spec("column", axis_x_title="city", axis_y_title="number of violations"), columns, result).config
+    assert (plain["axisXTitle"], plain["axisYTitle"]) == ("city", "number of violations")
+
+
+def test_a_wide_table_widens_and_records_its_long_headers():
+    columns, result = cities(2)
+    columns[1] = ResultColumn(name="violations", meaning="عدد السكان من الفئة العمرية 15 إلى 24 سنة", kind="measure",
+                              aggregate="count")
+    resolved = resolve(Spec(type="table"), columns, result)
+    assert resolved.width > 800 and [c.key for c in resolved.compromises] == ["headers"]
+    assert resolve(Spec(type="table"), *cities(2)).width == 800
+
+
+def test_the_direction_compromise_needs_an_explicit_direction():
+    columns, result = cities()
+    by_default = resolve(city_spec(language="ar"), columns, result)
+    explicit = resolve(city_spec(language="ar", direction="rtl"), columns, result)
+    assert "direction" not in [c.key for c in by_default.compromises]
+    assert "direction" in [c.key for c in explicit.compromises]
+    assert by_default.overrides["title"]["align"] == "right"
