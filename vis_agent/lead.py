@@ -1,16 +1,19 @@
 """The lead agent: talks to the caller, delegates to the profiler, knows the store."""
 
 import asyncio
+import logging
 import re
 
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed
 from pydantic_ai.durable_exec.temporal import TemporalDurability
+from pydantic_ai.messages import ModelRequest, ToolReturnPart, UserPromptPart
 from pydantic_ai.models import Model
 from pydantic_ai.tools import ToolDefinition
 from pydantic_ai_harness import Advisor
 
 from vis_agent.analyst.agent import LeadAnswer
 from vis_agent.analyst.agent import answer_question as analyst_answer_question
+from vis_agent.analyst.checks import numbers_in
 from vis_agent.deps import AppDeps
 from vis_agent.models import DatasetSummary
 from vis_agent.profiler.agent import profile_csv
@@ -18,6 +21,8 @@ from vis_agent.requests.models import ArtifactSummary, Caller, RequestOutcome
 from vis_agent.requests.runner import answer_request, create_request, latest_unfinished, requests_of, run_request
 from vis_agent.requests.store import ArtifactNotFound, RequestNotFound
 from vis_agent.store import DatasetNotFound
+
+log = logging.getLogger("lead")
 
 MAX_LISTED_DATASETS = 20
 MAX_LISTED_ARTIFACTS = 20
@@ -57,13 +62,12 @@ Past work. A question about what was already made, shown, or analysed in this co
 did we make so far?", "show me the earlier chart", or "did we already look at X?", is a find_artifact call;
 never answer it from memory, and never route it to draw.
 
-Showing a result. Show the picture with its png_url as a Markdown image, exactly as returned (a path starting
-with /renders/, never with a host added). Then give the summary, a table of at most twenty rows with the total
-row count, the assumptions, the compromises, and the warnings, plainly. Do this for every artifact, a revision
-that changed only the picture included: the table goes under the new picture. When the artifact has no chart,
-say why in one sentence and show the table. Show the artifact ID and the request ID once, in one short line, so the
-user can name them later. Offer the spec and the SQL when asked. Never restate a number that is not in the
-result. Never describe a chart you did not get back.
+Showing a result. draw, revise, resume, and answer_question return a card: the picture, the summary, the table
+with its row count, the assumptions, the compromises, the warnings, the review, and the IDs, already in the
+user's language. Put the card in your reply exactly as returned, whole, then add your own words around it. Never
+restate a number that is not in the card or in the user's message, never describe a chart that is not in the
+card, and never drop the table on a picture-only revision: the card has it. When the outcome has no artifact,
+say why in one sentence. Offer the spec and the SQL when asked.
 
 Changing a chart. A change to an existing chart is a revise of the artifact this conversation last showed, or
 the one the user names, with the change in the user's words. A short imperative that alters the data, such
@@ -243,6 +247,43 @@ async def find_artifact(ctx: RunContext[AppDeps], artifact_id: str = "", dataset
         raise ModelRetry(str(exc)) from exc
 
 
+LIST_MARKER = re.compile(r"(?m)^\s*\d{1,2}[.)]\s")
+IDENTIFIER = re.compile(r"\b(?:art|rq|ds)_[0-9a-f]+\b")
+
+
+def numbers_from_the_run(messages) -> set[str]:
+    """Every number this run has seen: the user's words and the tools' returns, cards included."""
+    seen: set[str] = set()
+    for message in messages:
+        if not isinstance(message, ModelRequest):
+            continue
+        for part in message.parts:
+            if isinstance(part, UserPromptPart):
+                content = part.content if isinstance(part.content, str) else " ".join(str(c) for c in part.content)
+                seen |= numbers_in(content)
+            elif isinstance(part, ToolReturnPart):
+                seen |= numbers_in(part.model_response_str())
+    return seen
+
+
+def _same_value(number: str, known: set[str]) -> bool:
+    decimals = len(number.split(".")[1]) if "." in number else 0
+    value = float(number)
+    for candidate in known:
+        try:
+            if abs(round(float(candidate), decimals) - value) < 1e-9:
+                return True
+        except ValueError:
+            continue
+    return False
+
+
+def invented_numbers(reply: str, known: set[str]) -> list[str]:
+    """Numbers in the reply that no result and no user message hold; list markers and IDs are not numbers."""
+    text = IDENTIFIER.sub(" ", LIST_MARKER.sub(" ", reply))
+    return sorted(n for n in numbers_in(text) if n not in known and not _same_value(n, known))
+
+
 def create_lead(model: str | Model, advisor_model: str | None = None) -> Agent[AppDeps, str]:
     capabilities = []
     if advisor_model:
@@ -262,4 +303,17 @@ def create_lead(model: str | Model, advisor_model: str | None = None) -> Agent[A
     agent.tool(resume, sequential=True, prepare=offer_resume)
     agent.tool(find_dataset)
     agent.tool(find_artifact)
+
+    @agent.output_validator
+    def numbers_come_from_the_run(ctx: RunContext[AppDeps], reply: str) -> str:
+        """A figure the user did not write and no tool returned is invented: one retry, then the reply goes out and
+        the slip is logged, because a stuck lead is worse than one wrong figure."""
+        invented = invented_numbers(reply, numbers_from_the_run(ctx.messages))
+        if invented and ctx.retry == 0:
+            raise ModelRetry("These numbers are in no result and not in the user's message: " + ", ".join(invented)
+                             + ". Use only the card's numbers, or leave the number out.")
+        if invented:
+            log.warning("The lead's reply keeps numbers no result returned: %s", invented)
+        return reply
+
     return agent

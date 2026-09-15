@@ -609,3 +609,10 @@ def test_a_crash_after_the_revision_decision_never_revises_again(
 
     assert outcome.status == "done" and outcome.artifact.chart == "bar"
     assert len(calls) == 2
+
+
+def test_the_outcome_carries_a_card(deps, dataset_id, fake_models, fake_render):
+    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+    outcome = run(run_request(deps, request.request_id))
+    assert outcome.card and "![chart](/renders/" in outcome.card and outcome.artifact.artifact_id in outcome.card
+    assert "| West | 20 |" in outcome.card and "2 of 2 rows" in outcome.card

@@ -21,6 +21,7 @@ from pydantic_ai.usage import RunUsage, UsageLimits
 from vis_agent.analyst.checks import check_result, named_period_check, normalise_units, restates, summary_numbers_exist
 from vis_agent.analyst.models import Analysis, AnalysisReport, Clarification, PreviousAnalysis, QueryError, QueryResult, ResultColumn
 from vis_agent.analyst.query import run_sql
+from vis_agent.card import card as build_card
 from vis_agent.deps import AppDeps
 from vis_agent.language import ARABIC, language_of  # noqa: F401  (ARABIC is re-exported for the designer)
 from vis_agent.models import DataBrief, QuestionAnswer
@@ -361,20 +362,25 @@ class LeadAnswer(BaseModel):
     row_count: int = 0
     sql: str | None = None
     warnings: list[str] = []
+    card: str | None = None
 
     @classmethod
     def from_report(cls, report: AnalysisReport) -> "LeadAnswer":
         analysis, table = report.analysis, report.result
+        rows = table.rows[:LEAD_ROWS] if table else []
+        row_count = table.row_count if table else 0
+        shown = build_card(language=report.language, summary=analysis.summary, columns=analysis.columns, rows=rows,
+                           row_count=row_count, assumptions=analysis.assumptions, warnings=report.warnings) \
+            if analysis is not None else None
         return cls(
             dataset_id=report.dataset_id, question=report.question,
             summary=analysis.summary if analysis else None,
             assumptions=analysis.assumptions if analysis else [],
             clarification=report.clarification,
             columns=analysis.columns if analysis else [],
-            rows=table.rows[:LEAD_ROWS] if table else [],
-            row_count=table.row_count if table else 0,
+            rows=rows, row_count=row_count,
             sql=analysis.sql if analysis else None,
-            warnings=report.warnings,
+            warnings=report.warnings, card=shown,
         )
 
 

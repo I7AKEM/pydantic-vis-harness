@@ -12,6 +12,7 @@ from pydantic_ai.usage import RunUsage
 
 from vis_agent.analyst.agent import analyze_dataset, detect_language
 from vis_agent.analyst.models import AnalysisReport, AnalysisRevision, Clarification, PreviousAnalysis, RevisionRound
+from vis_agent.card import card as build_card
 from vis_agent.deps import AppDeps
 from vis_agent.designer.agent import design_chart, render_design, render_id
 from vis_agent.designer.models import Compromise, DesignReport, PreviousDesign
@@ -69,10 +70,17 @@ def versions() -> tuple[str, str]:
 async def outcome_for(deps: AppDeps, request: Request, warnings: list[str] | None = None) -> RequestOutcome:
     pending = request.pending()
     artifact = None
+    shown = None
     if request.artifact_id:
         artifact = LeadArtifact.from_artifact(await asyncio.to_thread(requests_of(deps).get_artifact, request.artifact_id))
+        shown = build_card(language=request.language or "English", png_url=artifact.png_url,
+                           no_chart_reason=artifact.no_chart_reason, summary=artifact.summary,
+                           explanation=artifact.explanation, columns=artifact.columns, rows=artifact.rows,
+                           row_count=artifact.row_count, assumptions=artifact.assumptions,
+                           compromises=artifact.compromises, warnings=[*artifact.warnings, *(warnings or [])],
+                           review=artifact.review, artifact_id=artifact.artifact_id, request_id=artifact.request_id)
     return RequestOutcome(
-        request_id=request.request_id, status=request.status, artifact=artifact,
+        request_id=request.request_id, status=request.status, artifact=artifact, card=shown,
         clarification=Clarification(question=pending.question, reason=pending.reason) if pending else None,
         overdue=pending.overdue(now()) if pending else False, error=request.error, warnings=list(warnings or []),
     )

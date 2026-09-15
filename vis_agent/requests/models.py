@@ -192,6 +192,7 @@ class LeadArtifact(BaseModel):
     png_url: str | None = None
     html_url: str | None = None
     warnings: list[str] = []
+    review: dict[str, Any] | None = None
 
     @classmethod
     def from_artifact(cls, artifact: Artifact) -> "LeadArtifact":
@@ -210,6 +211,7 @@ class LeadArtifact(BaseModel):
             compromises=list(artifact.compromises) or (list(design.compromises) if design else []),
             no_chart_reason=artifact.no_chart_reason, png_url=artifact.png_url, html_url=artifact.html_url,
             warnings=list(artifact.report.warnings),
+            review=artifact.review,
         )
 
 
@@ -223,3 +225,4 @@ class RequestOutcome(BaseModel):
     overdue: bool = False
     error: str | None = None
     warnings: list[str] = []
+    card: str | None = None
