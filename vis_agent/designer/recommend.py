@@ -4,7 +4,8 @@ from vis_agent.analyst.models import QueryResult, ResultColumn
 from vis_agent.models import Intent
 
 from .catalogue import CATALOGUE, CatalogueEntry
-from .models import Candidate, Recommendation, Rejection, RuleScore
+from .indicator import indicator_data_violations
+from .models import Candidate, IndicatorCard, Recommendation, Rejection, RuleScore
 from .rules import ADDITIVE, Context, HARD_RULES, SOFT_RULES
 from .shape import ColumnShape, ResultShape, describe
 
@@ -59,6 +60,15 @@ def recommend_charts(
     context = Context(intent=intent, suggested=suggested)
     candidates, rejected = [], []
     for entry in CATALOGUE.entries:
+        cards = []
+        if entry.name == "indicator":
+            failures = indicator_data_violations(columns, result)
+            if failures:
+                rejected.append(Rejection(name="indicator", rule="H15", explanation=failures[0].message))
+                continue
+            if len(shape.measures) == 1:
+                cards = [IndicatorCard(value=shape.measures[0].name,
+                                       context=[column.name for column in columns if column.kind not in ("measure", "share")])]
         binding = default_binding(entry, shape)
         if binding is None:
             rejected.append(Rejection(name=entry.name, rule="H1",
@@ -76,7 +86,11 @@ def recommend_charts(
             if scored is not None:
                 breakdown.append(RuleScore(rule=scored.rule, score=scored.score,
                                            explanation=f"{scored.explanation} {scored.fix}".strip()))
+        if entry.name == "indicator" and not cards:
+            breakdown.append(RuleScore(rule="S15", score=0, explanation=(
+                "This complete single row is eligible for cards. Choose primary metrics and supporting columns "
+                "from the question; no first-column binding is proposed. Keep every result column.")))
         candidates.append(Candidate(name=entry.name, score=sum(r.score for r in breakdown),
-                                    binding={role: c.name for role, c in binding.items()}, breakdown=breakdown))
+                                    binding={role: c.name for role, c in binding.items()}, cards=cards, breakdown=breakdown))
     candidates.sort(key=lambda c: -c.score)
     return Recommendation(candidates=candidates, rejected=rejected)

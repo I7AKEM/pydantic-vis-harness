@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_ea324b7f83ba4b7c806447cd9688a934",
+  "question": "Which port do Egyptians use the most?",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT port, port_entries FROM \"ds_ea324b7f83ba4b7c806447cd9688a934\" WHERE nationality = 'مصري' ORDER BY port_entries DESC LIMIT 1",
+    "columns": [
+      {
+        "name": "port",
+        "meaning": "The port name",
+        "kind": "geography",
+        "unit": null,
+        "source": "port",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "port_entries",
+        "meaning": "Number of entries",
+        "kind": "measure",
+        "unit": null,
+        "source": "port_entries",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "Egyptians use the King Abdulaziz International Airport (Jeddah) the most, with 19 entries.",
+    "assumptions": [
+      "The nationality 'مصري' corresponds to Egyptians."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT port, port_entries FROM \"ds_ea324b7f83ba4b7c806447cd9688a934\" WHERE nationality = 'مصري' ORDER BY port_entries DESC LIMIT 1",
+    "columns": [
+      "port",
+      "port_entries"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "مطار الملك عبدالعزيز الدولي (جدة)",
+        19
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.024699041998246685
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.868325041999924,
+  "created_at": "2026-09-13T18:47:16.001428Z"
+}

@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_bf55059fc6384f39ac8953bb06949234",
+  "question": "بعد حساب متوسط الاعمار لسكان جميع احياء الرياض حسب احدث اسناد، ما هو الحي الاكبر سنًا؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \"district\", \"avg_age\" FROM \"ds_bf55059fc6384f39ac8953bb06949234\" ORDER BY \"avg_age\" DESC LIMIT 1",
+    "columns": [
+      {
+        "name": "district",
+        "meaning": "اسم الحي",
+        "kind": "category",
+        "unit": null,
+        "source": "district",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "avg_age",
+        "meaning": "متوسط العمر",
+        "kind": "measure",
+        "unit": null,
+        "source": "avg_age",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "الحي الأكبر سنًا هو حي الملقا بمتوسط عمر يبلغ 41.84 سنة.",
+    "assumptions": [
+      "تم اعتبار الحي صاحب أعلى متوسط عمر هو الحي الأكبر سنًا"
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \"district\", \"avg_age\" FROM \"ds_bf55059fc6384f39ac8953bb06949234\" ORDER BY \"avg_age\" DESC LIMIT 1",
+    "columns": [
+      "district",
+      "avg_age"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "الملقا",
+        41.8421052631579
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.04457908399490407
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.98687833299482,
+  "created_at": "2026-09-13T22:10:24.611008Z"
+}

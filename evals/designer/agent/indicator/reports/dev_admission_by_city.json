@@ -1,0 +1,61 @@
+{
+  "dataset_id": "ds_indicator_fixture",
+  "question": "Compare total admissions by city.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      {
+        "name": "city",
+        "meaning": "city",
+        "kind": "category",
+        "unit": null,
+        "source": null,
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "admissions",
+        "meaning": "admissions",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "Prepared result for the requested measurement.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      "city",
+      "admissions"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "A",
+        100
+      ],
+      [
+        "B",
+        131
+      ]
+    ],
+    "row_count": 2,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T00:00:00Z"
+}

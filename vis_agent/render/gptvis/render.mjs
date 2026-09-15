@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { makeFormatter } from './format.js';
+import { drawIndicator } from './indicator.mjs';
 
 const plain = value => value !== null && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype;
 function deepMerge(base, overrides) {
@@ -81,9 +82,14 @@ try {
     };
   }
   const start = performance.now();
-  const vis = await render(config);
-  let buffer;
-  try { buffer = vis.toBuffer(); } finally { vis.destroy(); }
+  let buffer, indicator;
+  if (config.type === 'indicator') {
+    indicator = drawIndicator(config, createCanvas);
+    buffer = indicator.buffer;
+  } else {
+    const vis = await render(config);
+    try { buffer = vis.toBuffer(); } finally { vis.destroy(); }
+  }
   const renderMs = performance.now() - start;
   await writeFile(process.argv[2] || output, buffer);
   const picture = await loadImage(buffer), { width, height } = picture;
@@ -98,7 +104,9 @@ try {
   }
   console.log(JSON.stringify({ renderMs, width, height, bytes: buffer.length,
     nonBackgroundShare: changed / sampled, g2: captured, functionPaths, formatPaths, texts,
-    ...(config.type === 'spreadsheet' ? { config } : {}) }));
+    ...(config.type === 'spreadsheet' ? { config } : {}),
+    ...(indicator ? { texts: indicator.texts, textBounds: indicator.textBounds, cardBounds: indicator.cardBounds,
+      logicalWidth: indicator.logicalWidth, logicalHeight: indicator.logicalHeight } : {}) }));
 } catch (error) {
   console.error(JSON.stringify({ error: String(error.message || error) }));
   process.exitCode = 1;

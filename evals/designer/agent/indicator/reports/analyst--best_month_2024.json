@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_a935a62a8066417a9550fc8418d08fb6",
+  "question": "ما أفضل شهر في 2024 من حيث عدد الزوار السياح؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT month, tourist_visitors FROM \"ds_a935a62a8066417a9550fc8418d08fb6\" WHERE year = 2024 ORDER BY tourist_visitors DESC LIMIT 1",
+    "columns": [
+      {
+        "name": "month",
+        "meaning": "الشهر",
+        "kind": "ordinal",
+        "unit": null,
+        "source": "month",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "tourist_visitors",
+        "meaning": "عدد الزوار السياح",
+        "kind": "measure",
+        "unit": null,
+        "source": "tourist_visitors",
+        "aggregate": "none",
+        "denominator": "visitors"
+      }
+    ],
+    "summary": "أفضل شهر في عام 2024 من حيث عدد الزوار السياح هو شهر مارس (الشهر 3)، حيث بلغ عدد الزوار 310 زوار.",
+    "assumptions": [
+      "تم اعتبار الشهر الأفضل هو الشهر الذي سجل أعلى عدد من الزوار السياح."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT month, tourist_visitors FROM \"ds_a935a62a8066417a9550fc8418d08fb6\" WHERE year = 2024 ORDER BY tourist_visitors DESC LIMIT 1",
+    "columns": [
+      "month",
+      "tourist_visitors"
+    ],
+    "types": [
+      "BIGINT",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        3,
+        310
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.0170840419959859
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.8262209999957122,
+  "created_at": "2026-09-13T18:41:55.368942Z"
+}

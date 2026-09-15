@@ -5,7 +5,7 @@ from copy import deepcopy
 import pytest
 
 from vis_agent.designer.catalogue import CATALOGUE
-from vis_agent.designer.models import NumberFormat, Spec
+from vis_agent.designer.models import IndicatorCard, NumberFormat, Spec
 from vis_agent.designer.resolve import ResolveError, resolve
 from vis_agent.designer.syntax import parse
 
@@ -15,6 +15,154 @@ from .conftest import (cities, column, gender_share, grouped, monthly, raw_amoun
 
 def city_spec(chart="column", **kwargs):
     return Spec(type=chart, bind={"category": "city", "value": "violations"}, **kwargs)
+
+
+@pytest.mark.parametrize("pattern", [None, "0.00%", "0.00 percentage", "0.00 percent"])
+def test_percent_alias_formats_on_ordinary_charts_preserve_the_scale(pattern):
+    columns = [column("city", "category"), column("violations", "measure", unit="percentage")]
+    result = table(columns, [["Riyadh", 108.86], ["Jeddah", .34]])
+    before = result.model_copy(deep=True)
+    resolved = resolve(city_spec(format=pattern), columns, result)
+    assert resolved.number.unit == "%"
+    assert result == before
+
+
+def test_indicator_binds_by_column_identity_without_aggregating_or_dropping_null():
+    columns = [column("count", "measure", unit="count"), column("percent", "share", unit="%"),
+               column("region", "category"), column("period", "time")]
+    result = table(columns, [[0, None, "الرياض", "١٤٤٧-٠٩"]])
+    before = result.model_copy(deep=True)
+    spec = Spec(type="indicator", language="ar", digits="arabic",
+                cards=[IndicatorCard(value="percent", support=["count"], context=["region", "period"])])
+    resolved = resolve(spec, columns[::-1], result)
+    card = resolved.config["cards"][0]
+    assert card["value"] == {"column": "percent", "label": "percent", "unit": "%",
+                             "state": "unavailable", "display": "غير متاح", "exact": None,
+                             "number": "غير متاح", "unitLabel": "%", "exactNumber": None}
+    assert card["support"][0]["display"] == "٠"
+    assert [c["text"] for c in card["context"]] == ["الرياض", "١٤٤٧-٠٩"]
+    assert (resolved.drawn_rows, resolved.dropped_rows, resolved.folded_rows) == (1, 0, 0)
+    assert result == before
+    assert resolved.config["direction"] == "rtl"
+    assert "data" not in resolved.config and resolved.overrides == {}
+
+
+@pytest.mark.parametrize("value,unit,pattern,display,exact", [
+    (9007199254740993, None, None, "9,007,199,254,740,993", None),
+    (0, "%", None, "0%", None),
+    (0.34, None, None, "0.34", None),
+    (0.34, "%", None, "0.34%", None),
+    (108.86, "percentage", None, "108.86%", None),
+    (108.86, "percentage", "0.00%", "108.86%", None),
+    (0.34, "percentage", None, "0.34%", None),
+    (-108.86, "percent", None, "-108.86%", None),
+    (108.86, "نسبة مئوية", None, "108.86%", None),
+    (9.913666751770636, "%", None, "9.91%", "9.913666751770636%"),
+    (0.0005393990555122537, "%", None, "0.0005394%", "0.0005393990555122537%"),
+    (-0.0005393990555122537, "%", "0.00%", "0.00%", "-0.0005393990555122537%"),
+    (1e-100, None, None, "1e-100", None),
+    (-150, "%", None, "-150%", None),
+    (250, "%", None, "250%", None),
+    (1234567, "SAR", "0k", "1.2M SAR", "1234567 SAR"),
+])
+def test_indicator_number_text_preserves_saved_values(value, unit, pattern, display, exact):
+    columns = [column("value", "measure", unit=unit)]
+    spec = Spec(type="indicator", cards=[IndicatorCard(value="value", format=pattern)])
+    card = resolve(spec, columns, table(columns, [[value]])).config["cards"][0]
+    assert card["value"]["display"] == display
+    assert card["value"]["exact"] == exact
+    assert card["value"]["unit"] == unit  # Historical source metadata is retained.
+
+
+def test_indicator_card_order_and_each_unit_are_explicit():
+    columns = [column("duration", "measure", unit="hours"), column("revenue", "measure", unit="SAR")]
+    spec = Spec(type="indicator", digits="arabic", cards=[IndicatorCard(value="revenue"), IndicatorCard(value="duration")])
+    cards = resolve(spec, columns, table(columns, [[2.5, 1240]])).config["cards"]
+    assert [c["value"]["column"] for c in cards] == ["revenue", "duration"]
+    assert [c["value"]["display"] for c in cards] == ["١٬٢٤٠ SAR", "٢٫٥ hours"]
+
+
+def test_indicator_translated_labels_preserve_bound_report_values_and_metadata():
+    columns = [column("value", "measure", unit="%"), column("support", "measure"), column("period", "time")]
+    result = table(columns, [[12.5, 25, "1447-09"]])
+    original_columns = [column.model_copy(deep=True) for column in columns]
+    original_result = result.model_copy(deep=True)
+    spec = Spec(type="indicator", language="ar", column_labels={"value": "النسبة", "support": "العدد", "period": "الفترة"},
+                cards=[IndicatorCard(value="value", support=["support"], context=["period"])])
+    card = resolve(spec, columns, result).config["cards"][0]
+    assert [card["value"]["label"], card["support"][0]["label"], card["context"][0]["label"]] == ["النسبة", "العدد", "الفترة"]
+    assert card["value"]["display"] == "12.5%" and card["context"][0]["text"] == "1447-09"
+    assert columns == original_columns and result == original_result
+
+
+@pytest.mark.parametrize("unit", ["person", "persons", "people", " Person ", "شخص", "أشخاص", "فرد", "أفراد", "نسمة"])
+def test_indicator_count_nouns_remain_visible_while_axis_count_policy_stays_unchanged(unit):
+    columns = [column("value", "measure", unit=unit)]
+    result = table(columns, [[18]])
+    spec = Spec(type="indicator", cards=[IndicatorCard(value="value")])
+    value = resolve(spec, columns, result).config["cards"][0]["value"]
+    assert value["display"] == "18 people" and value["unit"] == unit
+    assert value["number"] == "18" and value["unitLabel"] == "people"
+    assert resolve(Spec(type="table"), columns, result).table_formats["value"]["unit"] == unit
+    chart_columns, chart_result = cities()
+    chart_columns[1].unit = unit
+    assert resolve(city_spec(), chart_columns, chart_result).number.unit == unit
+    assert columns[0].unit == unit
+
+
+@pytest.mark.parametrize("unit,amount,language,suffix", [
+    ("person", 1, "en", "person"), ("person", 18, "en", "people"),
+    ("person", 18, "ar", "شخصًا"), ("people", 3, "ar", "أشخاص"),
+    ("users", 18, "ar", "مستخدمًا"), ("orders", 5, "ar", "طلبات"),
+    ("users", None, "ar", "مستخدمين"), ("SAR", None, "ar", "SAR"),
+])
+def test_indicator_localizes_meaningful_count_units_and_keeps_unavailable_unit(unit, amount, language, suffix):
+    columns = [column("value", "measure", unit=unit)]
+    spec = Spec(type="indicator", language=language, cards=[IndicatorCard(value="value")])
+    value = resolve(spec, columns, table(columns, [[amount]])).config["cards"][0]["value"]
+    assert value["unitLabel"] == suffix and value["unit"] == unit
+    assert value["number"] == ("غير متاح" if amount is None else str(amount))
+
+
+@pytest.mark.parametrize("unit", ["person-days", "SAR/person", "people/km²", "person hours", "ساعة/شخص"])
+def test_count_noun_normalization_preserves_compound_units(unit):
+    columns = [column("value", "measure", unit=unit)]
+    result = table(columns, [[18]])
+    spec = Spec(type="indicator", cards=[IndicatorCard(value="value")])
+    value = resolve(spec, columns, result).config["cards"][0]["value"]
+    assert value["display"] == f"18 {unit}" and value["unit"] == unit
+    assert resolve(Spec(type="table"), columns, result).table_formats["value"]["unit"] == unit
+
+
+@pytest.mark.parametrize("value", [True, "123", "NaN", float("inf"), float("nan")])
+def test_indicator_resolve_rejects_invalid_numeric_cells(value):
+    columns = [column("value", "measure")]
+    spec = Spec(type="indicator", cards=[IndicatorCard(value="value")])
+    with pytest.raises(ResolveError, match="finite numer"):
+        resolve(spec, columns, table(columns, [[value]]))
+
+
+@pytest.mark.parametrize("rows,total", [([], 0), ([[1], [2]], 2), ([[1]], 200)])
+def test_indicator_resolve_never_picks_the_first_row(rows, total):
+    columns = [column("value", "measure")]
+    result = table(columns, rows)
+    result.row_count = total
+    with pytest.raises(ResolveError, match="exactly one complete"):
+        resolve(Spec(type="indicator", cards=[IndicatorCard(value="value")]), columns, result)
+
+
+@pytest.mark.parametrize("value,unit", [(120, "%"), (-1, "%"), (1.2, "fraction")])
+def test_direct_indicator_resolution_rejects_impossible_explicit_shares(value, unit):
+    columns = [column("value", "share", unit=unit)]
+    with pytest.raises(ResolveError, match="outside"):
+        resolve(Spec(type="indicator", cards=[IndicatorCard(value="value")]), columns, table(columns, [[value]]))
+
+
+def test_indicator_resolve_rejects_changed_unit_even_without_a_prior_check():
+    columns = [column("value", "measure", unit="SAR")]
+    spec = Spec(type="indicator", cards=[IndicatorCard(value="value", format="0.0%")])
+    with pytest.raises(ResolveError, match="preserve the unit"):
+        resolve(spec, columns, table(columns, [[100]]))
 
 
 def group_spec(chart="grouped_column", **kwargs):
@@ -315,7 +463,8 @@ def test_percent_runs_after_folding_and_honours_explicit_title_and_format():
         {"category": "Other", "group": "M", "value": 70},
     ]
     assert resolved.config["axisYTitle"] == "Share"
-    assert resolved.number.unit == "pct"
+    assert resolved.number.unit == "%"
+    assert resolved.number.decimals == 1
 
 
 def test_zero_percent_total_is_disclosed_without_dividing_by_zero():

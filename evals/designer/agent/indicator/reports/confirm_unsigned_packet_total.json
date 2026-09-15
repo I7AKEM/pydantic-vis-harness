@@ -1,0 +1,45 @@
+{
+  "dataset_id": "ds_confirmation_fixture",
+  "question": "Show the exact cumulative packet total as a KPI.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_result FROM dataset",
+    "columns": [
+      {
+        "name": "packets",
+        "meaning": "Cumulative packets",
+        "kind": "measure",
+        "unit": "count",
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "Prepared measurements for the requested result.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_result FROM dataset",
+    "columns": [
+      "packets"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        18446744073709551615
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "independent-fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T16:00:00Z"
+}

@@ -1,0 +1,117 @@
+{
+  "dataset_id": "ds_indicator_fixture",
+  "question": "Summarize all seven operation totals without omitting any.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      {
+        "name": "operation_1",
+        "meaning": "operation 1",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "operation_2",
+        "meaning": "operation 2",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "operation_3",
+        "meaning": "operation 3",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "operation_4",
+        "meaning": "operation 4",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "operation_5",
+        "meaning": "operation 5",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "operation_6",
+        "meaning": "operation 6",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "operation_7",
+        "meaning": "operation 7",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "Prepared result for the requested measurement.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      "operation_1",
+      "operation_2",
+      "operation_3",
+      "operation_4",
+      "operation_5",
+      "operation_6",
+      "operation_7"
+    ],
+    "types": [
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T00:00:00Z"
+}

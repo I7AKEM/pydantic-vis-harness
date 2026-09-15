@@ -1,0 +1,96 @@
+{
+  "dataset_id": "ds_41627f492a8f4d1c8c83d852959f10b7",
+  "question": "ما نسبة المخالفات غير المسددة من إجمالي المخالفات؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    SUM(unpaid_violations) AS \"المخالفات غير المسددة\", \n    SUM(total_violations) AS \"إجمالي المخالفات\", \n    (SUM(unpaid_violations) * 100.0 / SUM(total_violations)) AS \"نسبة المخالفات غير المسددة\" \nFROM \"ds_41627f492a8f4d1c8c83d852959f10b7\"",
+    "columns": [
+      {
+        "name": "المخالفات غير المسددة",
+        "meaning": "إجمالي عدد المخالفات غير المسددة",
+        "kind": "measure",
+        "unit": null,
+        "source": "unpaid_violations",
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "إجمالي المخالفات",
+        "meaning": "إجمالي عدد جميع المخالفات",
+        "kind": "measure",
+        "unit": null,
+        "source": "total_violations",
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "نسبة المخالفات غير المسددة",
+        "meaning": "نسبة المخالفات غير المسددة من الإجمالي",
+        "kind": "share",
+        "unit": null,
+        "source": null,
+        "aggregate": "share",
+        "denominator": "إجمالي المخالفات"
+      }
+    ],
+    "summary": "تبلغ نسبة المخالفات غير المسددة حوالي 9.91% من إجمالي المخالفات، حيث بلغ عدد المخالفات غير المسددة 94,356 مخالفة من أصل 951,777 مخالفة إجمالية.",
+    "assumptions": [
+      "تم حساب النسبة بناءً على مجموع كافة المخالفات غير المسددة مقسوماً على مجموع إجمالي المخالفات في كامل مجموعة البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    SUM(unpaid_violations) AS \"المخالفات غير المسددة\", \n    SUM(total_violations) AS \"إجمالي المخالفات\", \n    (SUM(unpaid_violations) * 100.0 / SUM(total_violations)) AS \"نسبة المخالفات غير المسددة\" \nFROM \"ds_41627f492a8f4d1c8c83d852959f10b7\"",
+    "columns": [
+      "المخالفات غير المسددة",
+      "إجمالي المخالفات",
+      "نسبة المخالفات غير المسددة"
+    ],
+    "types": [
+      "HUGEINT",
+      "HUGEINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        94356,
+        951777,
+        9.913666751770636
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "نسبة المخالفات غير المسددة",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "نسبة المخالفات غير المسددة: shares sum to 9.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.03140970799722709
+  },
+  "checks": [
+    {
+      "column": "نسبة المخالفات غير المسددة",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "نسبة المخالفات غير المسددة: shares sum to 9.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "نسبة المخالفات غير المسددة: shares sum to 9.9, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.651951874999213,
+  "created_at": "2026-09-13T19:10:19.734109Z"
+}

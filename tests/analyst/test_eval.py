@@ -30,3 +30,52 @@ def test_load_cases_reads_the_format(tmp_path):
     cases = load_cases(tmp_path)
     assert cases[0].name == "one" and cases[0].inputs["question"] == "Total?"
     assert cases[0].expected_output == {"expect": "table", "columns": ["total"], "rows": [[1]]}
+
+
+def test_indicator_sql_golds_do_not_allow_100x_scale_changes():
+    from pathlib import Path
+    from evals.analyst.make_expected import expected_tables
+    directory = Path(__file__).resolve().parents[2] / 'evals/analyst/indicator'
+    assert expected_tables(directory) == json.loads((directory / 'expected.json').read_text())
+    cases = load_cases(directory)
+    assert len(cases) >= 8 and all(c.expected_output['strict_scale'] for c in cases)
+    rate = next(c for c in cases if c.name == 'indicator_weighted_rate')
+    assert rate.expected_output['rows'] == [[20.0]]
+    assert tables_match(rate.expected_output, {'columns': ['rate'], 'rows': [[0.2]]}) == 0
+    assert tables_match(rate.expected_output, {'columns': ['rate'], 'rows': [[20]]}) == 1
+
+
+def test_evidence_and_mismatches_preserve_error_checks_even_when_values_match(tmp_path, capsys):
+    import asyncio
+    from pathlib import Path
+    from pydantic_evals import Case, Dataset
+    from vis_agent.analyst.models import AnalysisReport
+    from vis_agent.profiler.models import ProfileCheck
+    from evals.analyst.run import TableMatches, ChecksClean, print_mismatch, write_evidence
+    source = Path(__file__).resolve().parents[2] / 'evals/designer/agent/indicator/reports/dev_change.json'
+    output = AnalysisReport.model_validate_json(source.read_text())
+    output.checks = [ProfileCheck(column=None, check='summary_numbers_exist', severity='error', passed=False,
+                                  message='The summary mentions an unsupported number.')]
+    case = Case(name='change', inputs={'question': output.question, 'csv': 'fixture.csv'},
+                expected_output={'expect': 'table', 'columns': ['change'], 'rows': [[-148.75]], 'strict_scale': True})
+    report = asyncio.run(Dataset(name='evidence', cases=[case], evaluators=[TableMatches(), ChecksClean()]).evaluate(lambda inputs: output))
+    (tmp_path / 'cases.json').write_text('[]')
+    path = tmp_path / 'evidence/run.json'
+    write_evidence(path, report, tmp_path, {'analyst': 'test', 'profiler': 'test'})
+    saved = json.loads(path.read_text())
+    result = saved['cases'][0]
+    assert result['scores']['TableMatches'] == 1
+    assert result['assertions']['ChecksClean'] is False
+    assert result['output']['checks'][0]['message'] == output.checks[0].message
+    assert saved['provenance']['models']['analyst'] == 'test'
+    print_mismatch(case, output)
+    printed = capsys.readouterr().out
+    assert 'summary_numbers_exist' in printed and 'sql:' in printed
+    assert 'expected [[' not in printed
+
+
+def test_analyst_help_advertises_portable_evidence():
+    import subprocess
+    import sys
+    result = subprocess.run([sys.executable, '-m', 'evals.analyst.run', '--help'], capture_output=True, text=True)
+    assert result.returncode == 0 and '--out' in result.stdout

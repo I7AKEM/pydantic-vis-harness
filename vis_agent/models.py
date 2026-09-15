@@ -6,7 +6,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-Intent = Literal["compare", "trend", "rank", "distribution", "composition", "relation", "share"]
+Intent = Literal["compare", "trend", "rank", "distribution", "composition", "relation", "share", "summary"]
 
 
 class DataBrief(BaseModel):

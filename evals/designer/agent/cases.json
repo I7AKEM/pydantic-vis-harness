@@ -149,18 +149,19 @@
   "name": "discounted_percentage",
   "report": "reports/discounted_percentage.json",
   "brief": {
-   "intent": "share",
+   "intent": "summary",
    "suggested_chart_type": null,
    "brand_colors": []
   },
   "expect": "design",
   "charts": [
+   "indicator",
    "table"
   ],
   "language": "en",
   "bind": {},
   "emphasis": null,
-  "why": "Intent: share. single number"
+  "why": "A share is the headline and counts provide support. A full table remains acceptable in the legacy set."
  },
  {
   "name": "female_share_by_region",
@@ -538,18 +539,19 @@
   "name": "unpaid_share_overall",
   "report": "reports/unpaid_share_overall.json",
   "brief": {
-   "intent": "share",
+   "intent": "summary",
    "suggested_chart_type": null,
    "brand_colors": []
   },
   "expect": "design",
   "charts": [
+   "indicator",
    "table"
   ],
   "language": "ar",
   "bind": {},
   "emphasis": null,
-  "why": "Intent: share. single number with three columns"
+  "why": "A share is the headline and counts provide support. A full table remains acceptable in the legacy set."
  },
  {
   "name": "violation_type_share",

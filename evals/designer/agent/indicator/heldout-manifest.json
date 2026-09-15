@@ -1,0 +1,21 @@
+{
+  "frozen_at": "2026-09-15",
+  "cases": [
+    "heldout_inventory",
+    "heldout_inventory_trend",
+    "heldout_gigantic_integer",
+    "heldout_trace_percentage",
+    "heldout_growth_above100",
+    "heldout_multi_missing",
+    "heldout_six_totals",
+    "heldout_seven_totals",
+    "heldout_age_breakdown",
+    "heldout_missing_years",
+    "heldout_available_years",
+    "heldout_arabic_scope"
+  ],
+  "sha256": "48230dc764245bc759aedae7fc7ec4fc09f50a9aef385d032299ca47a871483f",
+  "used_for_tuning": true,
+  "used_for_tuning_at": "2026-09-15",
+  "reason": "All three repeats of age-breakdown and missing-year-coverage cases failed and informed designer rules. Preserve original cases and scores; confirmation.json is the new frozen confirmation set."
+}

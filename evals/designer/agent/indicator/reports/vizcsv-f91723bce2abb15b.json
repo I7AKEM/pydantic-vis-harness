@@ -1,0 +1,103 @@
+{
+  "dataset_id": "ds_4120d0f93b264f4aa14d3f68c5a12aab",
+  "question": "ابحث عن مستوى الثروة الذي يكون عدد أسره هو أكبر انحراف عن المتوسط لعدد الأسر في كل مستوى، معبّرًا عنه كدرجة Z. اعرض المستوى، وعدده، والمتوسط، والانحراف المعياري، ودرجة Z (مقربة إلى منزلتين عشريتين).",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    wealth_level, \n    cnt, \n    mean_cnt, \n    sd_cnt, \n    ROUND(z_score, 2) AS z_score_rounded\nFROM \"ds_4120d0f93b264f4aa14d3f68c5a12aab\"\nORDER BY ABS(z_score) DESC\nLIMIT 1",
+    "columns": [
+      {
+        "name": "wealth_level",
+        "meaning": "مستوى الثروة",
+        "kind": "category",
+        "unit": null,
+        "source": "wealth_level",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "cnt",
+        "meaning": "عدد الأسر",
+        "kind": "measure",
+        "unit": null,
+        "source": "cnt",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "mean_cnt",
+        "meaning": "المتوسط",
+        "kind": "measure",
+        "unit": null,
+        "source": "mean_cnt",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "sd_cnt",
+        "meaning": "الانحراف المعياري",
+        "kind": "measure",
+        "unit": null,
+        "source": "sd_cnt",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "z_score_rounded",
+        "meaning": "درجة Z",
+        "kind": "measure",
+        "unit": null,
+        "source": "z_score",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "مستوى الثروة الذي سجل أكبر انحراف عن المتوسط هو \"Lower Middle\" بعدد أسر بلغ 298,629، وبدرجة Z تبلغ -1.47. يبلغ المتوسط 299,800.0 والانحراف المعياري 795.99.",
+    "assumptions": [
+      "تم تحديد أكبر انحراف بناءً على القيمة المطلقة لدرجة Z."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    wealth_level, \n    cnt, \n    mean_cnt, \n    sd_cnt, \n    ROUND(z_score, 2) AS z_score_rounded\nFROM \"ds_4120d0f93b264f4aa14d3f68c5a12aab\"\nORDER BY ABS(z_score) DESC\nLIMIT 1",
+    "columns": [
+      "wealth_level",
+      "cnt",
+      "mean_cnt",
+      "sd_cnt",
+      "z_score_rounded"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT",
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "Lower Middle",
+        298629,
+        299800.0,
+        795.99,
+        -1.47
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.0493679589999374
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 6.361730957993132,
+  "created_at": "2026-09-13T22:19:56.552359Z"
+}

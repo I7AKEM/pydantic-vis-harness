@@ -137,6 +137,109 @@ def test_grammar_and_instructions():
     assert instructions().startswith(DESIGNER_RULEBOOK.splitlines()[0])
     assert "\n\nGrammar:\n" + text in instructions()
     assert "donut:" in instructions() and "table:" in instructions()
+    assert '"- value <column name>"' in text
+    assert "ordinary bind must be empty" in text
+
+
+def test_prompt_retains_partition_claim_and_materialized_result_limit():
+    columns, result = gender_share()
+    columns[-1].partition_by = []
+    source = report(columns, result)
+    assert build_prompt(source, None).columns[-1].partition_by == []
+    result.row_count = 10
+    assert build_prompt(source, None).preview_is_partial is True
+
+
+def test_indicator_designer_uses_normal_recommend_check_and_delivery_path():
+    from .conftest import single_number
+
+    spec = "vis indicator\ntitle Total visitors\ndescription Reported visitor total\ncards\n  - value total\n"
+
+    def drive(messages, info):
+        returns = [part for message in messages for part in message.parts if isinstance(part, ToolReturnPart)]
+        if not returns:
+            return tool_call("recommend_charts", intent="summary")
+        returned = last_return(messages).model_response_object()
+        if len(returns) == 1:
+            first = returned["candidates"][0]
+            assert first["name"] == "indicator" and first["cards"][0]["value"] == "total"
+            return tool_call("check_spec", spec=spec)
+        assert returned["ok"]
+        return tool_call("deliver_design", spec=returned["canonical"],
+                         explanation="The card shows the reported total. A headline number answers the total request.")
+
+    result = run(report(*single_number(), question="What is the total visitor count?"), FunctionModel(drive))
+    assert result.design.chart == "indicator" and result.design.intent == "summary"
+    assert result.check_calls == 1 and result.requests == 3
+    assert result.clarification is None and result.warnings == []
+
+
+def test_indicator_nested_syntax_error_is_repairable_with_existing_check_budget():
+    from .conftest import single_number
+
+    spec = "vis indicator\ntitle Total\ndescription Reported total\ncards\n  - value total\n"
+
+    def drive(messages, info):
+        returns = [part for message in messages for part in message.parts if isinstance(part, ToolReturnPart)]
+        if not returns:
+            return tool_call("check_spec", spec=spec + "    formula sum(total)\n")
+        returned = last_return(messages).model_response_object()
+        if len(returns) == 1:
+            assert returned["violations"][0]["rule"] == "syntax"
+            assert returned["violations"][0]["line"] == 6
+            return tool_call("check_spec", spec=spec)
+        assert returned["ok"]
+        return tool_call("deliver_design", spec=returned["canonical"], explanation="The indicator shows the total.")
+
+    result = run(report(*single_number()), FunctionModel(drive))
+    assert result.design.chart == "indicator"
+    assert result.check_calls == 2 and result.requests == 3
+
+
+@pytest.mark.parametrize("use_check_tool", [True, False])
+def test_selected_composition_intent_cannot_deliver_indicator_even_with_complete_bindings(use_check_tool):
+    from .conftest import column
+
+    columns = [column("total", "measure"), column("hardware", "measure"), column("software", "measure")]
+    source = report(columns, table(columns, [[900, 300, 600]]), question="Show total sales and the product breakdown.")
+    indicator = ("vis indicator\ntitle Sales\ndescription Sales totals\ncards\n"
+                 "  - value total\n  - value hardware\n  - value software\n")
+    table_spec = "vis table\ntitle Sales breakdown\ndescription Sales by product and total sales\n"
+    calls = 0
+
+    def drive(messages, info):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            return tool_call("recommend_charts", intent="composition")
+        if calls == 2:
+            if use_check_tool:
+                return tool_call("check_spec", spec=indicator)
+            return tool_call("deliver_design", spec=indicator, explanation="The cards show sales.")
+        if calls == 3:
+            if use_check_tool:
+                checked = last_return(messages).model_response_object()
+                assert not checked["ok"] and any(v["rule"] == "I7" for v in checked["violations"])
+            else:
+                assert "I7" in retries(messages)[-1].content
+            return tool_call("deliver_design", spec=table_spec, explanation="The table preserves the product breakdown and total.")
+        pytest.fail("Repair should complete within the existing request budget")
+
+    result = run(source, FunctionModel(drive))
+    assert result.design.chart == "table" and result.design.intent == "composition"
+    assert result.requests == 3 and result.clarification is None
+
+
+def test_render_design_rechecks_selected_intent_before_rendering(tmp_path):
+    from .conftest import single_number
+
+    source = report(*single_number())
+    spec = "vis indicator\ntitle Total\ndescription Reported total\ncards\n  - value total\n"
+    design = models.Design(spec=spec, chart="indicator", intent="composition", explanation="Components.",
+                           considered=["indicator"], compromises=[])
+    with pytest.raises(ValueError, match="I7"):
+        render_design(source, design, tmp_path)
+    assert list(tmp_path.iterdir()) == []
 
 
 @pytest.mark.parametrize("starting_requests", [None, 7])
@@ -486,6 +589,9 @@ def test_previous_design_and_answers_reach_the_designer_prompt():
     prompt = build_prompt(source, None, clarifications=[QuestionAnswer(question="Donut or pie?", answer="Donut")],
                           previous=PreviousDesign(spec="vis donut\ntitle Share\n", change="Make it blue"))
     assert prompt.previous.change == "Make it blue" and prompt.clarifications[0].answer == "Donut"
+    legacy = build_prompt(source, None, previous=PreviousDesign(spec=None, change="Make it a blue indicator"))
+    assert legacy.question == source.question
+    assert '"previous":{"spec":null,"change":"Make it a blue indicator"}' in prompt_json(legacy)
 
 
 def test_designer_revise_rules_reach_the_model_only_with_previous_work():
@@ -501,7 +607,8 @@ def test_designer_revise_rules_reach_the_model_only_with_previous_work():
         return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification",
                                                  args={"question": "Which?", "reason": "Checking."})])
 
-    for previous, expected in (None, False), (PreviousDesign(spec="vis donut\n", change="Blue"), True):
+    for previous, expected in ((None, False), (PreviousDesign(spec="vis donut\n", change="Blue"), True),
+                               (PreviousDesign(spec=None, change="Make it an indicator"), True)):
         prompt = build_prompt(source, None, previous=previous)
         deps = DesignerDeps(report=source, prompt=prompt, suggested=None)
         with designer.override(model=FunctionModel(drive)):

@@ -11,7 +11,7 @@ from vis_agent.models import Intent
 ChartType = Literal[
     "column", "bar", "grouped_column", "stacked_column", "grouped_bar", "stacked_bar",
     "line", "multi_line", "area", "stacked_area", "pie", "donut", "scatter", "histogram",
-    "boxplot", "treemap", "radar", "dual_axes", "word_cloud", "table",
+    "boxplot", "treemap", "radar", "dual_axes", "word_cloud", "table", "indicator",
 ]
 SortOrder = Literal["value desc", "value asc", "category asc", "category desc", "none"]
 Theme = Literal["default", "dark", "academy"]
@@ -36,6 +36,17 @@ class NumberFormat(BaseModel):
     digits: Digits = "western"
 
 
+class IndicatorCard(BaseModel):
+    """Column bindings for one headline measurement; values remain in the result."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    value: str = Field(min_length=1)
+    context: list[str] = Field(default_factory=list)
+    support: list[str] = Field(default_factory=list)
+    format: str | None = None
+
+
 class Spec(BaseModel):
     """A parsed chart spec. Field names are the spec keys in snake case."""
 
@@ -54,6 +65,8 @@ class Spec(BaseModel):
     inner_radius: float | None = None
     bin_number: int | None = None
     bind: dict[str, str] = Field(default_factory=dict)
+    cards: list[IndicatorCard] = Field(default_factory=list)
+    column_labels: dict[str, str] = Field(default_factory=dict)
     sort: SortOrder | None = None
     limit: int | None = None
     other: str | None = None
@@ -94,11 +107,11 @@ class Compromise(BaseModel):
 
 
 class PreviousDesign(BaseModel):
-    """The design being revised: the spec that was delivered, and what must differ."""
+    """The prior spec (if one existed) and the caller's requested change."""
 
     model_config = ConfigDict(extra="forbid")
 
-    spec: str
+    spec: str | None
     change: str
 
 
@@ -112,6 +125,7 @@ class Candidate(BaseModel):
     name: str
     score: int
     binding: dict[str, str]
+    cards: list[IndicatorCard] = Field(default_factory=list)
     breakdown: list[RuleScore]
 
 

@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_8acb647247df4c45b10d819db41887f8",
+  "question": "How many visitors were there in total in 2024?",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT sum(visitor_count) AS \"Total Visitors\" FROM \"ds_8acb647247df4c45b10d819db41887f8\" WHERE year_month LIKE '2024%'",
+    "columns": [
+      {
+        "name": "Total Visitors",
+        "meaning": "Total number of visitors in 2024",
+        "kind": "measure",
+        "unit": null,
+        "source": "visitor_count",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "There were a total of 1,458 visitors in 2024.",
+    "assumptions": [
+      "I assumed that the 'year_month' column contains the year as the first four characters."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT sum(visitor_count) AS \"Total Visitors\" FROM \"ds_8acb647247df4c45b10d819db41887f8\" WHERE year_month LIKE '2024%'",
+    "columns": [
+      "Total Visitors"
+    ],
+    "types": [
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        1458
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "Total Visitors",
+        "check": "total_explained",
+        "severity": "warning",
+        "passed": false,
+        "message": "Total Visitors: the result covers 1458 of the column's total 3241, because the query keeps only the rows its WHERE clause names; expected when the question asks for a subset."
+      }
+    ],
+    "seconds": 0.028894791998027358
+  },
+  "checks": [
+    {
+      "column": "Total Visitors",
+      "check": "total_explained",
+      "severity": "warning",
+      "passed": false,
+      "message": "Total Visitors: the result covers 1458 of the column's total 3241, because the query keeps only the rows its WHERE clause names; expected when the question asks for a subset."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "Total Visitors: the result covers 1458 of the column's total 3241, because the query keeps only the rows its WHERE clause names; expected when the question asks for a subset."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.831466208997881,
+  "created_at": "2026-09-13T19:11:55.510425Z"
+}

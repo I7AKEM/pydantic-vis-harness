@@ -1,0 +1,81 @@
+{
+  "dataset_id": "ds_confirmation_fixture",
+  "question": "Show the age distribution of residents, including the total and all three age bands.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_result FROM dataset",
+    "columns": [
+      {
+        "name": "residents",
+        "meaning": "All residents",
+        "kind": "measure",
+        "unit": "person",
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "under_20",
+        "meaning": "Residents under 20",
+        "kind": "measure",
+        "unit": "person",
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "age20_64",
+        "meaning": "Residents aged 20 to 64",
+        "kind": "measure",
+        "unit": "person",
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "age65_plus",
+        "meaning": "Residents aged 65 or above",
+        "kind": "measure",
+        "unit": "person",
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "Prepared measurements for the requested result.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_result FROM dataset",
+    "columns": [
+      "residents",
+      "under_20",
+      "age20_64",
+      "age65_plus"
+    ],
+    "types": [
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        124,
+        28,
+        79,
+        17
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "independent-fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T16:00:00Z"
+}

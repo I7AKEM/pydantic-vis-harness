@@ -1,0 +1,375 @@
+[
+  {
+    "name": "indicator_total",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "What is the total order count?\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "indicator",
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            60
+          ],
+          "units": [
+            null
+          ],
+          "card_count": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "indicator_explicit",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "Show a KPI card for total revenue, in SAR.\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "indicator",
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            450
+          ],
+          "units": [
+            "SAR"
+          ],
+          "card_count": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "indicator_numbers_only",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "Just the total order count, numbers only, no chart.\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "answer_question",
+        "outcome": "table",
+        "expected_rows": [
+          [
+            60
+          ]
+        ],
+        "no_image": true
+      }
+    ]
+  },
+  {
+    "name": "indicator_table_only",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "Give a table only with total revenue and total cost, no chart.\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "answer_question",
+        "outcome": "table",
+        "expected_rows": [
+          [
+            450,
+            320
+          ]
+        ],
+        "no_image": true
+      }
+    ]
+  },
+  {
+    "name": "indicator_multi",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "Show total orders and total revenue as two independent KPI cards; revenue is in SAR.\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "indicator",
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            60,
+            450
+          ],
+          "units": [
+            null,
+            "SAR"
+          ],
+          "card_count": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "indicator_style_revision",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "Show total orders as a KPI.\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "indicator",
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            60
+          ],
+          "units": [
+            null
+          ],
+          "card_count": 1
+        }
+      },
+      {
+        "message": "Use dark blue #174A7E.",
+        "tool": "revise",
+        "outcome": "indicator",
+        "redo_analysis": false,
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            60
+          ],
+          "units": [
+            null
+          ],
+          "card_count": 1
+        },
+        "analysis_reused": true
+      }
+    ]
+  },
+  {
+    "name": "indicator_filter_revision",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "Show total orders as a KPI.\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "indicator",
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            60
+          ],
+          "units": [
+            null
+          ],
+          "card_count": 1
+        }
+      },
+      {
+        "message": "Now include only Riyadh.",
+        "tool": "revise",
+        "outcome": "indicator",
+        "redo_analysis": true,
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            40
+          ],
+          "units": [
+            null
+          ],
+          "card_count": 1
+        },
+        "analysis_reused": false
+      }
+    ]
+  },
+  {
+    "name": "indicator_grouped_to_total",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "Compare total orders by city.\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "forbid_indicator": true,
+        "require_delivery": true
+      },
+      {
+        "message": "Now show one KPI for the total across all cities.",
+        "tool": "revise",
+        "outcome": "indicator",
+        "redo_analysis": true,
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            60
+          ],
+          "units": [
+            null
+          ],
+          "card_count": 1
+        },
+        "analysis_reused": false
+      }
+    ]
+  },
+  {
+    "name": "indicator_language_revision",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "Show total orders as a KPI.\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "indicator",
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            60
+          ],
+          "units": [
+            null
+          ],
+          "card_count": 1
+        }
+      },
+      {
+        "message": "اجعل العنوان والوصف باللغة العربية.",
+        "tool": "revise",
+        "outcome": "indicator",
+        "redo_analysis": false,
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            60
+          ],
+          "units": [
+            null
+          ],
+          "card_count": 1
+        },
+        "analysis_reused": true
+      }
+    ]
+  },
+  {
+    "name": "indicator_weighted_rate",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "Show accepted divided by eligible, times 100, as a KPI percentage. Include both totals as supporting counts.\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "indicator",
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            20
+          ],
+          "units": [
+            "%"
+          ],
+          "card_count": 1,
+          "support_values": [
+            10,
+            50
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "indicator_denominator_revision",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "Show accepted divided by eligible, times 100, as a KPI percentage. Include totals as support.\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "indicator",
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            20
+          ],
+          "units": [
+            "%"
+          ],
+          "card_count": 1,
+          "support_values": [
+            10,
+            50
+          ]
+        }
+      },
+      {
+        "message": "Instead use total orders as the denominator; retain numerator and denominator counts.",
+        "tool": "revise",
+        "outcome": "indicator",
+        "redo_analysis": true,
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            16.666666666666668
+          ],
+          "units": [
+            "%"
+          ],
+          "card_count": 1,
+          "support_values": [
+            10,
+            60
+          ]
+        },
+        "analysis_reused": false
+      }
+    ]
+  },
+  {
+    "name": "indicator_unavailable",
+    "csv": "evals/lead/indicator/zero.csv",
+    "turns": [
+      {
+        "message": "Show accepted divided by eligible times 100 as a KPI. Return NULL if the denominator is zero.\n\nAttached CSV: [zero.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "indicator",
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            null
+          ],
+          "units": [
+            "%"
+          ],
+          "card_count": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "indicator_undefined",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "Show a KPI for the success index.\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "question"
+      },
+      {
+        "message": "Define the success index as the total order count across the whole dataset. Please continue the KPI request.",
+        "tool": "resume",
+        "outcome": "indicator",
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            60
+          ],
+          "units": [
+            null
+          ],
+          "card_count": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "indicator_resume_without_pending",
+    "csv": "evals/lead/indicator/operations.csv",
+    "turns": [
+      {
+        "message": "Resume the unfinished indicator request.\n\nAttached CSV: [operations.csv](/datasets/{dataset_id}/profile)",
+        "tool": "none",
+        "outcome": "text"
+      }
+    ]
+  }
+]

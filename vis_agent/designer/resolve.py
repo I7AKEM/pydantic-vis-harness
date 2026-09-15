@@ -10,8 +10,10 @@ from decimal import Decimal, ROUND_HALF_UP
 import duckdb
 
 from vis_agent.analyst.models import QueryResult, ResultColumn
+from vis_agent.units import canonical_unit, display_unit
 
 from .catalogue import CATALOGUE
+from .indicator_text import resolve_cards
 from .models import Compromise, NumberFormat, Spec
 from .rules import ACCENT, ADDITIVE, BARS, COLUMNS
 from .syntax import parse_format
@@ -22,9 +24,8 @@ LANGUAGE_DEFAULTS = {
 }
 TRENDS = {"line", "multi_line", "area", "stacked_area"}
 MEASURES = {"value", "value2", "x", "y"}
-WITHOUT_AXES = {"pie", "donut", "treemap", "radar", "word_cloud", "table"}
+WITHOUT_AXES = {"pie", "donut", "treemap", "radar", "word_cloud", "table", "indicator"}
 SINGLE_SERIES = {"column", "bar", "line", "area", "scatter", "histogram", "boxplot"}
-COUNT_UNITS = {"count", "counts", "number", "n", "عدد", "رقم"}
 ISO_DATE_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?", re.ASCII)
 GREGORIAN_ISO = re.compile(
     r"(?:1[6-9]|2\d)\d{2}(?:-\d{2}(?:-\d{2})?)?(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?", re.ASCII,
@@ -86,7 +87,7 @@ def _shorten_time(records: list[dict], role: str) -> None:
 
 def _column_unit(column: ResultColumn | None) -> str | None:
     unit = column.unit if column is not None else None
-    return None if unit is not None and unit.strip().lower() in COUNT_UNITS else unit
+    return display_unit(unit)
 
 
 def _table_headers(columns: list[ResultColumn]) -> list[str]:
@@ -241,6 +242,18 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     number.digits = spec.digits
     height = spec.height if spec.height is not None else 450
     by_name = {column.name: column for column in columns}
+    if spec.type == "indicator":
+        try:
+            cards = resolve_cards(spec, columns, result)
+        except ValueError as error:
+            raise ResolveError(str(error)) from error
+        width = spec.width if spec.width is not None else (460 if len(cards) == 1 else 800)
+        config = {"type": "indicator", "cards": cards, "width": width,
+                  "height": spec.height, "theme": spec.theme,
+                  "language": spec.language, "direction": spec.direction or defaults["direction"],
+                  "title": spec.title, "subtitle": spec.subtitle, "description": spec.description,
+                  "background": spec.background_color, "accent": spec.palette[0] if spec.palette else None}
+        return Resolved(config, {}, number, [], 1, 0, 0, width, height)
     if spec.type == "table":
         width = spec.width if spec.width is not None else 800
         table_columns = [by_name[name] for name in result.columns]
@@ -382,8 +395,9 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
         else:
             overrides["legend"] = True
 
+    number.unit = canonical_unit(number.unit)
     if spec.format is not None and number.unit == "%" and not spec.percent and any(
-        column.kind != "share" for role, column in binding.items() if role in MEASURES
+        column.kind != "share" and canonical_unit(column.unit) != "%" for role, column in binding.items() if role in MEASURES
     ):
         compromises.append(Compromise(key="format", message="a percent sign on a value that is not a share"))
     value = binding.get("value") or binding.get("y")

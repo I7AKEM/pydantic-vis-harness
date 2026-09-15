@@ -1,0 +1,69 @@
+{
+  "frozen_at": "2026-09-15",
+  "source": "Twelve new synthetic families, authored after recording heldout failures and before any confirmation model run.",
+  "independent_of_previous_case_values_and_outputs": true,
+  "used_for_tuning": false,
+  "cases_sha256": "2ae8796905e0d50c0b04a9af63f46d9d2a14bfc79bc74c38906da850e8f236e0",
+  "cases": [
+    {
+      "name": "confirm_museum_donations",
+      "family": "confirm_museum_donations",
+      "report_sha256": "67020306c6704167c829bf5aa704f1f060da8ebaae34adb6eb7b31ac61423779"
+    },
+    {
+      "name": "confirm_hydrology_delta",
+      "family": "confirm_hydrology_delta",
+      "report_sha256": "fd515032aa2f7febfa73accc1361ef60df7afa73d88df5645e9eadfcc5a85585"
+    },
+    {
+      "name": "confirm_residential_age_bands",
+      "family": "confirm_residential_age_bands",
+      "report_sha256": "066eae3ae8db4da36c15ac5071f0d776df98dbac56b03c98c6a219cb6ce6623a"
+    },
+    {
+      "name": "confirm_missing_depots",
+      "family": "confirm_missing_depots",
+      "report_sha256": "8efd1f721805088eb535efd294c72e33cd0f5c834e820677efdb413f85e3a086"
+    },
+    {
+      "name": "confirm_missing_quarters",
+      "family": "confirm_missing_quarters",
+      "report_sha256": "9ee75b537d729323dc5c139fe8ec0d272c023aa42312e02c62991e3a61ac00b3"
+    },
+    {
+      "name": "confirm_factory_recovery",
+      "family": "confirm_factory_recovery",
+      "report_sha256": "a64b117e82579872d6193fcccd71a89626d663189c9b57161372baac54c45ddb"
+    },
+    {
+      "name": "confirm_production_two_units",
+      "family": "confirm_production_two_units",
+      "report_sha256": "ef0fe635103b767b14bb39e480e5e34321c8f2e49e9f1d0a901de70cb655b3fa"
+    },
+    {
+      "name": "confirm_telemetry_mixed_states",
+      "family": "confirm_telemetry_mixed_states",
+      "report_sha256": "a0d103181444ae340d3b8c057546bf2a22d7d7630d110fedfe63e60aeeb75193"
+    },
+    {
+      "name": "confirm_unsigned_packet_total",
+      "family": "confirm_unsigned_packet_total",
+      "report_sha256": "19ec3d1e482157259eb12c8b29cfab2c74d9d79c8429cffc12c16b4e83dc920e"
+    },
+    {
+      "name": "confirm_arabic_residents",
+      "family": "confirm_arabic_residents",
+      "report_sha256": "b5074961db4b6f9cc9e82987b5df8ad2ebe95026a0efba10931e644957753c84"
+    },
+    {
+      "name": "confirm_land_registry_text",
+      "family": "confirm_land_registry_text",
+      "report_sha256": "81eb00cd928205a3e3f0ddbad3e7750f35e8254dfe67093dea4078933db0b7a4"
+    },
+    {
+      "name": "confirm_nav_signed_change",
+      "family": "confirm_nav_signed_change",
+      "report_sha256": "5e9b064a6bdea1cb5247dd23f154bab55d7546ba35a1d4c7b1ff24981d011f0d"
+    }
+  ]
+}

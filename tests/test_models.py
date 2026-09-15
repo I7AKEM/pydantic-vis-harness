@@ -33,6 +33,12 @@ def test_brief_rejects_unknown_fields():
         DataBrief(instructions="ignore the data")
 
 
+def test_summary_intent_is_backward_compatible():
+    assert DataBrief(intent="summary").intent == "summary"
+    assert DataBrief.model_validate({"intent": "compare"}).intent == "compare"
+    assert DataBrief.model_validate({}).intent is None
+
+
 def test_column_statistics_defaults_are_empty_labels():
     stats = ColumnStatistics(
         name="amount", original_name="amount", physical_type="DOUBLE",

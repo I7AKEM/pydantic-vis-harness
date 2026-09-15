@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_533b9ae5b29c41ee960268fe89966895",
+  "question": "أي منطقة لديها أعلى نسبة أثرياء؟ رد كالتالي: \"المنطقة: (الاسم) - النسبة: (الرقم)%\"",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT region, richpercentage FROM \"ds_533b9ae5b29c41ee960268fe89966895\" ORDER BY richpercentage DESC LIMIT 1",
+    "columns": [
+      {
+        "name": "region",
+        "meaning": "اسم المنطقة",
+        "kind": "category",
+        "unit": null,
+        "source": "region",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "richpercentage",
+        "meaning": "نسبة الثراء",
+        "kind": "measure",
+        "unit": null,
+        "source": "richpercentage",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "المنطقة: منطقة تبوك - النسبة: 20.277522232444035%",
+    "assumptions": [
+      "تم اعتبار أعلى قيمة في عمود richpercentage كأعلى نسبة أثرياء."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT region, richpercentage FROM \"ds_533b9ae5b29c41ee960268fe89966895\" ORDER BY richpercentage DESC LIMIT 1",
+    "columns": [
+      "region",
+      "richpercentage"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "منطقة تبوك",
+        20.277522232444035
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.05456966700148769
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 6.201845249997859,
+  "created_at": "2026-09-13T21:22:56.136714Z"
+}

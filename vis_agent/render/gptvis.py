@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import unicodedata
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -28,6 +29,13 @@ GPTVIS_DEGRADED = {
 
 
 def capability(chart_type: ChartType) -> Capability:
+    if chart_type == "indicator":
+        honoured = {"cards", "columnLabels", "title", "subtitle", "description", "language", "theme", "width", "height",
+                    "direction", "digits", "backgroundColor", "palette", "style"}
+        return Capability(honoured=honoured, degraded={}, rejected={
+            key: "indicators use card bindings and have no chart axes or row transforms"
+            for key in GPTVIS_HONOURED - honoured
+        })
     degraded = GPTVIS_DEGRADED
     if chart_type == "table":
         degraded = dict.fromkeys(
@@ -54,6 +62,8 @@ def _inline_json(value) -> str:
 
 
 def _page(spec: Spec, resolved, metrics: dict, png: Path) -> str:
+    if spec.type == "indicator":
+        return _indicator_page(spec, resolved, png)
     table_html = ""
     if spec.type == "table":
         names = resolved.config["columns"]
@@ -77,6 +87,72 @@ def _page(spec: Spec, resolved, metrics: dict, png: Path) -> str:
     for match in reversed(list(re.finditer(r"{{(\w+)}}", page))):
         page = page[:match.start()] + page[match.start():].replace(match[0], values[match[1]], 1)
     return page
+
+
+def _indicator_page(spec: Spec, resolved, png: Path) -> str:
+    """A portable static image with the same escaped, accessible card text."""
+    def number_html(text):
+        match = re.match(r"([+\-]?[\d٬٫,.]+(?:[eE][+\-]?\d+)?[KMB]?%?)(.*)", text, re.DOTALL)
+        if match is None:
+            return html.escape(text)
+        # Keep signs/exponents in order; the unit keeps normal Arabic shaping.
+        numeric, suffix = match.groups()
+        suffix_html = f'<bdi dir="auto">{html.escape(suffix)}</bdi>' if suffix else ""
+        return f'<bdi dir="ltr" style="unicode-bidi: bidi-override">{html.escape(numeric)}</bdi>{suffix_html}'
+
+    def metric(item, primary=False):
+        unit = f'<bdi dir="auto" class="metric-unit">{html.escape(item["unitLabel"])}</bdi>' if item["unitLabel"] else ""
+
+        def amount(text):
+            value = f'{number_html(text)} {unit}'
+            return f'<bdi dir="ltr" class="metric-percent">{value}</bdi>' if item["unitLabel"] == "%" else value
+
+        exact = f'<small>{amount(item["exactNumber"])}</small>' if item["exactNumber"] else ""
+        kind = ' class="primary"' if primary else ""
+        return (f'<dt>{html.escape(item["label"])}</dt>'
+                f'<dd{kind} data-state="{item["state"]}">{amount(item["number"])}{exact}</dd>')
+
+    def context(item):
+        numeric_token = re.fullmatch(r"[\dTZ :./+\-]+", item["text"]) is not None
+        direction, bidi = ("ltr", "bidi-override") if numeric_token else ("auto", "isolate")
+        return (f'<dt>{html.escape(item["label"])}</dt><dd><bdi dir="{direction}" '
+                f'style="unicode-bidi: {bidi}">{html.escape(item["text"])}</bdi></dd>')
+
+    sections = []
+    def normalized_label(text):
+        return " ".join(unicodedata.normalize("NFKC", text or "").lower().split())
+
+    for card in resolved.config["cards"]:
+        context_html = "".join(context(item) for item in card["context"])
+        support = "".join(metric(item) for item in card["support"])
+        redundant_description = normalized_label(spec.description) in {
+            normalized_label(card["value"]["label"]), normalized_label(spec.title),
+        }
+        footnote = (f'<p class="footnote">{html.escape(spec.description)}</p>'
+                    if len(resolved.config["cards"]) == 1 and spec.description and not redundant_description else "")
+        sections.append(f'<section><dl>{metric(card["value"], True)}{context_html}{support}</dl>{footnote}</section>')
+    title, description = html.escape(spec.title or "Indicator"), html.escape(spec.description or "")
+    subtitle = f'<p>{html.escape(spec.subtitle)}</p>' if spec.subtitle else ""
+    duplicate_title = len(resolved.config["cards"]) == 1 and normalized_label(resolved.config["cards"][0]["value"]["label"]) == normalized_label(spec.title)
+    heading = "" if duplicate_title else f"<h1>{title}</h1>"
+    overview = f"<p>{description}</p>" if len(resolved.config["cards"]) > 1 else ""
+    image = base64.b64encode(png.read_bytes()).decode("ascii")
+    direction = spec.direction or ("rtl" if spec.language == "ar" else "ltr")
+    return f'''<!doctype html>
+<html lang="{spec.language}" dir="{direction}">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{title}</title><style>
+body {{ font-family: sans-serif; margin: 2rem; color: #182435; background: #fff; }}
+img {{ max-width: 100%; height: auto; }}
+.metrics {{ display: flex; flex-wrap: wrap; gap: 1.5rem; }}
+section {{ border: 1px solid #d5deeb; padding: 1rem; min-width: 12rem; }}
+dt {{ font-weight: 600; margin-top: .75rem; }} dd {{ margin: .25rem 0 1rem; overflow-wrap: anywhere; }}
+.primary {{ font-size: 2rem; }} .metric-unit {{ font-size: .65em; margin-inline-start: .25em; }}
+.footnote {{ font-size: .85rem; color: #506176; }}
+small {{ display: block; margin-top: .25rem; }}
+</style></head><body>{heading}{subtitle}{overview}
+<img src="data:image/png;base64,{image}" width="{resolved.width}" height="{resolved.height}" alt="{description}">
+<div class="metrics">{''.join(sections)}</div></body></html>'''
 
 
 def render(spec: Spec, columns: list[ResultColumn], result: QueryResult, out_dir: Path,
@@ -106,13 +182,19 @@ def render(spec: Spec, columns: list[ResultColumn], result: QueryResult, out_dir
         raise RenderFailed(reason)
     try:
         metrics = json.loads(process.stdout)
+        if spec.type == "indicator":
+            resolved.width, resolved.height = metrics["logicalWidth"], metrics["logicalHeight"]
+            resolved.config["height"] = resolved.height
         if spec.type == "table":
             resolved.config = metrics["config"]
         config.write_text(json.dumps({"gptvis": resolved.config, "overrides": resolved.overrides,
                                      "number": resolved.number.model_dump(), "g2": metrics["g2"],
                                      "number2": payload["format2"],
                                      "tableFormats": resolved.table_formats,
-                                     "functionPaths": metrics["functionPaths"]}, ensure_ascii=False, indent=2), encoding="utf-8")
+                                     "functionPaths": metrics["functionPaths"],
+                                     **({"texts": metrics["texts"], "textBounds": metrics["textBounds"],
+                                         "cardBounds": metrics["cardBounds"]} if spec.type == "indicator" else {})},
+                                    ensure_ascii=False, indent=2), encoding="utf-8")
         page.write_text(_page(spec, resolved, metrics, png), encoding="utf-8")
         merged_compromises = list(compromises) + resolved.compromises
         if metrics["functionPaths"]:
@@ -121,7 +203,9 @@ def render(spec: Spec, columns: list[ResultColumn], result: QueryResult, out_dir
                         seconds=metrics["renderMs"] / 1000, non_background_share=metrics["nonBackgroundShare"],
                         compromises=list({(c.key, c.message): c for c in merged_compromises}.values()),
                         drawn_rows=resolved.drawn_rows, folded_rows=resolved.folded_rows,
-                        dropped_rows=resolved.dropped_rows, texts=metrics["texts"] if trace else None)
+                        dropped_rows=resolved.dropped_rows,
+                        texts=metrics["texts"] if trace or spec.type == "indicator" else None,
+                        text_bounds=metrics.get("textBounds"))
     except (ValueError, KeyError, TypeError, OSError) as error:
         raise RenderFailed(f"invalid renderer output: {error}") from error
 

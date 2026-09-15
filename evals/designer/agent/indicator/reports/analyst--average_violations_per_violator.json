@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_fba664ddf9be4ccaba7e1e1f1ea3f6d3",
+  "question": "ما متوسط عدد المخالفات لكل مخالف؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT avg(violation_count) AS \"متوسط عدد المخالفات\" FROM \"ds_fba664ddf9be4ccaba7e1e1f1ea3f6d3\"",
+    "columns": [
+      {
+        "name": "متوسط عدد المخالفات",
+        "meaning": "متوسط عدد المخالفات لكل مخالف",
+        "kind": "measure",
+        "unit": null,
+        "source": "violation_count",
+        "aggregate": "avg",
+        "denominator": null
+      }
+    ],
+    "summary": "متوسط عدد المخالفات لكل مخالف هو 4.089.",
+    "assumptions": [
+      "تم حساب المتوسط لجميع السجلات الموجودة في الجدول دون استثناء أي قيم."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT avg(violation_count) AS \"متوسط عدد المخالفات\" FROM \"ds_fba664ddf9be4ccaba7e1e1f1ea3f6d3\"",
+    "columns": [
+      "متوسط عدد المخالفات"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        4.089
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.02238454199687112
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.044665665998764,
+  "created_at": "2026-09-13T18:41:36.543199Z"
+}

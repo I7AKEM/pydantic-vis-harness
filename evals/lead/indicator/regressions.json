@@ -1,0 +1,46 @@
+[
+  {
+    "name": "citizens_explicit_arabic_revision",
+    "csv": "evals/lead/indicator/citizens.csv",
+    "provenance": {
+      "kind": "actual user regression, excluded from frozen confirmation",
+      "source_csv_sha256": "14bd6839a2eedae8c31149d6b2313f5b3d89efa79d7eea6c1bbbe4b940447ad1",
+      "display_requirement": "Label inside the card and visible meaningful unit."
+    },
+    "turns": [
+      {
+        "message": "Show the total citizen count as a KPI. The unit for citizen_count is person.\n\nAttached CSV: [citizens.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "indicator",
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            18
+          ],
+          "units": [
+            "person"
+          ],
+          "card_count": 1
+        }
+      },
+      {
+        "message": "Make this card Arabic. Keep the measurement label inside the card above the number, and keep a visible localized unit.",
+        "tool": "revise",
+        "outcome": "indicator",
+        "redo_analysis": false,
+        "analysis_reused": true,
+        "require_delivery": true,
+        "metrics": {
+          "values": [
+            18
+          ],
+          "units": [
+            "person"
+          ],
+          "card_count": 1
+        },
+        "language": "ar"
+      }
+    ]
+  }
+]

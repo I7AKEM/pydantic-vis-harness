@@ -59,6 +59,7 @@ class ResultFacts(BaseModel):
     unit: str | None = None
     aggregate: Aggregate = "none"
     denominator: str | None = None
+    partition_by: list[str] | None = None
     distinct: int
     longest_label: int
     minimum: float | None = None
@@ -117,7 +118,7 @@ def build_prompt(
         facts = shape.column(column.name)
         columns.append(ResultFacts(
             name=column.name, meaning=column.meaning, kind=column.kind, unit=column.unit,
-            aggregate=column.aggregate, denominator=column.denominator,
+            aggregate=column.aggregate, denominator=column.denominator, partition_by=column.partition_by,
             distinct=facts.distinct, longest_label=facts.longest_label,
             minimum=facts.minimum, maximum=facts.maximum,
             has_negative=facts.has_negative, nulls=facts.nulls,
@@ -137,7 +138,7 @@ def build_prompt(
         summary=report.analysis.summary, assumptions=report.analysis.assumptions,
         columns=columns, row_count=report.result.row_count,
         preview=[[cut(cell) for cell in row] for row in rows[:PREVIEW_ROWS]],
-        preview_is_partial=len(rows) > PREVIEW_ROWS,
+        preview_is_partial=len(rows) > PREVIEW_ROWS or len(rows) < report.result.row_count,
         clarifications=list(clarifications or []), previous=previous,
     )
 
@@ -156,6 +157,14 @@ def grammar() -> str:
         elif key == "bind":
             description = ('section; two-space-indented lines "<role> <column name>"; roles '
                            + ", ".join(models.ROLES))
+        elif key == "cards":
+            description = ('indicator only; one to six records starting with two-space-indented "- value <column name>"; '
+                           'four-space lines "context <column name>", "support <column name>" (repeatable), '
+                           'or "format <number pattern>"; ordinary bind must be empty')
+        elif key == "columnLabels":
+            description = ('indicator only; optional section with two-space lines '
+                           '\'- ["exact column name", "translated label"]\'; JSON string pairs; '
+                           'translate existing meanings without changing data or units')
         elif key == "style":
             description = "section; backgroundColor <hex>"
         elif key == "axisXTitle":
@@ -168,7 +177,10 @@ def grammar() -> str:
             description = {"int": "integer", "bool": "true or false",
                            "format": "pattern like 0,0.00 SAR, 0.0%, 0k"}.get(kind, kind)
         lines.append(f"{key}: {description}")
-    lines.extend(["", "Example:", "vis table", "title Result", "description The answer to the question"])
+    lines.extend(["", "Example:", "vis table", "title Result", "description The answer to the question",
+                  "", "Indicator label translation example:", "vis indicator", "title إجمالي الزوار",
+                  "description إجمالي الزوار خلال الفترة", "language ar", "cards", "  - value visitor_count",
+                  "columnLabels", '  - ["visitor_count", "إجمالي الزوار"]'])
     return "\n".join(lines)
 
 
@@ -211,7 +223,7 @@ async def check_spec(ctx: RunContext[DesignerDeps], spec: str) -> SpecCheck:
         raise ModelRetry("You have used the three check calls of this run. "
                          "Deliver the spec that passed, or ask the caller a question.")
     deps.check_calls += 1
-    check = run_check(spec, deps.report.analysis.columns, deps.report.result, deps.renderer)
+    check = run_check(spec, deps.report.analysis.columns, deps.report.result, deps.renderer, intent=deps.intent)
     if check.ok:
         deps.last_check = check
     else:
@@ -241,7 +253,7 @@ def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -
     """Deliver a checked spec and a two-sentence explanation in the caller's language using supported numbers."""
     deps = ctx.deps
     report = deps.report
-    check = run_check(spec, report.analysis.columns, report.result, deps.renderer)
+    check = run_check(spec, report.analysis.columns, report.result, deps.renderer, intent=deps.intent)
     failures = []
     if check.ok:
         parsed = parse(check.canonical)
@@ -249,7 +261,7 @@ def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -
         if parsed.language != language:
             parsed.language = language
             spec = to_text(parsed)
-            check = run_check(spec, report.analysis.columns, report.result, deps.renderer)
+            check = run_check(spec, report.analysis.columns, report.result, deps.renderer, intent=deps.intent)
         arabic_title = bool(ARABIC.search(parsed.title or ""))
         if arabic_title != (report.language == "Arabic"):
             failures.append(f"Write the title in {report.language}.")
@@ -368,7 +380,7 @@ def render_design(
     if report.analysis is None or report.result is None:
         raise ValueError("The report needs an analysis and a result; resolve any clarification with the analyst first.")
     columns, result = report.analysis.columns, report.result
-    check = run_check(design.spec, columns, result, renderer)
+    check = run_check(design.spec, columns, result, renderer, intent=design.intent)
     if not check.ok:
         raise ValueError("\n".join(
             f"line {v.line or 1}: {v.rule}: {v.message}. {v.fix}" for v in check.violations

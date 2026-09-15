@@ -1,0 +1,57 @@
+{
+  "dataset_id": "ds_indicator_fixture",
+  "question": "Show two KPIs: completed jobs and mean queue time.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      {
+        "name": "jobs",
+        "meaning": "jobs",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "queue_time",
+        "meaning": "queue time",
+        "kind": "measure",
+        "unit": "ms",
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "Prepared result for the requested measurement.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      "jobs",
+      "queue_time"
+    ],
+    "types": [
+      "DOUBLE",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        45,
+        null
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T00:00:00Z"
+}

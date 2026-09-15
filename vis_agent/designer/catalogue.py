@@ -68,6 +68,10 @@ class Catalogue(BaseModel):
                 f"{'required' if role.required else 'optional'})"
                 for name, role in entry.roles.items()
             ) or "none; every column is shown"
+            if entry.name == "indicator":
+                roles = ("cards: one to six records with value (measure/share), optional context "
+                         "(category/ordinal/time/geography/identifier), support (measure/share), and format; "
+                         "exact column names; every result column must be covered; ordinary bind is empty")
             lines.append(
                 f"{entry.name}: purposes={', '.join(entry.purposes)}; "
                 f"roles={roles}; rating={entry.rating}; {entry.summary}"

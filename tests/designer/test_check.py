@@ -219,6 +219,13 @@ def test_c17_percent_unit_on_measure_is_a_compromise():
     assert check_spec(text, *gender_share()).compromises == []
 
 
+def test_percent_change_measure_with_percent_unit_has_no_false_share_warning():
+    columns, result = cities()
+    columns[1].unit = "%"
+    check = check_spec(COLUMN + "format 0.0%\n", columns, result)
+    assert check.ok and check.compromises == []
+
+
 @pytest.mark.parametrize("chart,bindings,builder,sort", [
     ("scatter", "  x age\n  y amount", "scatter_points", "value desc"),
     ("histogram", "  value amount", "raw_amounts", "category asc"),

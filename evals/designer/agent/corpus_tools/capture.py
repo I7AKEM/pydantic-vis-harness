@@ -107,8 +107,11 @@ async def _capture(entries: list[dict], reports_dir: Path, concurrency: int) -> 
             AnalysisReport.model_validate_json(path.read_text(encoding='utf-8'))
         elif entry.get('features', {}).get('source') == 'phase4':
             source = Path(entry['features']['source_report'])
-            report = AnalysisReport.model_validate_json(source.read_text(encoding='utf-8'))
-            _write(path, report.model_dump(mode='json'))
+            frozen = source.read_text(encoding='utf-8')
+            AnalysisReport.model_validate_json(frozen)
+            # Validate compatibility, then preserve the original evidence exactly. New optional
+            # model defaults must not silently rewrite an already frozen baseline report.
+            path.write_text(frozen, encoding='utf-8')
         else:
             pending.append(entry)
     if not pending:

@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 from tests.designer.conftest import (cities, column, gender_share, grouped, monthly,
-                                     raw_amounts, scatter_points, table, two_units)
+                                     raw_amounts, scatter_points, single_number, table, two_units)
 from vis_agent.designer.catalogue import CATALOGUE
 from vis_agent.designer.resolve import resolve
 from vis_agent.designer.syntax import parse
@@ -84,6 +84,7 @@ SPECS = {
     "dual_axes": ("vis dual_axes\nbind\n  category month\n  value visits\n  value2 revenue", two_units),
     "word_cloud": ("vis word_cloud\nbind\n  category city\n  value violations", words),
     "table": ("vis table", gender_share),
+    "indicator": ("vis indicator\ncards\n  - value total", single_number),
 }
 
 

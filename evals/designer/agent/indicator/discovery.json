@@ -1,0 +1,1176 @@
+[
+  {
+    "name": "analyst--average_daily_deaths",
+    "report": "reports/analyst--average_daily_deaths.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "متوسط الوفيات اليومي",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 51.314207650273225
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--average_daily_deaths",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--average_daily_deaths",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--average_violations_per_violator",
+    "report": "reports/analyst--average_violations_per_violator.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "متوسط عدد المخالفات",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 4.089
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--average_violations_per_violator",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--average_violations_per_violator",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--best_month_2024",
+    "report": "reports/analyst--best_month_2024.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "Entity or period identity must accompany the measurement; a table is acceptable.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "tourist_visitors",
+          "context": [
+            "month"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 310
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--best_month_2024",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--best_month_2024",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--discounted_percentage",
+    "report": "reports/analyst--discounted_percentage.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "The requested share is primary; numerator/denominator counts remain supporting metrics.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "discount_percentage",
+          "context": [],
+          "support": [
+            "discounted_count"
+          ],
+          "unit": "%",
+          "state": "value",
+          "exact_value": 48.0
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--discounted_percentage",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--discounted_percentage",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--egyptian_top_port",
+    "report": "reports/analyst--egyptian_top_port.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Entity or period identity must accompany the measurement; a table is acceptable.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "port_entries",
+          "context": [
+            "port"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 19
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--egyptian_top_port",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--egyptian_top_port",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--employees_born_after_1990",
+    "report": "reports/analyst--employees_born_after_1990.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "إجمالي الموظفين",
+          "context": [],
+          "support": [],
+          "unit": "count",
+          "state": "value",
+          "exact_value": 125
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--employees_born_after_1990",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--employees_born_after_1990",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--highest_daily_deaths",
+    "report": "reports/analyst--highest_daily_deaths.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "Highest Deaths",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 72
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--highest_daily_deaths",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--highest_daily_deaths",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--lowest_citizen_percentage_region",
+    "report": "reports/analyst--lowest_citizen_percentage_region.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Entity or period identity must accompany the measurement; a table is acceptable.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "citizen_percentage",
+          "context": [
+            "region"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 48.15905743740795
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--lowest_citizen_percentage_region",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--lowest_citizen_percentage_region",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--most_common_violation_jeddah",
+    "report": "reports/analyst--most_common_violation_jeddah.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Entity or period identity must accompany the measurement; a table is acceptable.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "total_violations",
+          "context": [
+            "violation_type_description"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 6190
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--most_common_violation_jeddah",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--most_common_violation_jeddah",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--peak_visitor_month",
+    "report": "reports/analyst--peak_visitor_month.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Entity or period identity must accompany the measurement; a table is acceptable.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "visitor_count",
+          "context": [
+            "year_month"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 229
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--peak_visitor_month",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--peak_visitor_month",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--top_store_by_orders",
+    "report": "reports/analyst--top_store_by_orders.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Entity or period identity must accompany the measurement; a table is acceptable.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "Order Count",
+          "context": [
+            "store_name"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 4
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--top_store_by_orders",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--top_store_by_orders",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--top_traveller_type",
+    "report": "reports/analyst--top_traveller_type.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "Entity or period identity must accompany the measurement; a table is acceptable.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "إجمالي الرحلات",
+          "context": [
+            "نوع_المسافر"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 748986
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--top_traveller_type",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--top_traveller_type",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--unpaid_share_overall",
+    "report": "reports/analyst--unpaid_share_overall.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "The requested share is primary; numerator/denominator counts remain supporting metrics.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "نسبة المخالفات غير المسددة",
+          "context": [],
+          "support": [
+            "المخالفات غير المسددة",
+            "إجمالي المخالفات"
+          ],
+          "unit": null,
+          "state": "value",
+          "exact_value": 9.913666751770636
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--unpaid_share_overall",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--unpaid_share_overall",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--violations_december_2025",
+    "report": "reports/analyst--violations_december_2025.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "عدد المخالفات",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 220
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--violations_december_2025",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--violations_december_2025",
+      "discovery": true
+    }
+  },
+  {
+    "name": "analyst--visitors_2024_total",
+    "report": "reports/analyst--visitors_2024_total.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "Total Visitors",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 1458
+        }
+      ]
+    },
+    "metadata": {
+      "family": "analyst--visitors_2024_total",
+      "source_run": "20260913-183937",
+      "source_case": "analyst--visitors_2024_total",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-1adcf9de6971a077",
+    "report": "reports/vizcsv-1adcf9de6971a077.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "percentage",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 18.181818181818183
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-1adcf9de6971a077",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-1adcf9de6971a077",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-1ddfa1a4c0823358",
+    "report": "reports/vizcsv-1ddfa1a4c0823358.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "table"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "The explicit text format or requested breakdown is not a headline-card request; preserve the complete answer.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "forbidden",
+      "cards": []
+    },
+    "metadata": {
+      "family": "vizcsv-1ddfa1a4c0823358",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-1ddfa1a4c0823358",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-3c9b38b7a1e11816",
+    "report": "reports/vizcsv-3c9b38b7a1e11816.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "total_salaries_2023",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 6771564196.400009
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-3c9b38b7a1e11816",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-3c9b38b7a1e11816",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-5a978d632cfd754c",
+    "report": "reports/vizcsv-5a978d632cfd754c.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A NULL result must be shown as unavailable, never as zero.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "unavailable",
+      "cards": [
+        {
+          "value": "نسبة النساء السعوديات",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "unavailable",
+          "exact_value": null
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-5a978d632cfd754c",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-5a978d632cfd754c",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-6c8cc1666963d616",
+    "report": "reports/vizcsv-6c8cc1666963d616.json",
+    "brief": null,
+    "expect": "clarification",
+    "charts": [],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "The result lacks the requested yearly detail. A card cannot repair this analyst failure.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "incomplete",
+      "cards": []
+    },
+    "metadata": {
+      "family": "vizcsv-6c8cc1666963d616",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-6c8cc1666963d616",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-7a01599b82a646f2",
+    "report": "reports/vizcsv-7a01599b82a646f2.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "average_trips_per_individual",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 1.7494711008372814
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-7a01599b82a646f2",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-7a01599b82a646f2",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-7b73e00f5a9acbf7",
+    "report": "reports/vizcsv-7b73e00f5a9acbf7.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "Entity or period identity must accompany the measurement; a table is acceptable.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "graduate_count",
+          "context": [
+            "graduation_year"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 19660
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-7b73e00f5a9acbf7",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-7b73e00f5a9acbf7",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-8001e09f5f45bb3f",
+    "report": "reports/vizcsv-8001e09f5f45bb3f.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "table"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "The explicit text format or requested breakdown is not a headline-card request; preserve the complete answer.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "forbidden",
+      "cards": []
+    },
+    "metadata": {
+      "family": "vizcsv-8001e09f5f45bb3f",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-8001e09f5f45bb3f",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-851588564ab222d2",
+    "report": "reports/vizcsv-851588564ab222d2.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "avg_sum_amount",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 700.0354014789951
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-851588564ab222d2",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-851588564ab222d2",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-8f706ab9f208d7db",
+    "report": "reports/vizcsv-8f706ab9f208d7db.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "Entity or period identity must accompany the measurement; a table is acceptable.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "worker_count",
+          "context": [
+            "district"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 873
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-8f706ab9f208d7db",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-8f706ab9f208d7db",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-92e6d5bee4a72b39",
+    "report": "reports/vizcsv-92e6d5bee4a72b39.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "total_violations",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 190227
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-92e6d5bee4a72b39",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-92e6d5bee4a72b39",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-9f9155e976cefaff",
+    "report": "reports/vizcsv-9f9155e976cefaff.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "table"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "The explicit text format or requested breakdown is not a headline-card request; preserve the complete answer.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "forbidden",
+      "cards": []
+    },
+    "metadata": {
+      "family": "vizcsv-9f9155e976cefaff",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-9f9155e976cefaff",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-a7761ce7247590cc",
+    "report": "reports/vizcsv-a7761ce7247590cc.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "table"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "The explicit text format or requested breakdown is not a headline-card request; preserve the complete answer.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "forbidden",
+      "cards": []
+    },
+    "metadata": {
+      "family": "vizcsv-a7761ce7247590cc",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-a7761ce7247590cc",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-a987ac48cb20a44c",
+    "report": "reports/vizcsv-a987ac48cb20a44c.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A regional report may show independent entry/exit cards only when the zone context is preserved.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "entry_count",
+          "context": [
+            "zone"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 448
+        },
+        {
+          "value": "exit_count",
+          "context": [
+            "zone"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 709
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-a987ac48cb20a44c",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-a987ac48cb20a44c",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-ae79cdc7d8e77066",
+    "report": "reports/vizcsv-ae79cdc7d8e77066.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "The requested share is primary; numerator/denominator counts remain supporting metrics.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "share_percentage",
+          "context": [],
+          "support": [
+            "students_returned_to_same_university",
+            "total_postgraduates"
+          ],
+          "unit": null,
+          "state": "value",
+          "exact_value": 0.0005393990555122537
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-ae79cdc7d8e77066",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-ae79cdc7d8e77066",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-b9b02a1b59143a94",
+    "report": "reports/vizcsv-b9b02a1b59143a94.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "الفرق في متوسط الأيام",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 1.5251998554464024
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-b9b02a1b59143a94",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-b9b02a1b59143a94",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-c2315009d8035563",
+    "report": "reports/vizcsv-c2315009d8035563.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "arrival_count",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 894
+        },
+        {
+          "value": "departure_count",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 3
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-c2315009d8035563",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-c2315009d8035563",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-c61dd08461a844cc",
+    "report": "reports/vizcsv-c61dd08461a844cc.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "A requested headline aggregate is available in one complete result row.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "نسبة السكان فوق 60 سنة",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 13.926325247079964
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-c61dd08461a844cc",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-c61dd08461a844cc",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-e512500e4c3f828a",
+    "report": "reports/vizcsv-e512500e4c3f828a.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "Entity or period identity must accompany the measurement; a table is acceptable.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "avg_age",
+          "context": [
+            "district"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 41.8421052631579
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-e512500e4c3f828a",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-e512500e4c3f828a",
+      "discovery": true
+    }
+  },
+  {
+    "name": "vizcsv-f91723bce2abb15b",
+    "report": "reports/vizcsv-f91723bce2abb15b.json",
+    "brief": null,
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "If shown as a card, retain the wealth level and all requested count/mean/deviation fields as support.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "z_score_rounded",
+          "context": [
+            "wealth_level"
+          ],
+          "support": [
+            "cnt",
+            "mean_cnt",
+            "sd_cnt"
+          ],
+          "unit": null,
+          "state": "value",
+          "exact_value": -1.47
+        }
+      ]
+    },
+    "metadata": {
+      "family": "vizcsv-f91723bce2abb15b",
+      "source_run": "20260913-183937",
+      "source_case": "vizcsv-f91723bce2abb15b",
+      "discovery": true
+    }
+  }
+]

@@ -1,0 +1,84 @@
+{
+  "dataset_id": "ds_efe4b3969a334a169e14273d3f03d8e3",
+  "question": "What is the most common violation type in Jeddah?",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT violation_type_description, SUM(violation_count) AS total_violations FROM \"ds_efe4b3969a334a169e14273d3f03d8e3\" WHERE city = 'جدة' GROUP BY violation_type_description ORDER BY total_violations DESC LIMIT 1",
+    "columns": [
+      {
+        "name": "violation_type_description",
+        "meaning": "Violation type description",
+        "kind": "category",
+        "unit": null,
+        "source": "violation_type_description",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "total_violations",
+        "meaning": "Total number of violations",
+        "kind": "measure",
+        "unit": null,
+        "source": "violation_count",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "The most common violation type in Jeddah is \"تجاوز السرعة المحددة بمقدار لا يزيد على 25 كم/س\" with 6,190 violations.",
+    "assumptions": [
+      "The city name for Jeddah is filtered as 'جدة' in the dataset."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT violation_type_description, SUM(violation_count) AS total_violations FROM \"ds_efe4b3969a334a169e14273d3f03d8e3\" WHERE city = 'جدة' GROUP BY violation_type_description ORDER BY total_violations DESC LIMIT 1",
+    "columns": [
+      "violation_type_description",
+      "total_violations"
+    ],
+    "types": [
+      "VARCHAR",
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        "تجاوز السرعة المحددة بمقدار لا يزيد على 25 كم/س",
+        6190
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "total_violations",
+        "check": "total_explained",
+        "severity": "warning",
+        "passed": false,
+        "message": "total_violations: the result covers 6190 of the column's total 476391, because the query keeps only the rows its WHERE clause names; expected when the question asks for a subset."
+      }
+    ],
+    "seconds": 0.01374000000214437
+  },
+  "checks": [
+    {
+      "column": "total_violations",
+      "check": "total_explained",
+      "severity": "warning",
+      "passed": false,
+      "message": "total_violations: the result covers 6190 of the column's total 476391, because the query keeps only the rows its WHERE clause names; expected when the question asks for a subset."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "total_violations: the result covers 6190 of the column's total 476391, because the query keeps only the rows its WHERE clause names; expected when the question asks for a subset."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 6.15411020800093,
+  "created_at": "2026-09-13T18:55:14.249327Z"
+}

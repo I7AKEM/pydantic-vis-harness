@@ -1,7 +1,10 @@
 """Parse and serialize the strict, line-oriented chart spec language."""
 
+import json
 import re
 from typing import get_args
+
+from pydantic import ValidationError
 
 from . import models
 from .models import ROLES, NumberFormat, Spec, SpecError, SpecIssue
@@ -14,6 +17,8 @@ KEYS = {
     "axisXTitle": ("axis_x_title", "text"), "axisYTitle": ("axis_y_title", "text"),
     "innerRadius": ("inner_radius", "number"), "binNumber": ("bin_number", "int"),
     "bind": ("bind", "section:pairs"), "style": ("style", "section:pairs"),
+    "cards": ("cards", "section:cards"),
+    "columnLabels": ("column_labels", "section:labels"),
     "sort": ("sort", "enum:SortOrder"), "limit": ("limit", "int"), "other": ("other", "text"), "unknown": ("unknown", "text"),
     "emphasis": ("emphasis", "section:list"), "palette": ("palette", "section:list"),
     "direction": ("direction", "enum:Direction"), "zero": ("zero", "bool"),
@@ -87,6 +92,8 @@ def parse(text: str) -> Spec:
     seen_roles: set[str] = set()
     parent = "vis"
     style_parent: str | None = None
+    card: dict | None = None
+    card_lines: list[int] = []
 
     def issue(number: int, message: str) -> None:
         issues.append(SpecIssue(line=number, message=message))
@@ -103,9 +110,9 @@ def parse(text: str) -> Spec:
         if kind.startswith("section:"):
             if value:
                 issue(number, f"'{key}' is a section; put its lines indented below it")
-            if kind == "section:list":
+            if kind in ("section:list", "section:cards"):
                 data[field] = []
-            elif key == "bind":
+            elif key == "bind" or kind == "section:labels":
                 data[field] = {}
         elif not value:
             issue(number, f"missing value for '{key}'")
@@ -137,7 +144,48 @@ def parse(text: str) -> Spec:
         if indent == 0:
             parent = key
             style_parent = None
+            card = None
             read_key(number, key, value, KEYS)
+        elif indent == 2 and parent == "cards":
+            card = None
+            if not content.startswith("- "):
+                issue(number, "a card starts with '- value <column name>'")
+                continue
+            card_key, card_value = _split_key(content[2:])
+            if card_key != "value" or not card_value:
+                issue(number, "a card starts with '- value <column name>'")
+                continue
+            card = {"value": card_value, "context": [], "support": []}
+            data["cards"].append(card)
+            card_lines.append(number)
+        elif indent == 4 and parent == "cards":
+            if card is None:
+                issue(number, "start a card with '- value <column name>' first")
+            elif key not in ("context", "support", "format"):
+                issue(number, "duplicate card value" if key == "value" else f"unknown card field '{key}'")
+            elif not value:
+                issue(number, f"missing value for card '{key}'")
+            elif key in ("context", "support"):
+                card[key].append(value)
+            elif "format" in card:
+                issue(number, "duplicate card format")
+            else:
+                try:
+                    card["format"] = _typed_value(value, "format")
+                except ValueError as error:
+                    issue(number, str(error))
+        elif indent == 2 and parent == "columnLabels":
+            try:
+                pair = json.loads(content[2:]) if content.startswith("- ") else None
+            except json.JSONDecodeError:
+                pair = None
+            if (not isinstance(pair, list) or len(pair) != 2 or
+                    any(not isinstance(item, str) or not item.strip() for item in pair)):
+                issue(number, 'columnLabels records are - ["exact column name", "translated label"]')
+            elif pair[0] in data["column_labels"]:
+                issue(number, f"duplicate column label '{pair[0]}'")
+            else:
+                data["column_labels"][pair[0]] = pair[1]
         elif indent == 2 and parent == "bind":
             if key not in ROLES:
                 issue(number, f"unknown role '{key}'; roles are {', '.join(ROLES)}")
@@ -162,7 +210,14 @@ def parse(text: str) -> Spec:
 
     if issues:
         raise SpecError(issues)
-    return Spec.model_validate(data)
+    try:
+        return Spec.model_validate(data)
+    except ValidationError as error:
+        # Nested contract errors belong to the same bounded spec-repair path.
+        raise SpecError([SpecIssue(
+            line=card_lines[e["loc"][1]] if len(e["loc"]) > 1 and e["loc"][0] == "cards" else first_number,
+            message=e["msg"],
+        ) for e in error.errors()]) from None
 
 
 def _text_value(value: str | int | float | bool) -> str:
@@ -192,6 +247,17 @@ def to_text(spec: Spec) -> str:
         if key == "bind":
             lines.append("bind")
             lines.extend(f"  {role} {value[role]}" for role in ROLES if role in value)
+        elif key == "cards":
+            lines.append("cards")
+            for card in value:
+                lines.append(f"  - value {card.value}")
+                lines.extend(f"    context {name}" for name in card.context)
+                lines.extend(f"    support {name}" for name in card.support)
+                if card.format is not None:
+                    lines.append(f"    format {card.format}")
+        elif key == "columnLabels":
+            lines.append(key)
+            lines.extend("  - " + json.dumps([name, label], ensure_ascii=False) for name, label in value.items())
         elif kind == "section:list":
             lines.append(key)
             lines.extend(f"  - {item}" for item in value)

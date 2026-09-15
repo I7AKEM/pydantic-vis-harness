@@ -1,0 +1,45 @@
+{
+  "dataset_id": "ds_confirmation_fixture",
+  "question": "Reply only in this exact text format: \"Registered parcels: (number)\". Do not draw a chart.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_result FROM dataset",
+    "columns": [
+      {
+        "name": "parcels",
+        "meaning": "Registered parcels",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "Prepared measurements for the requested result.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_result FROM dataset",
+    "columns": [
+      "parcels"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        752
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "independent-fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T16:00:00Z"
+}

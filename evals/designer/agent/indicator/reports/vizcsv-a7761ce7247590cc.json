@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_fdc7587ec80d49bda0a60c1f42e5734b",
+  "question": "ما هي البلدية في الرياض التي بها أعلى كثافة من الشباب (الذين تتراوح أعمارهم بين 18 و 30 عاماً)؟ رد كالتالي: \"البلدية: (الاسم) - العدد: (الرقم)\"",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT municipality, density FROM \"ds_fdc7587ec80d49bda0a60c1f42e5734b\" ORDER BY density DESC LIMIT 1",
+    "columns": [
+      {
+        "name": "municipality",
+        "meaning": "اسم البلدية",
+        "kind": "category",
+        "unit": null,
+        "source": "municipality",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "density",
+        "meaning": "كثافة الشباب",
+        "kind": "measure",
+        "unit": null,
+        "source": "density",
+        "aggregate": "none",
+        "denominator": "youth per district"
+      }
+    ],
+    "summary": "البلدية: الدرعية - العدد: 10.333333333333334",
+    "assumptions": [
+      "تم اعتبار عمود الكثافة (density) كمقياس لأعلى كثافة من الشباب."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT municipality, density FROM \"ds_fdc7587ec80d49bda0a60c1f42e5734b\" ORDER BY density DESC LIMIT 1",
+    "columns": [
+      "municipality",
+      "density"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "الدرعية",
+        10.333333333333334
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.058092500003112946
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.9176057090007816,
+  "created_at": "2026-09-13T21:56:13.413112Z"
+}

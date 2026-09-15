@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_0e43fee78fa34d748b8b3ebc8087ff21",
+  "question": "What was the highest number of deaths recorded on a single day?",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT max(death_count) AS \"Highest Deaths\" FROM \"ds_0e43fee78fa34d748b8b3ebc8087ff21\"",
+    "columns": [
+      {
+        "name": "Highest Deaths",
+        "meaning": "The highest number of deaths recorded on a single day",
+        "kind": "measure",
+        "unit": null,
+        "source": "death_count",
+        "aggregate": "max",
+        "denominator": null
+      }
+    ],
+    "summary": "The highest number of deaths recorded on a single day was 72.",
+    "assumptions": [
+      "The dataset contains daily death counts for the year 2024."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT max(death_count) AS \"Highest Deaths\" FROM \"ds_0e43fee78fa34d748b8b3ebc8087ff21\"",
+    "columns": [
+      "Highest Deaths"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        72
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.024303916994540486
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.552247584004363,
+  "created_at": "2026-09-13T18:50:39.714916Z"
+}

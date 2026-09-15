@@ -27,6 +27,7 @@ class Rendered(BaseModel):
     folded_rows: int
     dropped_rows: int
     texts: list[str] | None = None
+    text_bounds: list[dict] | None = None
 
 
 class RendererUnavailable(Exception):
@@ -44,4 +45,3 @@ def capability_for(renderer: str, chart_type: ChartType) -> Capability:
     if renderer not in RENDERERS:
         raise KeyError(f"Unknown renderer '{renderer}'; registered: {', '.join(RENDERERS)}")
     return RENDERERS[renderer](chart_type)
-

@@ -1,0 +1,59 @@
+{
+  "dataset_id": "ds_confirmation_fixture",
+  "question": "Show audit completion KPIs separately for Q1, Q2, Q3, and Q4 of 2026.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_result FROM dataset",
+    "columns": [
+      {
+        "name": "quarter",
+        "meaning": "Reported quarter",
+        "kind": "ordinal",
+        "unit": null,
+        "source": null,
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "audits",
+        "meaning": "Completed audits",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "Prepared measurements for the requested result.",
+    "assumptions": [
+      "The supplied result contains Q1 only. No result for Q2, Q3, or Q4 is available."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_result FROM dataset",
+    "columns": [
+      "quarter",
+      "audits"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "2026-Q1",
+        47
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "independent-fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T16:00:00Z"
+}
