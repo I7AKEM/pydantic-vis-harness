@@ -318,7 +318,8 @@
   "charts": [
    "column",
    "bar",
-   "table"
+   "table",
+   "dual_axes"
   ],
   "language": "en",
   "bind": {},

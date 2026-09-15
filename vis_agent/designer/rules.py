@@ -100,7 +100,13 @@ def h9_raw(entry, shape, binding, context):
 
 
 def h10_units(entry, shape, binding, context):
-    if entry.name == "dual_axes" and "value" in binding and "value2" in binding and binding["value"].unit == binding["value2"].unit:
+    """Two measures of one unit belong on one axis. Two measures with no unit written are one scale only when they
+    are aggregated the same way: a count beside an average is two scales, whatever the analyst left unwritten."""
+    if entry.name != "dual_axes" or "value" not in binding or "value2" not in binding:
+        return None
+    first, second = binding["value"], binding["value2"]
+    same_scale = first.unit == second.unit and (first.unit is not None or first.aggregate == second.aggregate)
+    if same_scale:
         return RuleResult("H10", 0, "The two measures have the same unit.", "Fold them into one series: a multi_line or grouped_column with fold", True)
 
 

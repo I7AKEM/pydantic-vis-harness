@@ -445,3 +445,12 @@ def test_checks_collect_all_errors_with_fixes():
                          labels="on", data=cities(60), axis_y_min=10, zero=True)
     assert {"C6", "C9", "C10", "C11", "C13", "C15", "C16"} <= {v.rule for v in violations}
     assert all(v.message and v.fix for v in violations)
+
+
+def test_h10_lets_a_count_and_an_average_share_two_axes_when_no_unit_is_written():
+    columns, result = two_units()
+    columns[1].unit = columns[2].unit = None
+    columns[1].aggregate, columns[2].aggregate = "sum", "avg"
+    candidate((columns, result), "dual_axes")
+    columns[2].aggregate = "sum"
+    rejected((columns, result), "dual_axes", "H10")
