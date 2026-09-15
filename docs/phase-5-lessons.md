@@ -50,6 +50,10 @@ with reasoning off.
   lead run (the proxy Gemma's charts passed Qwen's review, or the review timed out); the eight runner tests cover
   the mechanics, including the crash-and-resume inside a round.
 - Cost: one review per rendered chart, about 7 s and one request on Qwen; a round adds one design run and one review.
+- Logfire: trace `01a0a5b1b43c889fc95d50effe0885ae` in project vis-harness (2026-09-15 15:31 UTC) is one request on the
+  proxy with a scripted reviewer verdict (revise, then pass): analyst, designer, reviewer, the designer again with the
+  review rules loaded, reviewer; one saved round, verdict pass, 14 requests. The isolated instance used for the
+  browser check sent no traces (no token in the worktree's environment).
 
 ## The evaluation team's rerun
 
