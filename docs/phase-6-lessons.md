@@ -471,3 +471,21 @@ and `temperature: 0`.
 - The corpus half of the lead evaluation is a stress test over result-table exports; four of ten files hold
   one cell. A corpus export that keeps source tables (already on the Phase 4b list) would make it a real
   tool-choice measure.
+
+## The analyst–designer repair, validated
+
+Run on 2026-09-15 on branch `analyst-designer-repair` (fold in code, plain-words chart diagnostics, spent
+budgets as failures, one analyst revision per request asked by the designer), OpenRouter, Gemma 4 31B specialists:
+
+- Unit suite 1055; model-free designer set 39/39.
+- Designer agent evaluation 32/32 delivered, every automatic score 1.00; scale dev 37 cases delivered 1.00,
+  passed 1.00, chart accepted 0.919; scale held-out 29 cases delivered 0.966 (one explanation wrote "-50", a
+  difference the model computed, and the number check refused it twice), passed 1.00.
+- Analyst evaluation: every table matched (100%).
+- Lead evaluation with the seven new repair cases (`evals/lead/cases.json`, CSVs in `evals/lead/fixtures/`):
+  18/18 cases, tool choice 26/26, outcome 26/26, redo 3/3, revision expectations 2/2, no false questions,
+  113 model requests. One case used the repair for real: violations count against average fine per city
+  (`repair-two-units`), where the designer asked the analyst for a revised table and the chart was delivered
+  after 13 requests. The reported Jeddah request drew in one pass: the fold handles two same-unit measures in code.
+- The runner now reports `revised`, `questioned`, and `requests_used` per turn and counts revisions, false
+  questions, and held-out cases; two cases are held out of any prompt tuning.
