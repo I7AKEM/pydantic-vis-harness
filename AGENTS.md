@@ -1,4 +1,4 @@
-# Phase 6: The lead and the conversation
+# Phase 5: The reviewer and the team
 
 The Phase 1 design is in docs/superpowers/specs/2026-09-06-vis-agent-design.md. It introduced the
 profiler as the model for every later agent, plus the lead skeleton, the upload path, and the store.
@@ -20,12 +20,19 @@ The Phase 6 design is in docs/superpowers/specs/2026-09-08-phase-6-lead-and-conv
 It adds chart-first conversation, saved requests and artifact versions, clarification and resume,
 terminal commands, the agent channel, and the lead evaluation in `evals/lead/`.
 
-Requests package file map:
+The Phase 5 design is in docs/superpowers/specs/2026-09-15-phase-5-reviewer-and-team-design.md.
+It adds the reviewer, the review round, the rules ledger with its two levels, and the lead's card. Plans:
+docs/superpowers/plans/2026-09-15-phase-5a-rules-ledger.md and 2026-09-15-phase-5b-reviewer-and-loop.md.
+
+File map (the requests package and Phase 5's additions):
 
 - `vis_agent/requests/models.py`: request records, step names, callers, exchanges, and artifacts.
 - `vis_agent/requests/store.py`: requests and artifact versions in the datasets database.
 - `vis_agent/requests/runner.py`: the fixed step order, saved outputs, answers, and resume.
 - `vis_agent/requests/api.py`: the seven JSON routes and return-address callback.
+- `vis_agent/reviewer/`: the reviewer agent, its models, rulebook, and rubric.
+- `vis_agent/findings.py`: the Finding every agent and the card share.
+- `vis_agent/card.py`: the reply card the lead shows whole.
 
 - Use Python 3.12, uv, Pydantic AI, OpenRouter or a LiteLLM proxy, and the built-in Web Chat UI.
 - Providers: `vis_agent/providers.py` builds one team (lead + specialists + `AppDeps`) per configured provider,
@@ -80,6 +87,22 @@ Requests package file map:
   (`medium` is also supported; both modes need `OPENROUTER_API_KEY` and the `optimize` dependency group).
   The optimizer uses train and dev only. Adopt its rulebook changes only if the real runner's automatic
   scores improve on dev and heldout without lowering the judged sample; otherwise keep the seed rulebook.
+- Rules have two levels. An error stops delivery at the agent that found it and is fixed there or handed one
+  step upstream with its diagnosis; a warning travels with the artifact as a compromise or a check and is shown
+  on the card. A rule code can decide never stays prose: the profiler's unit placeholders, the one list of
+  generic count markers in `vis_agent/units.py` (a noun the data names, such as person or شخص, is a real unit
+  and is shown beside a KPI number), and the designer's single colour are code. Rulebooks keep judgment rules
+  and one-line pointers to what the checks enforce.
+- The review step runs the reviewer (`AppDeps.reviewer`, `PYDANTIC_AI_REVIEWER_MODEL` or `LITELLM_REVIEWER_MODEL`,
+  never the designer's model) on the rendered picture. Any error-level finding sends the request back to the
+  design step with the findings as `review`; at most `PYDANTIC_AI_REVIEW_ROUNDS` (2) rounds, counted from the
+  persisted `request.rounds`. A chart still faulted after the last round delivers with its findings on the card;
+  a reviewer that cannot finish delivers the chart unreviewed with a warning. The reviewer never asks the user
+  and never reaches the analyst; the designer may still spend the request's one analysis revision inside a round.
+- The lead shows the card returned by draw, revise, resume, and answer_question whole; an output validator sends
+  it back once for a number no result and no user message holds.
+- Run `uv run python -m evals.reviewer.run` (needs the labelled set and a reviewer model) before a merge that
+  touches the reviewer or its rulebook; the exit line is agreement of at least 0.8 with the human verdicts.
 
 Run with:
 
