@@ -291,8 +291,11 @@ def test_s12_fallback():
 def test_s13_one_number():
     assert candidate(single_number(), "table").score == 2
     for entry in CATALOGUE.entries:
-        assert direct("S13", entry.name, single_number()).score == (2 if entry.name == "table" else -3)
+        expected = 2 if entry.name == "table" else -3 if entry.name == "indicator" else 0
+        assert direct("S13", entry.name, single_number()).score == expected
+        assert direct("S13", entry.name, single_number(), intent="summary").score == (3 if entry.name == "indicator" else 0)
     assert direct("S13", "column", cities()) is None
+    assert direct("S13", "column", single_number(), intent="trend") is None
 
 
 def test_s14_few_parts():

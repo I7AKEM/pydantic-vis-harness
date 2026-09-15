@@ -1,0 +1,99 @@
+{
+  "dataset_id": "ds_35373ca134874d36945d4b2bb3ef8c51",
+  "question": "What percentage of violations were discounted?",
+  "language": "English",
+  "brief_fingerprint": "8d4b4b1b17daadca",
+  "analysis": {
+    "sql": "SELECT \n    count(*) FILTER (WHERE is_discounted = true) AS discounted_count,\n    (count(*) FILTER (WHERE is_discounted = true) * 100.0 / count(*)) AS discount_percentage\nFROM \"ds_35373ca134874d36945d4b2bb3ef8c51\"",
+    "columns": [
+      {
+        "name": "discounted_count",
+        "meaning": "Number of discounted violations",
+        "kind": "measure",
+        "unit": null,
+        "source": "is_discounted",
+        "aggregate": "count",
+        "denominator": "total violations"
+      },
+      {
+        "name": "discount_percentage",
+        "meaning": "Percentage of violations that were discounted",
+        "kind": "share",
+        "unit": "%",
+        "source": "is_discounted",
+        "aggregate": "share",
+        "denominator": "total violations"
+      }
+    ],
+    "summary": "48.0% of violations were discounted, representing 480 violations.",
+    "assumptions": [
+      "The total number of violations is based on all rows in the dataset."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    count(*) FILTER (WHERE is_discounted = true) AS discounted_count,\n    (count(*) FILTER (WHERE is_discounted = true) * 100.0 / count(*)) AS discount_percentage\nFROM \"ds_35373ca134874d36945d4b2bb3ef8c51\"",
+    "columns": [
+      "discounted_count",
+      "discount_percentage"
+    ],
+    "types": [
+      "BIGINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        480,
+        48.0
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "discounted_count",
+        "check": "total_explained",
+        "severity": "warning",
+        "passed": false,
+        "message": "discounted_count: the result covers 480 of the column's total 1000, because the query keeps only the rows its WHERE clause names; expected when the question asks for a subset."
+      },
+      {
+        "column": "discount_percentage",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "discount_percentage: shares sum to 48.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.02515812499768799
+  },
+  "checks": [
+    {
+      "column": "discounted_count",
+      "check": "total_explained",
+      "severity": "warning",
+      "passed": false,
+      "message": "discounted_count: the result covers 480 of the column's total 1000, because the query keeps only the rows its WHERE clause names; expected when the question asks for a subset."
+    },
+    {
+      "column": "discount_percentage",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "discount_percentage: shares sum to 48.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "discounted_count: the result covers 480 of the column's total 1000, because the query keeps only the rows its WHERE clause names; expected when the question asks for a subset.",
+    "discount_percentage: shares sum to 48.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 22.27150316600455,
+  "created_at": "2026-09-13T18:47:30.800448Z"
+}

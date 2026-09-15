@@ -66,8 +66,8 @@ def test_a_step_that_dies_keeps_the_checkpoints_and_resume_skips_them(deps, data
     assert outcome.status == "done" and analyst.runs == 1 and outcome.artifact.chart == "bar"
 
 
-def test_a_single_number_skips_the_designer(deps, dataset_id, fake_models, fake_render, agents):
-    _profiler, analyst, _designer, _lead = agents
+def test_a_single_number_reaches_the_designer_and_delivers_an_indicator(deps, dataset_id, fake_models, fake_render, agents):
+    _profiler, analyst, designer, _lead = agents
     from pydantic_ai.models.function import FunctionModel
 
     def one_number(messages, info):
@@ -79,13 +79,96 @@ def test_a_single_number_skips_the_designer(deps, dataset_id, fake_models, fake_
                              "aggregate": "sum"}]})])
         return ModelResponse(parts=[ToolCallPart(tool_name="deliver_analysis", args={"summary": "The total is 30."})])
 
-    with analyst.override(model=FunctionModel(one_number)):
+    spec = "vis indicator\ntitle Total sales\ndescription Total sales across all regions\ncards\n  - value total\n"
+
+    def indicator(messages, info):
+        returns = tool_returns(messages)
+        if not returns:
+            return ModelResponse(parts=[ToolCallPart(tool_name="check_spec", args={"spec": spec})])
+        checked = returns[-1].model_response_object()
+        assert checked["ok"], checked
+        return ModelResponse(parts=[ToolCallPart(tool_name="deliver_design", args={
+            "spec": checked["canonical"], "explanation": "The card shows the total sales."})])
+
+    with analyst.override(model=FunctionModel(one_number)), designer.override(model=FunctionModel(indicator)):
         request = create_request(deps, type="new", dataset_id=dataset_id, question="Total amount", caller=CHAT)
         outcome = run(run_request(deps, request.request_id))
-    assert outcome.status == "done" and outcome.artifact.chart is None and outcome.artifact.png_url is None
-    assert "single number" in outcome.artifact.no_chart_reason and outcome.artifact.rows == [[30]]
-    assert deps.requests.get_request(request.request_id).steps["design"]["skipped"]
-    assert fake_models[1].runs == 0 and not fake_render
+    assert outcome.status == "done" and outcome.artifact.chart == "indicator" and outcome.artifact.png_url
+    assert outcome.artifact.no_chart_reason is None and outcome.artifact.rows == [[30]]
+    assert deps.requests.get_request(request.request_id).steps["design"]["design"]["chart"] == "indicator"
+    assert len(fake_render) == 1
+
+
+@pytest.mark.parametrize("second_revision", [False, True])
+def test_a_repaired_scalar_reaches_indicator_design_and_is_not_reanalysed(
+    deps, dataset_id, fake_models, fake_render, agents, second_revision,
+):
+    _profiler, analyst, designer, _lead = agents
+    fallback = create_designer("test")
+    configured = replace(deps, designer_fallback=fallback)
+    spec = "vis indicator\ntitle Total sales\ndescription Sales across all regions\ncards\n  - value total\n"
+
+    def repair_analysis(messages, info):
+        prompt = prompt_of(messages)
+        if not prompt.get("previous", {}).get("feedback"):
+            return analyst_drive(messages, info)
+        assert prompt["previous"]["feedback"]["preserve"] == "All regions and sales"
+        if not tool_returns(messages):
+            return ModelResponse(parts=[ToolCallPart(tool_name="run_query", args={
+                "sql": f'SELECT sum(amount) AS total FROM {prompt["table"]}',
+                "columns": [{"name": "total", "meaning": "Total sales", "kind": "measure",
+                             "source": "amount", "aggregate": "sum"}],
+            })])
+        return ModelResponse(parts=[ToolCallPart(tool_name="deliver_analysis", args={
+            "summary": "The overall total is 30.",
+        })])
+
+    def deliver_indicator(messages, info):
+        prompt = prompt_of(messages)
+        assert prompt["revision"]["reply"] == "The overall total is 30."
+        returns = tool_returns(messages)
+        if not returns:
+            return ModelResponse(parts=[ToolCallPart(tool_name="check_spec", args={"spec": spec})])
+        checked = returns[-1].model_response_object()
+        assert checked["ok"], checked
+        return ModelResponse(parts=[ToolCallPart(tool_name="deliver_design", args={
+            "spec": checked["canonical"], "explanation": "The card shows the requested overall total.",
+        })])
+
+    def repair_design(messages, info):
+        if "revision" not in prompt_of(messages) or second_revision:
+            return ModelResponse(parts=[ToolCallPart(tool_name="request_analysis_revision", args={
+                "problem": "A grouped table cannot show the requested overall total",
+                "requested_change": "Return the overall sum as one row",
+                "preserve": "All regions and sales",
+            })])
+        return deliver_indicator(messages, info)
+
+    analyst_runs, designer_runs, fallback_runs = (
+        Counting(repair_analysis), Counting(repair_design), Counting(deliver_indicator),
+    )
+    with analyst.override(model=FunctionModel(analyst_runs)), \
+            designer.override(model=FunctionModel(designer_runs)), \
+            fallback.override(model=FunctionModel(fallback_runs)):
+        request = create_request(configured, type="new", dataset_id=dataset_id,
+                                 question="Show the overall sales total as a KPI", caller=CHAT)
+        outcome = run(run_request(configured, request.request_id))
+
+    assert outcome.status == "done" and outcome.artifact.chart == "indicator" and outcome.artifact.png_url
+    assert outcome.artifact.rows == [[30]] and outcome.artifact.row_count == 1
+    saved = deps.requests.get_request(request.request_id)
+    assert saved.steps["analyze_before_revision"]["result"]["row_count"] == 2
+    assert saved.steps["analyze"]["result"]["row_count"] == 1
+    assert saved.revision is not None and analyst_runs.runs == 2
+    # Counting also sees retries without a ToolReturn as starts. The refused
+    # second revision consumes two bounded retries before fallback takes over.
+    assert designer_runs.runs == (4 if second_revision else 2)
+    assert fallback_runs.runs == int(second_revision) and len(fake_render) == 1
+    if second_revision:
+        assert any("second table revision" in warning for warning in outcome.artifact.warnings)
+        assert any("fallback model" in warning for warning in outcome.artifact.warnings)
+    else:
+        assert any("chart comes from the revised table" in warning for warning in outcome.artifact.warnings)
 
 
 def test_a_renderer_failure_delivers_the_table(deps, dataset_id, fake_models, monkeypatch):

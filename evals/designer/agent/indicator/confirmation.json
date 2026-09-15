@@ -1,0 +1,424 @@
+[
+  {
+    "name": "confirm_museum_donations",
+    "report": "reports/confirm_museum_donations.json",
+    "brief": {
+      "raw_question": "Show total museum donations as one KPI in USD.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show total museum donations as one KPI in USD.",
+    "split": "confirmation",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "donations",
+          "context": [],
+          "support": [],
+          "unit": "USD",
+          "state": "value",
+          "exact_value": 4267.35
+        }
+      ]
+    },
+    "metadata": {
+      "family": "confirm_museum_donations",
+      "source": "new synthetic confirmation result; no prior model outputs",
+      "independent_gold": true,
+      "discovery": false
+    }
+  },
+  {
+    "name": "confirm_hydrology_delta",
+    "report": "reports/confirm_hydrology_delta.json",
+    "brief": {
+      "raw_question": "Show the signed net seepage change as a KPI with the monitoring station as context.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show the signed net seepage change as a KPI with the monitoring station as context.",
+    "split": "confirmation",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "net_seepage",
+          "context": [
+            "station"
+          ],
+          "support": [],
+          "unit": "m³/s",
+          "state": "value",
+          "exact_value": -2.5e-06
+        }
+      ]
+    },
+    "metadata": {
+      "family": "confirm_hydrology_delta",
+      "source": "new synthetic confirmation result; no prior model outputs",
+      "independent_gold": true,
+      "discovery": false
+    }
+  },
+  {
+    "name": "confirm_residential_age_bands",
+    "report": "reports/confirm_residential_age_bands.json",
+    "brief": {
+      "raw_question": "Show the age distribution of residents, including the total and all three age bands.",
+      "intent": "composition"
+    },
+    "expect": "design",
+    "charts": [
+      "table"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show the age distribution of residents, including the total and all three age bands.",
+    "split": "confirmation",
+    "indicator": {
+      "mode": "forbidden",
+      "cards": []
+    },
+    "metadata": {
+      "family": "confirm_residential_age_bands",
+      "source": "new synthetic confirmation result; no prior model outputs",
+      "independent_gold": true,
+      "discovery": false
+    }
+  },
+  {
+    "name": "confirm_missing_depots",
+    "report": "reports/confirm_missing_depots.json",
+    "brief": {
+      "raw_question": "Show one stock-total KPI for each depot: East, West, and North.",
+      "intent": "summary"
+    },
+    "expect": "clarification",
+    "charts": [],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show one stock-total KPI for each depot: East, West, and North.",
+    "split": "confirmation",
+    "indicator": {
+      "mode": "incomplete",
+      "cards": []
+    },
+    "metadata": {
+      "family": "confirm_missing_depots",
+      "source": "new synthetic confirmation result; no prior model outputs",
+      "independent_gold": true,
+      "discovery": false
+    }
+  },
+  {
+    "name": "confirm_missing_quarters",
+    "report": "reports/confirm_missing_quarters.json",
+    "brief": {
+      "raw_question": "Show audit completion KPIs separately for Q1, Q2, Q3, and Q4 of 2026.",
+      "intent": "summary"
+    },
+    "expect": "clarification",
+    "charts": [],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show audit completion KPIs separately for Q1, Q2, Q3, and Q4 of 2026.",
+    "split": "confirmation",
+    "indicator": {
+      "mode": "incomplete",
+      "cards": []
+    },
+    "metadata": {
+      "family": "confirm_missing_quarters",
+      "source": "new synthetic confirmation result; no prior model outputs",
+      "independent_gold": true,
+      "discovery": false
+    }
+  },
+  {
+    "name": "confirm_factory_recovery",
+    "report": "reports/confirm_factory_recovery.json",
+    "brief": {
+      "raw_question": "Show the material recovery percentage as the headline KPI and recovered/input kilograms as support.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show the material recovery percentage as the headline KPI and recovered/input kilograms as support.",
+    "split": "confirmation",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "recovery_pct",
+          "context": [],
+          "support": [
+            "recovered",
+            "input"
+          ],
+          "unit": "%",
+          "state": "value",
+          "exact_value": 80
+        }
+      ]
+    },
+    "metadata": {
+      "family": "confirm_factory_recovery",
+      "source": "new synthetic confirmation result; no prior model outputs",
+      "independent_gold": true,
+      "discovery": false
+    }
+  },
+  {
+    "name": "confirm_production_two_units",
+    "report": "reports/confirm_production_two_units.json",
+    "brief": {
+      "raw_question": "Show two independent KPIs: total production cost and labor hours.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show two independent KPIs: total production cost and labor hours.",
+    "split": "confirmation",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "cost",
+          "context": [],
+          "support": [],
+          "unit": "EUR",
+          "state": "value",
+          "exact_value": 938.25
+        },
+        {
+          "value": "labor_hours",
+          "context": [],
+          "support": [],
+          "unit": "hours",
+          "state": "value",
+          "exact_value": 61.75
+        }
+      ]
+    },
+    "metadata": {
+      "family": "confirm_production_two_units",
+      "source": "new synthetic confirmation result; no prior model outputs",
+      "independent_gold": true,
+      "discovery": false
+    }
+  },
+  {
+    "name": "confirm_telemetry_mixed_states",
+    "report": "reports/confirm_telemetry_mixed_states.json",
+    "brief": {
+      "raw_question": "Show two KPIs for the probe: dissolved oxygen and battery voltage; retain the probe identifier.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show two KPIs for the probe: dissolved oxygen and battery voltage; retain the probe identifier.",
+    "split": "confirmation",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "oxygen",
+          "context": [
+            "probe"
+          ],
+          "support": [],
+          "unit": "mg/L",
+          "state": "unavailable",
+          "exact_value": null
+        },
+        {
+          "value": "voltage",
+          "context": [
+            "probe"
+          ],
+          "support": [],
+          "unit": "V",
+          "state": "value",
+          "exact_value": 0
+        }
+      ]
+    },
+    "metadata": {
+      "family": "confirm_telemetry_mixed_states",
+      "source": "new synthetic confirmation result; no prior model outputs",
+      "independent_gold": true,
+      "discovery": false
+    }
+  },
+  {
+    "name": "confirm_unsigned_packet_total",
+    "report": "reports/confirm_unsigned_packet_total.json",
+    "brief": {
+      "raw_question": "Show the exact cumulative packet total as a KPI.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show the exact cumulative packet total as a KPI.",
+    "split": "confirmation",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "packets",
+          "context": [],
+          "support": [],
+          "unit": "count",
+          "state": "value",
+          "exact_value": 18446744073709551615
+        }
+      ]
+    },
+    "metadata": {
+      "family": "confirm_unsigned_packet_total",
+      "source": "new synthetic confirmation result; no prior model outputs",
+      "independent_gold": true,
+      "discovery": false
+    }
+  },
+  {
+    "name": "confirm_arabic_residents",
+    "report": "reports/confirm_arabic_residents.json",
+    "brief": {
+      "raw_question": "اعرض إجمالي المقيمين كمؤشر مع اسم الحي وفترة الإحصاء.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "اعرض إجمالي المقيمين كمؤشر مع اسم الحي وفترة الإحصاء.",
+    "split": "confirmation",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "المقيمون",
+          "context": [
+            "الحي",
+            "الفترة"
+          ],
+          "support": [],
+          "unit": "نسمة",
+          "state": "value",
+          "exact_value": 237
+        }
+      ]
+    },
+    "metadata": {
+      "family": "confirm_arabic_residents",
+      "source": "new synthetic confirmation result; no prior model outputs",
+      "independent_gold": true,
+      "discovery": false
+    }
+  },
+  {
+    "name": "confirm_land_registry_text",
+    "report": "reports/confirm_land_registry_text.json",
+    "brief": {
+      "raw_question": "Reply only in this exact text format: \"Registered parcels: (number)\". Do not draw a chart.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "table"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Reply only in this exact text format: \"Registered parcels: (number)\". Do not draw a chart.",
+    "split": "confirmation",
+    "indicator": {
+      "mode": "forbidden",
+      "cards": []
+    },
+    "metadata": {
+      "family": "confirm_land_registry_text",
+      "source": "new synthetic confirmation result; no prior model outputs",
+      "independent_gold": true,
+      "discovery": false
+    }
+  },
+  {
+    "name": "confirm_nav_signed_change",
+    "report": "reports/confirm_nav_signed_change.json",
+    "brief": {
+      "raw_question": "Show the signed percentage change in NAV as a KPI, with the valuation date as context.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show the signed percentage change in NAV as a KPI, with the valuation date as context.",
+    "split": "confirmation",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "nav_change",
+          "context": [
+            "valuation_date"
+          ],
+          "support": [],
+          "unit": "%",
+          "state": "value",
+          "exact_value": -2.005
+        }
+      ]
+    },
+    "metadata": {
+      "family": "confirm_nav_signed_change",
+      "source": "new synthetic confirmation result; no prior model outputs",
+      "independent_gold": true,
+      "discovery": false
+    }
+  }
+]

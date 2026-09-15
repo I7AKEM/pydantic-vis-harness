@@ -1,0 +1,57 @@
+{
+  "dataset_id": "ds_indicator_fixture",
+  "question": "Make the accepted claim percentage the headline KPI, with count as support.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      {
+        "name": "share",
+        "meaning": "share",
+        "kind": "share",
+        "unit": "%",
+        "source": null,
+        "aggregate": "share",
+        "denominator": "Eligible population"
+      },
+      {
+        "name": "accepted",
+        "meaning": "accepted",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "Prepared result for the requested measurement.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      "share",
+      "accepted"
+    ],
+    "types": [
+      "DOUBLE",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        24,
+        12
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T00:00:00Z"
+}

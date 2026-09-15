@@ -1,0 +1,87 @@
+[
+  {
+    "name": "regression_arabic_citizens_18",
+    "report": "reports/regression_arabic_citizens_18.json",
+    "brief": {
+      "raw_question": "اعرض إجمالي عدد المواطنين كمؤشر بعنوان «إجمالي عدد المواطنين»، واستخدم التسمية نفسها للقيمة.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "Actual citizen_count total18: show the measurement label inside the card above the number and preserve a visible localized person unit; one shared heading.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "إجمالي السكان",
+          "context": [],
+          "support": [],
+          "unit": "person",
+          "state": "value",
+          "exact_value": 18,
+          "unit_text": "شخصًا"
+        }
+      ],
+      "shared_heading": "إجمالي عدد المواطنين"
+    },
+    "metadata": {
+      "family": "actual_arabic_citizen_count",
+      "source_artifact": "data/renders/707fc6ab0310",
+      "source_csv_sha256": "14bd6839a2eedae8c31149d6b2313f5b3d89efa79d7eea6c1bbbe4b940447ad1",
+      "question_adapted_for_regression": true,
+      "source_question_available": false,
+      "independent_gold": true,
+      "discovery": true,
+      "display_contract_updated_by_user": "2026-09-15: User explicitly requested the label inside the card above the value and visible count units. This supersedes the earlier bare-number preference."
+    }
+  },
+  {
+    "name": "regression_arabic_percentage_alias_108_86",
+    "report": "reports/regression_arabic_percentage_alias_108_86.json",
+    "brief": {
+      "raw_question": "اعرض نسبة التغير كمؤشر بعنوان «نسبة التغير»، واستخدم التسمية نفسها للقيمة.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": ["indicator"],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "Actual percentage_change=108.86 with legacy source unit percentage must display 108.86% without rescaling or changing the raw source metadata.",
+    "split": "discovery",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "percentage_change",
+          "context": [],
+          "support": [],
+          "unit": "percentage",
+          "state": "value",
+          "exact_value": 108.86,
+          "unit_text": "%"
+        }
+      ],
+      "shared_heading": "نسبة التغير"
+    },
+    "metadata": {
+      "family": "actual_arabic_percentage_alias",
+      "source_artifact": "data/renders/1b077356b887",
+      "source_csv": "data/uploads/ds_338ef8d2926245ab93e513229c304951.csv",
+      "source_csv_sha256": "71dc94601b9a8d75c82918dc982e08083805036cad8b780e6455b2c4c50daa3b",
+      "source_config_sha256": "838f6a0229c426be0aa94c364e762e6dcd1db167be2aba55f9cbfbfa1069749b",
+      "question_adapted_for_regression": true,
+      "source_question_available": true,
+      "source_question": "مثله بيانيا",
+      "independent_gold": true,
+      "discovery": true,
+      "source_note": "The source CSV was independently queried with DuckDB. The report preserves the supplied original question, SQL, column metadata, summary and result. The brief explicitly requests the original rendered label to make the visible-heading regression deterministic."
+    }
+  }
+]

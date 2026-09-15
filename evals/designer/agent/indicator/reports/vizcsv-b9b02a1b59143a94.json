@@ -1,0 +1,56 @@
+{
+  "dataset_id": "ds_65a38d68ca144d688e5c4055d74c95eb",
+  "question": "ما الفرق في متوسط عدد الأيام بين تاريخ تسجيل المخالفة وتاريخ سدادها، بين المخالفات المخفضة وغير المخفضة للمخالفات المرتكبة في السنة الماضية (2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT difference AS \"الفرق في متوسط الأيام\" FROM \"ds_65a38d68ca144d688e5c4055d74c95eb\"",
+    "columns": [
+      {
+        "name": "الفرق في متوسط الأيام",
+        "meaning": "الفرق بين متوسط عدد الأيام للمخالفات غير المخفضة والمخفضة",
+        "kind": "measure",
+        "unit": null,
+        "source": "difference",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "الفرق في متوسط عدد الأيام بين المخالفات غير المخفضة والمخفضة هو 1.53 يوم تقريباً. تم استخراج هذه القيمة مباشرة من عمود الفرق المتاح في البيانات.",
+    "assumptions": [
+      "تم استخدام عمود difference الذي يمثل الفرق بين متوسط الأيام غير المخفضة والمخفضة كما هو محدد في وصف البيانات.",
+      "البيانات المقدمة هي ملخص مسبق، لذا تم اعتبارها تمثل الفترة المطلوبة (2025)."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT difference AS \"الفرق في متوسط الأيام\" FROM \"ds_65a38d68ca144d688e5c4055d74c95eb\"",
+    "columns": [
+      "الفرق في متوسط الأيام"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        1.5251998554464024
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.0965907089994289
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.9621111250016838,
+  "created_at": "2026-09-13T22:00:13.356075Z"
+}

@@ -1,0 +1,683 @@
+{
+  "kind": "historical evidence, not same-day matched model baseline",
+  "runtime": "53c179b",
+  "deterministic_before_change": {
+    "score": "37/37",
+    "date": "2026-09-15"
+  },
+  "cases": [
+    {
+      "case": "analyst--average_daily_deaths",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.053,
+        "profile_s": 6.273,
+        "request_s": 3.063
+      }
+    },
+    {
+      "case": "analyst--average_violations_per_violator",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.031,
+        "profile_s": 4.127,
+        "request_s": 3.097
+      }
+    },
+    {
+      "case": "analyst--best_month_2024",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle أفضل شهر في 2024 من حيث عدد الزوار السياح\ndescription يوضح الجدول الشهر الذي سجل أعلى عدد من الزوار السياح في عام 2024.\nlanguage ar\n",
+        "chart": "table",
+        "intent": "rank",
+        "explanation": "يوضح هذا الجدول الشهر الذي سجل أعلى عدد من الزوار السياح في عام 2024، وهو شهر مارس بعدد 310 زوار. تم اختيار الجدول لأن النتيجة تتكون من قيمة واحدة فقط.",
+        "considered": [
+          "table",
+          "column",
+          "bar"
+        ],
+        "compromises": [
+          {
+            "key": "direction",
+            "message": "tables are drawn as the package draws them"
+          }
+        ]
+      },
+      "reply": null,
+      "timings": {
+        "upload_s": 0.031,
+        "profile_s": 4.123,
+        "request_s": 6.132
+      }
+    },
+    {
+      "case": "analyst--discounted_percentage",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle Percentage of Discounted Violations\ndescription A table showing the number and percentage of violations that were discounted.\n",
+        "chart": "table",
+        "intent": "share",
+        "explanation": "The chart shows that 48.0% of violations were discounted. A table is used because the result consists of a single value.",
+        "considered": [
+          "table",
+          "scatter"
+        ],
+        "compromises": []
+      },
+      "reply": "![Percentage of Discounted Violations](/renders/20a206aa3a29/chart.png)\n\n**48% of violations were discounted**, accounting for **480 out of 1,000 total violations**.\n\n| Discounted Count | Discount Percentage |\n|-----------------|-------------------|\n| 480 | 48.0% |\n\n**Assumptions:**\n- The percentage is calculated against all records in the dataset (1,000 total).\n- Discounted violations are identified by the `is_discounted = true` flag.\n\n**No chart note:** The result is a single summary value, so a table is the most appropriate display.\n\nart_8a58496218dd4c67b608ea0103032cd2 · rq_da70aca685e24a02b5313052590e66d2",
+      "timings": {
+        "upload_s": 0.032,
+        "profile_s": 175.773,
+        "request_s": 27.359,
+        "ask_s": 33.762
+      }
+    },
+    {
+      "case": "analyst--egyptian_top_port",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle Most Used Port by Egyptians\ndescription A table showing the port used most by Egyptians.\n",
+        "chart": "table",
+        "intent": "rank",
+        "explanation": "The chart shows that Egyptians use the King Abdulaziz International Airport (Jeddah) the most. A table is used because there is only one result.",
+        "considered": [
+          "bar",
+          "table",
+          "column"
+        ],
+        "compromises": []
+      },
+      "reply": null,
+      "timings": {
+        "upload_s": 0.033,
+        "profile_s": 8.243,
+        "request_s": 12.182
+      }
+    },
+    {
+      "case": "analyst--employees_born_after_1990",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.033,
+        "profile_s": 8.209,
+        "request_s": 12.213
+      }
+    },
+    {
+      "case": "analyst--highest_daily_deaths",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": "The highest number of deaths recorded on a single day was **72**.\n\n| Highest Deaths |\n|----------------|\n| 72             |\n\n**Assumptions:** The maximum value was taken from the `death_count` column across all rows in the dataset. No warnings were raised.",
+      "timings": {
+        "upload_s": 0.026,
+        "profile_s": 8.23,
+        "request_s": 6.13,
+        "ask_s": 21.737
+      }
+    },
+    {
+      "case": "analyst--lowest_citizen_percentage_region",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle Citizen Percentage by Region\ndescription A table showing the citizen percentage for the region with the lowest value.\n",
+        "chart": "table",
+        "intent": "rank",
+        "explanation": "The chart shows that the Makkah Region has the lowest citizen percentage at 48.16%. A table is used because the result contains only one record.",
+        "considered": [
+          "bar",
+          "table",
+          "column"
+        ],
+        "compromises": []
+      },
+      "reply": "![Citizen Percentage by Region](/renders/f227d8d08a46/chart.png)\n\n**Makkah Region (منطقة مكة المكرمة)** has the lowest citizen percentage at **48.16%**, meaning fewer than half of its population are citizens — the only region below the 50% mark.\n\n| Region | Citizen Percentage |\n|---|---|\n| منطقة مكة المكرمة (Makkah Region) | 48.16% |\n\n**Assumptions:** The `citizen_percentage` column was used as the comparison measure, representing the share of citizens out of the total population in each region.\n\n*Artifact: art_1f3cf3bbf0764a909f7264d10570037b · Request: rq_bc832b351b4d44049e02c80e64b3acce*",
+      "timings": {
+        "upload_s": 0.033,
+        "profile_s": 10.314,
+        "request_s": 15.21,
+        "ask_s": 27.301
+      }
+    },
+    {
+      "case": "analyst--most_common_violation_jeddah",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle Most Common Violation Type in Jeddah\ndescription A table showing the most common violation type in Jeddah and its total count.\n",
+        "chart": "table",
+        "intent": "rank",
+        "explanation": "This table shows the most common violation type in Jeddah. A table is used because the result contains only one value.",
+        "considered": [
+          "bar",
+          "table",
+          "column",
+          "treemap"
+        ],
+        "compromises": []
+      },
+      "reply": "![Most Common Violation Type in Jeddah](/renders/5241c79bbc1a/chart.png)\n\nThe most common violation type in Jeddah is:\n\n| Violation Type | Total Violations |\n|---|---|\n| تجاوز السرعة المحددة بمقدار لا يزيد على 25 كم/س *(Exceeding the speed limit by no more than 25 km/h)* | 6,190 |\n\n**Summary:** Speeding by up to 25 km/h above the limit is by far the most recorded violation in Jeddah (جدة), accounting for 6,190 violations out of the city's total records.\n\n**Assumptions:** The city name for Jeddah is stored as **'جدة'** in the dataset.\n\n*art_c22c48e3b4a244268153177931cd5f6e · rq_d6d1147274db4446a6035c8119d28de1*",
+      "timings": {
+        "upload_s": 0.034,
+        "profile_s": 12.334,
+        "request_s": 15.227,
+        "ask_s": 31.689
+      }
+    },
+    {
+      "case": "analyst--peak_visitor_month",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle Month with the Most Visitors\ndescription A table showing the month with the highest visitor count.\n",
+        "chart": "table",
+        "intent": "rank",
+        "explanation": "The chart shows that November 2023 had the most visitors with 229. A table is used because the result contains only one value.",
+        "considered": [
+          "table",
+          "column",
+          "bar"
+        ],
+        "compromises": []
+      },
+      "reply": "![Month with the Most Visitors](/renders/3cc75c8feebd/chart.png)\n\n**November 2023** had the most visitors, with **229 visitors**.\n\n| Year-Month | Visitor Count |\n|------------|--------------|\n| 2023-11    | 229          |\n\n**Assumptions:** The result was pulled by finding the single month with the highest total visitor count.\nNo compromises or warnings to note.\n\n*Artifact: art_0033f448693542af8a2aa8626b6c45aa · Request: rq_119970e9a1fc4366b12f5d346ab51e41*",
+      "timings": {
+        "upload_s": 0.034,
+        "profile_s": 4.128,
+        "request_s": 6.147,
+        "ask_s": 21.356
+      }
+    },
+    {
+      "case": "analyst--top_store_by_orders",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle Store with the Most Orders\ndescription A table showing the store with the highest number of orders.\n",
+        "chart": "table",
+        "intent": "rank",
+        "explanation": "The chart shows that Al Baik received the most orders with a total of 4. A table is used because the result contains only one value.",
+        "considered": [
+          "table",
+          "column",
+          "bar",
+          "treemap"
+        ],
+        "compromises": []
+      },
+      "reply": "![Store with the Most Orders](/renders/c9339badc09d/chart.png)\n\n**Al Baik** is the store that received the most orders, with a total of **4 orders**.\n\n| Store Name | Order Count |\n|------------|-------------|\n| Al Baik    | 4           |\n\n**Assumptions:**\n- Order count is determined by the number of records per store.\n\n**Warnings:**\n- The order count sums to 4, while the dataset's total is 100 rows. This means the query returned only the top store; other stores also have orders and were excluded from this view. If you'd like to see the full ranking of all stores, just ask!\n\nart_f5714477ee744aaabd2481d05369f293 · rq_e2fb037dfb7e4c57b99d2cc85ca0f52e",
+      "timings": {
+        "upload_s": 0.031,
+        "profile_s": 10.326,
+        "request_s": 6.113,
+        "ask_s": 26.071
+      }
+    },
+    {
+      "case": "analyst--top_traveller_type",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle نوع المسافر الأكثر رحلات\ndescription يوضح الجدول نوع المسافر الذي قام بأكبر عدد من الرحلات.\nlanguage ar\n",
+        "chart": "table",
+        "intent": "rank",
+        "explanation": "يوضح هذا الجدول نوع المسافر الأكثر رحلات وهو المواطن بعدد 748,986 رحلة. تم استخدام الجدول لأن النتيجة تتكون من قيمة واحدة فقط.",
+        "considered": [
+          "table",
+          "column",
+          "bar",
+          "treemap"
+        ],
+        "compromises": [
+          {
+            "key": "direction",
+            "message": "tables are drawn as the package draws them"
+          }
+        ]
+      },
+      "reply": null,
+      "timings": {
+        "upload_s": 0.039,
+        "profile_s": 4.169,
+        "request_s": 6.135
+      }
+    },
+    {
+      "case": "analyst--unpaid_share_overall",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle نسبة المخالفات غير المسددة\ndescription يوضح الجدول نسبة المخالفات غير المسددة من إجمالي المخالفات.\nlanguage ar\n",
+        "chart": "table",
+        "intent": "share",
+        "explanation": "يعرض هذا الجدول نسبة المخالفات غير المسددة والتي تبلغ 9.91% من إجمالي 951,777 مخالفة. تم اختيار الجدول لأن النتيجة تتكون من قيمة واحدة فقط.",
+        "considered": [
+          "table",
+          "scatter"
+        ],
+        "compromises": [
+          {
+            "key": "direction",
+            "message": "tables are drawn as the package draws them"
+          }
+        ]
+      },
+      "reply": null,
+      "timings": {
+        "upload_s": 0.044,
+        "profile_s": 4.169,
+        "request_s": 6.156
+      }
+    },
+    {
+      "case": "analyst--violations_december_2025",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.04,
+        "profile_s": 10.353,
+        "request_s": 3.108
+      }
+    },
+    {
+      "case": "analyst--visitors_2024_total",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": "There were **1,458 visitors in total in 2024**.\n\n| Total Visitors |\n|----------------|\n| 1,458 |\n\n**Assumptions:** The year 2024 was identified by filtering the `year_month` column for values starting with `'2024'`.\n\n**Note:** This covers 1,458 out of the column's overall total of 3,241 visitors — expected, since only 2024 rows were included.",
+      "timings": {
+        "upload_s": 0.032,
+        "profile_s": 4.157,
+        "request_s": 3.122,
+        "ask_s": 18.604
+      }
+    },
+    {
+      "case": "vizcsv-1adcf9de6971a077",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.074,
+        "profile_s": 6.451,
+        "request_s": 9.324
+      }
+    },
+    {
+      "case": "vizcsv-1ddfa1a4c0823358",
+      "eval_completed": "done",
+      "request_status": "waiting",
+      "design": null,
+      "reply": "نعم، هل تقصد بـ \"أعلى نسبة أثرياء\" القيمة الأعلى في عمود **richpercentage** (نسبة الثراء)؟",
+      "timings": {
+        "upload_s": 0.078,
+        "profile_s": 12.672,
+        "request_s": 12.385,
+        "ask_s": 24.194
+      }
+    },
+    {
+      "case": "vizcsv-3c9b38b7a1e11816",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.074,
+        "profile_s": 4.332,
+        "request_s": 9.345
+      }
+    },
+    {
+      "case": "vizcsv-5a978d632cfd754c",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.078,
+        "profile_s": 10.56,
+        "request_s": 3.228
+      }
+    },
+    {
+      "case": "vizcsv-6c8cc1666963d616",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.063,
+        "profile_s": 2.226,
+        "request_s": 3.22
+      }
+    },
+    {
+      "case": "vizcsv-7a01599b82a646f2",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.079,
+        "profile_s": 4.306,
+        "request_s": 6.358
+      }
+    },
+    {
+      "case": "vizcsv-7b73e00f5a9acbf7",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle أعلى سنة في عدد الخريجين للجامعات الحكومية\ndescription يوضح الجدول أعلى سنة في عدد الخريجين للجامعات الحكومية.\nlanguage ar\n",
+        "chart": "table",
+        "intent": "rank",
+        "explanation": "يوضح هذا الجدول أعلى سنة في عدد الخريجين للجامعات الحكومية، وهي سنة 2025 بعدد 19,660 خريجاً. تم اختيار الجدول لأن النتيجة تتكون من قيمة واحدة فقط.",
+        "considered": [
+          "table",
+          "column",
+          "bar"
+        ],
+        "compromises": [
+          {
+            "key": "direction",
+            "message": "tables are drawn as the package draws them"
+          }
+        ]
+      },
+      "reply": null,
+      "timings": {
+        "upload_s": 0.063,
+        "profile_s": 12.724,
+        "request_s": 12.413
+      }
+    },
+    {
+      "case": "vizcsv-8001e09f5f45bb3f",
+      "eval_completed": "done",
+      "request_status": "waiting",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.08,
+        "profile_s": 8.559,
+        "request_s": 18.513
+      }
+    },
+    {
+      "case": "vizcsv-851588564ab222d2",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.068,
+        "profile_s": 4.287,
+        "request_s": 6.295
+      }
+    },
+    {
+      "case": "vizcsv-8f706ab9f208d7db",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle أعلى حي في منطقة الرياض من حيث عدد المشتغلين\ndescription حي البجيري هو الحي الأعلى بعدد 873 عاملاً.\nlanguage ar\n",
+        "chart": "table",
+        "intent": "rank",
+        "explanation": "يوضح الجدول الحي الأعلى في منطقة الرياض من حيث عدد المشتغلين. تم اختيار الجدول لأن النتيجة تتكون من قيمة واحدة فقط.",
+        "considered": [
+          "table",
+          "column",
+          "bar"
+        ],
+        "compromises": [
+          {
+            "key": "direction",
+            "message": "tables are drawn as the package draws them"
+          }
+        ]
+      },
+      "reply": null,
+      "timings": {
+        "upload_s": 0.079,
+        "profile_s": 8.535,
+        "request_s": 6.264
+      }
+    },
+    {
+      "case": "vizcsv-92e6d5bee4a72b39",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.081,
+        "profile_s": 4.314,
+        "request_s": 3.221
+      }
+    },
+    {
+      "case": "vizcsv-9f9155e976cefaff",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.072,
+        "profile_s": 2.229,
+        "request_s": 3.213
+      }
+    },
+    {
+      "case": "vizcsv-a7761ce7247590cc",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle كثافة الشباب في بلديات الرياض\ndescription جدول يوضح كثافة الشباب في بلدية الدرعية.\nlanguage ar\n",
+        "chart": "table",
+        "intent": "rank",
+        "explanation": "البلدية: الدرعية - العدد: 10.33. يوضح هذا الجدول كثافة الشباب في البلدية الأعلى كثافة في الرياض.",
+        "considered": [
+          "table",
+          "column",
+          "bar"
+        ],
+        "compromises": [
+          {
+            "key": "direction",
+            "message": "tables are drawn as the package draws them"
+          }
+        ]
+      },
+      "reply": "البلدية: **الدرعية** - العدد: **10.33 شاب لكل حي**",
+      "timings": {
+        "upload_s": 0.074,
+        "profile_s": 4.336,
+        "request_s": 6.277,
+        "ask_s": 17.455
+      }
+    },
+    {
+      "case": "vizcsv-a987ac48cb20a44c",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle عمليات الدخول والخروج في منطقة الحدود الشمالية\ndescription يوضح الجدول عدد عمليات الدخول والخروج لمنطقة الحدود الشمالية.\nlanguage ar\ndirection rtl\n",
+        "chart": "table",
+        "intent": "compare",
+        "explanation": "يوضح هذا الجدول عدد عمليات الدخول (448) والخروج (709) في منطقة الحدود الشمالية. تم اختيار الجدول لأنه الأنسب لعرض مجموعة صغيرة من الأرقام المحددة بدقة.",
+        "considered": [
+          "column",
+          "bar",
+          "table",
+          "scatter"
+        ],
+        "compromises": [
+          {
+            "key": "direction",
+            "message": "tables are drawn as the package draws them"
+          }
+        ]
+      },
+      "reply": null,
+      "timings": {
+        "upload_s": 0.083,
+        "profile_s": 4.375,
+        "request_s": 6.32
+      }
+    },
+    {
+      "case": "vizcsv-ae79cdc7d8e77066",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle نسبة الطلاب العائدين للدراسات العليا في نفس جامعة البكالوريوس\ndescription تظهر هذه الجدولة نسبة الطلاب الذين عادوا إلى نفس الجامعة للحصول على شهادات الماجستير أو الدكتوراه أو الزمالة من إجمالي طلاب الدراسات العليا.\nlanguage ar\n",
+        "chart": "table",
+        "intent": "share",
+        "explanation": "يوضح الجدول نسبة الطلاب الذين عادوا إلى نفس الجامعة للحصول على دراسات عليا، وهي 0.0005%. تم استخدام الجدول لأن النتيجة تتكون من قيمة واحدة فقط.",
+        "considered": [
+          "table",
+          "scatter"
+        ],
+        "compromises": [
+          {
+            "key": "direction",
+            "message": "tables are drawn as the package draws them"
+          }
+        ]
+      },
+      "reply": "![نسبة الطلاب العائدين للدراسات العليا في نفس جامعة البكالوريوس](/renders/23278609d8ec/chart.png)\n\n---\n\n### النتيجة\n\n| الطلاب العائدون إلى نفس الجامعة | إجمالي طلاب الدراسات العليا | النسبة المئوية |\n|---|---|---|\n| 2 | 370,783 | ~0.0005% |\n\n---\n\n### الملخص\nتُشير البيانات إلى أن **2 طلاب فقط** من إجمالي **370,783** من حاملي شهادات الماجستير أو الدكتوراه أو الزمالة عادوا إلى نفس الجامعة التي تخرجوا منها في مرحلة البكالوريوس، أي ما يُعادل **نسبة 0.0005% تقريباً**، وهي نسبة ضئيلة جداً.\n\n> **ملاحظة:** تم احتساب النسبة بقسمة عدد الطلاب العائدين على إجمالي طلاب الدراسات العليا في البيانات المتاحة.\n\n🔖 `art_e8543fdbc4bf484faf88419992676baa` | `rq_840ef115f1994d249d8729315a9513a5`",
+      "timings": {
+        "upload_s": 0.088,
+        "profile_s": 2.241,
+        "request_s": 6.26,
+        "ask_s": 40.291
+      }
+    },
+    {
+      "case": "vizcsv-b9b02a1b59143a94",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.059,
+        "profile_s": 2.241,
+        "request_s": 3.244
+      }
+    },
+    {
+      "case": "vizcsv-c2315009d8035563",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle عدد المغادرين والقادمين الأجانب في الربع الثالث من عام 2023\ndescription يوضح الجدول عدد الرحلات القادمة والمغادرة في الربع الثالث من عام 2023.\nlanguage ar\ndirection rtl\n",
+        "chart": "table",
+        "intent": "compare",
+        "explanation": "يوضح هذا الجدول عدد الرحلات القادمة (894) والمغادرة (3) في الربع الثالث من عام 2023. تم استخدام الجدول لأن النتيجة تتكون من رقمين منفصلين فقط.",
+        "considered": [
+          "table",
+          "scatter"
+        ],
+        "compromises": [
+          {
+            "key": "direction",
+            "message": "tables are drawn as the package draws them"
+          }
+        ]
+      },
+      "reply": null,
+      "timings": {
+        "upload_s": 0.09,
+        "profile_s": 2.318,
+        "request_s": 6.304
+      }
+    },
+    {
+      "case": "vizcsv-c61dd08461a844cc",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": null,
+      "reply": null,
+      "timings": {
+        "upload_s": 0.086,
+        "profile_s": 2.24,
+        "request_s": 3.227
+      }
+    },
+    {
+      "case": "vizcsv-e512500e4c3f828a",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle متوسط العمر في أحياء الرياض\ndescription يوضح الجدول الحي الأكبر سنًا في الرياض بناءً على متوسط العمر.\nlanguage ar\n",
+        "chart": "table",
+        "intent": "rank",
+        "explanation": "يعرض الجدول الحي الأكبر سنًا في الرياض. تم اختيار الجدول لأن النتيجة تتكون من قيمة واحدة فقط.",
+        "considered": [
+          "table",
+          "column",
+          "bar"
+        ],
+        "compromises": [
+          {
+            "key": "direction",
+            "message": "tables are drawn as the package draws them"
+          }
+        ]
+      },
+      "reply": null,
+      "timings": {
+        "upload_s": 0.081,
+        "profile_s": 4.348,
+        "request_s": 9.375
+      }
+    },
+    {
+      "case": "vizcsv-f91723bce2abb15b",
+      "eval_completed": "done",
+      "request_status": "done",
+      "design": {
+        "spec": "vis table\ntitle مستوى الثروة الأكثر انحرافاً عن المتوسط\ndescription يوضح الجدول مستوى الثروة، عدد الأسر، المتوسط، الانحراف المعياري، ودرجة Z للمستوى الذي سجل أكبر انحراف.\nlanguage ar\n",
+        "chart": "table",
+        "intent": "rank",
+        "explanation": "يعرض هذا الجدول مستوى الثروة \"Lower Middle\" الذي سجل أكبر انحراف عن المتوسط بدرجة Z تبلغ -1.47. تم اختيار الجدول لأنه الوسيلة الأنسب لعرض مجموعة متنوعة من المقاييس الإحصائية (العدد، المتوسط، الانحراف المعياري، ودرجة Z) لنتيجة واحدة.",
+        "considered": [
+          "column",
+          "bar",
+          "table",
+          "scatter"
+        ],
+        "compromises": [
+          {
+            "key": "direction",
+            "message": "tables are drawn as the package draws them"
+          }
+        ]
+      },
+      "reply": null,
+      "timings": {
+        "upload_s": 0.085,
+        "profile_s": 12.822,
+        "request_s": 15.58
+      }
+    }
+  ]
+}

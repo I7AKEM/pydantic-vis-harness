@@ -1,0 +1,96 @@
+{
+  "dataset_id": "ds_5610046c96fb417e817bdb88964f4da5",
+  "question": "ما نسبة الطلاب الذين عادوا الى الجامعات التي تخرجوا منها في مرحلة البكالوريوس للحصول على الماجستير أو الدكتوراه أو الزمالة، من اجمالي الحاصلين على شهادات الماجستير أو الدكتوراه أو الزمالة؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    students_returned_to_same_university, \n    total_postgraduates, \n    (CAST(students_returned_to_same_university AS DOUBLE) / total_postgraduates) * 100 AS share_percentage \nFROM \"ds_5610046c96fb417e817bdb88964f4da5\"",
+    "columns": [
+      {
+        "name": "students_returned_to_same_university",
+        "meaning": "عدد الطلاب الذين عادوا إلى نفس الجامعة",
+        "kind": "measure",
+        "unit": null,
+        "source": "students_returned_to_same_university",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "total_postgraduates",
+        "meaning": "إجمالي عدد طلاب الدراسات العليا",
+        "kind": "measure",
+        "unit": null,
+        "source": "total_postgraduates",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "share_percentage",
+        "meaning": "نسبة الطلاب الذين عادوا إلى نفس الجامعة من الإجمالي",
+        "kind": "share",
+        "unit": null,
+        "source": null,
+        "aggregate": "share",
+        "denominator": "total_postgraduates"
+      }
+    ],
+    "summary": "تبلغ نسبة الطلاب الذين عادوا إلى نفس الجامعة للحصول على دراسات عليا 0.0005% تقريباً، حيث عاد 2 من الطلاب من إجمالي 370,783 طالباً.",
+    "assumptions": [
+      "تم حساب النسبة بناءً على عدد الطلاب العائدين مقسوماً على إجمالي طلاب الدراسات العليا المتاحين في البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    students_returned_to_same_university, \n    total_postgraduates, \n    (CAST(students_returned_to_same_university AS DOUBLE) / total_postgraduates) * 100 AS share_percentage \nFROM \"ds_5610046c96fb417e817bdb88964f4da5\"",
+    "columns": [
+      "students_returned_to_same_university",
+      "total_postgraduates",
+      "share_percentage"
+    ],
+    "types": [
+      "BIGINT",
+      "BIGINT",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        2,
+        370783,
+        0.0005393990555122537
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "share_percentage",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "share_percentage: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.06083641699660802
+  },
+  "checks": [
+    {
+      "column": "share_percentage",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "share_percentage: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "share_percentage: shares sum to 0.0, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.199490416998742,
+  "created_at": "2026-09-13T21:58:34.686000Z"
+}

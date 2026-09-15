@@ -53,7 +53,7 @@ def h1_shape(entry, shape, binding, context):
 
 
 def h2_time_kept(entry, shape, binding, context):
-    if shape.times and entry.name != "table" and not any(c.kind == "time" for c in binding.values()):
+    if shape.times and entry.name not in ("table", "indicator") and not any(c.kind == "time" for c in binding.values()):
         return RuleResult("H2", 0, "The time column is left unbound.", "Bind the time column", True)
 
 
@@ -142,6 +142,8 @@ def s1_intent(entry, shape, binding, context):
 
 
 def s2_suggested(entry, shape, binding, context):
+    if entry.name == "indicator" and context.intent not in (None, "summary", "share"):
+        return None
     if context.suggested and CATALOGUE.find(context.suggested) == entry:
         return RuleResult("S2", 3, "This chart matches the suggested chart.", "")
 
@@ -190,7 +192,7 @@ def s8_composition(entry, shape, binding, context):
 
 
 def s9_unbound(entry, shape, binding, context):
-    if entry.name == "table":
+    if entry.name in ("table", "indicator"):
         return None
     bound = {c.name for c in binding.values()}
     sources = {c.source for c in binding.values() if c.kind in ("category", "ordinal", "geography") and c.source is not None}
@@ -217,8 +219,17 @@ def s12_fallback(entry, shape, binding, context):
 
 
 def s13_one_number(entry, shape, binding, context):
-    if shape.rows == 1 and len(shape.measures) == 1:
-        return RuleResult("S13", 2 if entry.name == "table" else -3, "One number is best read directly.", "")
+    if shape.rows != 1 or not shape.measures:
+        return None
+    if context.intent == "summary":
+        return RuleResult("S13", 3 if entry.name == "indicator" else 0,
+                          "Headline measurements suit an indicator when the question asks for a summary.", "")
+    if entry.name == "indicator":
+        return RuleResult("S13", 1 if context.intent == "share" else -3,
+                          "A single row is eligible; the question must justify a headline metric.", "")
+    if len(shape.measures) == 1 and context.intent is None:
+        return RuleResult("S13", 2 if entry.name == "table" else 0,
+                          "Without a summary intent, a table preserves the scalar result and its context.", "")
 
 
 def s14_few_parts(entry, shape, binding, context):

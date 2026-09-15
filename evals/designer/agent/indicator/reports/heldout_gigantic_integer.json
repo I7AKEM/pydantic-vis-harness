@@ -1,0 +1,45 @@
+{
+  "dataset_id": "ds_indicator_fixture",
+  "question": "Show the exact processed event count as a KPI.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      {
+        "name": "events",
+        "meaning": "events",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "Prepared result for the requested measurement.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      "events"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        9007199254740993
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T00:00:00Z"
+}

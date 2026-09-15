@@ -197,6 +197,13 @@
     "name": "one_number",
     "columns": [{"name": "average_violations", "meaning": "Average violations per violator", "kind": "measure", "aggregate": "avg"}],
     "rows": [[4.089]],
+    "intent": "summary", "suggested": null, "expected": ["indicator"],
+    "why": "A requested headline measurement is eligible for an indicator with summary intent."
+  },
+  {
+    "name": "one_number_non_summary",
+    "columns": [{"name": "average_violations", "meaning": "Average violations per violator", "kind": "measure", "aggregate": "avg"}],
+    "rows": [[4.089]],
     "intent": "compare", "suggested": null, "expected": ["table"],
     "why": "Analyst average_violations_per_violator, the one-number fallback. S13 rewards a directly readable table; the table must never receive S1."
   },

@@ -45,6 +45,13 @@ def test_language_and_prompt(store, people, agents):
     dataset, profile = people
     assert detect_language("ما مجموع المبالغ؟", None, []) == "Arabic"
     assert detect_language("Total amount?", None, []) == "English"
+    assert detect_language("Make this card Arabic", None, []) == "Arabic"
+    assert detect_language("Make this card Arabic. Keep the same units.", None, []) == "Arabic"
+    assert detect_language("Translate the labels into Arabic, please", None, []) == "Arabic"
+    assert detect_language("Translate the labels into Arabic please", None, []) == "Arabic"
+    assert detect_language("اعرض البطاقة باللغة الإنجليزية", None, []) == "English"
+    assert detect_language("How many Arabic speakers?", None, []) == "English"
+    assert detect_language("Do not make this card Arabic", None, []) == "English"
     assert detect_language("", DataBrief(raw_question="كم؟"), ["a"]) == "Arabic"
     assert detect_language("", None, ["المدينة"]) == "Arabic"
     prompt = build_prompt(store, profile, "Total by region", "English")
@@ -138,6 +145,122 @@ def test_repair_after_a_query_error_and_the_call_cap(store, people, agents):
     assert "nope" in seen[0]["error"]
     assert report.clarification == Clarification(question="Which column holds the amount?", reason="The query kept failing.")
     assert report.analysis is None and report.result is None
+
+
+@pytest.mark.parametrize("initial_unit", [None, "unknown"])
+def test_new_share_requires_explicit_scale_and_repairs_in_query_budget(store, people, agents, initial_unit):
+    dataset, profile = people
+    _profiler, analyst = agents
+    prompt = build_prompt(store, profile, "What percentage of people are in the East?", "English")
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+    sql = f"SELECT 100.0 * count(*) FILTER (WHERE region = 'East') / count(*) AS share FROM \"{dataset}\""
+    column = {"name": "share", "meaning": "East share of people", "kind": "share", "aggregate": "share"}
+
+    def drive(messages, info):
+        queries = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart) and p.tool_name == "run_query"]
+        assert not any(isinstance(p, RetryPromptPart) for m in messages for p in m.parts)
+        if not queries:
+            return tool_call("run_query", sql=sql, columns=[{**column, "unit": initial_unit}])
+        returned = last_return(messages).model_response_object()
+        assert returned["rows"] == [[40.0]]
+        errors = [check for check in returned["checks"] if check["severity"] == "error" and not check["passed"]]
+        if len(queries) == 1:
+            assert [check["check"] for check in errors] == ["share_scale_declared"]
+            assert "do not guess" in errors[0]["message"]
+            assert deps.passed is None
+            return tool_call("run_query", sql=sql, columns=[{**column, "unit": "%", "denominator": "All people"}])
+        assert not errors
+        return tool_call("deliver_analysis", summary="The East accounts for 40% of all people.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        result = asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
+    assert isinstance(result.output, Analysis)
+    assert result.output.sql == sql and result.output.columns[0].unit == "%"
+    assert deps.query_calls == 2 and deps.passed.result.rows == [[40.0]]
+
+
+@pytest.mark.parametrize("unit", ["percentage", " percent ", "نسبة مئوية"])
+def test_new_query_canonicalizes_percent_metadata_without_rescaling(store, people, agents, unit):
+    dataset, profile = people
+    _profiler, analyst = agents
+    prompt = build_prompt(store, profile, "What percentage of people are in the East?", "English")
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+    sql = f"SELECT 100.0 * count(*) FILTER (WHERE region = 'East') / count(*) AS share FROM \"{dataset}\""
+    columns = [{"name": "share", "meaning": "East share of people", "kind": "share", "unit": unit,
+                "aggregate": "share", "denominator": "All people"}]
+
+    def drive(messages, info):
+        queries = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart) and p.tool_name == "run_query"]
+        if not queries:
+            return tool_call("run_query", sql=sql, columns=columns)
+        returned = last_return(messages).model_response_object()
+        assert returned["rows"] == [[40.0]]
+        assert all(check["passed"] for check in returned["checks"])
+        return tool_call("deliver_analysis", summary="The East accounts for 40% of all people.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        result = asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
+    assert isinstance(result.output, Analysis)
+    assert result.output.sql == sql and result.output.columns[0].unit == "%"
+    assert deps.query_calls == 1 and deps.passed.result.rows == [[40.0]]
+
+
+def test_new_share_with_explicit_fraction_passes_without_rescaling(store, people, agents):
+    dataset, profile = people
+    _profiler, analyst = agents
+    prompt = build_prompt(store, profile, "What fraction of people are in the East?", "English")
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+    sql = f"SELECT 1.0 * count(*) FILTER (WHERE region = 'East') / count(*) AS share FROM \"{dataset}\""
+    columns = [{"name": "share", "meaning": "East share of people", "kind": "share", "unit": "fraction",
+                "aggregate": "share", "denominator": "All people"}]
+
+    def drive(messages, info):
+        queries = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart) and p.tool_name == "run_query"]
+        if not queries:
+            return tool_call("run_query", sql=sql, columns=columns)
+        returned = last_return(messages).model_response_object()
+        assert returned["rows"] == [[0.4]]
+        assert all(check["passed"] for check in returned["checks"])
+        return tool_call("deliver_analysis", summary="The East share of all people is 0.4.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        result = asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
+    assert isinstance(result.output, Analysis)
+    assert result.output.sql == sql and result.output.columns[0].unit == "fraction"
+    assert deps.query_calls == 1 and deps.passed.result.rows == [[0.4]]
+
+
+def test_undeclared_share_scale_exhausts_existing_query_budget(store, people, agents):
+    dataset, _profile = people
+    profiler, analyst = agents
+    question = "What percentage of people are in the East?"
+    usage = RunUsage()
+    checked_queries = []
+    sql = f"SELECT 100.0 * count(*) FILTER (WHERE region = 'East') / count(*) AS share FROM \"{dataset}\""
+    columns = [{"name": "share", "meaning": "East share of people", "kind": "share", "aggregate": "share"}]
+
+    def drive(messages, info):
+        queries = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart) and p.tool_name == "run_query"]
+        assert not any(isinstance(p, RetryPromptPart) for m in messages for p in m.parts)
+        if queries:
+            returned = last_return(messages).model_response_object()
+            errors = [check for check in returned["checks"] if check["severity"] == "error" and not check["passed"]]
+            assert [check["check"] for check in errors] == ["share_scale_declared"]
+            checked_queries.append(returned)
+        if len(queries) < MAX_QUERY_CALLS:
+            return tool_call("run_query", sql=sql, columns=columns)
+        assert len(queries) == MAX_QUERY_CALLS
+        assert "run_query" not in [tool.name for tool in info.function_tools]
+        return tool_call("deliver_analysis", summary="This unchecked share cannot be delivered.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        report = run(store, profiler, analyst, dataset, question, usage=usage)
+    assert report.analysis is None and report.result is None and report.clarification is None
+    assert len(report.warnings) == 1 and report.warnings[0].startswith("The analyst could not answer")
+    assert f"No query passed its checks in {MAX_QUERY_CALLS} tries" in report.warnings[0]
+    assert "declare the share scale from its SQL" in report.warnings[0]
+    assert len(checked_queries) == MAX_QUERY_CALLS
+    assert usage.requests == MAX_QUERY_CALLS + 1
 
 
 def test_two_queries_in_one_response_past_the_budget_get_one_retry(store, people, agents):

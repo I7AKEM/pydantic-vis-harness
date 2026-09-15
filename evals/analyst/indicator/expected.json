@@ -1,0 +1,88 @@
+{
+ "indicator_total_orders": {
+  "columns": [
+   "total_orders"
+  ],
+  "rows": [
+   [
+    60
+   ]
+  ]
+ },
+ "indicator_weighted_rate": {
+  "columns": [
+   "accepted_percentage"
+  ],
+  "rows": [
+   [
+    20.0
+   ]
+  ]
+ },
+ "indicator_rate_support": {
+  "columns": [
+   "accepted_percentage",
+   "accepted",
+   "eligible"
+  ],
+  "rows": [
+   [
+    20.0,
+    10,
+    50
+   ]
+  ]
+ },
+ "indicator_zero_denominator": {
+  "columns": [
+   "accepted_percentage"
+  ],
+  "rows": [
+   [
+    null
+   ]
+  ]
+ },
+ "indicator_multiple_totals": {
+  "columns": [
+   "revenue",
+   "cost"
+  ],
+  "rows": [
+   [
+    450,
+    320
+   ]
+  ]
+ },
+ "indicator_filter_total": {
+  "columns": [
+   "orders"
+  ],
+  "rows": [
+   [
+    40
+   ]
+  ]
+ },
+ "indicator_grouped_to_total": {
+  "columns": [
+   "total_orders"
+  ],
+  "rows": [
+   [
+    60
+   ]
+  ]
+ },
+ "indicator_percentage_change": {
+  "columns": [
+   "percentage_change"
+  ],
+  "rows": [
+   [
+    -80.0
+   ]
+  ]
+ }
+}

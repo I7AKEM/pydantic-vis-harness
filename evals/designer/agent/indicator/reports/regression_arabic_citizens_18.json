@@ -1,0 +1,48 @@
+{
+  "dataset_id": "ds_citizen_count_regression",
+  "question": "اعرض إجمالي عدد المواطنين كمؤشر بعنوان «إجمالي عدد المواطنين»، واستخدم التسمية نفسها للقيمة.",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT SUM(citizen_count) AS \"إجمالي السكان\" FROM read_csv_auto(?)",
+    "columns": [
+      {
+        "name": "إجمالي السكان",
+        "meaning": "إجمالي عدد السكان",
+        "kind": "measure",
+        "unit": "person",
+        "source": "citizen_count",
+        "aggregate": "sum",
+        "denominator": null,
+        "partition_by": null
+      }
+    ],
+    "summary": "إجمالي عدد المواطنين هو 18.",
+    "assumptions": [
+      "يحسب الإجمالي بجمع عمود citizen_count للمدن المدرجة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT SUM(citizen_count) AS \"إجمالي السكان\" FROM read_csv_auto(?)",
+    "columns": [
+      "إجمالي السكان"
+    ],
+    "types": [
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        18
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "saved-user-result",
+  "seconds": 0,
+  "created_at": "2026-09-15T16:00:00Z"
+}

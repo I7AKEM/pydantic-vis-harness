@@ -1,0 +1,57 @@
+{
+  "dataset_id": "ds_confirmation_fixture",
+  "question": "Show the signed percentage change in NAV as a KPI, with the valuation date as context.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_result FROM dataset",
+    "columns": [
+      {
+        "name": "valuation_date",
+        "meaning": "Valuation date",
+        "kind": "time",
+        "unit": null,
+        "source": null,
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "nav_change",
+        "meaning": "Change in NAV",
+        "kind": "measure",
+        "unit": "%",
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "Prepared measurements for the requested result.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_result FROM dataset",
+    "columns": [
+      "valuation_date",
+      "nav_change"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "2026-08-31",
+        -2.005
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "independent-fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T16:00:00Z"
+}

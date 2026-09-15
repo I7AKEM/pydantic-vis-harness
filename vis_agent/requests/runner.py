@@ -188,11 +188,6 @@ def pairs(request: Request) -> list[QuestionAnswer]:
     return [QuestionAnswer(question=e.question, answer=e.answer) for e in request.clarifications if e.answer]
 
 
-def single_number(report: AnalysisReport) -> bool:
-    return (report.result is not None and report.result.row_count == 1 and report.analysis is not None
-            and len(report.analysis.columns) == 1 and report.analysis.columns[0].kind in ("measure", "share"))
-
-
 async def understand(deps: AppDeps, request: Request, usage: RunUsage, budget: int | None) -> dict[str, Any]:
     dataset = await asyncio.to_thread(deps.store.get_upload, request.dataset_id)
     output: dict[str, Any] = {"question": request.question}
@@ -285,13 +280,11 @@ async def run_designer(deps: AppDeps, request: Request, designer, brief, previou
 
 async def design(deps: AppDeps, request: Request, usage: RunUsage, budget: int | None) -> dict[str, Any]:
     report = AnalysisReport.model_validate(request.steps["analyze"])
-    if single_number(report):
-        return {"skipped": "The answer is a single number; it needs no chart."}
     previous = None
     if request.parent_artifact_id:
         parent = await asyncio.to_thread(requests_of(deps).get_artifact, request.parent_artifact_id)
-        if parent.design is not None:
-            previous = PreviousDesign(spec=parent.design.spec, change=request.question)
+        previous = PreviousDesign(spec=parent.design.spec if parent.design is not None else None,
+                                  change=request.question)
     brief = (await asyncio.to_thread(deps.store.get_upload, request.dataset_id)).brief
     designed, round_ = await run_designer(deps, request, deps.designer, brief, previous, usage, budget)
     if designed.design is None and designed.clarification is None and deps.designer_fallback is not None:

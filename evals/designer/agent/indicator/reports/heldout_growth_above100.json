@@ -1,0 +1,45 @@
+{
+  "dataset_id": "ds_indicator_fixture",
+  "question": "Show growth since launch as a percentage-change KPI.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      {
+        "name": "growth",
+        "meaning": "growth",
+        "kind": "measure",
+        "unit": "%",
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "Prepared result for the requested measurement.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      "growth"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        245.4
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T00:00:00Z"
+}

@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_38fc6bf14e424d0f96aebf787523d0a4",
+  "question": "ما نسبة السكان في الفئة العمرية فوق 60 سنة في 2025؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage_over_60 AS \"نسبة السكان فوق 60 سنة\" FROM \"ds_38fc6bf14e424d0f96aebf787523d0a4\"",
+    "columns": [
+      {
+        "name": "نسبة السكان فوق 60 سنة",
+        "meaning": "نسبة السكان في الفئة العمرية 60 سنة فأكثر",
+        "kind": "measure",
+        "unit": null,
+        "source": "percentage_over_60",
+        "aggregate": "none",
+        "denominator": "إجمالي السكان"
+      }
+    ],
+    "summary": "تبلغ نسبة السكان في الفئة العمرية فوق 60 سنة حوالي 13.93%.",
+    "assumptions": [
+      "تم افتراض أن البيانات المتاحة في الجدول تمثل تقديرات عام 2025."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage_over_60 AS \"نسبة السكان فوق 60 سنة\" FROM \"ds_38fc6bf14e424d0f96aebf787523d0a4\"",
+    "columns": [
+      "نسبة السكان فوق 60 سنة"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        13.926325247079964
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.06303679200209444
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.6831343750018277,
+  "created_at": "2026-09-13T22:03:53.979091Z"
+}

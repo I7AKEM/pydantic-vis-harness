@@ -1,0 +1,57 @@
+{
+  "dataset_id": "ds_indicator_fixture",
+  "question": "Show two KPIs: energy consumed and average temperature.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      {
+        "name": "energy",
+        "meaning": "energy",
+        "kind": "measure",
+        "unit": "kWh",
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      },
+      {
+        "name": "temperature",
+        "meaning": "temperature",
+        "kind": "measure",
+        "unit": "°C",
+        "source": null,
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "Prepared result for the requested measurement.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      "energy",
+      "temperature"
+    ],
+    "types": [
+      "DOUBLE",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        718,
+        21.5
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T00:00:00Z"
+}

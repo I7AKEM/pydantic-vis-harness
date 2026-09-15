@@ -1,0 +1,18 @@
+{
+  "date": "2026-09-15",
+  "corrections": [
+    {
+      "case": "indicator_resume_without_pending",
+      "old_tool": "resume",
+      "new_tool": "none",
+      "reason": "Runtime withdraws resume when no unfinished request exists; a text response is the correct behavior. Original run remains under outputs/indicator/lead-1."
+    }
+  ],
+  "additions": [
+    {
+      "case": "indicator_undefined",
+      "turn": 2,
+      "reason": "Continue a persisted clarification using resume after the user defines the metric. Total orders=60 from guarded SQL gold indicator_total_orders."
+    }
+  ]
+}

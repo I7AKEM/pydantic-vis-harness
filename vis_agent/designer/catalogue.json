@@ -929,7 +929,8 @@
         "distribution",
         "composition",
         "relation",
-        "share"
+        "share",
+        "summary"
       ],
       "roles": {},
       "fields": {},
@@ -940,6 +941,30 @@
         "options": {}
       },
       "summary": "Show every result column for any purpose without requiring role bindings."
+    },
+    {
+      "name": "indicator",
+      "aliases": [
+        "KPI",
+        "metric card",
+        "statistic"
+      ],
+      "purposes": [
+        "summary",
+        "share"
+      ],
+      "roles": {},
+      "fields": {},
+      "rating": "recommended",
+      "keys": [
+        "cards",
+        "columnLabels"
+      ],
+      "draw": {
+        "type": "indicator",
+        "options": {}
+      },
+      "summary": "Show headline measurements from exactly one complete result row. Bind primary metrics explicitly in cards, retaining context and support; one row alone does not establish summary intent."
     }
   ]
 }

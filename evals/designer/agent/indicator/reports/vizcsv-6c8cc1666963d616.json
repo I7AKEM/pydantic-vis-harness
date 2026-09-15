@@ -1,0 +1,73 @@
+{
+  "dataset_id": "ds_b39473e3923d40cb951c9577d925ddff",
+  "question": "ما الفرق بالنسبة المئوية في متوسط عدد المخالفات السنوية بين السائقين تحت عمر  25 سنة وفوق عمر 25 سنة لكل عام خلال الفترة 2021-2025؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT percentage_difference FROM \"ds_b39473e3923d40cb951c9577d925ddff\"",
+    "columns": [
+      {
+        "name": "percentage_difference",
+        "meaning": "الفرق بالنسبة المئوية في متوسط عدد المخالفات السنوية بين السائقين تحت عمر 25 سنة وفوق عمر 25 سنة",
+        "kind": "share",
+        "unit": null,
+        "source": "percentage_difference",
+        "aggregate": "none",
+        "denominator": "متوسط السائقين فوق 25 سنة"
+      }
+    ],
+    "summary": "الفرق بالنسبة المئوية في متوسط عدد المخالفات السنوية بين السائقين تحت عمر 25 سنة وفوق عمر 25 سنة هو -15.82%.",
+    "assumptions": [
+      "تم استخدام العمود percentage_difference مباشرة من الجدول كونه يمثل الفرق المطلوب.",
+      "الجدول يحتوي على صف واحد فقط، لذا تم اعتبار البيانات شاملة للفترة المذكورة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT percentage_difference FROM \"ds_b39473e3923d40cb951c9577d925ddff\"",
+    "columns": [
+      "percentage_difference"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        -15.815827942399787
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "percentage_difference",
+        "check": "shares_add_up",
+        "severity": "warning",
+        "passed": false,
+        "message": "percentage_difference: shares sum to -15.8, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+      }
+    ],
+    "seconds": 0.056995083003130276
+  },
+  "checks": [
+    {
+      "column": "percentage_difference",
+      "check": "shares_add_up",
+      "severity": "warning",
+      "passed": false,
+      "message": "percentage_difference: shares sum to -15.8, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "percentage_difference: shares sum to -15.8, not 100. Fine when the share is within each row's own group; otherwise include every group or an Other row."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.9307108329958282,
+  "created_at": "2026-09-13T21:40:28.801333Z"
+}

@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_9dfa1e58ff784e96a307ef46e9a6474b",
+  "question": "ما متوسط عدد الوفيات اليومي؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT avg(death_count) AS \"متوسط الوفيات اليومي\" FROM \"ds_9dfa1e58ff784e96a307ef46e9a6474b\"",
+    "columns": [
+      {
+        "name": "متوسط الوفيات اليومي",
+        "meaning": "متوسط عدد الوفيات اليومي",
+        "kind": "measure",
+        "unit": null,
+        "source": "death_count",
+        "aggregate": "avg",
+        "denominator": null
+      }
+    ],
+    "summary": "متوسط عدد الوفيات اليومي هو 51.31.",
+    "assumptions": [
+      "تم حساب المتوسط بناءً على جميع السجلات المتاحة في الجدول."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT avg(death_count) AS \"متوسط الوفيات اليومي\" FROM \"ds_9dfa1e58ff784e96a307ef46e9a6474b\"",
+    "columns": [
+      "متوسط الوفيات اليومي"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        51.314207650273225
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.010191041998041328
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.486769541996182,
+  "created_at": "2026-09-13T18:40:01.252112Z"
+}

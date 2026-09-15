@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_6096982bfb3b48de95cd01be4ecaa72d",
+  "question": "ما هو متوسط قيمة المخالفات المرورية للفرد خلال عام 2024",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT avg_sum_amount FROM \"ds_6096982bfb3b48de95cd01be4ecaa72d\"",
+    "columns": [
+      {
+        "name": "avg_sum_amount",
+        "meaning": "متوسط قيمة المخالفات المرورية للفرد",
+        "kind": "measure",
+        "unit": null,
+        "source": "avg_sum_amount",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "متوسط قيمة المخالفات المرورية للفرد خلال عام 2024 هو 700.04 تقريباً.",
+    "assumptions": [
+      "تم استخدام العمود avg_sum_amount كقيمة جاهزة للمتوسط المطلوب."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT avg_sum_amount FROM \"ds_6096982bfb3b48de95cd01be4ecaa72d\"",
+    "columns": [
+      "avg_sum_amount"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        700.0354014789951
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.08253037500253413
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.259771124998224,
+  "created_at": "2026-09-13T21:47:22.504090Z"
+}

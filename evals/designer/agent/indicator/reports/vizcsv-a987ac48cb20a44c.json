@@ -1,0 +1,79 @@
+{
+  "dataset_id": "ds_75764ba4c74c4b8e9b5347d205302353",
+  "question": "سو لي تقرير عن الحدود",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT zone, entry_count, exit_count FROM \"ds_75764ba4c74c4b8e9b5347d205302353\" WHERE zone = 'الحدود الشمالية'",
+    "columns": [
+      {
+        "name": "zone",
+        "meaning": "اسم المنطقة",
+        "kind": "geography",
+        "unit": null,
+        "source": "zone",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "entry_count",
+        "meaning": "عدد الدخول",
+        "kind": "measure",
+        "unit": null,
+        "source": "entry_count",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "exit_count",
+        "meaning": "عدد الخروج",
+        "kind": "measure",
+        "unit": null,
+        "source": "exit_count",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "سجلت منطقة الحدود الشمالية 448 عملية دخول و 709 عمليات خروج.",
+    "assumptions": [
+      "تم اعتبار \"الحدود\" في السؤال كإشارة إلى منطقة الحدود الشمالية بناءً على القيم المتوفرة في البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT zone, entry_count, exit_count FROM \"ds_75764ba4c74c4b8e9b5347d205302353\" WHERE zone = 'الحدود الشمالية'",
+    "columns": [
+      "zone",
+      "entry_count",
+      "exit_count"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "الحدود الشمالية",
+        448,
+        709
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.05828904200461693
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.8143384579962003,
+  "created_at": "2026-09-13T21:56:51.114602Z"
+}

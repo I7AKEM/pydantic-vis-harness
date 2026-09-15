@@ -125,3 +125,67 @@ def test_format_patterns(pattern, expected):
 def test_bad_format_patterns(pattern):
     with pytest.raises(ValueError):
         parse_format(pattern)
+
+
+def test_indicator_round_trip_keeps_card_order_and_unicode_column_names():
+    text = ("vis indicator\ntitle Summary\ndescription Reported totals\ncards\n"
+            "  - value Gross amount (SAR)\n    context السنة الهجرية\n    context store: name\n"
+            "    support invoice count\n    support net-value\n    format 0,0.00 SAR\n"
+            "  - value net-value\n    context السنة الهجرية\n")
+    spec = parse(text)
+    assert spec.bind == {}
+    assert [card.value for card in spec.cards] == ["Gross amount (SAR)", "net-value"]
+    assert spec.cards[0].context == ["السنة الهجرية", "store: name"]
+    assert spec.cards[0].support == ["invoice count", "net-value"]
+    assert parse(to_text(spec)) == spec
+    assert to_text(parse(to_text(spec))) == to_text(spec)
+
+
+@pytest.mark.parametrize("body,line,fragment", [
+    ("  value total", 3, "starts"),
+    ("  - value", 3, "starts"),
+    ("  - support total", 3, "starts"),
+    ("    support count", 3, "start a card"),
+    ("  - value total\n    value other", 4, "duplicate card value"),
+    ("  - value total\n    formula sum(x)", 4, "unknown card field"),
+    ("  - value total\n    context", 4, "missing value"),
+    ("  - value total\n    format 0.0\n    format 0.00", 5, "duplicate card format"),
+    ("  - value total\n    format 0..0", 4, "format pattern"),
+    ("  - value total\n  support count", 4, "starts"),
+    ("  - value total\n      support count", 4, "indentation"),
+])
+def test_indicator_syntax_errors_keep_source_lines(body, line, fragment):
+    with pytest.raises(SpecError) as error:
+        parse("vis indicator\ncards\n" + body + "\n")
+    assert any(issue.line == line and fragment in issue.message for issue in error.value.issues)
+
+
+def test_indicator_column_labels_round_trip_preserves_json_strings_and_column_names():
+    spec = Spec(type="indicator", column_labels={"Gross amount (SAR)": "الإيراد الإجمالي", 'store "name"': 'اسم "المتجر"'})
+    text = to_text(spec)
+    assert '\ncolumnLabels\n  - ["Gross amount (SAR)", "الإيراد الإجمالي"]\n' in text
+    assert parse(text) == spec
+    assert to_text(parse(text)) == text
+
+
+@pytest.mark.parametrize("record,fragment", [
+    ('["total", "الإجمالي"]', "JSON pair"),
+    ('- ["total"]', "JSON pair"),
+    ('- ["total", "الإجمالي", "extra"]', "JSON pair"),
+    ('- {"total": "الإجمالي"}', "JSON pair"),
+    ('- ["total", 100]', "JSON pair"),
+    ('- ["total", ""]', "JSON pair"),
+    ('- ["total", "   "]', "JSON pair"),
+    ('- ["total", "الإجمالي"', "JSON pair"),
+])
+def test_invalid_column_label_records_have_line_numbers(record, fragment):
+    with pytest.raises(SpecError) as error:
+        parse("vis indicator\ncolumnLabels\n  " + record + "\n")
+    assert error.value.issues[0].line == 3
+    assert "columnLabels records" in error.value.issues[0].message
+
+
+def test_duplicate_column_label_is_not_last_value_wins():
+    with pytest.raises(SpecError) as error:
+        parse('vis indicator\ncolumnLabels\n  - ["total", "Total"]\n  - ["total", "Changed"]\n')
+    assert error.value.issues[0].line == 4 and "duplicate column label" in error.value.issues[0].message

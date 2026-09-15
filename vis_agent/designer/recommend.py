@@ -5,7 +5,8 @@ from vis_agent.models import Intent
 
 from .catalogue import CATALOGUE, CatalogueEntry
 from .fold import Folded, fold, foldable
-from .models import Candidate, Recommendation, Rejection, RuleScore
+from .indicator import indicator_data_violations
+from .models import Candidate, IndicatorCard, Recommendation, Rejection, RuleScore
 from .rules import ADDITIVE, Context, HARD_RULES, SOFT_RULES, missing_roles
 from .shape import ColumnShape, ResultShape, describe
 
@@ -71,6 +72,15 @@ def recommend_charts(
     candidates, rejected = [], []
     for entry in CATALOGUE.entries:
         used_shape, used_fold = shape, []
+        cards = []
+        if entry.name == "indicator":
+            failures = indicator_data_violations(columns, result)
+            if failures:
+                rejected.append(Rejection(name="indicator", rule="H15", explanation=failures[0].message))
+                continue
+            if len(shape.measures) == 1:
+                cards = [IndicatorCard(value=shape.measures[0].name,
+                                       context=[column.name for column in columns if column.kind not in ("measure", "share")])]
         binding = default_binding(entry, shape)
         # A chart that needs a series column gets one folded from the same-unit measures, when nothing else binds it.
         if binding is None and folded is not None and "group" in entry.roles and entry.roles["group"].required:
@@ -92,9 +102,13 @@ def recommend_charts(
             if scored is not None:
                 breakdown.append(RuleScore(rule=scored.rule, score=scored.score,
                                            explanation=f"{scored.explanation} {scored.fix}".strip()))
+        if entry.name == "indicator" and not cards:
+            breakdown.append(RuleScore(rule="S15", score=0, explanation=(
+                "This complete single row is eligible for cards. Choose primary metrics and supporting columns "
+                "from the question; no first-column binding is proposed. Keep every result column.")))
         candidates.append(Candidate(name=entry.name, score=sum(r.score for r in breakdown),
                                     binding={role: c.name for role, c in binding.items()
                                              if not used_fold or role not in ("group", "value")},
-                                    fold=used_fold, breakdown=breakdown))
+                                    fold=used_fold, cards=cards, breakdown=breakdown))
     candidates.sort(key=lambda c: -c.score)
     return Recommendation(candidates=candidates, rejected=rejected)

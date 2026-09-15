@@ -27,6 +27,7 @@ from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, ProfilerInput, prof
 from vis_agent.profiler.models import DatasetProfile, ProfileCheck, SemanticProfile
 from vis_agent.profiler.review import failed_checks
 from vis_agent.store import DatasetNotFound, DatasetStore, quote_identifier
+from vis_agent.units import canonical_unit
 
 log = logging.getLogger("analyst")
 DEFAULT_ANALYST_MODEL = DEFAULT_PROFILER_MODEL
@@ -100,7 +101,20 @@ class AnalystDeps:
 
 
 def detect_language(question: str, brief: DataBrief | None, column_names: list[str]) -> str:
-    """Once, from the question's script; then the brief's raw question; then the column names."""
+    """Honor an explicit output language, then use the question's script and existing fallbacks."""
+    # A language revision can be written in the old language ("Make this card Arabic").
+    # Require an instruction and a terminal language name; a column such as English speakers
+    # is not itself an instruction to translate the picture.
+    for clause in reversed(re.split(r"[.!?؟;\n]", question)):
+        explicit = re.search(
+            r"\b(?:answer|respond|write|render|display|translate|make|switch|change)\b"
+            r".{0,80}?\b(Arabic|English)\b(?:,?\s+please)?\s*$", clause, re.I)
+        if explicit and not re.search(r"\b(?:not|don't|never)\b", clause, re.I):
+            return explicit[1].capitalize()
+        for name, pattern in (("English", r"(?:باللغة\s+الإنجليزية|باللغة\s+الانجليزية|بالإنجليزية|بالانجليزية)"),
+                              ("Arabic", r"(?:باللغة\s+العربية|بالعربية)")):
+            if re.search(pattern + r"\s*$", clause) and not re.search(r"(?:^|\s)لا\s", clause):
+                return name
     for text in (question, brief.raw_question if brief else None, " ".join(column_names)):
         if text and text.strip():
             return "Arabic" if ARABIC.search(text) else "English"
@@ -180,7 +194,18 @@ async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[Result
         and column.name[1:-1] in result.columns and column.name not in result.columns else column
         for column in columns
     ]
+    # Normalize newly generated unit metadata before checking and saving it.
+    # Loading an older report preserves its original metadata.
+    columns = [column.model_copy(update={"unit": canonical_unit(column.unit)}) for column in columns]
     result.checks = await asyncio.to_thread(check_result, deps.store, deps.profile, columns, result)
+    # New shares must state their scale; historical reports remain readable by check_result.
+    result.checks.extend(
+        ProfileCheck(column=column.name, check="share_scale_declared", severity="error", passed=False,
+                     message=f"{column.name}: declare the share scale from its SQL: unit % for a percentage "
+                             "on the 0–100 scale, or unit fraction for a ratio on the 0–1 scale. Read the "
+                             "numerator/denominator calculation; do not guess the scale from the value.")
+        for column in columns if column.kind == "share" and column.unit not in ("%", "fraction")
+    )
     errors = failed_checks(result.checks, "error")
     deps.last_errors = [check.message for check in errors]
     if not errors:

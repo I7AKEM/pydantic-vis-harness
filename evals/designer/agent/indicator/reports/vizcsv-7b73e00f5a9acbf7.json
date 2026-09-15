@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_56fa3f9f0e9347ec8f1a855a61d8e241",
+  "question": "ماهي أعلى سنة في عدد الخريجين لجميع الجامعات الحكومية؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT graduation_year, graduate_count FROM \"ds_56fa3f9f0e9347ec8f1a855a61d8e241\" ORDER BY graduate_count DESC LIMIT 1",
+    "columns": [
+      {
+        "name": "graduation_year",
+        "meaning": "سنة التخرج",
+        "kind": "ordinal",
+        "unit": null,
+        "source": "graduation_year",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "graduate_count",
+        "meaning": "عدد الخريجين",
+        "kind": "measure",
+        "unit": null,
+        "source": "graduate_count",
+        "aggregate": "none",
+        "denominator": "person"
+      }
+    ],
+    "summary": "أعلى سنة في عدد الخريجين هي عام 2025، حيث بلغ عدد الخريجين 19,660 شخصاً.",
+    "assumptions": [
+      "تم اعتبار البيانات المتاحة في الجدول شاملة لجميع الجامعات الحكومية المطلوبة."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT graduation_year, graduate_count FROM \"ds_56fa3f9f0e9347ec8f1a855a61d8e241\" ORDER BY graduate_count DESC LIMIT 1",
+    "columns": [
+      "graduation_year",
+      "graduate_count"
+    ],
+    "types": [
+      "BIGINT",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        2025,
+        19660
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.05638954100140836
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 6.586360165994847,
+  "created_at": "2026-09-13T21:44:45.687010Z"
+}

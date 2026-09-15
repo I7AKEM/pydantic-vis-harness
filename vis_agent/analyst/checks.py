@@ -1,11 +1,14 @@
 # vis_agent/analyst/checks.py
 """Code checks of a result against the raw data. Every fact is a DuckDB query result or a profile field."""
 
+import json
+import math
 import re
 
 from vis_agent.analyst.models import QueryResult, ResultColumn
 from vis_agent.profiler.models import DatasetProfile, ProfileCheck
 from vis_agent.store import DatasetStore, quote_identifier
+from vis_agent.units import canonical_unit
 
 MAX_LABEL_DISTINCT = 200
 OTHER_LABELS = {"other", "others", "أخرى", "اخرى", "غير ذلك"}
@@ -14,6 +17,48 @@ TOTAL_TOLERANCE = 0.005   # relative difference that counts as the same total
 GROUPING_KINDS = ("category", "ordinal", "time", "geography", "identifier")
 ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩٫٬", "0123456789.,")
 NUMBER = re.compile(r"-?\d[\d,]*(?:\.\d+)?")
+_DECREASE = r"decreas(?:e|ed|es)|declin(?:e|ed|es)|drop(?:ped|s)?|fall(?:en|s)?|fell|reduction|reduced"
+_INCREASE = r"increas(?:e|ed|es)|rise(?:n|s)?|rose|growth|grew|gain(?:ed|s)?"
+_ARABIC_DECREASE = r"انخفض(?:ت)?|انخفاض|بانخفاض|الانخفاض|تراجع(?:ت)?|بتراجع|هبط(?:ت)?|هبوط"
+_ARABIC_INCREASE = r"ارتفع(?:ت)?|ارتفاع|بارتفاع|الارتفاع|زاد(?:ت)?|زيادة|بزيادة|نمو"
+_CHANGE_BEFORE = re.compile(
+    rf"(?<!\w)(?P<down>{_DECREASE})\s+(?:(?:by|of)\s+)?(?:(?:about|approximately|roughly)\s+)?$|"
+    rf"(?<!\w)(?P<up>{_INCREASE})\s+(?:(?:by|of)\s+)?(?:(?:about|approximately|roughly)\s+)?$|"
+    rf"(?<!\w)(?P<ar_down>{_ARABIC_DECREASE})\s+(?:[^\W\d_]+\s+){{0,4}}(?:بنسبة|بمقدار|بواقع)\s*$|"
+    rf"(?<!\w)(?P<ar_up>{_ARABIC_INCREASE})\s+(?:[^\W\d_]+\s+){{0,4}}(?:بنسبة|بمقدار|بواقع)\s*$",
+    re.IGNORECASE,
+)
+_CHANGE_AFTER = re.compile(
+    rf"^\s*(?:[%٪]|percent(?:age)?(?:\s+points?)?)?\s*(?:(?P<down>{_DECREASE})|(?P<up>{_INCREASE}))\b",
+    re.IGNORECASE,
+)
+_NEGATED_CHANGE = re.compile(r"\b(?:not|no|never|without|\w+n['’]t|لم|لن|لا|ليس|دون|غير)\b", re.IGNORECASE)
+
+
+def numeric_mention_direction(text: str, start: int, end: int) -> int | None:
+    """Read a local change phrase: -1 decrease, +1 increase, 0 contradictory, None ordinary.
+
+    This recognizes bounded magnitude wording, not arbitrary sentence meaning. In particular,
+    'fell to 80' is an ordinary level, while 'fell by 80' asserts a signed change. A caller must
+    compare a directional mention with actual signed numeric results, never an absolute-value pool.
+    """
+    before = re.sub(r"[\u064b-\u065f\u0670ـ]", "", text[:start])
+    explicit_plus = before.endswith("+")
+    if explicit_plus:
+        before = before[:-1]
+    prefix = _CHANGE_BEFORE.search(before)
+    suffix = _CHANGE_AFTER.match(text[end:])
+    found = [match for match in (prefix, suffix) if match]
+    if not found:
+        return None
+    directions = {-1 if match.groupdict().get("down") or match.groupdict().get("ar_down") else 1 for match in found}
+    # Reject negation near the predicate; do not turn 'did not decrease' into a decrease.
+    predicate_start = prefix.start() if prefix else max(0, len(before) - 80)
+    local = before[max(0, predicate_start - 40):]
+    if len(directions) != 1 or _NEGATED_CHANGE.search(local) or text[start:end].startswith("-"):
+        return 0
+    direction = directions.pop()
+    return 0 if explicit_plus and direction == -1 else direction
 
 
 def _check(column, check, severity, passed, message) -> ProfileCheck:
@@ -27,10 +72,50 @@ def _text(value) -> str | None:
 def _numbers(values) -> list[float] | None:
     numbers = []
     for value in values:
-        if isinstance(value, bool) or not isinstance(value, (int, float)):
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
             return None
         numbers.append(float(value))
     return numbers
+
+
+def _share_partition_check(connection, column: ResultColumn, columns: list[ResultColumn],
+                           result: QueryResult) -> ProfileCheck | None:
+    """Only test an explicitly declared complete partition, using its declared scale and groups."""
+    if column.partition_by is None:
+        return None
+    by_name = {c.name: c for c in columns}
+    invalid = [name for name in column.partition_by
+               if name not in by_name or by_name[name].kind not in GROUPING_KINDS]
+    if invalid:
+        return _check(column.name, "share_partition_columns", "error", False,
+                      f"{column.name}: partition_by must name result grouping columns; invalid: {invalid}.")
+    if result.row_count != len(result.rows):
+        return _check(column.name, "share_partition_incomplete", "warning", False,
+                      f"{column.name}: the result is truncated; its complete partition cannot be checked.")
+    unit = (canonical_unit(column.unit) or "").strip().casefold()
+    target = 100 if unit == "%" else 1 if unit == "fraction" else None
+    if target is None:
+        return _check(column.name, "share_partition_scale", "warning", False,
+                      f"{column.name}: a complete partition needs unit % or explicit unit fraction; its scale is unknown.")
+    index = result.columns.index(column.name)
+    if _numbers([row[index] for row in result.rows]) is None:
+        return _check(column.name, "share_partition_values", "warning", False,
+                      f"{column.name}: the declared partition includes missing or nonfinite numeric values.")
+    # The saved, bounded result is the object being checked, not a fresh execution of the analyst's SQL.
+    # Column indices come from validated metadata; cell values are supplied as a JSON parameter.
+    groups = [f"json_extract(value, '$[{result.columns.index(name)}]')" for name in column.partition_by]
+    measure = f"CAST(json_extract(value, '$[{index}]') AS DOUBLE)"
+    selected = ", ".join([*groups, f"sum({measure})"])
+    grouped = " GROUP BY " + ", ".join(str(i + 1) for i in range(len(groups))) if groups else ""
+    totals = connection.execute(f"SELECT {selected} FROM json_each(?)" + grouped,
+                                [json.dumps(result.rows, ensure_ascii=False, allow_nan=False)]).fetchall()
+    for *keys, total in totals:
+        if total is None or abs(total - target) > SHARE_TOLERANCE * target / 100:
+            scope = f" for {dict(zip(column.partition_by, keys))}" if keys else ""
+            return _check(column.name, "shares_add_up", "warning", False,
+                          f"{column.name}: the declared complete partition sums to {total:g}{scope}, not {target}. "
+                          "Include every part or Other, or use partition_by null if this is a partial selection or row rate.")
+    return None
 
 
 def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[ResultColumn],
@@ -51,7 +136,6 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
     index = {name: i for i, name in enumerate(result.columns)}
     values_of = {c.name: [row[index[c.name]] for row in result.rows] for c in columns}
     table = quote_identifier(store.table_name(profile.source.dataset_id))
-    grouping = [c for c in columns if c.kind in GROUPING_KINDS]
 
     with store.connect() as connection:
         for column in columns:
@@ -59,7 +143,9 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
             source = stats.get(column.source) if column.source else None
             if column.source and source is None:
                 checks.append(_check(column.name, "source_column_exists", "error", False,
-                                     f"{column.name}: source {column.source!r} is not a column of this dataset."))
+                                     f"{column.name}: source {column.source!r} is not a column of this dataset. "
+                                     "Use one exact source column name, or source null when computed from several columns; "
+                                     "never join names with commas or write an expression in source."))
                 continue
 
             if (source is not None and column.aggregate == "none" and column.kind in GROUPING_KINDS
@@ -93,19 +179,21 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
                         continue
 
             numbers = _numbers(values)
-            if column.kind == "share" and numbers is not None:
-                groups: dict[object, float] = {}
-                key_column = grouping[0].name if len(grouping) > 1 else None
-                for row_index, number in enumerate(numbers):
-                    key = result.rows[row_index][index[key_column]] if key_column else None
-                    groups[key] = groups.get(key, 0.0) + number
-                for key, total in groups.items():
-                    if abs(total - 100) > SHARE_TOLERANCE and abs(total - 1) > SHARE_TOLERANCE / 100:
-                        where = f" for {key!r}" if key_column else ""
-                        checks.append(_check(column.name, "shares_add_up", "warning", False,
-                                             f"{column.name}: shares sum to {total:.1f}{where}, not 100. Fine when the share "
-                                             "is within each row's own group; otherwise include every group or an Other row."))
-                        break
+            if column.kind == "share":
+                unit = canonical_unit(column.unit)
+                upper = 100 if unit == "%" else 1 if unit == "fraction" else None
+                if upper is not None and numbers:
+                    low, high = connection.execute(
+                        "SELECT min(value), max(value) FROM unnest(?::DOUBLE[]) AS shares(value)",
+                        [numbers]).fetchone()
+                    if low < -upper * 1e-9 or high > upper + upper * 1e-9:
+                        checks.append(_check(column.name, "share_in_bounds", "error", False,
+                                             f"{column.name}: a part-of-whole share must be between 0 and {upper}; "
+                                             f"the result ranges from {low:g} to {high:g}. Correct the calculation, "
+                                             "or use kind measure with unit % if this is a percentage change, not a share."))
+                partition_check = _share_partition_check(connection, column, columns, result)
+                if partition_check is not None:
+                    checks.append(partition_check)
 
             if (column.kind in ("measure", "share") and numbers is not None and source is not None
                     and source.numeric is not None and column.aggregate in ("avg", "min", "max")):
@@ -179,6 +267,7 @@ def summary_numbers_exist(summary: str, result: QueryResult, context: str = "") 
     claims: "under 15", "December 2025", "drivers over 25".
     """
     candidates: set[float] = {float(result.row_count)}
+    signed_results: set[float] = set()
     for token in NUMBER.findall(context.translate(ARABIC_DIGITS)):
         candidates.add(float(token.replace(",", "")))
     for row in result.rows:
@@ -187,15 +276,22 @@ def summary_numbers_exist(summary: str, result: QueryResult, context: str = "") 
                 continue
             if isinstance(value, (int, float)):
                 candidates.add(float(value))
+                signed_results.add(float(value))
                 if 0 <= value <= 1:
                     candidates.add(float(value) * 100)
             else:
                 for token in NUMBER.findall(str(value).translate(ARABIC_DIGITS)):
                     candidates.add(float(token.replace(",", "")))
-    for token in NUMBER.findall(summary.translate(ARABIC_DIGITS)):
+    normalized = summary.translate(ARABIC_DIGITS)
+    for mention in NUMBER.finditer(normalized):
+        token = mention.group()
         decimals = len(token.split(".")[1]) if "." in token else 0
         number = float(token.replace(",", ""))
-        if not any(abs(round(candidate, decimals) - number) < 1e-9 for candidate in candidates):
+        direction = numeric_mention_direction(normalized, mention.start(), mention.end())
+        pool = candidates if direction is None else signed_results
+        if direction:
+            number *= direction
+        if direction == 0 or not any(abs(round(candidate, decimals) - number) < 1e-9 for candidate in pool):
             return _check(None, "summary_numbers_exist", "error", False,
                           f"The summary mentions {token}, which is not in the result. Use only numbers from the result.")
     return _check(None, "summary_numbers_exist", "error", True, "ok")
