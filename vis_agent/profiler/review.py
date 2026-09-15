@@ -1,5 +1,6 @@
 """Code checks of an interpretation against the measurements and the brief."""
 
+from vis_agent.language import language_of
 from vis_agent.models import DataBrief
 from vis_agent.profiler.models import DeterministicProfile, ProfileCheck, SemanticProfile
 
@@ -15,7 +16,7 @@ def _check(column: str | None, check: str, severity: str, passed: bool, message:
 
 
 def run_checks(statistics: DeterministicProfile, semantic: SemanticProfile,
-               brief: DataBrief | None = None) -> list[ProfileCheck]:
+               brief: DataBrief | None = None, language: str | None = None) -> list[ProfileCheck]:
     checks: list[ProfileCheck] = []
     stats_by_name = {column.name: column for column in statistics.columns}
 
@@ -104,6 +105,13 @@ def run_checks(statistics: DeterministicProfile, semantic: SemanticProfile,
                     name, "brief_unit_fits_numeric_column", "warning", stats.numeric is not None,
                     f"{name}: the brief gives unit {unit!r} but the column is {stats.physical_type}, not numeric.",
                 ))
+    if language is not None:
+        texts = [("description", semantic.description), ("row_meaning", semantic.row_meaning),
+                 *((f"meaning of {column.name}", column.meaning) for column in semantic.columns)]
+        wrong = [name for name, text in texts if text and text.strip() and language_of(text) != language]
+        if wrong:
+            checks.append(_check(None, "language_matches", "warning", False,
+                                 f"Written in the wrong language: {', '.join(wrong[:5])} should be in {language}."))
     return checks
 
 

@@ -22,6 +22,7 @@ from vis_agent.analyst.checks import check_result, summary_numbers_exist
 from vis_agent.analyst.models import Analysis, AnalysisReport, Clarification, PreviousAnalysis, QueryError, QueryResult, ResultColumn
 from vis_agent.analyst.query import run_sql
 from vis_agent.deps import AppDeps
+from vis_agent.language import ARABIC, language_of  # noqa: F401  (ARABIC is re-exported for the designer)
 from vis_agent.models import DataBrief, QuestionAnswer
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, ProfilerInput, profile_dataset
 from vis_agent.profiler.models import DatasetProfile, ProfileCheck, SemanticProfile
@@ -42,7 +43,6 @@ ANALYSIS_TIMEOUT_SECONDS = 90
 MAX_QUERY_CALLS = 3
 MAX_REQUESTS = 8
 PROMPT_DISTINCT_VALUES = 12
-ARABIC = re.compile(r"[؀-ۿ]")
 
 
 class ColumnFacts(BaseModel):
@@ -115,10 +115,7 @@ def detect_language(question: str, brief: DataBrief | None, column_names: list[s
                               ("Arabic", r"(?:باللغة\s+العربية|بالعربية)")):
             if re.search(pattern + r"\s*$", clause) and not re.search(r"(?:^|\s)لا\s", clause):
                 return name
-    for text in (question, brief.raw_question if brief else None, " ".join(column_names)):
-        if text and text.strip():
-            return "Arabic" if ARABIC.search(text) else "English"
-    return "English"
+    return language_of(question, brief.raw_question if brief else None, " ".join(column_names))
 
 
 def build_prompt(
