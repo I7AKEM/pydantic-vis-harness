@@ -52,8 +52,9 @@ def create_reviewer(model: str | Model) -> Agent[ReviewerDeps, Review]:
         output_type=ToolOutput(deliver_review, name="deliver_review"),
         retries={"output": 2},
         instructions=REVIEWER_RULEBOOK + "\n\n" + rubric_text(),
-        # Thinking off, as for the other specialists: the proxy's Qwen otherwise spends its answer reasoning.
-        model_settings={"thinking": False, "temperature": 0.0},
+        # Reasoning off, said explicitly: the unified `thinking` setting is dropped for models whose profile does not
+        # declare reasoning-off support, and the proxy's Qwen then reasons for two minutes per picture (7 s without).
+        model_settings={"openai_reasoning_effort": "none", "thinking": False, "temperature": 0.0},
     )
 
 
