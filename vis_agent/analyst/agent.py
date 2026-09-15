@@ -246,16 +246,22 @@ def deliver_analysis(
     return Analysis(sql=deps.passed.sql, columns=deps.passed.columns, summary=summary, assumptions=assumptions or [])
 
 
-def ask_clarification(ctx: RunContext[AnalystDeps], question: str, reason: str) -> Clarification:
-    """Ask the caller one question, in the caller's language, when the columns cannot answer the question or a
-    term in it has no definition. Say in reason what is missing.
+def ask_clarification(ctx: RunContext[AnalystDeps], ask: str, reason: str) -> Clarification:
+    """Ask the caller for the one fact the columns do not hold, or the one term the question leaves undefined.
+
+    Args:
+        ask: The question for the caller, in the caller's language. Never the caller's own question, and never a
+            question about units, labels, order, language, or format: decide those yourself and record an assumption.
+        reason: What is missing, in one sentence.
     """
-    if not question.strip():
+    if not ask.strip():
         raise ModelRetry("The question is empty. Ask one question the caller can answer, or answer with SQL.")
-    if restates(question, ctx.deps.prompt.question):
-        raise ModelRetry("That question only repeats the caller's words. Answer with SQL, or ask for the one fact or "
-                         "definition that is missing, in words the caller did not already use.")
-    return Clarification(question=question, reason=reason)
+    if restates(ask, ctx.deps.prompt.question):
+        log.info("Refused a clarification that only restates %r: %r", ctx.deps.prompt.question, ask)
+        raise ModelRetry("That only repeats the caller's words. If the columns can answer the question, call run_query "
+                         "with the SQL; otherwise ask for the one missing fact or definition, in words the caller did "
+                         "not already use.")
+    return Clarification(question=ask, reason=reason)
 
 
 def create_analyst(model: str | Model) -> Agent[AnalystDeps, Analysis | Clarification]:

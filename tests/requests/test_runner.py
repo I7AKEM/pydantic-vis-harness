@@ -23,7 +23,7 @@ def run(coro):
 
 def asking_drive(messages, info):
     return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification",
-                                             args={"question": "Which amount?", "reason": "Two amount columns."})])
+                                             args={"ask": "Which amount?", "reason": "Two amount columns."})])
 
 
 def test_a_new_request_runs_every_step_and_delivers(deps, dataset_id, fake_models, fake_render):
@@ -546,7 +546,7 @@ def test_a_revision_the_analyst_cannot_make_keeps_the_first_table(
         prompt = prompt_of(messages)
         if prompt.get("previous", {}).get("feedback"):
             return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification", args={
-                "question": "Which day?", "reason": "The table cannot support the requested day.",
+                "ask": "Which day?", "reason": "The table cannot support the requested day.",
             })])
         return analyst_drive(messages, info)
 

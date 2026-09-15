@@ -87,9 +87,25 @@ def test_a_restated_clarification_is_sent_back_once(store, people):
         calls["n"] += 1
         question = "هل تقصد نسبة الشباب؟" if calls["n"] == 1 else "ما الفئة العمرية التي تعدّها شبابًا: 15-24 أم 15-29؟"
         return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification",
-                                                 args={"question": question, "reason": "undefined term"})])
+                                                 args={"ask": question, "reason": "undefined term"})])
 
     analyst = create_analyst("test")
     with analyst.override(model=FunctionModel(drive)):
         report = asyncio.run(analyze_dataset(store, create_profiler("test"), analyst, dataset_id, "ما نسبة الشباب بين السكان؟"))
     assert calls["n"] == 2 and report.clarification is not None and "15-24" in report.clarification.question
+
+
+def test_a_clarification_restated_every_time_ends_the_run_instead_of_reaching_the_caller(store, people):
+    dataset_id, _profile = people
+    calls = {"n": 0}
+
+    def drive(messages, info):
+        calls["n"] += 1
+        return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification",
+                                                 args={"ask": "هل تقصد نسبة الشباب؟", "reason": "undefined term"})])
+
+    analyst = create_analyst("test")
+    with analyst.override(model=FunctionModel(drive)):
+        report = asyncio.run(analyze_dataset(store, create_profiler("test"), analyst, dataset_id, "ما نسبة الشباب بين السكان؟"))
+    assert calls["n"] == 3 and report.clarification is None and report.analysis is None
+    assert any("repeats the caller" in warning for warning in report.warnings)

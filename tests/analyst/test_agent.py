@@ -138,7 +138,7 @@ def test_repair_after_a_query_error_and_the_call_cap(store, people, agents):
         if len(calls) < MAX_QUERY_CALLS:
             return tool_call("run_query", sql=f'SELECT nope FROM "{dataset}"', columns=[{"name": "nope", "meaning": "x", "kind": "measure"}])
         assert "run_query" not in [t.name for t in info.function_tools]
-        return tool_call("ask_clarification", question="Which column holds the amount?", reason="The query kept failing.")
+        return tool_call("ask_clarification", ask="Which column holds the amount?", reason="The query kept failing.")
 
     with analyst.override(model=FunctionModel(drive)):
         report = run(store, profiler, analyst, dataset, "Total by region")
@@ -334,7 +334,7 @@ def test_omitted_columns_are_refused_through_the_agent(store, agents):
                              columns=[{"name": "WKT", "meaning": "Geometry", "kind": "geography", "source": "WKT"}])
         returned = last_return(messages).model_response_object()
         assert "cannot be queried" in returned["error"]
-        return tool_call("ask_clarification", question="Which region should I count?", reason="Geometry cannot be queried.")
+        return tool_call("ask_clarification", ask="Which region should I count?", reason="Geometry cannot be queried.")
 
     with profiler.override(model=TestModel(call_tools=[], custom_output_args=profile_output)):
         with analyst.override(model=FunctionModel(drive)):
@@ -416,7 +416,7 @@ def test_localized_rules_stay_out_of_ordinary_runs(store, people, agents):
 
     def drive(messages, info):
         seen["instructions"] = messages[0].instructions or ""
-        return tool_call("ask_clarification", question="Which amount column: paid or unpaid?", reason="Checking the instructions.")
+        return tool_call("ask_clarification", ask="Which amount column: paid or unpaid?", reason="Checking the instructions.")
 
     with analyst.override(model=FunctionModel(drive)):
         asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
@@ -495,7 +495,7 @@ def test_revise_rules_reach_the_model_only_with_answers_or_previous_work(store, 
 
     def drive(messages, info):
         seen["instructions"] = messages[0].instructions or ""
-        return tool_call("ask_clarification", question="Which amount column: paid or unpaid?", reason="Checking the instructions.")
+        return tool_call("ask_clarification", ask="Which amount column: paid or unpaid?", reason="Checking the instructions.")
 
     for clarifications, expected in ([], False), ([QuestionAnswer(question="Which?", answer="This")], True):
         prompt = build_prompt(store, profile, "Total amount by region", "English", clarifications=clarifications)
@@ -541,7 +541,7 @@ def test_designer_feedback_reaches_the_analyst_and_loads_the_repair_rules(store,
 
     def drive(messages, info):
         seen["instructions"] = messages[0].instructions or ""
-        return tool_call("ask_clarification", question="Which amount column: paid or unpaid?", reason="Checking the instructions.")
+        return tool_call("ask_clarification", ask="Which amount column: paid or unpaid?", reason="Checking the instructions.")
 
     deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
     with analyst.override(model=FunctionModel(drive)):

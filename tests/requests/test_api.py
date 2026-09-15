@@ -60,7 +60,7 @@ def test_a_question_round_trips_over_the_channel(app, deps, dataset_id, fake_mod
     def ask_then_answer(messages, info):
         if not prompt_of(messages).get("clarifications"):
             return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification",
-                                                     args={"question": "Which amount?", "reason": "Two."})])
+                                                     args={"ask": "Which amount?", "reason": "Two."})])
         return analyst_drive(messages, info)
 
     with analyst.override(model=FunctionModel(ask_then_answer)), TestClient(app) as client:

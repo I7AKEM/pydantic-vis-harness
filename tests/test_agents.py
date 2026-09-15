@@ -301,7 +301,7 @@ def test_draw_returns_the_question_and_resume_answers_it(conversation):
         prompt = json.loads(messages[0].parts[-1].content)
         if not prompt.get("clarifications"):
             return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification",
-                                                     args={"question": "Which amount?", "reason": "Two."})])
+                                                     args={"ask": "Which amount?", "reason": "Two."})])
         assert prompt["clarifications"][0]["answer"] == "The amount column"
         return analyst_chart_drive(messages, info)
 
@@ -428,7 +428,7 @@ def test_an_empty_clarification_is_sent_back_to_the_model(store, people):
     def drive(messages, info):
         attempts.append(any(isinstance(p, RetryPromptPart) for p in messages[-1].parts))
         question = "" if len(attempts) == 1 else "Which amount?"
-        return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification", args={"question": question, "reason": "Two."})])
+        return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification", args={"ask": question, "reason": "Two."})])
 
     with analyst.override(model=FunctionModel(drive)):
         import asyncio
