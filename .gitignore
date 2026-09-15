@@ -17,3 +17,5 @@ evals/designer/agent/scale/renders/
 evals/designer/agent/indicator/renders/
 .DS_Store
 outputs/
+evals/reviewer/labelled/png/
+evals/reviewer/verdicts/
