@@ -16,7 +16,7 @@ from pydantic_ai.usage import RunUsage, UsageLimits
 from vis_agent.analyst.models import AnalysisReport, Cell
 from vis_agent.designer.models import Compromise, Design
 from vis_agent.findings import Finding
-from vis_agent.models import DataBrief
+from vis_agent.models import DataBrief, QuestionAnswer
 from vis_agent.reviewer.models import Review, ReviewColumn, ReviewerPrompt, ReviewReport
 from vis_agent.reviewer.rubric import rubric_text
 
@@ -28,6 +28,7 @@ REVIEW_TIMEOUT_SECONDS = 60
 MAX_REQUESTS = 3
 ROWS_FOR_REVIEW = 100
 CELL_CHARACTERS = 40
+FIXERS = {"analyst", "designer", "renderer"}  # a finding owned by the user or by no one cannot be sent back
 
 
 @dataclass
@@ -37,10 +38,11 @@ class ReviewerDeps:
 
 def deliver_review(ctx: RunContext[ReviewerDeps], findings: list[Finding], summary: str) -> Review:
     """Deliver the review: the findings, each tied to a rule with its level and owner, and a one-sentence summary
-    in the caller's language. The verdict is not yours: any error-level finding sends the chart back."""
+    in the caller's language. The verdict is not yours: an error the analyst, the designer, or the renderer can
+    fix sends the chart back; a decision only the caller can make stays on the card as an open finding."""
     if not summary.strip():
         raise ModelRetry("Write one sentence saying what you saw.")
-    verdict = "revise" if any(finding.level == "error" for finding in findings) else "pass"
+    verdict = "revise" if any(finding.level == "error" and finding.owner in FIXERS for finding in findings) else "pass"
     return Review(verdict=verdict, summary=summary.strip(), findings=findings)
 
 
@@ -63,10 +65,11 @@ def _cut(cell: Cell) -> Cell:
 
 
 def build_prompt(report: AnalysisReport, design: Design, brief: DataBrief | None, compromises, warnings,
-                 round_: int) -> ReviewerPrompt:
+                 round_: int, clarifications=()) -> ReviewerPrompt:
     rows = report.result.rows
     return ReviewerPrompt(
-        question=report.question, language=report.language, chart=design.chart, spec=design.spec,
+        question=report.question, language=report.language, clarifications=list(clarifications),
+        chart=design.chart, spec=design.spec,
         columns=[ReviewColumn(name=c.name, meaning=c.meaning, kind=c.kind, unit=c.unit) for c in report.analysis.columns],
         rows=[[_cut(cell) for cell in row] for row in rows[:ROWS_FOR_REVIEW]], row_count=report.result.row_count,
         rows_are_partial=len(rows) > ROWS_FOR_REVIEW, summary=report.analysis.summary,
@@ -79,12 +82,12 @@ def build_prompt(report: AnalysisReport, design: Design, brief: DataBrief | None
 async def review_chart(
     report: AnalysisReport, design: Design, png: Path, reviewer: Agent[ReviewerDeps, Review], *,
     brief: DataBrief | None = None, compromises: list[Compromise] | tuple = (), warnings: list[str] | tuple = (),
-    round_: int = 1, usage: RunUsage | None = None,
+    round_: int = 1, usage: RunUsage | None = None, clarifications: list[QuestionAnswer] | tuple = (),
 ) -> ReviewReport:
     """Review one rendered chart. A reviewer that cannot finish, or a picture that cannot be read, is a warning:
     the chart delivers unreviewed and says so."""
     started = time.perf_counter()
-    prompt = build_prompt(report, design, brief, compromises, warnings, round_)
+    prompt = build_prompt(report, design, brief, compromises, warnings, round_, clarifications)
     deps = ReviewerDeps(prompt=prompt)
     run_usage = usage if usage is not None else RunUsage()
     starting = run_usage.requests

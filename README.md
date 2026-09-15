@@ -637,7 +637,7 @@ Every rendered chart is reviewed before it is delivered. The reviewer, an agent 
 designer's, receives the picture, the spec, the rows the table holds, and the record the team already made
 (assumptions, compromises, warnings), and returns findings, each tied to a rule (its own R-1 to R-5, or a
 check the team names), a level, an owner, and a message in the caller's language. Code derives the verdict:
-any error-level finding sends the request back to the design step with the findings, at most two rounds
+any error-level finding the team can fix sends the request back to the design step with the findings, at most two rounds
 (`PYDANTIC_AI_REVIEW_ROUNDS`); every round is saved, so a killed run resumes mid-round. A chart still faulted
 after the last round is delivered with its findings shown, never dropped and never turned into a question.
 

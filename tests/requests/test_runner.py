@@ -664,6 +664,17 @@ def test_an_error_finding_starts_a_round_and_the_designer_sees_the_findings(deps
     assert len(artifact.review["rounds"]) == 1 and artifact.review["verdict"] == "pass"
 
 
+def test_a_decision_that_is_the_users_never_starts_a_round(deps, dataset_id, fake_models, fake_render, reviewer):
+    _analyst, designer = fake_models
+    with reviewer.override(model=FunctionModel(reviewer_finding(rule="R-3", owner="user", message="Cities, not hospitals."))):
+        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+        outcome = run(run_request(deps, request.request_id))
+    saved = deps.requests.get_request(request.request_id)
+    assert outcome.status == "done" and designer.runs == 1 and saved.rounds == []
+    assert saved.steps["review"]["verdict"] == "pass" and "- Cities, not hospitals." in outcome.card
+    assert not any("review rounds" in w for w in outcome.artifact.warnings)
+
+
 def test_rounds_stop_at_the_bound_and_the_chart_delivers_with_its_findings(deps, dataset_id, fake_models, fake_render, reviewer):
     _analyst, designer = fake_models
     with reviewer.override(model=FunctionModel(reviewer_finding(message="Bar 3 is unlabelled."))):

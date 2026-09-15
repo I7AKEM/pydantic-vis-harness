@@ -9,6 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from vis_agent.analyst.models import Cell, ColumnKind
 from vis_agent.designer.models import ChartType
 from vis_agent.findings import Finding
+from vis_agent.models import QuestionAnswer
 
 
 class ReviewColumn(BaseModel):
@@ -23,6 +24,7 @@ class ReviewerPrompt(BaseModel):
 
     question: str
     language: str
+    clarifications: list[QuestionAnswer] = []  # the caller's answers change what the chart must show
     chart: ChartType
     spec: str
     columns: list[ReviewColumn]

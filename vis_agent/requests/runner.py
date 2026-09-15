@@ -350,6 +350,7 @@ async def review(deps: AppDeps, request: Request, usage: RunUsage, budget: int |
         report, designed.design, png, deps.reviewer, brief=brief,
         compromises=[Compromise.model_validate(c) for c in rendered.get("compromises", [])],
         warnings=[*report.warnings, *designed.warnings], round_=len(request.rounds) + 1, usage=usage,
+        clarifications=pairs(request),
     )
     if reviewed.review is None:
         return {"status": "not_reviewed", "reason": "; ".join(reviewed.warnings), "warnings": reviewed.warnings,

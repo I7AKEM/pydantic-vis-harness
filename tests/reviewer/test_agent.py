@@ -11,6 +11,7 @@ from pydantic_ai.models.function import FunctionModel
 from vis_agent.analyst.models import Analysis, AnalysisReport
 from vis_agent.designer.models import Compromise, Design
 from vis_agent.findings import Finding
+from vis_agent.models import QuestionAnswer
 from vis_agent.reviewer.agent import create_reviewer, review_chart
 from vis_agent.reviewer.rubric import REVIEWER_RULES, rubric_text
 from tests.designer.conftest import cities
@@ -59,6 +60,30 @@ def test_an_error_finding_makes_the_verdict_revise_and_the_picture_reaches_the_m
     prompt = json.loads(text)
     assert prompt["chart"] == "bar" and prompt["rows"][0] == ["City0", 50] and prompt["row_count"] == 5
     assert prompt["compromises"] == ["the legend stays where the package puts it"] and prompt["assumptions"] == ["All years"]
+
+
+def test_a_decision_only_the_caller_can_make_is_an_open_finding_not_a_send_back(png):
+    report, design = inputs()
+    reviewer = create_reviewer("test")
+    with reviewer.override(model=FunctionModel(reviewing([{"rule": "R-3", "level": "error", "owner": "user",
+                                                            "message": "Cities, not hospitals: the caller's call."}]))):
+        reviewed = asyncio.run(review_chart(report, design, png, reviewer))
+    assert reviewed.review.verdict == "pass" and reviewed.review.findings[0].owner == "user"
+
+
+def test_the_callers_answers_reach_the_reviewer(png):
+    report, design = inputs()
+    seen = {}
+
+    def drive(messages, info):
+        seen["prompt"] = json.loads(messages[0].parts[-1].content[0])
+        return reviewing([])(messages, info)
+
+    reviewer = create_reviewer("test")
+    with reviewer.override(model=FunctionModel(drive)):
+        asyncio.run(review_chart(report, design, png, reviewer,
+                                 clarifications=[QuestionAnswer(question="Which hospital column?", answer="Use the city.")]))
+    assert seen["prompt"]["clarifications"] == [{"question": "Which hospital column?", "answer": "Use the city."}]
 
 
 def test_warnings_alone_pass(png):

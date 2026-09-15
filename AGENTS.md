@@ -94,7 +94,8 @@ File map (the requests package and Phase 5's additions):
   and is shown beside a KPI number), and the designer's single colour are code. Rulebooks keep judgment rules
   and one-line pointers to what the checks enforce.
 - The review step runs the reviewer (`AppDeps.reviewer`, `PYDANTIC_AI_REVIEWER_MODEL` or `LITELLM_REVIEWER_MODEL`,
-  never the designer's model) on the rendered picture. Any error-level finding sends the request back to the
+  never the designer's model) on the rendered picture. Any error-level finding the analyst, designer, or renderer
+  can fix sends the request back to the
   design step with the findings as `review`; at most `PYDANTIC_AI_REVIEW_ROUNDS` (2) rounds, counted from the
   persisted `request.rounds`. A chart still faulted after the last round delivers with its findings on the card;
   a reviewer that cannot finish delivers the chart unreviewed with a warning. The reviewer never asks the user
