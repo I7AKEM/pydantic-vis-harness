@@ -508,7 +508,7 @@ In `vis_agent/analyst/rulebook.md`:
 - Step 6, append: `Never ask a question that only repeats the caller's words; name the missing fact or definition.`
 - Trend shape: `in chronological order.` → `in chronological order, ORDER BY the bucket ascending; descending is an error.`
 - Long-format shape, append: `(either shape draws: the designer folds side-by-side measures of one unit itself).`
-- Replace `- unit is null for counts and numbers of things; write a unit only for money, percent, and physical measures, in the caller's language.` with `- unit: write a real unit for money and physical measures, in the caller's language. The code sets % on shares and removes units from counts.`
+- Replace `- unit is null for counts and numbers of things; write a unit only for money, percent, and physical measures, in the caller's language.` with `- unit: write a real unit for money, physical measures, and counted things (SAR, km, person, شخص), in the caller's language. The code turns percent aliases into % and removes generic markers such as count or عدد.`
 
 - [ ] **Step 7: Run the tests and the suite**
 
@@ -519,7 +519,7 @@ Run: `uv run pytest -q` — Expected: all pass. If an existing test asserts a `c
 
 ```bash
 git add vis_agent/analyst/checks.py vis_agent/analyst/agent.py vis_agent/analyst/rulebook.md tests/analyst/test_units_and_periods.py
-git commit -m "Set % on shares and drop count units in code; make a reversed trend an error; catch named periods and restated questions"
+git commit -m "Drop generic count markers from units in code; make a reversed trend an error; catch named periods and restated questions"
 ```
 
 ---
@@ -628,7 +628,7 @@ In `vis_agent/designer/rulebook.md`:
 
 - `Choosing when the rules cannot:` → `Preferences, when the rules leave a choice (the reviewer weighs them; they are not requirements):`
 - `- title: in the caller's language; say what is shown, where, and when; no numbers.` → `- title: in the caller's language; say what is shown, where, and when; no numbers, except a year or a number the question itself names.`
-- After `- Bracket only real units (SAR, %, km, kg); a count has no unit, so write no brackets for it.` add ` The code removes count units and adds % to shares before you see the columns.`
+- After `- Bracket only real units (SAR, %, km, kg); a count has no unit, so write no brackets for it.` add ` The code removes generic count markers (count, number, عدد) before you see the columns; a noun such as person or شخص is a real unit and is bracketed like any other.`
 
 - [ ] **Step 6: Run the tests and the suite**
 
@@ -644,14 +644,14 @@ git commit -m "Name the designer's preferences as preferences; a title number th
 
 ---
 
-### Task 4: Resolver and renderer — one colour per series, decimals, axis titles, count units, table headers
+### Task 4: Resolver and renderer — one colour per series, decimals, axis titles, count markers, table headers
 
 **Files:**
 - Modify: `vis_agent/designer/resolve.py`
 - Test: `tests/designer/test_resolve.py` (append)
 
 **Interfaces:**
-- Consumes: `COUNT_UNITS` from Task 2.
+- Consumes: `display_unit` from `vis_agent/units.py` (the one list of generic count markers).
 - Produces: `resolve()` output changes only — `style.palette == [ACCENT]` for a single series without a palette or emphasis; `number.decimals` set when the smallest non-zero value is below 0.01; axis titles follow the column they name; `Compromise(key="headers")` and a computed width for wide tables; the `direction` compromise only for `spec.direction == "rtl"`.
 
 - [ ] **Step 1: Write the failing tests** (append to `tests/designer/test_resolve.py`)
@@ -668,12 +668,12 @@ def test_a_single_series_gets_one_colour():
     assert "palette" not in resolve(group_spec(), columns, result).config.get("style", {})
 
 
-def test_count_units_never_reach_the_axis():
+def test_generic_count_markers_leave_the_axis_and_a_named_noun_stays():
     columns, result = cities()
-    columns[1] = column("violations", "measure", aggregate="count", unit="person")
+    columns[1] = column("violations", "measure", aggregate="count", unit="count")
     assert resolve(city_spec(), columns, result).number.unit is None
-    columns[1] = column("violations", "measure", aggregate="sum", unit="شخص")
-    assert resolve(city_spec(), columns, result).number.unit is None
+    columns[1] = column("violations", "measure", aggregate="count", unit="شخص")
+    assert resolve(city_spec(), columns, result).number.unit == "شخص"
     columns[1] = column("violations", "measure", aggregate="sum", unit="SAR")
     assert resolve(city_spec(), columns, result).number.unit == "SAR"
 
@@ -715,25 +715,14 @@ def test_the_direction_compromise_needs_an_explicit_direction():
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
-Run: `uv run pytest tests/designer/test_resolve.py -q -k "colour or count_units or tiny or axis_titles or wide_table or direction_compromise"`
+Run: `uv run pytest tests/designer/test_resolve.py -q -k "colour or count_markers or tiny or axis_titles or wide_table or direction_compromise"`
 Expected: 6 FAIL.
 
-- [ ] **Step 3: Count units and the shared list**
+- [ ] **Step 3: Count markers and the shared list**
 
-In `vis_agent/designer/resolve.py` replace the local `COUNT_UNITS` line with an import and rewrite `_column_unit`:
-
-```python
-from vis_agent.analyst.checks import COUNT_UNITS
-
-
-def _column_unit(column: ResultColumn | None) -> str | None:
-    """A count has no unit, whatever word the analyst wrote; other units pass through."""
-    if column is None or column.unit is None or not column.unit.strip():
-        return None
-    if column.aggregate == "count" or column.unit.strip().lower() in COUNT_UNITS:
-        return None
-    return column.unit.strip()
-```
+No code change: `_column_unit` in `vis_agent/designer/resolve.py` already returns `display_unit(column.unit)` from
+`vis_agent/units.py`, the one list of generic markers (`count`, `number`, `عدد`). A noun the data names (`person`,
+`شخص`, `نسمة`) is a real unit: it stays on the axis title and beside the KPI number. The test above pins both.
 
 - [ ] **Step 4: The table's width and its long headers**
 

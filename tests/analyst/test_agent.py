@@ -416,7 +416,7 @@ def test_localized_rules_stay_out_of_ordinary_runs(store, people, agents):
 
     def drive(messages, info):
         seen["instructions"] = messages[0].instructions or ""
-        return tool_call("ask_clarification", question="Which amount?", reason="Checking the instructions.")
+        return tool_call("ask_clarification", question="Which amount column: paid or unpaid?", reason="Checking the instructions.")
 
     with analyst.override(model=FunctionModel(drive)):
         asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
@@ -495,7 +495,7 @@ def test_revise_rules_reach_the_model_only_with_answers_or_previous_work(store, 
 
     def drive(messages, info):
         seen["instructions"] = messages[0].instructions or ""
-        return tool_call("ask_clarification", question="Which amount?", reason="Checking the instructions.")
+        return tool_call("ask_clarification", question="Which amount column: paid or unpaid?", reason="Checking the instructions.")
 
     for clarifications, expected in ([], False), ([QuestionAnswer(question="Which?", answer="This")], True):
         prompt = build_prompt(store, profile, "Total amount by region", "English", clarifications=clarifications)
@@ -541,7 +541,7 @@ def test_designer_feedback_reaches_the_analyst_and_loads_the_repair_rules(store,
 
     def drive(messages, info):
         seen["instructions"] = messages[0].instructions or ""
-        return tool_call("ask_clarification", question="Which amount?", reason="Checking the instructions.")
+        return tool_call("ask_clarification", question="Which amount column: paid or unpaid?", reason="Checking the instructions.")
 
     deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
     with analyst.override(model=FunctionModel(drive)):

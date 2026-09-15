@@ -6,6 +6,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, FiniteFloat, field_validator
 
 from vis_agent.models import UploadedDataset
+from vis_agent.units import COUNT_UNITS
 
 PROFILE_VERSION = "2.0"
 
@@ -66,8 +67,8 @@ class DeterministicProfile(BaseModel):
 
 UNIT_PLACEHOLDERS = frozenset({
     "", "null", "none", "nil", "n/a", "na", "nan", "-", "unknown", "unitless", "no unit", "not applicable",
-    "count", "counts", "number", "n", "عدد", "لا يوجد", "بدون", "غير محدد",
-})
+    "لا يوجد", "بدون", "غير محدد",
+}) | COUNT_UNITS
 
 
 class ColumnSemantics(BaseModel):

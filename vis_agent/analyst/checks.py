@@ -8,7 +8,7 @@ import re
 from vis_agent.analyst.models import QueryResult, ResultColumn
 from vis_agent.profiler.models import DatasetProfile, ProfileCheck
 from vis_agent.store import DatasetStore, quote_identifier
-from vis_agent.units import canonical_unit
+from vis_agent.units import COUNT_UNITS, canonical_unit
 
 MAX_LABEL_DISTINCT = 200
 OTHER_LABELS = {"other", "others", "أخرى", "اخرى", "غير ذلك"}
@@ -59,6 +59,64 @@ def numeric_mention_direction(text: str, start: int, end: int) -> int | None:
         return 0
     direction = directions.pop()
     return 0 if explicit_plus and direction == -1 else direction
+
+SHARE_UNITS = frozenset({"%", "٪", "percent", "percentage", "pct", "نسبة", "نسبة مئوية", "بالمئة"})
+YEAR = re.compile(r"(?<!\d)(1[3-4]\d{2}|19\d{2}|20\d{2})(?!\d)")
+ORDER_BY = re.compile(r"\border\s+by\s+(.+?)(?:\s+limit\b|\s*;?\s*$)", re.IGNORECASE | re.DOTALL)
+WORD = re.compile(r"\w+")
+STOP_WORDS = frozenset("""a an the of in on for by to and or is are was were do does did you mean want which what
+how many much please هل تقصد ما ماذا هو هي في من على عن أم أو و ب ل كم تريد المقصود""".split())
+
+
+def numbers_in(text: str) -> set[str]:
+    """Every number written in the text, Western or Arabic-Indic digits, thousands separators removed."""
+    return {token.replace(",", "") for token in NUMBER.findall(text.translate(ARABIC_DIGITS))}
+
+
+def normalise_units(column: ResultColumn) -> ResultColumn:
+    """One convention for the checks and the designer: a declared percent alias is %, a generic count marker is no
+    unit. A share with no unit stays as written: the analyst must declare its scale (% or fraction), and the
+    share_scale_declared check sends it back, because code cannot tell a 0-1 ratio from a 0-100 percentage."""
+    unit = column.unit.strip() if column.unit and column.unit.strip() else None
+    if unit is not None and column.kind == "share" and unit.casefold() in SHARE_UNITS:
+        unit = "%"
+    elif unit is not None and unit.casefold() in COUNT_UNITS:
+        unit = None
+    return column if unit == column.unit else column.model_copy(update={"unit": unit})
+
+
+def years_named(text: str) -> set[str]:
+    """Four-digit years in the text, Gregorian or Hijri, in either digit system."""
+    return set(YEAR.findall(text.translate(ARABIC_DIGITS)))
+
+
+def named_period_check(question: str, sql: str, assumptions: list[str]) -> ProfileCheck:
+    """A year the question names must appear in the SQL, or an assumption must say why it does not."""
+    missing = sorted(years_named(question) - years_named(sql) - years_named(" ".join(assumptions)))
+    if missing:
+        return _check(None, "named_period_missing", "warning", False,
+                      f"The question names {', '.join(missing)}; the SQL does not filter on it and no assumption "
+                      "says why. Filter on the period, or record the assumption.")
+    return _check(None, "named_period_missing", "warning", True, "ok")
+
+
+def restates(clarification: str, question: str) -> bool:
+    """True when the clarification adds no word the question did not already hold: it repeats, it does not ask."""
+    asked = {word.casefold() for word in WORD.findall(clarification)} - STOP_WORDS
+    known = {word.casefold() for word in WORD.findall(question)}
+    return bool(asked) and asked <= known
+
+
+def _orders_descending(sql: str, column: ResultColumn) -> bool:
+    """True when the statement's first sort key is this column, descending: a reversed time axis is a choice."""
+    match = ORDER_BY.search(sql)
+    if not match:
+        return False
+    parts = match.group(1).split(",")[0].strip().split()
+    if len(parts) < 2 or parts[-1].casefold() != "desc":
+        return False
+    key = " ".join(parts[:-1]).strip('"').split(".")[-1].strip('"').casefold()
+    return key in {column.name.casefold(), (column.source or "").casefold()}
 
 
 def _check(column, check, severity, passed, message) -> ProfileCheck:
@@ -255,8 +313,11 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
                 # Fixed-width YYYY and YYYY-MM text sorts chronologically, including Hijri 13xx/14xx.
                 # Keep these buckets as text instead of interpreting them as Gregorian dates.
                 if present != sorted(present, key=lambda v: (isinstance(v, str), v)):
-                    checks.append(_check(column.name, "time_in_order", "warning", False,
-                                         f"{column.name}: time is not in chronological order."))
+                    reversed_on_purpose = _orders_descending(result.sql, column)
+                    checks.append(_check(column.name, "time_in_order", "error" if reversed_on_purpose else "warning", False,
+                                         f"{column.name}: time is not in chronological order."
+                                         + (f" Order it ascending: ORDER BY {quote_identifier(column.name)} ASC."
+                                            if reversed_on_purpose else "")))
     return checks
 
 

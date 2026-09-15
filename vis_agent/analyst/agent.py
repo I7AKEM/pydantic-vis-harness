@@ -18,7 +18,7 @@ from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior, Usage
 from pydantic_ai.tools import ToolDefinition
 from pydantic_ai.usage import RunUsage, UsageLimits
 
-from vis_agent.analyst.checks import check_result, summary_numbers_exist
+from vis_agent.analyst.checks import check_result, named_period_check, normalise_units, restates, summary_numbers_exist
 from vis_agent.analyst.models import Analysis, AnalysisReport, Clarification, PreviousAnalysis, QueryError, QueryResult, ResultColumn
 from vis_agent.analyst.query import run_sql
 from vis_agent.deps import AppDeps
@@ -191,9 +191,8 @@ async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[Result
         and column.name[1:-1] in result.columns and column.name not in result.columns else column
         for column in columns
     ]
-    # Normalize newly generated unit metadata before checking and saving it.
-    # Loading an older report preserves its original metadata.
-    columns = [column.model_copy(update={"unit": canonical_unit(column.unit)}) for column in columns]
+    # Canonical unit names first, then the share and count convention; an older saved report keeps its metadata.
+    columns = [normalise_units(column.model_copy(update={"unit": canonical_unit(column.unit)})) for column in columns]
     result.checks = await asyncio.to_thread(check_result, deps.store, deps.profile, columns, result)
     # New shares must state their scale; historical reports remain readable by check_result.
     result.checks.extend(
@@ -223,7 +222,7 @@ def _context(deps: AnalystDeps) -> str:
 def deliver_analysis(
     ctx: RunContext[AnalystDeps], summary: str, assumptions: list[str] | None = None,
 ) -> Analysis | Clarification:
-    """Deliver the answer: a two-sentence summary in the caller's language using only numbers from the result,
+    """Deliver the answer: a one- or two-sentence summary in the caller's language using only numbers from the result,
     and the assumptions you made. The last query that passed its checks is delivered with it.
     """
     deps = ctx.deps
@@ -237,6 +236,12 @@ def deliver_analysis(
     if not check.passed and deps.delivery_attempts == 0:
         deps.delivery_attempts += 1
         raise ModelRetry(check.message)
+    period = named_period_check(deps.prompt.question, deps.passed.sql, assumptions or [])
+    if not period.passed and deps.delivery_attempts == 0:
+        deps.delivery_attempts += 1
+        raise ModelRetry(period.message)
+    if not period.passed:
+        deps.passed.result.checks.append(period)
     return Analysis(sql=deps.passed.sql, columns=deps.passed.columns, summary=summary, assumptions=assumptions or [])
 
 
@@ -246,6 +251,9 @@ def ask_clarification(ctx: RunContext[AnalystDeps], question: str, reason: str) 
     """
     if not question.strip():
         raise ModelRetry("The question is empty. Ask one question the caller can answer, or answer with SQL.")
+    if restates(question, ctx.deps.prompt.question):
+        raise ModelRetry("That question only repeats the caller's words. Answer with SQL, or ask for the one fact or "
+                         "definition that is missing, in words the caller did not already use.")
     return Clarification(question=question, reason=reason)
 
 

@@ -94,8 +94,8 @@ honestly unanswerable; but a question that restates the user's question is still
 **Designer** (`rulebook.md`, `rulebook-revise.md`; tools `recommend_charts` ×2 and `check_spec` ×3; outputs
 `deliver_design`, `ask_clarification`, `request_analysis_revision`). Capability and scope are precise, and
 the grammar and catalogue are the model's whole vocabulary. Gaps: (a) the rulebook implies one colour per
-series and the renderer draws one per bar; (b) count units invented by the analyst (`person`, `شخص`) reach the
-axis; (c) values below the display precision print as `0`; (d) axis titles swap on horizontal bars; (e) the
+series and the renderer draws one per bar; (b) generic count markers written as units (`count`, `عدد`) reach the
+axis, while a noun the data names (`person`, `شخص`) must stay; (c) values below the display precision print as `0`; (d) axis titles swap on horizontal bars; (e) the
 "choosing when the rules cannot" list reads as preferences and is graded as requirements; (f) "no numbers in
 the title" blocks a year the user asked for; (g) the table renderer truncates long headers and nothing records
 it.
@@ -183,14 +183,14 @@ instructions. Rows not listed keep their current level.
 | P-unit | Profiler | A unit is JSON null for non-measures and counts; never a placeholder word | Prose; check misses the string | 274 | Code normalises `null`, `none`, `n/a`, `count`, `unitless`, `-` to null before the checks; `unit_only_on_measures` tested with the string. Error, fixed in code |
 | P-lang | Profiler | Descriptions and meanings follow one language | Prose, ambiguous | 54–66 | Code decides the language (the brief's question, else the headers) and passes it in the prompt; a `language_matches` warning check on the output |
 | P-geo | Profiler | Place names are geography only with geographic evidence | Prose | 13–32 | Judgment; the failed cases join `evals/profiler` |
-| A-pct | Analyst | A share or percent column carries `%` | Prose | 74 | Code sets `%` on kind `share` when the unit is null; the rulebook line becomes a pointer. Error, fixed in code |
+| A-pct | Analyst | A share declares its scale; a percent column carries `%` | Prose | 74 | Code turns percent aliases into `%`. A share with no declared scale is an error (`share_scale_declared`, from the indicator work): code cannot tell 0.45 from 45. The rulebook line becomes a pointer |
 | A-two | Analyst | "Two-sentence summary" | Prose | 14 | Deleted; "one or two sentences" |
 | A-time | Analyst | A trend is in chronological order | Warning `time_in_order` | 9 | Error when the SQL orders by the time column descending (the parser sees the ORDER BY): a reversed time axis draws a misleading line. A result ordered by a measure keeps the warning |
 | A-period | Analyst | A period or year the question names appears in the SQL or in an assumption | Nothing | 8–12 | New warning `named_period_missing`, general: years and Hijri years found in the question text, in any script |
 | A-long | Analyst | Same-unit measures in long format | Prose rule | fold exists | Prose only, downgraded: the designer folds in code |
 | A-ask | Analyst | Ask only for a missing column or an undefined term | Prose | 111 asked | Kept. New error check: a clarification that restates the question is refused (one retry). The evaluation reports asks by row-count bucket |
 | D-one | Designer | One colour for a single series | Prose; renderer ignores | 96 | Renderer default: a single series takes one colour unless the spec names a palette or emphasis. Error, fixed in code; leaves the rubric |
-| D-count | Designer | A count has no unit | Resolver drops a short word list | 7 | The resolver drops any unit on a column whose aggregate is a count or a sum of counts; `C21` error if one remains |
+| D-count | Analyst (code) | A generic count marker is not a unit; a noun the data names is | Resolver drops a short word list | 7 | One list in `vis_agent/units.py`: the profiler and the analyst's query step drop `count`, `number`, `عدد`; `person`, `شخص`, `نسمة` stay and are shown beside the KPI number and in the axis title |
 | D-zero | Designer | Values print with enough decimals to differ from zero | Nothing | in 23 | Resolver sets decimals from the smallest non-zero absolute value when `format` is unset. Fixed in code |
 | D-axis | Designer | Axis titles follow the axis, not the direction | Bug | in 23 | Fixed in the resolver, with a test per direction |
 | D-pref | Designer | The "choosing when the rules cannot" list | Prose | 15 | Marked as preferences in the rulebook and the rubric; they stay `S` warnings in recommendation scores |
