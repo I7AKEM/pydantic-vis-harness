@@ -119,3 +119,28 @@ def test_teams_from_env_needs_a_provider(store, monkeypatch):
     monkeypatch.delenv("LITELLM_BASE_URL", raising=False)
     with pytest.raises(RuntimeError, match="No provider is configured: set OPENROUTER_API_KEY, or LITELLM_BASE_URL"):
         teams_from_env(store, RequestStore(store))
+
+
+def test_the_reviewer_never_sits_on_the_designers_model(store, monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "x")
+    monkeypatch.delenv("LITELLM_BASE_URL", raising=False)
+    monkeypatch.setenv("PYDANTIC_AI_DESIGNER_MODEL", "openrouter:google/gemma-4-31b-it:nitro")
+    monkeypatch.setenv("PYDANTIC_AI_REVIEWER_MODEL", "openrouter:google/gemma-4-31b-it:nitro")
+    with pytest.raises(RuntimeError, match="reviewer"):
+        teams_from_env(store, RequestStore(store))
+    monkeypatch.setenv("PYDANTIC_AI_REVIEWER_MODEL", "openrouter:openai/gpt-5.4")
+    team = teams_from_env(store, RequestStore(store))[0]
+    assert team.deps.reviewer is not None and team.deps.reviewer.name == "reviewer"
+
+
+def test_the_litellm_reviewer_is_a_second_proxy_model(store, monkeypatch):
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.setenv("LITELLM_BASE_URL", "http://litellm.local:4000")
+    monkeypatch.setenv("LOCAL_LLM", "google/gemma-4")
+    monkeypatch.setenv("LITELLM_TOKEN", "t")
+    monkeypatch.setenv("LITELLM_REVIEWER_MODEL", "google/gemma-4")
+    with pytest.raises(RuntimeError, match="reviewer"):
+        teams_from_env(store, RequestStore(store))
+    monkeypatch.setenv("LITELLM_REVIEWER_MODEL", "Qwen/Qwen3.8-27B")
+    team = teams_from_env(store, RequestStore(store))[0]
+    assert team.deps.reviewer.model.model_name == "Qwen/Qwen3.8-27B"

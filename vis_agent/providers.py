@@ -18,6 +18,7 @@ from vis_agent.designer.agent import DEFAULT_DESIGNER_MODEL, DEFAULT_FALLBACK_DE
 from vis_agent.lead import create_lead
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, create_profiler
 from vis_agent.requests.store import RequestStore
+from vis_agent.reviewer.agent import DEFAULT_REVIEWER_MODEL, create_reviewer
 from vis_agent.store import DatasetStore
 
 CHAT_UI_SDK_VERSION = 7  # what the bundled chat UI speaks: pydantic_ai.ui._web.api.BUNDLED_UI_SDK_VERSION
@@ -41,12 +42,21 @@ class Team:
         return model if isinstance(model, str) else model.model_id
 
 
+def _reviewer_seat(reviewer_model: str, designer_model: str):
+    if reviewer_model.removeprefix("openrouter:") == designer_model.removeprefix("openrouter:"):
+        raise RuntimeError(f"The reviewer must not sit on the designer's model ({designer_model}); "
+                           "set PYDANTIC_AI_REVIEWER_MODEL or LITELLM_REVIEWER_MODEL to another model.")
+
+
 def openrouter_team(store: DatasetStore, requests: RequestStore) -> Team:
     """Today's wiring: each role's model from its PYDANTIC_AI_*_MODEL variable, with the measured defaults."""
     model = os.getenv("PYDANTIC_AI_MODEL") or DEFAULT_PROFILER_MODEL
     profiler = create_profiler(os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL)
     analyst = create_analyst(os.getenv("PYDANTIC_AI_ANALYST_MODEL") or DEFAULT_ANALYST_MODEL)
-    designer = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_MODEL") or DEFAULT_DESIGNER_MODEL)
+    designer_model = os.getenv("PYDANTIC_AI_DESIGNER_MODEL") or DEFAULT_DESIGNER_MODEL
+    reviewer_model = os.getenv("PYDANTIC_AI_REVIEWER_MODEL") or DEFAULT_REVIEWER_MODEL
+    _reviewer_seat(reviewer_model, designer_model)
+    designer = create_designer(designer_model)
     designer_fallback = create_designer(
         os.getenv("PYDANTIC_AI_DESIGNER_FALLBACK_MODEL") or DEFAULT_FALLBACK_DESIGNER_MODEL
     )
@@ -57,26 +67,26 @@ def openrouter_team(store: DatasetStore, requests: RequestStore) -> Team:
         designer=designer,
         requests=requests,
         designer_fallback=designer_fallback,
+        reviewer=create_reviewer(reviewer_model),
     )
     lead = create_lead(model, advisor_model=os.getenv("PYDANTIC_AI_ADVISOR_MODEL", DEFAULT_ADVISOR_MODEL))
     return Team("OpenRouter", lead, deps)
 
 
-def litellm_model() -> OpenAIChatModel:
-    """LOCAL_LLM through the LiteLLM proxy at LITELLM_BASE_URL, authenticated with LITELLM_TOKEN."""
+def litellm_model(name: str | None = None) -> OpenAIChatModel:
+    """A proxy model: LOCAL_LLM by default, or the named one, through LITELLM_BASE_URL with LITELLM_TOKEN."""
     return OpenAIChatModel(
-        os.environ["LOCAL_LLM"],
-        provider=LiteLLMProvider(
-            api_base=os.environ["LITELLM_BASE_URL"],
-            api_key=os.getenv("LITELLM_TOKEN"),
-        ),
+        name or os.environ["LOCAL_LLM"],
+        provider=LiteLLMProvider(api_base=os.environ["LITELLM_BASE_URL"], api_key=os.getenv("LITELLM_TOKEN")),
     )
 
 
 def litellm_team(store: DatasetStore, requests: RequestStore) -> Team:
-    """Every role on the one local model. No advisor: the native advisor needs an OpenRouter lead. The fallback
-    designer is a second designer on the same model: one more attempt, the only one the cluster has."""
+    """The reviewer uses a second proxy model; the other roles use LOCAL_LLM. No advisor: the native advisor
+    needs an OpenRouter lead. The fallback designer is a second designer on LOCAL_LLM for one more attempt."""
     model = litellm_model()
+    reviewer_model = os.getenv("LITELLM_REVIEWER_MODEL") or "Qwen/Qwen3.8-27B"
+    _reviewer_seat(reviewer_model, os.environ["LOCAL_LLM"])
     deps = AppDeps(
         store=store,
         profiler=create_profiler(model),
@@ -84,6 +94,7 @@ def litellm_team(store: DatasetStore, requests: RequestStore) -> Team:
         designer=create_designer(model),
         requests=requests,
         designer_fallback=create_designer(model),
+        reviewer=create_reviewer(litellm_model(reviewer_model)),
     )
     return Team("LiteLLM", create_lead(model), deps)
 
