@@ -8,8 +8,14 @@ Filled in as the phase runs; the headings are the spec's section 13. Numbers fro
 with reasoning off.
 
 - Unit suite 1571 passed; model-free designer evaluation 40 of 40.
-- Agreement with human verdicts: not run yet. `evals/reviewer/labelled/review.html` holds 89 charts from the
-  evaluation team's run and waits for the owner's verdicts (60 needed).
+- Agreement with by-eye verdicts (Codex Astra looked at all 89 pictures: 69 pass, 20 fail, `labelled/human.json`):
+  the reviewer on the proxy's Qwen agrees on 60 of 89, 0.674, below the 0.8 exit line. Confusion: pass/pass 43,
+  pass/revise 26, fail/revise 17, fail/pass 3. Qwen is too strict: it faults readable charts for problems that
+  are not there (bar lengths against the axis, "values multiplied by 100", differences hidden by rounding) and
+  wants a chart where a table answered the question. The three fail/pass cases are decisions only the user can
+  make (a map was asked, bars were drawn), which no longer count for the verdict. The evaluation team's two model
+  judges agree with the by-eye verdicts on only 26 of 89: they judged the whole reply (missing table, units,
+  explanation), not the picture.
 - Lead evaluation on the proxy: 13 of 18 cases with the reviewer (10 of 18 on the ledger branch without it, same day,
   same model); false questions 2; 207 requests for 26 turns (159 without the reviewer).
 - Analyst evaluation on the proxy: 52 of 71 after the ledger and the clarification fix (48 before the fix).
@@ -37,7 +43,8 @@ with reasoning off.
   refuse images, the unquantised Gemma engine is down. Reasoning must be sent off explicitly
   (`openai_reasoning_effort: none`): 135 to 213 s per picture with it on, 7 s with it off. Two of 26 reviews in the
   lead run hit the 60 s limit under load and delivered unreviewed with a warning, as designed.
-- Agreement per seat and per language: pending the owner's verdicts.
+- Agreement per seat: Qwen on the proxy 0.674 (above). No other proxy seat reads pictures, and the reviewer may not
+  sit on the designer's model, so Qwen stays the cluster's seat until the rulebook is tuned.
 - The reviewer judged against the original question and faulted a chart the caller had redirected ("no hospital
   column: draw it by city") twice, R-3 owner user. It now reads the questions the team asked and the caller's
   answers, and a finding only the caller can settle (owner user or none) no longer sends the chart back; it stays
@@ -67,7 +74,8 @@ Pending: ask for a rerun of the 283 cases against `feat/phase-5-reviewer`.
 - Echoed questions that survive the refusal (7 of 71): the run ends with the reason; a stronger seat is the fix.
 - `نسمة` displays as `شخصًا` or `أشخاص` through the indicator's noun table; the owner decides whether it should stay
   as written.
-- The agreement exit test and the seat choice, after the owner's verdicts; then the DSPy round on the reviewer's
-  rulebook.
+- Raise the reviewer's agreement on the proxy's Qwen above 0.8: tune the rulebook against the 26 over-strict cases
+  (the DSPy round on the reviewer's rulebook, with `evals/reviewer/run.py` as the score), or a second local seat
+  if one appears.
 - The lead sometimes answers a "table" request with `answer_question` (no picture, so no review); the browser
   check's long-header table therefore exercised the card, not the drawn table.
