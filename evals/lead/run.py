@@ -28,6 +28,7 @@ from vis_agent.lead import create_lead
 from vis_agent.models import DataBrief
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, create_profiler, profile_dataset
 from vis_agent.requests.store import RequestStore
+from vis_agent.reviewer.agent import DEFAULT_REVIEWER_MODEL, create_reviewer
 from vis_agent.store import DatasetStore
 from vis_agent.units import COUNT_NOUNS, canonical_unit, display_unit
 from vis_agent.designer.syntax import parse
@@ -260,13 +261,14 @@ def show_turn(name: str, index: int, turn: dict) -> None:
 
 
 async def run_case(case: dict, lead, profiler, analyst, designer, designer_fallback=None,
-                   evidence_dir: Path | None = None) -> dict:
+                   evidence_dir: Path | None = None, reviewer=None) -> dict:
     record = {"name": case["name"], "csv": case["csv"], "heldout": case.get("heldout", False), "turns": []}
     with tempfile.TemporaryDirectory(prefix="vis-lead-eval-") as directory:
         try:
             store = DatasetStore(Path(directory))
             requests = RequestStore(store)
-            deps = AppDeps(store, profiler, analyst, designer, requests, designer_fallback=designer_fallback)
+            deps = AppDeps(store, profiler, analyst, designer, requests, designer_fallback=designer_fallback,
+                           reviewer=reviewer)
             csv = ROOT / case["csv"]
             brief = DataBrief.model_validate_json((ROOT / case["brief"]).read_bytes()) if case.get("brief") else None
             uploaded = store.save_upload(csv.name, csv.read_bytes(), brief)
@@ -388,11 +390,13 @@ async def evaluate(cases: list[dict], evidence_dir: Path | None = None) -> dict:
     lead = create_lead(model, advisor_model="openrouter:openai/gpt-5.6-sol")
     # The runner retries a failed design once on this model, as the app does.
     designer_fallback = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_FALLBACK_MODEL") or DEFAULT_FALLBACK_DESIGNER_MODEL)
+    # The runner reviews every rendered chart, as the app does; PYDANTIC_AI_REVIEW_ROUNDS bounds the send-backs.
+    reviewer = create_reviewer(os.getenv("PYDANTIC_AI_REVIEWER_MODEL") or DEFAULT_REVIEWER_MODEL)
     semaphore = asyncio.Semaphore(3)
 
     async def bounded(case):
         async with semaphore:
-            return await run_case(case, lead, profiler, analyst, designer, designer_fallback, evidence_dir)
+            return await run_case(case, lead, profiler, analyst, designer, designer_fallback, evidence_dir, reviewer)
 
     results = await asyncio.gather(*(bounded(case) for case in cases))
     summary = summarize(results)
@@ -423,7 +427,8 @@ def main() -> None:
     results["provenance"] = provenance(args.cases, {"lead": results["model"],
         "analyst": os.getenv("PYDANTIC_AI_ANALYST_MODEL") or DEFAULT_ANALYST_MODEL,
         "designer": os.getenv("PYDANTIC_AI_DESIGNER_MODEL") or DEFAULT_DESIGNER_MODEL,
-        "profiler": os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL})
+        "profiler": os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL,
+        "reviewer": os.getenv("PYDANTIC_AI_REVIEWER_MODEL") or DEFAULT_REVIEWER_MODEL})
     results["provenance"]["prompts"]["lead"] = vis_agent.lead.LEAD_INSTRUCTIONS
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

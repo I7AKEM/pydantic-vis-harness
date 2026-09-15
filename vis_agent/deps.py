@@ -18,6 +18,8 @@ if TYPE_CHECKING:
     from vis_agent.profiler.models import SemanticProfile
     from vis_agent.requests.models import CallerKind
     from vis_agent.requests.store import RequestStore
+    from vis_agent.reviewer.agent import ReviewerDeps
+    from vis_agent.reviewer.models import Review
 
 
 @dataclass
@@ -32,3 +34,5 @@ class AppDeps:
     """Who talks to the lead in this run: the chat, the terminal, or a program; recorded on the requests it makes."""
     designer_fallback: Agent[DesignerDeps, Design | Clarification | AnalysisRevision] | None = None
     """Runs the design step once more when the designer fails; the lead's model by default."""
+    reviewer: Agent[ReviewerDeps, Review] | None = None
+    """Judges the rendered chart; None records the review step as not reviewed."""

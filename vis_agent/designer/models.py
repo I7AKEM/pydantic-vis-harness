@@ -6,6 +6,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from vis_agent.analyst.models import AnalysisRevision, Clarification
+from vis_agent.findings import Finding
 from vis_agent.models import Intent
 
 ChartType = Literal[
@@ -114,6 +115,14 @@ class PreviousDesign(BaseModel):
 
     spec: str | None
     change: str
+
+
+class ReviewRound(BaseModel):
+    """What the designer works from on a review round: the spec it delivered and what the reviewer found."""
+
+    spec: str
+    summary: str
+    findings: list[Finding]
 
 
 class RuleScore(BaseModel):

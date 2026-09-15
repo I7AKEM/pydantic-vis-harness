@@ -697,7 +697,7 @@ def test_a_reviewer_that_fails_delivers_unreviewed_with_a_warning(deps, dataset_
     assert any("could not finish" in w for w in outcome.artifact.warnings) and outcome.artifact.png_url
 
 
-def test_a_single_number_or_a_failed_render_is_not_reviewed(deps, dataset_id, fake_models, monkeypatch):
+def test_a_failed_render_is_not_reviewed(deps, dataset_id, fake_models, monkeypatch):
     from vis_agent.render.base import RenderFailed
 
     def broken(*args, **kwargs):

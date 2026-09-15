@@ -634,4 +634,21 @@ uv run python -m evals.profiler.run
 uv run python -m evals.analyst.run
 ```
 
+## The reviewer and the review round
+
+Every rendered chart is reviewed before it is delivered. The reviewer, an agent on a model other than the
+designer's, receives the picture, the spec, the rows the table holds, and the record the team already made
+(assumptions, compromises, warnings), and returns findings, each tied to a rule (its own R-1 to R-5, or a
+check the team names), a level, an owner, and a message in the caller's language. Code derives the verdict:
+any error-level finding the team can fix sends the request back to the design step with the findings, at most two rounds
+(`PYDANTIC_AI_REVIEW_ROUNDS`); every round is saved, so a killed run resumes mid-round. A chart still faulted
+after the last round is delivered with its findings shown, never dropped and never turned into a question.
+
+The reviewer's seat: `PYDANTIC_AI_REVIEWER_MODEL` on OpenRouter, `LITELLM_REVIEWER_MODEL` on the proxy; the
+agreement test in `evals/reviewer/` picks it (README there).
+
+The reply card. `draw`, `revise`, `resume`, and `answer_question` return a card built by code: picture, summary,
+table with its row count, assumptions, compromises, warnings, review, and IDs, in the user's language. The lead
+shows it whole.
+
 > Temporal support is installed and `TemporalDurability()` is attached. At this stage, Web Chat calls the agent normally, so runs are not yet durable. True durable execution starts when the agent is called inside a Temporal workflow and worker, which remains deferred. Phase 6 saves request step outputs in DuckDB; it does not add a Temporal worker.

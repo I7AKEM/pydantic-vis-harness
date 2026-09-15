@@ -12,6 +12,7 @@ from vis_agent.lead import create_lead
 from vis_agent.profiler.agent import create_profiler
 from vis_agent.render.base import Rendered
 from vis_agent.requests.store import RequestStore
+from vis_agent.reviewer.agent import create_reviewer
 
 SALES = b"id,region,date,amount\n001,East,2026-01-01,10\n002,West,2026-01-02,20\n"
 CHART_SPEC = (
@@ -61,6 +62,17 @@ def designer_drive(messages, info):
     })])
 
 
+def reviewer_pass(messages, info):
+    return ModelResponse(parts=[ToolCallPart(tool_name="deliver_review", args={"summary": "Fine.", "findings": []})])
+
+
+def reviewer_finding(rule="R-5", level="error", owner="designer", message="The bars are sorted ascending."):
+    def drive(messages, info):
+        return ModelResponse(parts=[ToolCallPart(tool_name="deliver_review", args={
+            "summary": "Something is off.", "findings": [{"rule": rule, "level": level, "owner": owner, "message": message}]})])
+    return drive
+
+
 class Counting:
     """Wraps a drive function and counts the runs it starts (first model call of each run)."""
 
@@ -79,9 +91,16 @@ def agents():
 
 
 @pytest.fixture
-def deps(store, agents):
+def reviewer():
+    return create_reviewer("test")
+
+
+@pytest.fixture
+def deps(store, agents, reviewer):
     profiler, analyst, designer, _lead = agents
-    return AppDeps(store=store, profiler=profiler, analyst=analyst, designer=designer, requests=RequestStore(store))
+    return AppDeps(store=store, profiler=profiler, analyst=analyst, designer=designer, requests=RequestStore(store),
+                   reviewer=reviewer)
+
 
 
 @pytest.fixture
@@ -90,13 +109,14 @@ def dataset_id(store):
 
 
 @pytest.fixture
-def fake_models(agents):
-    """Override every agent with fakes; yields the counting analyst and designer drives."""
+def fake_models(agents, reviewer):
+    """Override every agent with fakes; yields the counting analyst and designer drives. The reviewer passes."""
     profiler, analyst, designer, _lead = agents
     counted_analyst, counted_designer = Counting(analyst_drive), Counting(designer_drive)
     with profiler.override(model=TestModel(call_tools=[], custom_output_args=semantic_output(["id", "region", "date", "amount"]))), \
             analyst.override(model=FunctionModel(counted_analyst)), \
-            designer.override(model=FunctionModel(counted_designer)):
+            designer.override(model=FunctionModel(counted_designer)), \
+            reviewer.override(model=FunctionModel(reviewer_pass)):
         yield counted_analyst, counted_designer
 
 

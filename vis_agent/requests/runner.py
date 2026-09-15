@@ -2,6 +2,8 @@
 
 import asyncio
 import logging
+import os
+import re
 from datetime import timedelta
 from hashlib import sha256
 from pathlib import Path
@@ -15,20 +17,23 @@ from vis_agent.analyst.models import AnalysisReport, AnalysisRevision, Clarifica
 from vis_agent.card import card as build_card
 from vis_agent.deps import AppDeps
 from vis_agent.designer.agent import design_chart, render_design, render_id
-from vis_agent.designer.models import Compromise, DesignReport, PreviousDesign
+from vis_agent.designer.models import Compromise, DesignReport, PreviousDesign, ReviewRound
+from vis_agent.findings import Finding
 from vis_agent.models import QuestionAnswer
 from vis_agent.profiler.agent import profile_dataset
 from vis_agent.render.base import RenderFailed, RendererUnavailable
 from vis_agent.requests.models import (
     DEFAULT_DEADLINE_SECONDS, MAX_QUESTIONS, Artifact, Caller, CallerKind, Exchange, LeadArtifact, Lineage,
-    Request, RequestOutcome, RequestType, StepName,
+    Request, RequestOutcome, RequestType, Round, StepName,
 )
 from vis_agent.requests.store import RequestStore, now
+from vis_agent.reviewer.agent import review_chart
 from vis_agent.store import DatasetNotFound
 
 log = logging.getLogger("requests")
 REQUEST_LIMIT = 40
-NOT_REVIEWED = {"status": "not_reviewed", "reason": "Phase 5 adds the reviewer."}
+MAX_REVIEW_ROUNDS = int(os.getenv("PYDANTIC_AI_REVIEW_ROUNDS", "2"))
+CHECK_RULE = re.compile(r"[HC]\d{1,2}")  # the designer's hard and check rules: check_spec's job, not the reviewer's
 DESIGNER_DIR = Path(__file__).resolve().parent.parent / "designer"
 _running: set[str] = set()
 
@@ -150,6 +155,9 @@ async def run_request(deps: AppDeps, request_id: str, usage: RunUsage | None = N
                 await _fail(deps, request, f"The {step} step died: {exc}")
                 raise
             request.steps[step] = output
+            if step == "review" and _sends_back(request):
+                log.info("The reviewer sent %s back to the designer (round %s)", request_id, len(request.rounds) + 1)
+                _start_round(request)
             _count_requests(request, run_usage, used_before, requests_at_start)
             await asyncio.to_thread(store.save_request, request)
         request.status = "done"
@@ -272,12 +280,12 @@ async def run_designer(deps: AppDeps, request: Request, designer, brief, previou
     report = AnalysisReport.model_validate(request.steps["analyze"])
     _check_budget(request, budget)
     designed = await design_chart(report, designer, brief, usage=usage, clarifications=pairs(request),
-                                  previous=previous, revision=round_)
+                                  previous=previous, revision=round_, review=request.review_feedback)
     if designed.revision is not None and request.revision is None:
         report, round_, note = await revise_analysis(deps, request, report, designed.revision, usage, budget)
         _check_budget(request, budget)
         designed = await design_chart(report, designer, brief, usage=usage, clarifications=pairs(request),
-                                      previous=previous, revision=round_)
+                                      previous=previous, revision=round_, review=request.review_feedback)
         designed.warnings.insert(0, note)
     if designed.revision is not None:
         designed.warnings.append("The designer asked for a second table revision, which is not allowed: "
@@ -326,7 +334,48 @@ async def render(deps: AppDeps, request: Request, usage: RunUsage, budget: int |
 
 
 async def review(deps: AppDeps, request: Request, usage: RunUsage, budget: int | None) -> dict[str, Any]:
-    return dict(NOT_REVIEWED)
+    """The reviewer's look at the picture. No reviewer, no picture, or a reviewer that cannot finish: not reviewed."""
+    design_step, render_step = request.steps["design"], request.steps["render"]
+    if "skipped" in design_step or "skipped" in render_step:
+        return {"status": "not_reviewed", "reason": design_step.get("skipped") or render_step.get("skipped")}
+    if deps.reviewer is None:
+        return {"status": "not_reviewed", "reason": "No reviewer is configured."}
+    _check_budget(request, budget)
+    report = AnalysisReport.model_validate(request.steps["analyze"])
+    designed = DesignReport.model_validate(design_step)
+    rendered = render_step["rendered"]
+    png = deps.store.directory / "renders" / render_step["render_id"] / "chart.png"
+    brief = (await asyncio.to_thread(deps.store.get_upload, request.dataset_id)).brief
+    reviewed = await review_chart(
+        report, designed.design, png, deps.reviewer, brief=brief,
+        compromises=[Compromise.model_validate(c) for c in rendered.get("compromises", [])],
+        warnings=[*report.warnings, *designed.warnings], round_=len(request.rounds) + 1, usage=usage,
+        clarifications=pairs(request),
+    )
+    if reviewed.review is None:
+        return {"status": "not_reviewed", "reason": "; ".join(reviewed.warnings), "warnings": reviewed.warnings,
+                "model": reviewed.model}
+    # A finding on a hard or check rule is the designer's checks' job; count it as a defect of the checks, not of the chart.
+    for finding in reviewed.review.findings:
+        if CHECK_RULE.fullmatch(finding.rule):
+            log.warning("The reviewer caught %s on %s, which check_spec should have refused: %s",
+                        finding.rule, request.request_id, finding.message)
+    return {"status": "reviewed", "verdict": reviewed.review.verdict, "round": reviewed.round,
+            "review": reviewed.review.model_dump(mode="json"), "model": reviewed.model, "warnings": reviewed.warnings}
+
+
+def _sends_back(request: Request) -> bool:
+    return request.steps["review"].get("verdict") == "revise" and len(request.rounds) < MAX_REVIEW_ROUNDS
+
+
+def _start_round(request: Request) -> None:
+    """Move the round the reviewer refused into history and hand its findings to the next design step."""
+    review = request.steps["review"]["review"]
+    designed = DesignReport.model_validate(request.steps["design"])
+    request.rounds.append(Round(design=request.steps.pop("design"), render=request.steps.pop("render"),
+                                review=request.steps.pop("review")))
+    request.review_feedback = ReviewRound(spec=designed.design.spec, summary=review["summary"],
+                                          findings=[Finding.model_validate(f) for f in review["findings"]])
 
 
 async def deliver(deps: AppDeps, request: Request, usage: RunUsage, budget: int | None) -> dict[str, Any]:
@@ -337,6 +386,12 @@ async def deliver(deps: AppDeps, request: Request, usage: RunUsage, budget: int 
         return {"artifact_id": existing.artifact_id}
     report = AnalysisReport.model_validate(request.steps["analyze"])
     design_step, render_step, profile_step = request.steps["design"], request.steps["render"], request.steps["profile"]
+    review_step = request.steps["review"]
+    report.warnings.extend(review_step.get("warnings", []))
+    if review_step.get("verdict") == "revise":
+        report.warnings.append("The reviewer's findings were not all fixed within the review rounds; the open ones "
+                               "are listed under Review.")
+    review_record = {**review_step, "rounds": [r.review for r in request.rounds]}
     if "skipped" not in design_step:
         report.warnings.extend(design_step.get("warnings", []))
     designed = DesignReport.model_validate(design_step) if "skipped" not in design_step else None
@@ -354,11 +409,12 @@ async def deliver(deps: AppDeps, request: Request, usage: RunUsage, budget: int 
         report=report, design=designed.design if designed else None, compromises=compromises,
         no_chart_reason=design_step.get("skipped") or render_step.get("skipped"),
         render_id=render_step.get("render_id"), png_url=render_step.get("png_url"), html_url=render_step.get("html_url"),
-        review=request.steps["review"], clarifications=list(request.clarifications),
+        review=review_record, clarifications=list(request.clarifications),
         lineage=Lineage(profile_created_at=profile_step.get("created_at"),
                         brief_fingerprint=profile_step.get("brief_fingerprint"),
                         catalogue_version=catalogue_version, rules_version=rules_version,
-                        analyst_model=report.model, designer_model=designed.model if designed else None),
+                        analyst_model=report.model, designer_model=designed.model if designed else None,
+                        reviewer_model=review_step.get("model")),
         created_at=now(),
     )
     await asyncio.to_thread(store.save_artifact, artifact)
