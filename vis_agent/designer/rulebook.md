@@ -67,7 +67,7 @@ Intent from the question:
 - relation: how two measures move together ("relate", "versus", "against", "علاقة", "مقابل").
 - share: a proportion of one whole ("share", "percentage", "proportion", "نسبة", "حصة").
 
-Choosing when the rules cannot:
+Preferences, when the rules leave a choice (the reviewer weighs them; they are not requirements):
 - An indicator is rejected for compare, trend, composition, and distribution intents. Keep the intent
   that reflects the question; choose a fitting table or chart instead of relabeling the intent to make
   a preferred chart pass. Complete wide breakdowns use a chart with fold when its bindings preserve the
@@ -119,11 +119,11 @@ Filling the spec:
 - When the result holds a code column beside its label column (F beside Female), bind the label and
   leave the code out; it is not a group.
 - fold: when the result holds two or more measures of one unit side by side (injuries and deaths per month, males and females per region) and no label column names the series, list those columns under fold and leave group and value unbound; measures of different units go on a dual_axes instead.
-- title: in the caller's language; say what is shown, where, and when; no numbers.
+- title: in the caller's language; say what is shown, where, and when; no numbers, except a year or a number the question itself names.
 - description: one sentence saying what the picture shows, for a person who cannot see it.
 - language: ar for an Arabic caller, en otherwise.
 - On charts with axes, axisXTitle names the horizontal axis and axisYTitle the vertical axis, each as the column's meaning with its unit in brackets when it has one. Indicators have no axes.
-- Bracket only real units (SAR, %, km, kg); a count has no unit, so write no brackets for it.
+- Bracket only real units (SAR, %, km, kg, and a counted noun such as person or شخص); a generic count has no unit, so write no brackets for it. The code removes generic count markers (count, number, عدد) before you see the columns.
 - sort: value desc for comparisons and ranks; none over time and ordinals; category asc when the order
   of the labels carries meaning.
 - limit with the Other row when a comparison has more than about twenty categories, and the number the

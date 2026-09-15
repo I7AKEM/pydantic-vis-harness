@@ -17,7 +17,7 @@ from pydantic_ai.tools import ToolDefinition
 from pydantic_ai.usage import RunUsage, UsageLimits
 
 from vis_agent.analyst.agent import ARABIC
-from vis_agent.analyst.checks import summary_numbers_exist
+from vis_agent.analyst.checks import numbers_in, summary_numbers_exist
 from vis_agent.analyst.models import (
     Aggregate, AnalysisReport, AnalysisRevision, Cell, Clarification, ColumnKind, RevisionRound,
 )
@@ -29,7 +29,7 @@ from vis_agent.render.base import RENDERERS, Rendered
 from . import models
 from .catalogue import CATALOGUE
 from .check import check_spec as run_check
-from .models import Candidate, Design, DesignReport, PreviousDesign, Rejection, SpecCheck
+from .models import Candidate, Compromise, Design, DesignReport, PreviousDesign, Rejection, SpecCheck
 from .recommend import recommend_charts as rank_charts
 from .shape import describe
 from .syntax import KEYS, STYLE_KEYS, parse, to_text
@@ -280,8 +280,13 @@ def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -
         # A second failed delivery must stop here, without another repair turn.
         raise UnexpectedModelBehavior(message)
     deps.last_check = check
+    compromises = list(check.compromises)
+    title_numbers = sorted(numbers_in(parsed.title or "") - numbers_in(wording_context(deps)))
+    if title_numbers:
+        compromises.append(Compromise(key="title", message=f"The title carries {', '.join(title_numbers)}; "
+                                                          "a title says what is shown, not how much."))
     return Design(spec=check.canonical, chart=parsed.type, intent=deps.intent,
-                  explanation=explanation, considered=list(deps.considered), compromises=check.compromises)
+                  explanation=explanation, considered=list(deps.considered), compromises=compromises)
 
 
 def ask_clarification(ctx: RunContext[DesignerDeps], question: str, reason: str) -> Clarification:

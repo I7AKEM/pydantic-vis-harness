@@ -30,8 +30,6 @@ def _present_keys(spec: Spec) -> list[str]:
     # Style palettes serialize as top-level palettes; backgroundColor keeps style.
     if spec.background_color is not None:
         keys.append("style")
-    if spec.language == "ar" and "direction" not in keys:
-        keys.append("direction")
     return keys
 
 

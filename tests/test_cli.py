@@ -241,7 +241,7 @@ def test_check_subcommand_skips_rules_without_report(report_path, tmp_path, caps
 
 def test_check_subcommand_prints_compromises(report_path, tmp_path, capsys):
     spec = tmp_path / "donut.vis"
-    spec.write_text(DONUT + "language ar\n")
+    spec.write_text(DONUT + "language ar\ndirection rtl\n")
     assert cli.main(["check", str(spec), "--report", str(report_path)]) == 0
     printed = json.loads(capsys.readouterr().out)
     assert printed["ok"] and printed["canonical"]

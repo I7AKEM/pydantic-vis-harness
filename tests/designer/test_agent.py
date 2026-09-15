@@ -266,7 +266,7 @@ def test_happy_path(starting_requests):
     assert result.design.spec == result.check.canonical
     assert result.design.chart == "donut" and result.design.intent == "share"
     assert result.design.considered == considered
-    assert any("legend stays" in c.message for c in result.design.compromises)
+    assert result.design.compromises == []
     assert result.check.ok and result.requests == 3 and result.check_calls == 1
     assert result.model.startswith("function") and result.clarification is None
     assert result.warnings == []

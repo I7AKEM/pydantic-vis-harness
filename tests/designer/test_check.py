@@ -17,13 +17,13 @@ MULTI_FOLD = ("vis multi_line\ntitle Injuries and deaths\ndescription Monthly in
               "  time month\nfold\n  - injuries\n  - deaths\n")
 
 
-def test_passing_arabic_donut_is_canonical_with_legend_compromise():
+def test_passing_arabic_donut_is_canonical_without_direction_compromise():
     text = "vis donut\ntitle النسبة\ndescription النسبة حسب الجنس\nlanguage ar\nbind\n  category label\n  value share\n"
     check = check_spec(text, *gender_share())
     assert check.ok
     assert check.violations == []
     assert check.canonical == to_text(parse(text))
-    assert any("legend" in c.message for c in check.compromises)
+    assert check.compromises == []
 
 
 def test_syntax_error_stops_before_semantic_checks():
@@ -211,10 +211,10 @@ def test_renderer_rejections_and_degradations_are_both_reported(monkeypatch):
 
 
 @pytest.mark.parametrize("extra, expected", [
-    ("", False), ("language ar\n", True), ("direction rtl\n", True),
+    ("", False), ("language ar\n", False), ("direction rtl\n", True),
     ("direction ltr\n", True), ("language ar\ndirection ltr\n", True),
 ])
-def test_direction_presence_includes_arabic_default(extra, expected):
+def test_direction_compromise_requires_explicit_direction(extra, expected):
     check = check_spec(COLUMN + extra, *cities())
     assert check.ok
     assert any(c.key == "direction" for c in check.compromises) is expected
