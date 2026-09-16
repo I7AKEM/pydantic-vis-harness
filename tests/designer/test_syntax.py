@@ -189,3 +189,39 @@ def test_duplicate_column_label_is_not_last_value_wins():
     with pytest.raises(SpecError) as error:
         parse('vis indicator\ncolumnLabels\n  - ["total", "Total"]\n  - ["total", "Changed"]\n')
     assert error.value.issues[0].line == 4 and "duplicate column label" in error.value.issues[0].message
+
+
+def test_value_labels_round_trip_preserves_column_scope_and_original_keys():
+    spec = Spec(type="bar", column_labels={"gender": "الجنس", "marital_status": "الحالة الاجتماعية"},
+                value_labels={"gender": {"M": "ذكور", "F": "إناث"},
+                              "marital_status": {"M": "متزوج"},
+                              'store "code"': {"001": 'متجر "أول"', " A ": "الفرع أ"}})
+    text = to_text(spec)
+    assert 'valueLabels\n  - ["gender", "M", "ذكور"]\n' in text
+    assert parse(text) == spec
+    assert to_text(parse(text)) == text
+    assert parse(text).value_labels['store "code"']["001"] == 'متجر "أول"'
+    assert " A " in parse(text).value_labels['store "code"']
+
+
+@pytest.mark.parametrize("record", [
+    '- ["gender", "M"]', '- ["gender", "M", "Male", "extra"]',
+    '- ["gender", 1, "Male"]', '- ["gender", null, "Unknown"]',
+    '- ["", "M", "Male"]', '- ["gender", "M", " "]',
+    '["gender", "M", "Male"]', '- not-json',
+])
+def test_malformed_value_labels_have_the_source_line(record):
+    with pytest.raises(SpecError) as error:
+        parse("vis table\nvalueLabels\n  " + record + "\n")
+    assert error.value.issues[0].line == 3
+    assert "valueLabels records" in error.value.issues[0].message
+
+
+def test_value_labels_reject_duplicate_column_value_pairs_only():
+    text = ('vis table\nvalueLabels\n  - ["gender", "M", "Male"]\n'
+            '  - ["status", "M", "Married"]\n')
+    assert parse(text).value_labels == {"gender": {"M": "Male"}, "status": {"M": "Married"}}
+    with pytest.raises(SpecError) as error:
+        parse(text + '  - ["gender", "M", "Different"]\n')
+    assert error.value.issues[0].line == 5
+    assert "duplicate value label" in error.value.issues[0].message

@@ -177,7 +177,7 @@ def _share_partition_check(connection, column: ResultColumn, columns: list[Resul
 
 
 def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[ResultColumn],
-                 result: QueryResult) -> list[ProfileCheck]:
+                 result: QueryResult, *, table_name: str | None = None) -> list[ProfileCheck]:
     checks: list[ProfileCheck] = []
     if result.row_count == 0:
         checks.append(_check(None, "result_not_empty", "error", False,
@@ -193,7 +193,7 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
     brief = profile.source.brief
     index = {name: i for i, name in enumerate(result.columns)}
     values_of = {c.name: [row[index[c.name]] for row in result.rows] for c in columns}
-    table = quote_identifier(store.table_name(profile.source.dataset_id))
+    table = quote_identifier(table_name or store.table_name(profile.source.dataset_id))
 
     with store.connect() as connection:
         for column in columns:
@@ -293,20 +293,37 @@ def check_result(store: DatasetStore, profile: DatasetProfile, columns: list[Res
             if (source is not None and source.ordinal_pattern and column.aggregate == "none"
                     and column.kind in GROUPING_KINDS and column.kind != "time"):
                 # The profiler measured the scale ("under 15 < 15-30 < ... < over 60"); the result must follow it,
-                # not the text order, which puts digits before letters.
+                # not the text order, which puts digits before letters. Check the sequence inside the grouping
+                # columns that precede this ordinal column. A derived one-row-per-group label (for example the
+                # dominant education for each city and wealth band) has no ordinal sequence to validate.
                 levels = source.ordinal_pattern.split(" < ")
-                seen: list[str] = []
-                for value in values:
-                    if value is not None and str(value) not in seen:
+                ordinal_index = index[column.name]
+                partition_indices = [
+                    index[other.name] for other in columns[:ordinal_index]
+                    if other.kind in GROUPING_KINDS
+                ]
+                partitions: dict[tuple, list[str]] = {}
+                for row in result.rows:
+                    value = row[ordinal_index]
+                    if value is None:
+                        continue
+                    key = tuple(row[i] for i in partition_indices)
+                    seen = partitions.setdefault(key, [])
+                    if str(value) not in seen:
                         seen.append(str(value))
-                if all(v in levels for v in seen):
-                    positions = [levels.index(v) for v in seen]
-                    if positions != sorted(positions):
-                        when = " ".join(f"WHEN {level!r} THEN {i + 1}" for i, level in enumerate(levels))
-                        checks.append(_check(column.name, "ordinal_in_order", "error", False,
-                                             f"{column.name}: the rows do not follow the column's scale "
-                                             f"{source.ordinal_pattern}. Order by the scale, not the text: "
-                                             f"ORDER BY CASE {quote_identifier(source.name)} {when} END."))
+                out_of_order = False
+                for seen in partitions.values():
+                    if len(seen) > 1 and all(value in levels for value in seen):
+                        positions = [levels.index(value) for value in seen]
+                        if positions != sorted(positions):
+                            out_of_order = True
+                            break
+                if out_of_order:
+                    when = " ".join(f"WHEN {level!r} THEN {i + 1}" for i, level in enumerate(levels))
+                    checks.append(_check(column.name, "ordinal_in_order", "error", False,
+                                         f"{column.name}: the rows do not follow the column's scale "
+                                         f"{source.ordinal_pattern}. Order by the scale within each preceding group, "
+                                         f"not by text: ORDER BY CASE {quote_identifier(source.name)} {when} END."))
 
             if column.kind == "time":
                 present = [v for v in values if v is not None]

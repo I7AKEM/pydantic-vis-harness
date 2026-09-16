@@ -35,7 +35,9 @@
       "rating": "recommended",
       "keys": [
         "axisXTitle",
-        "axisYTitle"
+        "axisYTitle",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "draw": {
@@ -78,7 +80,9 @@
       "rating": "recommended",
       "keys": [
         "axisXTitle",
-        "axisYTitle"
+        "axisYTitle",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "draw": {
@@ -131,7 +135,9 @@
       "keys": [
         "axisXTitle",
         "axisYTitle",
-        "fold"
+        "fold",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "group_max": 10,
@@ -188,7 +194,9 @@
         "axisXTitle",
         "axisYTitle",
         "percent",
-        "fold"
+        "fold",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "group_max": 10,
@@ -241,7 +249,9 @@
       "keys": [
         "axisXTitle",
         "axisYTitle",
-        "fold"
+        "fold",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "group_max": 10,
@@ -295,7 +305,9 @@
         "axisXTitle",
         "axisYTitle",
         "percent",
-        "fold"
+        "fold",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "group_max": 10,
@@ -344,7 +356,9 @@
         "zero",
         "axisYMin",
         "axisYMax",
-        "axisYScale"
+        "axisYScale",
+        "columnLabels",
+        "valueLabels"
       ],
       "min_points": 3,
       "draw": {
@@ -400,7 +414,9 @@
         "axisYMin",
         "axisYMax",
         "axisYScale",
-        "fold"
+        "fold",
+        "columnLabels",
+        "valueLabels"
       ],
       "min_points": 3,
       "group_max": 10,
@@ -442,7 +458,9 @@
       "keys": [
         "axisXTitle",
         "axisYTitle",
-        "zero"
+        "zero",
+        "columnLabels",
+        "valueLabels"
       ],
       "min_points": 3,
       "additive_value": true,
@@ -496,7 +514,9 @@
         "axisYTitle",
         "percent",
         "zero",
-        "fold"
+        "fold",
+        "columnLabels",
+        "valueLabels"
       ],
       "min_points": 3,
       "group_max": 10,
@@ -540,7 +560,10 @@
         "value": "value"
       },
       "rating": "caution",
-      "keys": [],
+      "keys": [
+        "columnLabels",
+        "valueLabels"
+      ],
       "category_min": 2,
       "category_max": 6,
       "additive_value": true,
@@ -583,7 +606,9 @@
       },
       "rating": "caution",
       "keys": [
-        "innerRadius"
+        "innerRadius",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_min": 2,
       "category_max": 6,
@@ -643,7 +668,9 @@
         "axisYMax",
         "axisYScale",
         "axisXMin",
-        "axisXMax"
+        "axisXMax",
+        "columnLabels",
+        "valueLabels"
       ],
       "draw": {
         "type": "scatter",
@@ -675,7 +702,9 @@
       "keys": [
         "axisXTitle",
         "axisYTitle",
-        "binNumber"
+        "binNumber",
+        "columnLabels",
+        "valueLabels"
       ],
       "min_rows": 30,
       "raw_values": true,
@@ -722,7 +751,9 @@
         "axisYTitle",
         "zero",
         "axisYMin",
-        "axisYMax"
+        "axisYMax",
+        "columnLabels",
+        "valueLabels"
       ],
       "min_rows": 30,
       "raw_values": true,
@@ -763,7 +794,10 @@
         "value": "value"
       },
       "rating": "recommended",
-      "keys": [],
+      "keys": [
+        "columnLabels",
+        "valueLabels"
+      ],
       "category_max": 50,
       "additive_value": true,
       "draw": {
@@ -811,7 +845,10 @@
         "group": "group"
       },
       "rating": "caution",
-      "keys": [],
+      "keys": [
+        "columnLabels",
+        "valueLabels"
+      ],
       "category_min": 3,
       "category_max": 12,
       "group_max": 5,
@@ -868,7 +905,9 @@
         "axisYTitle",
         "zero",
         "axisYMin",
-        "axisYMax"
+        "axisYMax",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "draw": {
@@ -908,7 +947,10 @@
         "value": "value"
       },
       "rating": "caution",
-      "keys": [],
+      "keys": [
+        "columnLabels",
+        "valueLabels"
+      ],
       "category_min": 20,
       "draw": {
         "type": "word-cloud",
@@ -935,7 +977,10 @@
       "roles": {},
       "fields": {},
       "rating": "fallback",
-      "keys": [],
+      "keys": [
+        "columnLabels",
+        "valueLabels"
+      ],
       "draw": {
         "type": "spreadsheet",
         "options": {}
@@ -958,7 +1003,8 @@
       "rating": "recommended",
       "keys": [
         "cards",
-        "columnLabels"
+        "columnLabels",
+        "valueLabels"
       ],
       "draw": {
         "type": "indicator",

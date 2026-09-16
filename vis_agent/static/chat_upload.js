@@ -20,10 +20,10 @@
     const button = document.createElement("button");
     button.type = "button";
     button.textContent = "Upload CSV";
-    button.title = "Upload a CSV and profile it in this conversation";
+    button.title = "Upload a CSV to visualize in this conversation";
     const status = document.createElement("span");
     status.setAttribute("role", "status");
-    status.textContent = "Upload and profile a dataset";
+    status.textContent = "Upload a CSV to visualize";
     controls.append(button, picker, status);
     textarea.after(controls);
 
@@ -45,7 +45,7 @@
 
         const filename = result.filename.replace(/[\r\n]/g, " ").replace(/[\\[\]`*_]/g, "\\$&");
         const reference = `[${filename}](/datasets/${result.dataset_id}/profile)`;
-        const question = textarea.value.trim() || "Profile this CSV and summarize the result.";
+        const question = textarea.value.trim() || "Visualize this supplied CSV using its brief and column meanings.";
         const message = `${question}\n\nAttached CSV: ${reference}`;
 
         // Use native input/form events so the existing chat sends and saves the message normally.

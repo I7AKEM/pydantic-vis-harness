@@ -33,12 +33,12 @@ def delivering(spec):
 SPEC = "vis bar\ntitle Top 5 cities by violations\ndescription Cities ranked by violations\nbind\n  category city\n  value violations\nsort value desc\n"
 
 
-def test_a_number_in_the_title_the_question_did_not_name_is_a_compromise():
+def test_title_wording_is_an_expert_decision_not_a_numeric_regex_gate():
     designer = create_designer("test")
     with designer.override(model=FunctionModel(delivering(SPEC))):
         designed = asyncio.run(design_chart(report("Top five cities"), designer))
         named = asyncio.run(design_chart(report("Top 5 cities"), designer))
-    assert [c.key for c in designed.design.compromises] == ["title"] and "5" in designed.design.compromises[0].message
+    assert "title" not in [c.key for c in designed.design.compromises]
     assert "title" not in [c.key for c in named.design.compromises]
 
 

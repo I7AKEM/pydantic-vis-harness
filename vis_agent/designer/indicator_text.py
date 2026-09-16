@@ -5,6 +5,7 @@ from decimal import Decimal, ROUND_HALF_UP, localcontext
 from typing import Literal, TypedDict
 
 from vis_agent.analyst.models import QueryResult, ResultColumn
+from vis_agent.labels import display_value
 from vis_agent.units import canonical_unit, indicator_unit
 
 from .indicator import indicator_data_violations
@@ -109,7 +110,7 @@ def resolve_cards(spec: Spec, columns: list[ResultColumn], result: QueryResult) 
     cells = dict(zip(result.columns, result.rows[0]))
     # Keep direct renderer calls subject to the same finite-value/share-range
     # checks as normal checked delivery, while binding metadata by identity.
-    if issues := indicator_data_violations([metadata[name] for name in result.columns], result):
+    if issues := indicator_data_violations([metadata[name] for name in result.columns], result, policy=False):
         raise ValueError("; ".join(issue.message for issue in issues))
     unavailable = "غير متاح" if spec.language == "ar" else "Unavailable"
 
@@ -144,7 +145,7 @@ def resolve_cards(spec: Spec, columns: list[ResultColumn], result: QueryResult) 
                     raise ValueError(f"indicator context {name!r} must identify the result scope")
                 # In particular, do not shorten, parse or transliterate Hijri text.
                 context.append(ContextText(column=name, label=spec.column_labels.get(name, column.meaning or name),
-                                           text=unavailable if cell is None else str(cell)))
+                                           text=unavailable if cell is None else str(display_value(spec, name, cell))))
             cards.append(CardText(value=metric(card.value, card.format), context=context,
                                   support=[metric(name) for name in card.support]))
     except KeyError as error:

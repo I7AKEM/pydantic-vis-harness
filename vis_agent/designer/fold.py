@@ -38,7 +38,7 @@ def _unique(name: str, taken: set[str]) -> str:
 
 
 def fold(columns: list[ResultColumn], result: QueryResult, names: list[str], language: str = "en") -> Folded:
-    """One row per source row and folded column: the series column holds the folded column's meaning, the value column its cell."""
+    """One row per source row and measure, using the raw column name as its series identity."""
     by_name = {column.name: column for column in columns}
     if len(names) < 2:
         raise FoldError("fold needs two or more columns.")
@@ -75,8 +75,8 @@ def fold(columns: list[ResultColumn], result: QueryResult, names: list[str], lan
     rows = []
     for row in result.rows:
         base = [row[i] for i in kept_index]
-        for label, index in zip(labels, fold_index):
-            rows.append([*base, label, row[index]])
+        for name, index in zip(names, fold_index):
+            rows.append([*base, name, row[index]])
     types = [result.types[i] for i in kept_index] + ["VARCHAR", result.types[fold_index[0]]]
     folded_result = QueryResult(sql=result.sql, columns=[c.name for c in folded_columns], types=types, rows=rows,
                                 row_count=result.row_count * len(names), seconds=result.seconds)

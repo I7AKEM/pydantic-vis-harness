@@ -4,6 +4,8 @@ from collections.abc import Sequence
 
 from vis_agent.analyst.models import ResultColumn
 from vis_agent.designer.models import Compromise
+from vis_agent.models import DisplayLabels
+from vis_agent.labels import display_value
 
 CARD_ROWS = 20
 LABELS = {
@@ -20,10 +22,12 @@ def _cell(value) -> str:
     return "" if value is None else str(value).replace("|", "\\|").replace("\n", " ")
 
 
-def _table(columns: Sequence[ResultColumn], rows: Sequence[Sequence], total: int, labels: dict) -> str:
-    headers = [column.meaning.strip() or column.name for column in columns]
+def _table(columns: Sequence[ResultColumn], rows: Sequence[Sequence], total: int, labels: dict,
+           display: DisplayLabels) -> str:
+    headers = [display.column_labels.get(column.name, column.meaning.strip() or column.name) for column in columns]
     lines = ["| " + " | ".join(_cell(h) for h in headers) + " |", "|" + "---|" * len(headers)]
-    lines += ["| " + " | ".join(_cell(v) for v in row) + " |" for row in list(rows)[:CARD_ROWS]]
+    lines += ["| " + " | ".join(_cell(display_value(display, c.name, v)) for c, v in zip(columns, row)) + " |"
+              for row in list(rows)[:CARD_ROWS]]
     return "\n".join(lines) + "\n\n" + labels["rows"].format(shown=min(len(rows), CARD_ROWS), total=total)
 
 
@@ -45,7 +49,7 @@ def card(*, language: str, png_url: str | None = None, no_chart_reason: str | No
          explanation: str | None = None, columns: Sequence[ResultColumn] = (), rows: Sequence[Sequence] = (),
          row_count: int = 0, assumptions: Sequence[str] = (), compromises: Sequence[Compromise] = (),
          warnings: Sequence[str] = (), review: dict | None = None, artifact_id: str | None = None,
-         request_id: str | None = None) -> str:
+         request_id: str | None = None, display_labels: DisplayLabels | None = None) -> str:
     """Markdown in the caller's language: picture, summary, explanation, table with its count, assumptions,
     compromises, warnings, review, and the IDs. Every part the lead's instructions once asked the model to assemble."""
     labels = LABELS.get(language, LABELS["English"])
@@ -53,7 +57,7 @@ def card(*, language: str, png_url: str | None = None, no_chart_reason: str | No
         f"![chart]({png_url})" if png_url else f"**{labels['no_chart']}**: {no_chart_reason}" if no_chart_reason else "",
         summary or "",
         explanation or "",
-        _table(columns, rows, row_count, labels) if columns else "",
+        _table(columns, rows, row_count, labels, display_labels or DisplayLabels()) if columns else "",
         _section(labels["assumptions"], list(assumptions)),
         _section(labels["compromises"], [c.message for c in compromises]),
         _section(labels["warnings"], list(warnings)),

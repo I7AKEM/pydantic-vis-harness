@@ -305,3 +305,14 @@ def test_an_ordinal_column_must_follow_its_scale(store):
                                    f"GROUP BY 1, 2 ORDER BY 1, CASE age_group WHEN 'أقل من 15' THEN 1 WHEN '15-30' THEN 2 "
                                    f"WHEN '30-45' THEN 3 WHEN '45-60' THEN 4 WHEN 'أكثر من 60' THEN 5 END")
     assert failed_checks(check_result(store, profile, columns, by_scale)) == []
+
+    dominant = run(
+        store, dataset,
+        f'SELECT person_type, arg_max(age_group, population_count) AS dominant_age '
+        f'FROM "{dataset}" GROUP BY 1 ORDER BY 1',
+    )
+    dominant_columns = [
+        column("person_type", "category", "person_type"),
+        column("dominant_age", "ordinal", "age_group"),
+    ]
+    assert failed_checks(check_result(store, profile, dominant_columns, dominant), "error") == []

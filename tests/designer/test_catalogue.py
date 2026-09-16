@@ -64,4 +64,6 @@ def test_prompt_text_lists_every_entry():
     for entry in CATALOGUE.entries:
         assert entry.name in text
     assert "cards: one to six records" in text
+    assert "chart-specific config=" in text
+    assert "innerRadius" in text
     assert CATALOGUE.find("KPI").name == "indicator"

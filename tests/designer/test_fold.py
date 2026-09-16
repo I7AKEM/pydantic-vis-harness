@@ -21,7 +21,7 @@ def test_fold_makes_one_row_per_source_row_and_measure():
     series, value = folded.columns[1], folded.columns[2]
     assert series.kind == "category" and series.unit is None and series.aggregate == "none"
     assert value.kind == "measure" and value.unit == "person" and value.aggregate == "sum"
-    assert folded.result.rows[:2] == [["2025-01-01", "Total injuries", 15], ["2025-01-01", "Total deaths", 2]]
+    assert folded.result.rows[:2] == [["2025-01-01", "injuries", 15], ["2025-01-01", "deaths", 2]]
     assert folded.result.row_count == 6 and folded.result.types == ["DATE", "VARCHAR", "HUGEINT"]
     assert folded.result.columns == ["month", "Series", "Value"]
 

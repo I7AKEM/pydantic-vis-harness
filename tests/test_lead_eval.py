@@ -70,6 +70,56 @@ def test_first_call_and_matching_return():
     assert scored['tools_called'] == ['profile_csv', 'revise']
 
 
+def test_prepared_csv_scores_the_leads_publication_and_preserved_values():
+    expected = {'tool': 'draw', 'outcome': 'artifact', 'prepared_csv': True,
+                'source_columns': ['region', 'sales'], 'source_rows': [['North', 10]],
+                'charts': ['bar'], 'require_delivery': True, 'bindings': {'category': 'region', 'value': 'sales'},
+                'axis_titles': {'bar': {'x': 'Sales', 'y': 'Region'}, 'column': {'x': 'Region', 'y': 'Sales'}}}
+    artifact = {'artifact_id': 'art_a', 'chart': 'bar', 'columns': [{'name': 'region'}, {'name': 'sales'}],
+                'rows': [['North', 10]], 'png_url': '/renders/a/chart.png',
+                'spec': 'vis bar\naxisXTitle Sales\naxisYTitle Region\nbind\n  category region\n  value sales'}
+    captured = messages('draw', {'request_id': 'rq_a', 'table': {'row_count': 1}})
+    captured += messages('design_visualization', {'request_id': 'rq_a', 'design': {'chart': 'bar'}})
+    captured += messages('render_visualization', {'request_id': 'rq_a', 'render': {'png_url': artifact['png_url']}})
+    captured += messages('publish_visualization', {'request_id': 'rq_a', 'artifact': artifact})
+    scored = runner().score_turn(expected, captured, '![Chart](/renders/a/chart.png)')
+    assert all(scored[key] for key in ('tool_ok', 'outcome_ok', 'source_fidelity_ok', 'delegation_ok',
+                                       'flow_ok', 'chart_ok', 'binding_ok', 'axis_titles_ok', 'delivery_ok'))
+    artifact['spec'] = artifact['spec'].replace('vis bar', 'vis column')
+    assert runner().score_turn(expected, captured)['axis_titles_ok'] is False
+    artifact['spec'] = 'vis bar\nbind\n  category sales\n  value region'
+    assert runner().score_turn(expected, captured)['binding_ok'] is False
+    artifact['rows'] = [['North', 100]]
+    assert runner().score_turn(expected, captured)['source_fidelity_ok'] is False
+    captured += messages('consult_analyst', {'request_id': 'rq_a'})
+    assert runner().score_turn(expected, captured)['delegation_ok'] is False
+
+
+def test_prepared_csv_cases_have_exact_source_expectations_and_latency_targets():
+    cases = runner().load_cases(ROOT / 'evals/lead/prepared/cases.json')
+    assert len(cases) == 6
+    for case in cases:
+        assert (ROOT / case['csv']).is_file()
+        assert case['brief']['producer_agent'] == 'data-agent'
+        turn = case['turns'][0]
+        assert turn['prepared_csv'] and turn['source_rows'] and turn['source_columns']
+        assert turn['max_seconds'] == 60
+
+
+def test_explicit_review_requires_a_review_call_before_publication():
+    expected = {'tool': 'draw', 'outcome': 'artifact', 'review_required': True}
+    artifact = {'artifact_id': 'art_a', 'review': {'status': 'reviewed'}}
+    captured = messages('draw', {'request_id': 'rq_a'})
+    captured += messages('publish_visualization', {'request_id': 'rq_a', 'artifact': artifact})
+    assert runner().score_turn(expected, captured)['review_ok'] is False
+    captured = messages('draw', {'request_id': 'rq_a'})
+    captured += messages('review_visualization', {'request_id': 'rq_a', 'review': {'status': 'reviewed'}})
+    captured += messages('publish_visualization', {'request_id': 'rq_a', 'artifact': artifact})
+    assert runner().score_turn(expected, captured)['review_ok'] is True
+    artifact['review']['status'] = 'not_reviewed'
+    assert runner().score_turn(expected, captured)['review_ok'] is False
+
+
 @pytest.mark.parametrize('tool,content,outcome,args', [
     ('draw', {'artifact': None}, 'artifact', {}),
     ('draw', {'artifact': None, 'clarification': {'question': 'Which?'}}, 'chart', {}),
@@ -110,9 +160,6 @@ def test_turn_history_and_capture(monkeypatch):
     from pydantic_ai.models.function import FunctionModel
     from pydantic_ai.messages import TextPart
     module = runner()
-    async def profile(*args):
-        pass
-    monkeypatch.setattr(module, 'profile_dataset', profile)
     histories = []
     def respond(history, info):
         histories.append(history)
@@ -246,8 +293,11 @@ def test_summary_counts_revisions_false_questions_and_heldout(capsys):
         'revisions': 1, 'false_questions': 1, 'requests': 12,
         'heldout_cases': 2, 'heldout_cases_ok': 1,
         **{key: {'passed': 0, 'checked': 0} for key in (
-            'fidelity_ok', 'delivery_ok', 'answer_fidelity_ok', 'analysis_reuse_ok', 'language_ok')},
+            'fidelity_ok', 'delivery_ok', 'answer_fidelity_ok', 'analysis_reuse_ok', 'language_ok',
+            'source_fidelity_ok', 'delegation_ok', 'chart_ok', 'binding_ok', 'axis_titles_ok', 'labels_ok',
+            'flow_ok', 'review_ok', 'latency_ok')},
         'observed_outcomes': {},
+        'latency_seconds': None,
     }
     lines = capsys.readouterr().out.splitlines()
     assert all(text in lines[0] for text in ('revisions: 1', 'false questions: 1', 'requests: 12',
@@ -282,10 +332,6 @@ def test_run_case_annotates_saved_requests_and_prints_fields(monkeypatch, capsys
     from vis_agent.requests.models import Caller
 
     module = runner()
-    async def profile(*args):
-        pass
-    monkeypatch.setattr(module, 'profile_dataset', profile)
-
     def respond(history, info):
         if not isinstance(history[-1].parts[0], ToolReturnPart):
             return ModelResponse(parts=[ToolCallPart('draw', {})])
@@ -310,17 +356,18 @@ def test_run_case_annotates_saved_requests_and_prints_fields(monkeypatch, capsys
     assert record['heldout'] is True
     assert turn['tool_ok'] and turn['outcome_ok'] and turn['revision_ok']
     assert turn['revised'] == 'Need one row per month and measure'
-    assert turn['requests_used'] == 7 and turn['questioned'] is False
+    assert turn['requests_used'] == 2 and turn['questioned'] is False
+    assert record['requests'][0]['requests_used'] == 7
     printed = capsys.readouterr().out
-    assert all(text in printed for text in ('revised=', turn['revised'], 'questioned=False', 'requests=7', 'revision=True'))
+    assert all(text in printed for text in ('revised=', turn['revised'], 'questioned=False', 'requests=2', 'revision=True'))
 
 
-def test_run_case_profile_failure_keeps_reporting_fields(monkeypatch):
+def test_run_case_csv_import_failure_keeps_reporting_fields(monkeypatch):
     import asyncio
     module = runner()
-    async def profile(*args):
-        raise RuntimeError('profile unavailable')
-    monkeypatch.setattr(module, 'profile_dataset', profile)
+    def failed_import(*args):
+        raise RuntimeError('CSV unavailable')
+    monkeypatch.setattr(module.DatasetStore, 'import_csv', failed_import)
     case = {**module.load_cases()[1], 'heldout': True}
     case['turns'] = [{**case['turns'][0], 'revision': False}]
     record = asyncio.run(module.run_case(case, None, None, None, None))
@@ -436,9 +483,6 @@ def test_lead_evidence_copies_render_assets_before_temporary_store_disappears(tm
     from pydantic_ai.models.function import FunctionModel
     from vis_agent.deps import AppDeps
     module = runner()
-    async def profile(*args):
-        pass
-    monkeypatch.setattr(module, 'profile_dataset', profile)
     def respond(history, info):
         if isinstance(history[-1].parts[0], ToolReturnPart):
             return ModelResponse(parts=[TextPart('![Chart](/renders/fixture/chart.png)')])

@@ -1,758 +1,557 @@
+"""The lead chooses the team; saved requests do not prescribe a workflow."""
+
 import asyncio
 from dataclasses import replace
-from datetime import timedelta
 
-import duckdb
 import pytest
-from pydantic_ai.messages import ModelResponse, ToolCallPart
 from pydantic_ai.models.function import FunctionModel
+from pydantic_ai.usage import UsageLimits
 
-from vis_agent.designer.agent import create_designer
-from vis_agent.render.base import RenderFailed
-from vis_agent.requests import runner
-from vis_agent.requests.models import STEPS, Caller
-from vis_agent.requests.runner import answer_request, create_request, latest_unfinished, run_request
-from tests.requests.conftest import CHART_SPEC, Counting, analyst_drive, designer_drive, prompt_of, tool_returns
+from tests.requests.conftest import call, finish, lead_drive, request_id_of, reviewer_finding, tool_returns
+from vis_agent.requests.models import Caller
+from vis_agent.requests.service import create_request, latest_unfinished, run_request
 
 CHAT = Caller(kind="chat", conversation_id="chat-1")
 
 
-def run(coro):
-    return asyncio.run(coro)
+def run(awaitable):
+    return asyncio.run(awaitable)
 
 
-def asking_drive(messages, info):
-    return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification",
-                                             args={"ask": "Which amount?", "reason": "Two amount columns."})])
+def new_request(deps, dataset_id, **kwargs):
+    return create_request(deps, type="new", dataset_id=dataset_id, question="Compare regional sales", caller=CHAT, **kwargs)
 
 
-def test_a_new_request_runs_every_step_and_delivers(deps, dataset_id, fake_models, fake_render):
-    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+def test_lead_delivers_the_upstream_table_without_an_analysis_pipeline(deps, dataset_id, fake_models, fake_render):
+    request = new_request(deps, dataset_id)
     outcome = run(run_request(deps, request.request_id))
-    assert outcome.status == "done" and outcome.clarification is None
-    saved = deps.requests.get_request(request.request_id)
-    assert list(saved.steps) == list(STEPS) and saved.language == "English"
-    assert saved.steps["review"]["status"] == "reviewed"
-    artifact = outcome.artifact
-    assert artifact.version == 1 and artifact.parent_artifact_id is None
-    assert artifact.rows == [["West", 20], ["East", 10]] and artifact.row_count == 2
-    assert artifact.chart == "bar" and artifact.png_url.startswith("/renders/") and artifact.png_url.endswith("/chart.png")
-    assert artifact.summary == "West leads with 20." and fake_render
-    full = deps.requests.get_artifact(artifact.artifact_id)
-    assert full.lineage.catalogue_version and full.lineage.rules_version and full.review["status"] == "reviewed"
-    assert full.review["verdict"] == "pass"
-    assert saved.revision is None and "analyze_before_revision" not in saved.steps
-    assert run(run_request(deps, request.request_id)).artifact.artifact_id == artifact.artifact_id
-
-
-def test_a_step_that_dies_keeps_the_checkpoints_and_resume_skips_them(deps, dataset_id, fake_models, fake_render, monkeypatch):
-    analyst, _designer = fake_models
-    real_design = runner.design_chart
-    state = {"died": False}
-
-    async def dying(*args, **kwargs):
-        if not state["died"]:
-            state["died"] = True
-            raise RuntimeError("the process died here")
-        return await real_design(*args, **kwargs)
-
-    monkeypatch.setattr(runner, "design_chart", dying)
-    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    with pytest.raises(RuntimeError):
-        run(run_request(deps, request.request_id))
-    saved = deps.requests.get_request(request.request_id)
-    assert saved.status == "failed" and "analyze" in saved.steps and "design" not in saved.steps
-    assert analyst.runs == 1
-    outcome = run(run_request(deps, request.request_id))
-    assert outcome.status == "done" and analyst.runs == 1 and outcome.artifact.chart == "bar"
-
-
-def test_a_single_number_reaches_the_designer_and_delivers_an_indicator(deps, dataset_id, fake_models, fake_render, agents):
-    _profiler, analyst, designer, _lead = agents
-    from pydantic_ai.models.function import FunctionModel
-
-    def one_number(messages, info):
-        if not tool_returns(messages):
-            prompt = prompt_of(messages)
-            return ModelResponse(parts=[ToolCallPart(tool_name="run_query", args={
-                "sql": f'SELECT sum(amount) AS total FROM {prompt["table"]}',
-                "columns": [{"name": "total", "meaning": "Total sales", "kind": "measure", "source": "amount",
-                             "aggregate": "sum"}]})])
-        return ModelResponse(parts=[ToolCallPart(tool_name="deliver_analysis", args={"summary": "The total is 30."})])
-
-    spec = "vis indicator\ntitle Total sales\ndescription Total sales across all regions\ncards\n  - value total\n"
-
-    def indicator(messages, info):
-        returns = tool_returns(messages)
-        if not returns:
-            return ModelResponse(parts=[ToolCallPart(tool_name="check_spec", args={"spec": spec})])
-        checked = returns[-1].model_response_object()
-        assert checked["ok"], checked
-        return ModelResponse(parts=[ToolCallPart(tool_name="deliver_design", args={
-            "spec": checked["canonical"], "explanation": "The card shows the total sales."})])
-
-    with analyst.override(model=FunctionModel(one_number)), designer.override(model=FunctionModel(indicator)):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total amount", caller=CHAT)
-        outcome = run(run_request(deps, request.request_id))
-    assert outcome.status == "done" and outcome.artifact.chart == "indicator" and outcome.artifact.png_url
-    assert outcome.artifact.no_chart_reason is None and outcome.artifact.rows == [[30]]
-    assert deps.requests.get_request(request.request_id).steps["design"]["design"]["chart"] == "indicator"
+    assert outcome.status == "done" and outcome.artifact.png_url
+    assert outcome.artifact.rows == [["East", 10], ["West", 20]]
+    assert outcome.artifact.row_count == 2 and outcome.artifact.chart == "bar"
+    assert outcome.card and outcome.artifact.artifact_id in outcome.card
+    counts, designer, reviewer = fake_models
+    assert counts == {"profiler": 0, "analyst": 0}
+    assert designer.runs == 1 and reviewer.runs == 0
     assert len(fake_render) == 1
 
 
-@pytest.mark.parametrize("second_revision", [False, True])
-def test_a_repaired_scalar_reaches_indicator_design_and_is_not_reanalysed(
-    deps, dataset_id, fake_models, fake_render, agents, second_revision,
-):
-    _profiler, analyst, designer, _lead = agents
-    fallback = create_designer("test")
-    configured = replace(deps, designer_fallback=fallback)
-    spec = "vis indicator\ntitle Total sales\ndescription Sales across all regions\ncards\n  - value total\n"
+def test_preparing_a_draw_does_not_run_any_specialist(deps, dataset_id, agents, fake_models, fake_render):
+    lead = agents[-1]
 
-    def repair_analysis(messages, info):
-        prompt = prompt_of(messages)
-        if not prompt.get("previous", {}).get("feedback"):
-            return analyst_drive(messages, info)
-        assert prompt["previous"]["feedback"]["preserve"] == "All regions and sales"
+    def prepare_only(messages, info):
         if not tool_returns(messages):
-            return ModelResponse(parts=[ToolCallPart(tool_name="run_query", args={
-                "sql": f'SELECT sum(amount) AS total FROM {prompt["table"]}',
-                "columns": [{"name": "total", "meaning": "Total sales", "kind": "measure",
-                             "source": "amount", "aggregate": "sum"}],
-            })])
-        return ModelResponse(parts=[ToolCallPart(tool_name="deliver_analysis", args={
-            "summary": "The overall total is 30.",
-        })])
+            return call("draw", dataset_id=dataset_id, question="Compare regional sales")
+        context = tool_returns(messages)[-1].model_response_object()
+        assert context["request_id"]
+        return finish("The CSV is ready for the team.")
 
-    def deliver_indicator(messages, info):
-        prompt = prompt_of(messages)
-        assert prompt["revision"]["reply"] == "The overall total is 30."
-        returns = tool_returns(messages)
-        if not returns:
-            return ModelResponse(parts=[ToolCallPart(tool_name="check_spec", args={"spec": spec})])
-        checked = returns[-1].model_response_object()
-        assert checked["ok"], checked
-        return ModelResponse(parts=[ToolCallPart(tool_name="deliver_design", args={
-            "spec": checked["canonical"], "explanation": "The card shows the requested overall total.",
-        })])
+    with lead.override(model=FunctionModel(prepare_only)):
+        result = lead.run_sync("Show this CSV", deps=deps, conversation_id="chat-1")
+    request = deps.requests.get_request(deps.requests.list_requests()[0].request_id)
+    assert result.output == "The CSV is ready for the team."
+    assert request.artifact_id is None and not fake_render
+    assert fake_models[1].runs == fake_models[2].runs == 0
+    assert request.caller.conversation_id == "chat-1"
 
-    def repair_design(messages, info):
-        if "revision" not in prompt_of(messages) or second_revision:
-            return ModelResponse(parts=[ToolCallPart(tool_name="request_analysis_revision", args={
-                "problem": "A grouped table cannot show the requested overall total",
-                "requested_change": "Return the overall sum as one row",
-                "preserve": "All regions and sales",
-            })])
-        return deliver_indicator(messages, info)
 
-    analyst_runs, designer_runs, fallback_runs = (
-        Counting(repair_analysis), Counting(repair_design), Counting(deliver_indicator),
-    )
-    with analyst.override(model=FunctionModel(analyst_runs)), \
-            designer.override(model=FunctionModel(designer_runs)), \
-            fallback.override(model=FunctionModel(fallback_runs)):
-        request = create_request(configured, type="new", dataset_id=dataset_id,
-                                 question="Show the overall sales total as a KPI", caller=CHAT)
-        outcome = run(run_request(configured, request.request_id))
+def test_review_returns_feedback_to_the_lead_without_automatic_repair(deps, dataset_id, agents, reviewer, fake_models, fake_render):
+    request = new_request(deps, dataset_id)
+    observed = []
 
-    assert outcome.status == "done" and outcome.artifact.chart == "indicator" and outcome.artifact.png_url
-    assert outcome.artifact.rows == [[30]] and outcome.artifact.row_count == 1
+    def review_then_publish(messages, info):
+        returned = tool_returns(messages)
+        request_id = request_id_of(messages)
+        if not returned:
+            return call("resume", request_id=request_id)
+        last = returned[-1]
+        if last.tool_name == "resume":
+            return call("design_visualization", request_id=request_id)
+        if last.tool_name == "design_visualization":
+            return call("render_visualization", request_id=request_id)
+        if last.tool_name == "render_visualization":
+            return call("review_visualization", request_id=request_id)
+        if last.tool_name == "review_visualization":
+            observed.append(last.model_response_object())
+            return call("publish_visualization", request_id=request_id)
+        return finish()
+
+    with reviewer.override(model=FunctionModel(reviewer_finding())), \
+            agents[-1].override(model=FunctionModel(review_then_publish)):
+        outcome = run(run_request(deps, request.request_id))
+    assert outcome.status == "done" and observed
+    assert outcome.artifact.review["verdict"] == "revise"
+    assert fake_models[1].runs == 1 and len(fake_render) == 1
+
+
+def test_only_the_lead_can_choose_a_second_design_after_review(deps, dataset_id, agents, reviewer, fake_models, fake_render):
+    request = new_request(deps, dataset_id)
+    state = {"repaired": False}
+
+    def repair_once(messages, info):
+        returned = tool_returns(messages)
+        request_id = request_id_of(messages)
+        if not returned:
+            return call("resume", request_id=request_id)
+        last = returned[-1].tool_name
+        if last == "resume":
+            return call("design_visualization", request_id=request_id)
+        if last == "design_visualization":
+            return call("render_visualization", request_id=request_id)
+        if last == "render_visualization" and not state["repaired"]:
+            return call("review_visualization", request_id=request_id)
+        if last == "review_visualization":
+            state["repaired"] = True
+            return call("design_visualization", request_id=request_id, direction="Increase the title contrast.")
+        if last == "publish_visualization":
+            return finish()
+        # A fresh design must not keep the earlier design's visual verdict.
+        saved = deps.requests.get_request(request_id)
+        assert "review" not in saved.steps
+        return call("publish_visualization", request_id=request_id)
+
+    with reviewer.override(model=FunctionModel(reviewer_finding())), \
+            agents[-1].override(model=FunctionModel(repair_once)):
+        outcome = run(run_request(deps, request.request_id))
+    assert outcome.status == "done" and state["repaired"]
+    assert fake_models[1].runs == 2 and len(fake_render) == 2
+    assert outcome.artifact.review.get("verdict") != "revise"
+
+
+def test_resume_reuses_the_preview_instead_of_redesigning(deps, dataset_id, agents, fake_models, fake_render):
+    request = new_request(deps, dataset_id)
+
+    def stop_after_preview(messages, info):
+        returned = tool_returns(messages)
+        request_id = request_id_of(messages)
+        if not returned:
+            return call("resume", request_id=request_id)
+        if returned[-1].tool_name == "resume":
+            return call("design_visualization", request_id=request_id)
+        if returned[-1].tool_name == "design_visualization":
+            return call("render_visualization", request_id=request_id)
+        return finish("Preview saved.")
+
+    with agents[-1].override(model=FunctionModel(stop_after_preview)):
+        run(run_request(deps, request.request_id))
     saved = deps.requests.get_request(request.request_id)
-    assert saved.steps["analyze_before_revision"]["result"]["row_count"] == 2
-    assert saved.steps["analyze"]["result"]["row_count"] == 1
-    assert saved.revision is not None and analyst_runs.runs == 2
-    # Counting also sees retries without a ToolReturn as starts. The refused
-    # second revision consumes two bounded retries before fallback takes over.
-    assert designer_runs.runs == (4 if second_revision else 2)
-    assert fallback_runs.runs == int(second_revision) and len(fake_render) == 1
-    if second_revision:
-        assert any("second table revision" in warning for warning in outcome.artifact.warnings)
-        assert any("fallback model" in warning for warning in outcome.artifact.warnings)
-    else:
-        assert any("chart comes from the revised table" in warning for warning in outcome.artifact.warnings)
-
-
-def test_a_renderer_failure_delivers_the_table(deps, dataset_id, fake_models, monkeypatch):
-    def broken(*args, **kwargs):
-        raise RenderFailed("Node is missing.")
-
-    monkeypatch.setattr(runner, "render_design", broken)
-    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
+    assert saved.artifact_id is None and "render" in saved.steps
     outcome = run(run_request(deps, request.request_id))
-    assert outcome.status == "done" and outcome.artifact.spec and outcome.artifact.png_url is None
-    assert "rendered" in outcome.artifact.no_chart_reason and outcome.artifact.rows
+    assert outcome.status == "done" and outcome.artifact.png_url
+    assert fake_models[1].runs == 1 and len(fake_render) == 1
 
 
-def test_a_question_pauses_and_the_answer_reaches_the_analyst(deps, dataset_id, fake_models, fake_render, agents):
-    _profiler, analyst, _designer, _lead = agents
-    from pydantic_ai.models.function import FunctionModel
-    from tests.requests.conftest import analyst_drive
+def test_publish_and_completed_resume_are_idempotent(deps, dataset_id, agents, fake_models, fake_render):
+    request = new_request(deps, dataset_id)
+    first = run(run_request(deps, request.request_id))
 
-    seen = {}
+    def publish_again(messages, info):
+        if not tool_returns(messages):
+            return call("publish_visualization", request_id=request.request_id)
+        assert tool_returns(messages)[-1].model_response_object()["artifact"]["artifact_id"] == first.artifact.artifact_id
+        return finish()
 
-    def ask_then_answer(messages, info):
-        prompt = prompt_of(messages)
-        if not prompt.get("clarifications"):
-            return asking_drive(messages, info)
-        seen["pairs"] = prompt["clarifications"]
-        return analyst_drive(messages, info)
-
-    with analyst.override(model=FunctionModel(ask_then_answer)):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        paused = run(run_request(deps, request.request_id))
-        assert paused.status == "waiting" and paused.clarification.question == "Which amount?"
-        saved = deps.requests.get_request(request.request_id)
-        pending = saved.pending()
-        assert pending.step == "analyze" and "analyze" not in saved.steps
-        assert timedelta(hours=23) < pending.deadline - pending.asked_at <= timedelta(hours=24)
-        again = run(run_request(deps, request.request_id))
-        assert again.status == "waiting" and again.warnings
-        done = run(answer_request(deps, request.request_id, "The amount column", "chat"))
-    assert done.status == "done" and seen["pairs"] == [{"question": "Which amount?", "answer": "The amount column"}]
-    exchange = deps.requests.get_artifact(done.artifact.artifact_id).clarifications[0]
-    assert exchange.answer == "The amount column" and exchange.answered_by == "chat"
+    with agents[-1].override(model=FunctionModel(publish_again)):
+        agents[-1].run_sync("Show the delivered chart again", deps=deps)
+    again = run(run_request(deps, request.request_id))
+    assert again.artifact.artifact_id == first.artifact.artifact_id
+    assert len(deps.requests.list_artifacts(dataset_id=dataset_id)) == 1
+    assert fake_models[1].runs == 1 and len(fake_render) == 1
 
 
-def test_a_third_question_fails_the_request(deps, dataset_id, fake_models, agents):
-    _profiler, analyst, _designer, _lead = agents
-    from pydantic_ai.models.function import FunctionModel
-
-    with analyst.override(model=FunctionModel(asking_drive)):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        assert run(run_request(deps, request.request_id)).status == "waiting"
-        assert run(answer_request(deps, request.request_id, "one", "chat")).status == "waiting"
-        outcome = run(answer_request(deps, request.request_id, "two", "chat"))
-    assert outcome.status == "failed" and "Which amount?" in outcome.error
-    with pytest.raises(ValueError):
-        run(answer_request(deps, request.request_id, "three", "chat"))
+def test_style_revision_reuses_source_values_and_links_artifacts(deps, dataset_id, fake_models, fake_render):
+    first_request = new_request(deps, dataset_id)
+    first = run(run_request(deps, first_request.request_id)).artifact
+    revision = create_request(deps, type="revise", dataset_id=dataset_id, question="Make it blue", caller=CHAT,
+                              parent_artifact_id=first.artifact_id)
+    second = run(run_request(deps, revision.request_id)).artifact
+    assert second.version == 2 and second.parent_artifact_id == first.artifact_id
+    assert second.change == "Make it blue" and second.rows == first.rows
+    assert fake_models[0] == {"profiler": 0, "analyst": 0}
+    assert fake_models[1].runs == 2
 
 
-def test_revise_without_new_analysis_reuses_the_report_and_links_the_version(deps, dataset_id, fake_models, fake_render, agents):
-    analyst, _designer = fake_models
-    _profiler, _analyst, designer, _lead = agents
-    from pydantic_ai.models.function import FunctionModel
-    from tests.requests.conftest import designer_drive
-
-    first = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    v1 = run(run_request(deps, first.request_id)).artifact
-    seen = {}
-
-    def revising(messages, info):
-        seen["previous"] = prompt_of(messages).get("previous")
-        return designer_drive(messages, info)
-
-    with designer.override(model=FunctionModel(revising)):
-        second = create_request(deps, type="revise", dataset_id=dataset_id, question="Make it blue", caller=CHAT,
-                                parent_artifact_id=v1.artifact_id)
-        v2 = run(run_request(deps, second.request_id)).artifact
-    assert analyst.runs == 1
-    assert seen["previous"]["change"] == "Make it blue" and seen["previous"]["spec"] == v1.spec
-    assert v2.version == 2 and v2.parent_artifact_id == v1.artifact_id
-    assert v2.question == "Total by region" and v2.change == "Make it blue" and v2.sql == v1.sql
-    lineage = [s.artifact_id for s in deps.requests.list_artifacts(artifact_id=v1.artifact_id)]
-    assert lineage == [v2.artifact_id, v1.artifact_id]
-
-
-def test_revise_with_new_analysis_gives_the_analyst_the_previous_sql(deps, dataset_id, fake_models, fake_render, agents):
-    _profiler, analyst, _designer, _lead = agents
-    from pydantic_ai.models.function import FunctionModel
-    from tests.requests.conftest import analyst_drive
-
-    first = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    v1 = run(run_request(deps, first.request_id)).artifact
-    seen = {}
-
-    def revising(messages, info):
-        seen["previous"] = prompt_of(messages).get("previous")
-        return analyst_drive(messages, info)
-
-    with analyst.override(model=FunctionModel(revising)):
-        second = create_request(deps, type="revise", dataset_id=dataset_id, question="Only the East", caller=CHAT,
-                                parent_artifact_id=v1.artifact_id, redo_analysis=True)
-        v2 = run(run_request(deps, second.request_id)).artifact
-    assert "sum(amount)" in seen["previous"]["sql"] and seen["previous"]["change"] == "Only the East"
-    assert [c["name"] for c in seen["previous"]["columns"]] == ["region", "total"]
-    assert v2.version == 2
-
-
-def test_latest_unfinished_finds_the_conversation_request(deps, dataset_id, fake_models, fake_render):
-    done = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    run(run_request(deps, done.request_id))
+def test_latest_unfinished_never_crosses_conversations(deps, dataset_id, fake_models, fake_render):
+    request = new_request(deps, dataset_id)
+    assert latest_unfinished(deps, "chat-1").request_id == request.request_id
+    assert latest_unfinished(deps, "another-chat") is None
+    assert latest_unfinished(deps, None) is None
+    run(run_request(deps, request.request_id))
     assert latest_unfinished(deps, "chat-1") is None
-    waiting = create_request(deps, type="new", dataset_id=dataset_id, question="Later", caller=CHAT)
-    assert latest_unfinished(deps, "chat-1").request_id == waiting.request_id
-    assert latest_unfinished(deps, "chat-2") is None
-    assert latest_unfinished(deps, None) is None and latest_unfinished(deps, "") is None
 
 
-def test_the_budget_is_a_plain_failure(deps, dataset_id, fake_models, monkeypatch):
-    monkeypatch.setattr(runner, "REQUEST_LIMIT", 0)
-    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    outcome = run(run_request(deps, request.request_id))
-    assert outcome.status == "failed" and "budget" in outcome.error
+def test_model_request_budget_bounds_a_lead_that_ignores_completion(deps, dataset_id, agents, fake_models, fake_render):
+    from pydantic_ai.exceptions import UsageLimitExceeded
 
-
-def test_runner_needs_the_request_store(store, agents, dataset_id):
-    from vis_agent.deps import AppDeps
-
-    profiler, analyst, designer, _lead = agents
-    bare = AppDeps(store=store, profiler=profiler, analyst=analyst, designer=designer)
-    with pytest.raises(RuntimeError):
-        create_request(bare, type="new", dataset_id=dataset_id, question="q", caller=CHAT)
-
-
-def test_the_budget_holds_across_a_resume(deps, dataset_id, fake_models, fake_render, agents, monkeypatch):
-    """A standalone run counts every model request on the request: the profiler's one, the analyst's asking
-    turn, then the resumed analyst's two; the designer then finds the budget of four spent."""
-    _profiler, analyst, _designer, _lead = agents
-    from pydantic_ai.models.function import FunctionModel
-    from tests.requests.conftest import analyst_drive
-
-    def ask_then_answer(messages, info):
-        if not prompt_of(messages).get("clarifications"):
-            return asking_drive(messages, info)
-        return analyst_drive(messages, info)
-
-    monkeypatch.setattr(runner, "REQUEST_LIMIT", 4)
-    with analyst.override(model=FunctionModel(ask_then_answer)):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        assert run(run_request(deps, request.request_id)).status == "waiting"
-        assert deps.requests.get_request(request.request_id).requests_used == 2
-        outcome = run(answer_request(deps, request.request_id, "The amount column", "chat"))
-    assert outcome.status == "failed" and "budget" in outcome.error
-    assert deps.requests.get_request(request.request_id).requests_used == 4
-
-
-def test_a_database_failure_is_a_plain_failure(deps, dataset_id, fake_models, monkeypatch):
-    async def broken(*args, **kwargs):
-        raise duckdb.Error("boom")
-
-    monkeypatch.setattr(runner, "analyze_dataset", broken)
-    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    outcome = run(run_request(deps, request.request_id))
-    assert outcome.status == "failed" and outcome.error == "DuckDB could not run this step."
-    assert "analyze" not in deps.requests.get_request(request.request_id).steps
-
-
-def test_a_designer_that_cannot_finish_delivers_the_table(deps, dataset_id, fake_models, fake_render, monkeypatch):
-    from vis_agent.designer.models import DesignReport
-
-    async def unfinished(report, designer, brief, **kwargs):
-        return DesignReport(dataset_id=report.dataset_id, question=report.question, language=report.language,
-                            warnings=["The designer could not finish: it timed out"], seconds=0,
-                            created_at=report.created_at)
-
-    monkeypatch.setattr(runner, "design_chart", unfinished)
-    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    outcome = run(run_request(deps, request.request_id))
-    assert outcome.status == "done" and outcome.artifact.chart is None and outcome.artifact.rows
-    assert outcome.artifact.no_chart_reason == "The designer could not finish: it timed out"
-    assert not fake_render
-
-
-def test_a_failed_design_runs_once_more_on_the_fallback_designer(
-    deps, dataset_id, fake_models, fake_render, monkeypatch,
-):
-    from vis_agent.designer.models import DesignReport
-
-    fallback_deps = replace(deps, designer_fallback=deps.designer)
-    real_design = runner.design_chart
+    request = new_request(deps, dataset_id)
     calls = []
-
-    async def with_fallback(report, designer, brief, **kwargs):
-        calls.append(designer)
-        if len(calls) == 1:
-            return DesignReport(dataset_id=report.dataset_id, question=report.question, language=report.language,
-                                warnings=["The designer could not finish: it timed out"], seconds=0,
-                                created_at=report.created_at)
-        return await real_design(report, designer, brief, **kwargs)
-
-    monkeypatch.setattr(runner, "design_chart", with_fallback)
-    request = create_request(fallback_deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    outcome = run(run_request(fallback_deps, request.request_id))
-    assert outcome.status == "done" and outcome.artifact.chart == "bar"
-    assert calls == [deps.designer, fallback_deps.designer_fallback]
-    assert len(outcome.artifact.warnings) == 1 and "fallback model" in outcome.artifact.warnings[0]
-
-
-def test_a_looping_designer_is_cut_short_and_rescued_by_the_fallback(deps, dataset_id, fake_models, fake_render):
-    from vis_agent.designer.agent import create_designer
-
-    looping_calls = []
 
     def looping(messages, info):
-        looping_calls.append(1)
-        return ModelResponse(parts=[ToolCallPart(tool_name="recommend_charts", args={"intent": "compare"})])
+        calls.append(1)
+        return call("resume", request_id=request.request_id)
 
-    fallback = create_designer("test")
-    rescued = replace(deps, designer_fallback=fallback)
-    with deps.designer.override(model=FunctionModel(looping)), fallback.override(model=FunctionModel(designer_drive)):
-        request = create_request(rescued, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        outcome = run(run_request(rescued, request.request_id))
-    assert len(looping_calls) == 4  # two shortlists, one unknown-tool retry, then the run ends
-    assert outcome.status == "done" and outcome.artifact.chart == "bar"
-    assert len(outcome.artifact.warnings) == 1 and "fallback model" in outcome.artifact.warnings[0]
-    assert "exceeded max retries" in outcome.artifact.warnings[0]
+    with agents[-1].override(model=FunctionModel(looping)), pytest.raises(UsageLimitExceeded):
+        agents[-1].run_sync("Continue", deps=deps, conversation_id="chat-1", usage_limits=UsageLimits(request_limit=3))
+    assert len(calls) == 3 and not fake_render
 
 
-def test_the_artifact_carries_the_renderers_compromises(deps, dataset_id, fake_models, monkeypatch):
-    from vis_agent.designer.models import Compromise
-    from vis_agent.render.base import Rendered
-
-    def render(report, design, out_dir, renderer="gptvis"):
-        out_dir.mkdir(parents=True, exist_ok=True)
-        (out_dir / "chart.png").write_bytes(b"png")
-        return Rendered(png=out_dir / "chart.png", html=out_dir / "chart.html", config=out_dir / "config.json",
-                        width=2400, height=1350, seconds=0.1, non_background_share=0.2,
-                        compromises=[Compromise(key="bind", message="Dropped 1 rows with null measures.")],
-                        drawn_rows=1, folded_rows=0, dropped_rows=1)
-
-    monkeypatch.setattr(runner, "render_design", render)
-    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    outcome = run(run_request(deps, request.request_id))
-    assert [c.message for c in outcome.artifact.compromises] == ["Dropped 1 rows with null measures."]
-    assert deps.requests.get_artifact(outcome.artifact.artifact_id).compromises[0].key == "bind"
+def test_service_requires_a_configured_lead(deps, dataset_id):
+    request = new_request(deps, dataset_id)
+    with pytest.raises((RuntimeError, ValueError), match="lead"):
+        run(run_request(replace(deps, lead=None), request.request_id))
 
 
-def test_a_revision_speaks_the_language_of_the_change(deps, dataset_id, fake_models, fake_render, agents):
-    _profiler, _analyst, designer, _lead = agents
-    from pydantic_ai.models.function import FunctionModel
-    from tests.requests.conftest import designer_drive
+def test_an_explicit_analyst_call_invalidates_the_old_preview(deps, dataset_id, agents, fake_models, fake_render):
+    from tests.requests.conftest import prompt_of
 
-    first = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    v1 = run(run_request(deps, first.request_id)).artifact
-    seen = {}
+    request = new_request(deps, dataset_id)
+    observed = []
 
-    def revising(messages, info):
-        seen["language"] = prompt_of(messages)["language"]
-        return designer_drive(messages, info)
-
-    with designer.override(model=FunctionModel(revising)):
-        second = create_request(deps, type="revise", dataset_id=dataset_id, question="اجعله أزرق", caller=CHAT,
-                                parent_artifact_id=v1.artifact_id)
-        run(run_request(deps, second.request_id))
-    assert seen["language"] == "Arabic"
-    assert deps.requests.get_request(second.request_id).language == "Arabic"
-
-
-def test_the_designer_can_ask_the_analyst_for_a_revised_table_once(
-    deps, dataset_id, fake_models, fake_render, agents,
-):
-    _profiler, analyst, designer, _lead = agents
-    first_sql = f'SELECT region, sum(amount) AS total FROM "{dataset_id}" GROUP BY 1 ORDER BY 2 DESC'
-    second_sql = (f'SELECT region, date AS day, sum(amount) AS total FROM "{dataset_id}" '
-                  "GROUP BY 1, 2 ORDER BY 1, 2")
-
-    def revise_analysis(messages, info):
-        prompt = prompt_of(messages)
-        feedback = prompt.get("previous", {}).get("feedback")
-        if feedback is None:
-            return analyst_drive(messages, info)
-        assert feedback["problem"] == "Need one row per region and day"
+    def filter_east(messages, info):
         if not tool_returns(messages):
-            return ModelResponse(parts=[ToolCallPart(tool_name="run_query", args={
-                "sql": (f'SELECT region, date AS day, sum(amount) AS total FROM {prompt["table"]} '
-                        "GROUP BY 1, 2 ORDER BY 1, 2"),
-                "columns": [
-                    {"name": "region", "meaning": "Region", "kind": "category", "source": "region"},
-                    {"name": "day", "meaning": "Day", "kind": "ordinal", "source": "date"},
-                    {"name": "total", "meaning": "Total sales", "kind": "measure", "source": "amount",
-                     "aggregate": "sum"},
-                ],
-            })])
-        return ModelResponse(parts=[ToolCallPart(tool_name="deliver_analysis", args={
-            "summary": "Two regions on two days.", "assumptions": ["Kept the total."],
-        })])
+            prompt = prompt_of(messages)
+            return call("run_query", sql=f'SELECT region, amount FROM {prompt["table"]} WHERE region = \'East\'', columns=[
+                {"name": "region", "meaning": "Region", "kind": "category", "source": "region"},
+                {"name": "amount", "meaning": "Sales", "kind": "measure", "source": "amount"},
+            ])
+        return call("deliver_analysis", summary="Supplied sales for East.")
 
-    def revise_design(messages, info):
-        prompt = prompt_of(messages)
-        if "revision" not in prompt:
-            return ModelResponse(parts=[ToolCallPart(tool_name="request_analysis_revision", args={
-                "problem": "Need one row per region and day",
-                "requested_change": "Add the day",
-                "preserve": "The total by region",
-            })])
-        assert prompt["revision"]["reply"] == "Two regions on two days. Kept the total."
-        assert prompt["revision"]["request"]["problem"] == "Need one row per region and day"
-        return designer_drive(messages, info)
+    def filter_after_preview(messages, info):
+        returned = tool_returns(messages)
+        request_id = request_id_of(messages)
+        if not returned:
+            return call("resume", request_id=request_id)
+        last = returned[-1].tool_name
+        if last == "resume":
+            return call("design_visualization", request_id=request_id)
+        if last == "design_visualization":
+            return call("render_visualization", request_id=request_id)
+        if last == "render_visualization" and not observed:
+            return call("consult_analyst", request_id=request_id, task="The user requests only East; filter region to East.")
+        if last == "consult_analyst":
+            saved = deps.requests.get_request(request_id)
+            assert not {"design", "render", "review"} & saved.steps.keys()
+            observed.append(saved.steps["analyze"]["result"]["rows"])
+            return call("design_visualization", request_id=request_id)
+        if last == "render_visualization":
+            return call("publish_visualization", request_id=request_id)
+        return finish()
 
-    analyst_runs, designer_runs = Counting(revise_analysis), Counting(revise_design)
-    with analyst.override(model=FunctionModel(analyst_runs)), designer.override(model=FunctionModel(designer_runs)):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        outcome = run(run_request(deps, request.request_id))
-
-    assert outcome.status == "done" and outcome.artifact.chart == "bar"
-    assert outcome.artifact.rows == [["East", "2026-01-01", 10], ["West", "2026-01-02", 20]]
-    assert "asked the analyst to revise the table" in outcome.artifact.warnings[0]
-    saved = deps.requests.get_request(request.request_id)
-    assert saved.revision.problem == "Need one row per region and day"
-    assert saved.steps["analyze_before_revision"]["analysis"]["sql"] == first_sql
-    assert saved.steps["analyze"]["analysis"]["sql"] == second_sql
-    assert analyst_runs.runs == 2 and designer_runs.runs == 2
+    with agents[1].override(model=FunctionModel(filter_east)), \
+            agents[-1].override(model=FunctionModel(filter_after_preview)):
+        result = run(run_request(deps, request.request_id))
+    assert result.status == "done" and result.artifact.rows == [["East", 10]]
+    assert observed == [[["East", 10]]]
+    assert fake_models[0]["profiler"] == 0 and len(fake_render) == 2
 
 
-def test_a_second_revision_request_is_refused_and_the_fallback_delivers(
-    deps, dataset_id, fake_models, fake_render, agents,
-):
-    _profiler, analyst, designer, _lead = agents
-    fallback = create_designer("test")
-    rescued = replace(deps, designer_fallback=fallback)
+def test_failed_redesign_cannot_publish_the_obsolete_preview(deps, dataset_id, agents, fake_models, fake_render, monkeypatch):
+    from vis_agent import lead as lead_module
 
-    def revise_analysis(messages, info):
-        prompt = prompt_of(messages)
-        if prompt.get("previous", {}).get("feedback") and not tool_returns(messages):
-            return ModelResponse(parts=[ToolCallPart(tool_name="run_query", args={
-                "sql": f'SELECT region, sum(amount) AS total FROM {prompt["table"]} GROUP BY 1 ORDER BY 2 DESC',
-                "columns": [
-                    {"name": "region", "meaning": "Region", "kind": "category", "source": "region"},
-                    {"name": "total", "meaning": "Total sales", "kind": "measure", "source": "amount",
-                     "aggregate": "sum"},
-                ],
-            })])
-        if prompt.get("previous", {}).get("feedback"):
-            return ModelResponse(parts=[ToolCallPart(tool_name="deliver_analysis", args={
-                "summary": "The table is unchanged.", "assumptions": ["Kept the total."],
-            })])
-        return analyst_drive(messages, info)
-
-    def request_revision(messages, info):
-        return ModelResponse(parts=[ToolCallPart(tool_name="request_analysis_revision", args={
-            "problem": "Need another table", "requested_change": "Change the shape", "preserve": "The total",
-        })])
-
-    def fallback_drive(messages, info):
-        # The fallback designer sees the revision round the first designer asked for.
-        assert prompt_of(messages)["revision"]["reply"] == "The table is unchanged. Kept the total."
-        return designer_drive(messages, info)
-
-    analyst_runs = Counting(revise_analysis)
-    with analyst.override(model=FunctionModel(analyst_runs)), \
-            designer.override(model=FunctionModel(request_revision)), \
-            fallback.override(model=FunctionModel(fallback_drive)):
-        request = create_request(rescued, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        outcome = run(run_request(rescued, request.request_id))
-
-    assert outcome.status == "done" and outcome.artifact.chart == "bar"
-    assert analyst_runs.runs == 2
-    assert any("designer asked for a second table revision" in warning for warning in outcome.artifact.warnings)
-    assert any("fallback model" in warning for warning in outcome.artifact.warnings)
-
-
-def test_a_revision_the_analyst_cannot_make_keeps_the_first_table(
-    deps, dataset_id, fake_models, fake_render, agents,
-):
-    _profiler, analyst, designer, _lead = agents
-
-    def cannot_revise(messages, info):
-        prompt = prompt_of(messages)
-        if prompt.get("previous", {}).get("feedback"):
-            return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification", args={
-                "ask": "Which day?", "reason": "The table cannot support the requested day.",
-            })])
-        return analyst_drive(messages, info)
-
-    def revise_then_deliver(messages, info):
-        prompt = prompt_of(messages)
-        if "revision" not in prompt:
-            return ModelResponse(parts=[ToolCallPart(tool_name="request_analysis_revision", args={
-                "problem": "Need a day", "requested_change": "Add the day", "preserve": "The totals",
-            })])
-        assert prompt["revision"]["reply"].startswith("The analyst did not revise the table")
-        return designer_drive(messages, info)
-
-    with analyst.override(model=FunctionModel(cannot_revise)), designer.override(model=FunctionModel(revise_then_deliver)):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        outcome = run(run_request(deps, request.request_id))
-
-    assert outcome.status == "done"
-    assert outcome.artifact.rows == [["West", 20], ["East", 10]]
-    saved = deps.requests.get_request(request.request_id)
-    assert "analyze_before_revision" not in saved.steps
-    assert saved.revision is not None
-
-
-def test_a_crash_after_the_revision_decision_never_revises_again(
-    deps, dataset_id, fake_models, fake_render, agents, monkeypatch,
-):
-    _profiler, _analyst, designer, _lead = agents
-    real_analyze = runner.analyze_dataset
+    request = new_request(deps, dataset_id)
+    design = lead_module.design_chart
     calls = []
-    first_reports = []
 
-    async def crash_on_revision(*args, **kwargs):
+    async def fail_second(*args, **kwargs):
         calls.append(1)
         if len(calls) == 2:
-            raise RuntimeError("crashed after saving the revision")
-        report = await real_analyze(*args, **kwargs)
-        first_reports.append(report.model_dump(mode="json"))
-        return report
+            raise RuntimeError("designer disconnected")
+        return await design(*args, **kwargs)
 
-    design_runs = []
+    def change_design(messages, info):
+        returned = tool_returns(messages)
+        request_id = request_id_of(messages)
+        if not returned:
+            return call("resume", request_id=request_id)
+        if returned[-1].tool_name == "design_visualization":
+            return call("render_visualization", request_id=request_id)
+        return call("design_visualization", request_id=request_id,
+                    direction="Draw the source" if len(returned) == 1 else "Use larger labels")
 
-    def revise_then_deliver(messages, info):
+    monkeypatch.setattr(lead_module, "design_chart", fail_second)
+    with agents[-1].override(model=FunctionModel(change_design)):
+        result = run(run_request(deps, request.request_id))
+    saved = deps.requests.get_request(request.request_id)
+    assert result.status == "failed" and "designer disconnected" in result.error
+    assert "render" not in saved.steps and saved.artifact_id is None
+    assert len(fake_render) == 1
+
+
+def test_column_annotations_change_meanings_without_changing_values(deps, dataset_id, agents, fake_models, fake_render):
+    request = new_request(deps, dataset_id)
+
+    def annotate(messages, info):
+        returned = tool_returns(messages)
+        request_id = request_id_of(messages)
+        if not returned:
+            return call("resume", request_id=request_id)
+        if returned[-1].tool_name == "resume":
+            return call("design_visualization", request_id=request_id, columns=[
+                {"name": "amount", "meaning": "Revenue", "kind": "measure", "unit": "SAR", "source": "amount"},
+                {"name": "region", "meaning": "Sales region", "kind": "geography", "source": "region"},
+            ])
+        if returned[-1].tool_name == "design_visualization":
+            return call("render_visualization", request_id=request_id)
+        if returned[-1].tool_name == "render_visualization":
+            return call("publish_visualization", request_id=request_id)
+        return finish()
+
+    with agents[-1].override(model=FunctionModel(annotate)):
+        outcome = run(run_request(deps, request.request_id))
+    assert outcome.status == "done" and outcome.artifact.rows == [["East", 10], ["West", 20]]
+    assert [c.name for c in outcome.artifact.columns] == ["region", "amount"]
+    assert outcome.artifact.columns[1].unit == "SAR"
+
+
+def test_resume_after_render_crash_reuses_the_saved_design(deps, dataset_id, fake_models, fake_render, monkeypatch):
+    from vis_agent import lead as lead_module
+
+    request = new_request(deps, dataset_id)
+    render = lead_module.render_design
+    calls = []
+
+    def crash_once(*args, **kwargs):
+        calls.append(1)
+        if len(calls) == 1:
+            raise RuntimeError("render worker interrupted")
+        return render(*args, **kwargs)
+
+    monkeypatch.setattr(lead_module, "render_design", crash_once)
+    first = run(run_request(deps, request.request_id))
+    saved = deps.requests.get_request(request.request_id)
+    assert first.status == "failed" and saved.steps["design"]["design"]
+    assert "render" not in saved.steps
+    second = run(run_request(deps, request.request_id))
+    assert second.status == "done" and second.artifact.png_url
+    assert fake_models[1].runs == 1 and len(fake_render) == 1 and len(calls) == 2
+
+
+def test_request_budget_is_shared_with_nested_specialist_and_persists_on_resume(deps, dataset_id, fake_models, fake_render):
+    from vis_agent.requests.service import REQUEST_LIMIT
+
+    request = new_request(deps, dataset_id)
+    request.requests_used = REQUEST_LIMIT - 2
+    deps.requests.save_request(request)
+    first = run(run_request(deps, request.request_id))
+    saved = deps.requests.get_request(request.request_id)
+    assert first.status == "failed" and saved.requests_used == REQUEST_LIMIT
+    # Resume and the lead's design decision spend the final two requests; designer cannot start another.
+    assert fake_models[1].calls == 0 and not fake_render
+    second = run(run_request(deps, request.request_id))
+    assert second.status == "failed" and "budget" in second.error
+    assert deps.requests.get_request(request.request_id).requests_used == REQUEST_LIMIT
+    assert fake_models[1].calls == 0
+
+
+def test_specialist_uncertainty_returns_to_lead_without_asking_user(deps, dataset_id, agents, fake_models, fake_render):
+    request = new_request(deps, dataset_id)
+    observed = []
+
+    def uncertain(messages, info):
+        return call("ask_clarification", ask="Which presentation measure?", reason="The optional transformation has two interpretations.")
+
+    def consult_then_stop(messages, info):
+        returned = tool_returns(messages)
+        request_id = request_id_of(messages)
+        if not returned:
+            return call("resume", request_id=request_id)
+        if returned[-1].tool_name == "resume":
+            return call("consult_analyst", request_id=request_id, task="Describe the optional transformation.")
+        observed.append(returned[-1].model_response_object())
+        return finish("I have the specialist's feedback.")
+
+    with agents[1].override(model=FunctionModel(uncertain)), \
+            agents[-1].override(model=FunctionModel(consult_then_stop)):
+        run(run_request(deps, request.request_id))
+    saved = deps.requests.get_request(request.request_id)
+    assert observed and saved.steps["specialist_feedback"]["clarification"]
+    assert saved.status != "waiting" and saved.pending() is None
+    assert fake_models[1].runs == 0 and not fake_render
+
+
+def test_failed_analyst_is_withdrawn_instead_of_repeated(deps, dataset_id, agents, fake_models, fake_render):
+    request = new_request(deps, dataset_id)
+    analyst_runs = 0
+    lead_calls = 0
+
+    def failing_analyst(messages, info):
+        nonlocal analyst_runs
+        analyst_runs += 1
+        return call("ask_clarification", ask="Which calculation?", reason="The requested calculation is ambiguous.")
+
+    def repeating_lead(messages, info):
+        nonlocal lead_calls
+        lead_calls += 1
+        returned = tool_returns(messages)
+        request_id = request_id_of(messages)
+        if not returned:
+            return call("resume", request_id=request_id)
+        if returned[-1].tool_name == "resume":
+            return call("consult_analyst", request_id=request_id, task="Calculate a derived result.")
+        if lead_calls < 4:
+            assert "consult_analyst" not in [tool.name for tool in info.function_tools]
+        return finish("The analyst failed; I will not repeat it.")
+
+    with agents[1].override(model=FunctionModel(failing_analyst)), \
+            agents[-1].override(model=FunctionModel(repeating_lead)):
+        run(run_request(deps, request.request_id))
+
+    saved = deps.requests.get_request(request.request_id)
+    assert analyst_runs == 1 and saved.analyst_attempts == 1
+    assert saved.analyst_failure
+
+
+def test_cancellation_preserves_specialist_checkpoints_for_resume(deps, dataset_id, agents, fake_models, fake_render):
+    request = new_request(deps, dataset_id)
+
+    async def interrupted_run():
+        design_saved = asyncio.Event()
+
+        async def stop_after_design(messages, info):
+            returned = tool_returns(messages)
+            if not returned:
+                return call("resume", request_id=request.request_id)
+            if returned[-1].tool_name == "resume":
+                return call("design_visualization", request_id=request.request_id)
+            design_saved.set()
+            await asyncio.Event().wait()
+
+        with agents[-1].override(model=FunctionModel(stop_after_design)):
+            running = asyncio.create_task(run_request(deps, request.request_id))
+            await asyncio.wait_for(design_saved.wait(), timeout=5)
+            running.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await running
+
+    run(interrupted_run())
+    saved = deps.requests.get_request(request.request_id)
+    assert saved.status == "failed" and "interrupted" in saved.error
+    assert saved.steps["analyze"]["result"]["rows"] == [["East", 10], ["West", 20]]
+    assert saved.steps["design"]["design"] and saved.requests_used > 0
+    result = run(run_request(deps, request.request_id))
+    assert result.status == "done" and fake_models[1].runs == 1 and len(fake_render) == 1
+
+
+def test_accounting_storage_error_does_not_leave_request_marked_in_flight(deps, dataset_id, agents, fake_models, fake_render, monkeypatch):
+    request = new_request(deps, dataset_id)
+    save = deps.requests.save_request
+    calls = []
+
+    def fail_final_save(record):
+        calls.append(1)
+        if len(calls) == 2:
+            raise OSError("disk temporarily unavailable")
+        return save(record)
+
+    with monkeypatch.context() as patch:
+        patch.setattr(deps.requests, "save_request", fail_final_save)
+        with agents[-1].override(model=FunctionModel(lambda messages, info: finish("Interrupted."))), \
+                pytest.raises(OSError, match="disk temporarily unavailable"):
+            run(run_request(deps, request.request_id))
+    result = run(run_request(deps, request.request_id))
+    assert result.status == "done" and result.artifact.png_url
+
+
+def test_concurrent_render_and_redesign_cannot_restore_an_obsolete_preview(deps, dataset_id, agents, fake_models, fake_render, monkeypatch):
+    import threading
+
+    from tests.requests.conftest import CHART_SPEC
+    from vis_agent import lead as lead_module
+
+    request = new_request(deps, dataset_id)
+
+    def design_then_stop(messages, info):
+        returned = tool_returns(messages)
+        if not returned:
+            return call("resume", request_id=request.request_id)
+        if returned[-1].tool_name == "resume":
+            return call("design_visualization", request_id=request.request_id)
+        return finish()
+
+    with agents[-1].override(model=FunctionModel(design_then_stop)):
+        run(run_request(deps, request.request_id))
+    render_started, release_render = threading.Event(), threading.Event()
+    real_render, real_design = lead_module.render_design, lead_module.design_chart
+
+    def slow_render(*args, **kwargs):
+        render_started.set()
+        assert release_render.wait(timeout=5), "The concurrent test did not release its renderer"
+        return real_render(*args, **kwargs)
+
+    async def concurrent():
+        design_started = asyncio.Event()
+
+        async def observed_design(*args, **kwargs):
+            design_started.set()
+            return await real_design(*args, **kwargs)
+
+        async def invoke(name):
+            def drive(messages, info):
+                if not tool_returns(messages):
+                    return call(name, request_id=request.request_id)
+                return finish()
+            with agents[-1].override(model=FunctionModel(drive)):
+                return await agents[-1].run("Use the existing request", deps=deps)
+
+        monkeypatch.setattr(lead_module, "design_chart", observed_design)
+        rendering = asyncio.create_task(invoke("render_visualization"))
+        assert await asyncio.to_thread(render_started.wait, 5)
+        redesigning = asyncio.create_task(invoke("design_visualization"))
+        try:
+            # The old rendering owns the request until its checkpoint is saved.
+            with pytest.raises(TimeoutError):
+                await asyncio.wait_for(design_started.wait(), timeout=0.15)
+        finally:
+            release_render.set()
+        await asyncio.gather(rendering, redesigning)
+
+    monkeypatch.setattr(lead_module, "render_design", slow_render)
+    changed_spec = CHART_SPEC.replace("title Sales by region", "title Updated sales view")
+    with agents[2].override(model=FunctionModel(lambda messages, info: call(
+            "deliver_design", spec=changed_spec, explanation="The updated design uses the same supplied values."))):
+        run(concurrent())
+    saved = deps.requests.get_request(request.request_id)
+    assert "Updated sales view" in saved.steps["design"]["design"]["spec"]
+    assert "render" not in saved.steps
+
+
+def test_concurrent_publications_create_one_artifact(deps, dataset_id, agents, fake_models, fake_render, monkeypatch):
+    import threading
+
+    request = new_request(deps, dataset_id)
+
+    def preview_then_stop(messages, info):
+        returned = tool_returns(messages)
+        if not returned:
+            return call("resume", request_id=request.request_id)
+        if returned[-1].tool_name == "resume":
+            return call("design_visualization", request_id=request.request_id)
+        if returned[-1].tool_name == "design_visualization":
+            return call("render_visualization", request_id=request.request_id)
+        return finish()
+
+    with agents[-1].override(model=FunctionModel(preview_then_stop)):
+        run(run_request(deps, request.request_id))
+    find_artifact = deps.requests.artifact_for_request
+    simultaneous_read = threading.Barrier(2)
+
+    def synchronize_read(request_id):
+        try:
+            simultaneous_read.wait(timeout=0.15)
+        except threading.BrokenBarrierError:
+            pass  # With serialized publication only one caller can enter this read at a time.
+        return find_artifact(request_id)
+
+    monkeypatch.setattr(deps.requests, "artifact_for_request", synchronize_read)
+
+    def publish_once(messages, info):
         if not tool_returns(messages):
-            design_runs.append(1)
-        if len(design_runs) == 1:
-            return ModelResponse(parts=[ToolCallPart(tool_name="request_analysis_revision", args={
-                "problem": "Need a day", "requested_change": "Add the day", "preserve": "The total",
-            })])
-        return designer_drive(messages, info)
+            return call("publish_visualization", request_id=request.request_id)
+        return finish(tool_returns(messages)[-1].model_response_object()["artifact"]["artifact_id"])
 
-    monkeypatch.setattr(runner, "analyze_dataset", crash_on_revision)
-    with designer.override(model=FunctionModel(revise_then_deliver)):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        original = None
-        with pytest.raises(RuntimeError, match="crashed after saving"):
-            run(run_request(deps, request.request_id))
-        saved = deps.requests.get_request(request.request_id)
-        assert saved.revision is not None and saved.steps["analyze"] == first_reports[0]
-        outcome = run(run_request(deps, request.request_id))
+    async def concurrent():
+        return await asyncio.gather(agents[-1].run("Publish", deps=deps), agents[-1].run("Publish", deps=deps))
 
-    assert outcome.status == "done" and outcome.artifact.chart == "bar"
-    assert len(calls) == 2
-
-
-def test_the_outcome_carries_a_card(deps, dataset_id, fake_models, fake_render):
-    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    outcome = run(run_request(deps, request.request_id))
-    assert outcome.card and "![chart](/renders/" in outcome.card and outcome.artifact.artifact_id in outcome.card
-    assert "| West | 20 |" in outcome.card and "2 of 2 rows" in outcome.card
-
-
-from pydantic_ai.messages import TextPart
-
-from tests.requests.conftest import reviewer_finding, reviewer_pass
-
-
-def test_a_clean_chart_is_reviewed_once_and_delivered(deps, dataset_id, fake_models, fake_render):
-    _analyst, designer = fake_models
-    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    outcome = run(run_request(deps, request.request_id))
-    saved = deps.requests.get_request(request.request_id)
-    assert outcome.status == "done" and saved.steps["review"]["status"] == "reviewed"
-    assert saved.steps["review"]["verdict"] == "pass" and saved.rounds == [] and designer.runs == 1
-    artifact = deps.requests.get_artifact(outcome.artifact.artifact_id)
-    assert artifact.review["verdict"] == "pass" and artifact.review["rounds"] == []
-    assert "**Review**: pass" in outcome.card
-
-
-def test_an_error_finding_starts_a_round_and_the_designer_sees_the_findings(deps, dataset_id, fake_models, fake_render, reviewer):
-    _analyst, designer = fake_models
-    verdicts = iter([reviewer_finding(), reviewer_pass])
-    seen = {}
-
-    def review_then_pass(messages, info):
-        return next(verdicts)(messages, info)
-
-    real_drive = designer.drive
-
-    def watching(messages, info):
-        prompt = prompt_of(messages)
-        if prompt.get("review"):
-            seen["review"] = prompt["review"]
-        return real_drive(messages, info)
-
-    designer.drive = watching
-    with reviewer.override(model=FunctionModel(review_then_pass)):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        outcome = run(run_request(deps, request.request_id))
-    saved = deps.requests.get_request(request.request_id)
-    assert outcome.status == "done" and designer.runs == 2 and len(saved.rounds) == 1
-    assert seen["review"]["findings"][0]["rule"] == "R-5" and seen["review"]["spec"].startswith("vis bar")
-    assert saved.rounds[0].review["verdict"] == "revise" and saved.steps["review"]["verdict"] == "pass"
-    artifact = deps.requests.get_artifact(outcome.artifact.artifact_id)
-    assert len(artifact.review["rounds"]) == 1 and artifact.review["verdict"] == "pass"
-
-
-def test_a_decision_that_is_the_users_never_starts_a_round(deps, dataset_id, fake_models, fake_render, reviewer):
-    _analyst, designer = fake_models
-    with reviewer.override(model=FunctionModel(reviewer_finding(rule="R-3", owner="user", message="Cities, not hospitals."))):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        outcome = run(run_request(deps, request.request_id))
-    saved = deps.requests.get_request(request.request_id)
-    assert outcome.status == "done" and designer.runs == 1 and saved.rounds == []
-    assert saved.steps["review"]["verdict"] == "pass" and "- Cities, not hospitals." in outcome.card
-    assert not any("review rounds" in w for w in outcome.artifact.warnings)
-
-
-def test_rounds_stop_at_the_bound_and_the_chart_delivers_with_its_findings(deps, dataset_id, fake_models, fake_render, reviewer):
-    _analyst, designer = fake_models
-    with reviewer.override(model=FunctionModel(reviewer_finding(message="Bar 3 is unlabelled."))):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        outcome = run(run_request(deps, request.request_id))
-    saved = deps.requests.get_request(request.request_id)
-    assert outcome.status == "done" and designer.runs == 1 + runner.MAX_REVIEW_ROUNDS == 3
-    assert len(saved.rounds) == runner.MAX_REVIEW_ROUNDS and saved.steps["review"]["verdict"] == "revise"
-    assert outcome.artifact.png_url and outcome.clarification is None
-    assert "**Review**: revise" in outcome.card and "- Bar 3 is unlabelled." in outcome.card
-    assert any("review rounds" in w for w in outcome.artifact.warnings)
-
-
-def test_a_kill_between_render_and_review_resumes_into_the_same_round(deps, dataset_id, fake_models, fake_render, reviewer, monkeypatch):
-    _analyst, designer = fake_models
-    real_review = runner.review_chart
-    state = {"calls": 0}
-
-    async def dying(*args, **kwargs):
-        state["calls"] += 1
-        if state["calls"] == 2:
-            raise RuntimeError("the process died here")
-        return await real_review(*args, **kwargs)
-
-    monkeypatch.setattr(runner, "review_chart", dying)
-    verdicts = iter([reviewer_finding(), reviewer_pass, reviewer_pass])
-
-    def in_turn(messages, info):
-        return next(verdicts)(messages, info)
-
-    with reviewer.override(model=FunctionModel(in_turn)):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        with pytest.raises(RuntimeError):
-            run(run_request(deps, request.request_id))
-        saved = deps.requests.get_request(request.request_id)
-        assert saved.status == "failed" and len(saved.rounds) == 1 and "render" in saved.steps and "review" not in saved.steps
-        outcome = run(run_request(deps, request.request_id))
-    assert outcome.status == "done" and designer.runs == 2 and len(deps.requests.get_request(request.request_id).rounds) == 1
-
-
-def test_without_a_reviewer_the_step_records_not_reviewed(deps, dataset_id, fake_models, fake_render):
-    deps.reviewer = None
-    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    outcome = run(run_request(deps, request.request_id))
-    review = deps.requests.get_request(request.request_id).steps["review"]
-    assert outcome.status == "done" and review["status"] == "not_reviewed" and "No reviewer" in review["reason"]
-    assert "**Review**" not in outcome.card
-
-
-def test_a_reviewer_that_fails_delivers_unreviewed_with_a_warning(deps, dataset_id, fake_models, fake_render, reviewer):
-    def talking(messages, info):
-        return ModelResponse(parts=[TextPart("Looks fine to me.")])
-
-    with reviewer.override(model=FunctionModel(talking)):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        outcome = run(run_request(deps, request.request_id))
-    review = deps.requests.get_request(request.request_id).steps["review"]
-    assert outcome.status == "done" and review["status"] == "not_reviewed" and "could not finish" in review["reason"]
-    assert any("could not finish" in w for w in outcome.artifact.warnings) and outcome.artifact.png_url
-
-
-def test_a_failed_render_is_not_reviewed(deps, dataset_id, fake_models, monkeypatch):
-    from vis_agent.render.base import RenderFailed
-
-    def broken(*args, **kwargs):
-        raise RenderFailed("Node is missing.")
-
-    monkeypatch.setattr(runner, "render_design", broken)
-    request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-    outcome = run(run_request(deps, request.request_id))
-    assert outcome.status == "done" and deps.requests.get_request(request.request_id).steps["review"]["status"] == "not_reviewed"
-
-
-def test_zero_rounds_keeps_the_verdict_and_never_sends_back(deps, dataset_id, fake_models, fake_render, reviewer, monkeypatch):
-    monkeypatch.setattr(runner, "MAX_REVIEW_ROUNDS", 0)
-    _analyst, designer = fake_models
-    with reviewer.override(model=FunctionModel(reviewer_finding())):
-        request = create_request(deps, type="new", dataset_id=dataset_id, question="Total by region", caller=CHAT)
-        outcome = run(run_request(deps, request.request_id))
-    saved = deps.requests.get_request(request.request_id)
-    assert outcome.status == "done" and designer.runs == 1 and saved.rounds == [] and saved.steps["review"]["verdict"] == "revise"
+    with agents[-1].override(model=FunctionModel(publish_once)):
+        first, second = run(concurrent())
+    assert first.output == second.output
+    assert len(deps.requests.list_artifacts(dataset_id=dataset_id)) == 1

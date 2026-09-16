@@ -626,7 +626,7 @@
    "suggested_chart_type": null,
    "brand_colors": []
   },
-  "expect": "clarification",
+  "expect": "no_chart",
   "charts": [],
   "language": "en",
   "bind": {},

@@ -119,7 +119,7 @@ def test_empty_case_short_circuits():
 
     with designer.override(model=FunctionModel(unexpected_model)):
         output = asyncio.run(run.make_task(designer)(case.inputs))
-    assert output.clarification is not None and output.requests == 0
+    assert output.clarification is None and output.warnings and output.requests == 0
     scored = score(case, output)
     for name in ("Delivered", "Passed", "ChartAccepted", "LanguageRight", "BindingRight"):
         assert scored.scores[name].value == 1

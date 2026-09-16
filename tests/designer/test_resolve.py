@@ -8,6 +8,7 @@ from vis_agent.designer.catalogue import CATALOGUE
 from vis_agent.designer.models import IndicatorCard, NumberFormat, Spec
 from vis_agent.designer.resolve import ResolveError, resolve
 from vis_agent.designer.syntax import parse
+from vis_agent.labels import value_key
 
 from .conftest import (cities, column, gender_share, grouped, monthly, raw_amounts,
                        scatter_points, single_number, table, two_same_unit_measures,
@@ -153,10 +154,10 @@ def test_indicator_resolve_never_picks_the_first_row(rows, total):
 
 
 @pytest.mark.parametrize("value,unit", [(120, "%"), (-1, "%"), (1.2, "fraction")])
-def test_direct_indicator_resolution_rejects_impossible_explicit_shares(value, unit):
+def test_direct_indicator_resolution_preserves_supplied_values_without_revalidating_the_data(value, unit):
     columns = [column("value", "share", unit=unit)]
-    with pytest.raises(ResolveError, match="outside"):
-        resolve(Spec(type="indicator", cards=[IndicatorCard(value="value")]), columns, table(columns, [[value]]))
+    resolved = resolve(Spec(type="indicator", cards=[IndicatorCard(value="value")]), columns, table(columns, [[value]]))
+    assert resolved.config["cards"][0]["value"]["number"] == str(value)
 
 
 def test_indicator_resolve_rejects_changed_unit_even_without_a_prior_check():
@@ -414,7 +415,7 @@ def test_sort_orders(sort, expected):
 def test_category_sort_uses_text_for_numeric_labels():
     columns, _ = cities()
     result = table(columns, [[2, 20], [10, 10]])
-    assert [r["category"] for r in resolve(city_spec(sort="category asc"), columns, result).config["data"]] == ["10", "2"]
+    assert [r["category"] for r in resolve(city_spec(sort="category asc"), columns, result).config["data"]] == [10, 2]
 
 
 @pytest.mark.parametrize("kind", ["time", "ordinal"])
@@ -523,7 +524,7 @@ def test_explicit_palette_wins_and_style_background_passes_through():
     spec = parse("vis column\nbind\n  category city\n  value violations\nemphasis\n  - City0\n"
                  "style\n  backgroundColor #000000\n  palette\n    - #FFFFFF\n    - #1783FF\n")
     resolved = resolve(spec, *cities(2))
-    assert resolved.config["style"] == {"backgroundColor": "#000000", "palette": spec.palette[:1]}
+    assert resolved.config["style"] == {"backgroundColor": "#000000", "palette": spec.palette}
 
 
 @pytest.mark.parametrize("chart", ["column", "grouped_column", "stacked_column"])
@@ -782,7 +783,9 @@ def test_time_labels_are_text_with_consistent_precision(values, expected, chart)
         spec.bind["value2"] = "value2"
     resolved = resolve(spec, columns, result)
     labels = resolved.config["categories"] if chart == "dual_axes" else [r[role] for r in resolved.config["data"]]
-    assert labels == expected
+    assert labels == values
+    mapping = resolved.display["fields"].get(role, {})
+    assert [mapping.get(value_key(value), value_key(value)) for value in labels] == expected
     assert len(set(labels)) == len(set(values))
     assert "domain" not in resolved.overrides.get("scale", {}).get("x", {})
     assert [row[0] for row in result.rows] == values
@@ -834,7 +837,7 @@ def test_gregorian_monthly_series_still_shortens_in_analyst_order(year):
                 sort="none", direction="rtl")
     resolved = resolve(spec, columns, result)
     assert resolved.config["data"] == [
-        {"time": f"{year}-02", "value": 20}, {"time": f"{year}-03", "value": 10},
+        {"time": f"{year}-02-01", "value": 20}, {"time": f"{year}-03-01", "value": 10},
     ]
     assert "domain" not in resolved.overrides.get("scale", {}).get("x", {})
 
@@ -843,15 +846,15 @@ def test_numeric_categories_and_groups_use_text_for_sort_rtl_emphasis_and_other(
     columns, _ = cities()
     result = table(columns, [[2, 20], [10.0, 30], [1.25, 10], ["2.0", 5]])
     resolved = resolve(city_spec(sort="category asc", language="ar", emphasis=["10"]), columns, result)
-    assert [r["category"] for r in resolved.config["data"]] == ["1.25", "10", "2", "2.0"]
-    assert resolved.overrides["scale"]["x"]["domain"] == ["2.0", "2", "10", "1.25"]
+    assert [r["category"] for r in resolved.config["data"]] == [1.25, 10.0, 2, "2.0"]
+    assert resolved.overrides["scale"]["x"]["domain"] == ["2.0", 2, 10.0, 1.25]
     assert resolved.config["style"]["palette"] == ["#C9CDD4", "#1783FF", "#C9CDD4", "#C9CDD4"]
     folded = resolve(city_spec(limit=1), columns, result)
-    assert folded.config["data"] == [{"category": "10", "value": 30}, {"category": "Other", "value": 35}]
+    assert folded.config["data"] == [{"category": 10.0, "value": 30}, {"category": "Other", "value": 35}]
     columns, result = grouped(1)
     result.rows[0][1], result.rows[1][1] = 1, 2.0
     resolved = resolve(group_spec(emphasis=["2"]), columns, result)
-    assert [r["group"] for r in resolved.config["data"]] == ["1", "2"]
+    assert [r["group"] for r in resolved.config["data"]] == [1, 2.0]
     assert resolved.config["style"]["palette"] == ["#C9CDD4", "#1783FF"]
 
 
@@ -862,14 +865,15 @@ def test_numeric_categories_and_groups_use_text_for_sort_rtl_emphasis_and_other(
     (["b", "", "Share"], ["a", "b", "Share"]),
     (["b", "Same", "Same"], ["a", "b", "c"]),
 ])
-def test_table_headers_use_meanings_with_collision_safe_fallback(meanings, expected):
+def test_table_headers_are_display_metadata_without_changing_column_keys(meanings, expected):
     columns = [column(name, "measure") for name in ["a", "b", "c"]]
     for c, meaning in zip(columns, meanings):
         c.meaning = meaning
     result = table(columns, [[1, 2, 3]])
     resolved = resolve(Spec(type="table"), columns[::-1], result)
-    assert resolved.config["columns"] == expected
-    assert resolved.config["data"] == [dict(zip(expected, [1, 2, 3]))]
+    assert resolved.config["columns"] == ["a", "b", "c"]
+    assert resolved.config["data"] == [{"a": 1, "b": 2, "c": 3}]
+    assert resolved.display["columns"] == {c.name: c.meaning.strip() or c.name for c in columns}
 
 
 @pytest.mark.parametrize("unit,expected", [("count", None), (" COUNTS ", None), ("number", None),
@@ -897,9 +901,9 @@ def test_inherited_count_units_are_removed_from_charts_and_tables(unit, expected
     ("histogram", raw_amounts, {"value": "amount"}),
     ("boxplot", cities, {"category": "city", "value": "violations"}),
 ])
-def test_single_series_palette_uses_first_brand_colour(chart, builder, bindings):
+def test_single_series_palette_preserves_the_designers_explicit_colours(chart, builder, bindings):
     spec = Spec(type=chart, bind=bindings, palette=["#1F4E79", "#C0504D"])
-    assert resolve(spec, *builder()).config["style"]["palette"] == ["#1F4E79"]
+    assert resolve(spec, *builder()).config["style"]["palette"] == ["#1F4E79", "#C0504D"]
     assert spec.palette == ["#1F4E79", "#C0504D"]
 
 
@@ -954,7 +958,7 @@ def test_integer_years_bound_as_time_are_drawn_in_order():
     result = table(columns, [[2026, 5], [2025, 10], [2024, 20]])
     spec = Spec(type="line", bind={"time": "year", "value": "value"})
     resolved = resolve(spec, columns, result)
-    assert [record["time"] for record in resolved.config["data"]] == ["2024", "2025", "2026"]
+    assert [record["time"] for record in resolved.config["data"]] == [2024, 2025, 2026]
 
 
 @pytest.mark.parametrize("values", [

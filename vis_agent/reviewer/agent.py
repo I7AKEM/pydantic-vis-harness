@@ -4,7 +4,7 @@
 import asyncio
 import logging
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -17,6 +17,7 @@ from vis_agent.analyst.models import AnalysisReport, Cell
 from vis_agent.designer.models import Compromise, Design
 from vis_agent.findings import Finding
 from vis_agent.models import DataBrief, QuestionAnswer
+from vis_agent.labels import LABEL_INSTRUCTIONS, project_display_labels
 from vis_agent.reviewer.models import Review, ReviewColumn, ReviewerPrompt, ReviewReport
 from vis_agent.reviewer.rubric import rubric_text
 
@@ -53,7 +54,7 @@ def create_reviewer(model: str | Model) -> Agent[ReviewerDeps, Review]:
         deps_type=ReviewerDeps,
         output_type=ToolOutput(deliver_review, name="deliver_review"),
         retries={"output": 2},
-        instructions=REVIEWER_RULEBOOK + "\n\n" + rubric_text(),
+        instructions=REVIEWER_RULEBOOK + "\n\n" + rubric_text() + "\n\n" + LABEL_INSTRUCTIONS,
         # Reasoning off, said explicitly: the unified `thinking` setting is dropped for models whose profile does not
         # declare reasoning-off support, and the proxy's Qwen then reasons for two minutes per picture (7 s without).
         model_settings={"openai_reasoning_effort": "none", "thinking": False, "temperature": 0.0},
@@ -67,6 +68,7 @@ def _cut(cell: Cell) -> Cell:
 def build_prompt(report: AnalysisReport, design: Design, brief: DataBrief | None, compromises, warnings,
                  round_: int, clarifications=()) -> ReviewerPrompt:
     rows = report.result.rows
+    meanings, labels = project_display_labels(brief, report.analysis.columns, report.language)
     return ReviewerPrompt(
         question=report.question, language=report.language, clarifications=list(clarifications),
         chart=design.chart, spec=design.spec,
@@ -76,13 +78,14 @@ def build_prompt(report: AnalysisReport, design: Design, brief: DataBrief | None
         assumptions=list(report.analysis.assumptions),
         compromises=[c.message for c in (compromises or design.compromises)], warnings=list(warnings),
         caveats=list(brief.caveats) if brief else [], round=round_,
+        code_meanings=meanings, display_labels=labels,
     )
 
 
 async def review_chart(
     report: AnalysisReport, design: Design, png: Path, reviewer: Agent[ReviewerDeps, Review], *,
     brief: DataBrief | None = None, compromises: list[Compromise] | tuple = (), warnings: list[str] | tuple = (),
-    round_: int = 1, usage: RunUsage | None = None, clarifications: list[QuestionAnswer] | tuple = (),
+    round_: int = 1, usage: RunUsage | None = None, usage_limits: UsageLimits | None = None, clarifications: list[QuestionAnswer] | tuple = (),
 ) -> ReviewReport:
     """Review one rendered chart. A reviewer that cannot finish, or a picture that cannot be read, is a warning:
     the chart delivers unreviewed and says so."""
@@ -98,7 +101,9 @@ async def review_chart(
         picture = BinaryContent(data=png.read_bytes(), media_type="image/png")
         async with asyncio.timeout(REVIEW_TIMEOUT_SECONDS):
             result = await reviewer.run([prompt.model_dump_json(), picture], deps=deps, usage=run_usage,
-                                        usage_limits=UsageLimits(request_limit=starting + MAX_REQUESTS))
+                                        usage_limits=replace(usage_limits or UsageLimits(), request_limit=min(
+                                            starting + MAX_REQUESTS, usage_limits.request_limit
+                                            if usage_limits and usage_limits.request_limit is not None else starting + MAX_REQUESTS)))
         output = result.output
         model_name = result.response.model_name
     except (ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded, TimeoutError, OSError) as exc:

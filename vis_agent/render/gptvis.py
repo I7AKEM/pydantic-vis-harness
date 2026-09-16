@@ -30,7 +30,7 @@ GPTVIS_DEGRADED = {
 
 def capability(chart_type: ChartType) -> Capability:
     if chart_type == "indicator":
-        honoured = {"cards", "columnLabels", "title", "subtitle", "description", "language", "theme", "width", "height",
+        honoured = {"cards", "columnLabels", "valueLabels", "title", "subtitle", "description", "language", "theme", "width", "height",
                     "direction", "digits", "backgroundColor", "palette", "style"}
         return Capability(honoured=honoured, degraded={}, rejected={
             key: "indicators use card bindings and have no chart axes or row transforms"
@@ -67,10 +67,17 @@ def _page(spec: Spec, resolved, metrics: dict, png: Path) -> str:
     table_html = ""
     if spec.type == "table":
         names = resolved.config["columns"]
-        headings = "".join(f"<th scope=\"col\">{html.escape(name)}</th>" for name in names)
+        def cell_html(name, value):
+            text = "" if value is None else str(value)
+            escaped = html.escape(text)
+            if (name in resolved.display.get("timeFields", []) and re.search("[٠-٩]", text)
+                    and re.fullmatch(r"[0-9٠-٩TZ :./+\-]+", text)):
+                return f'<bdi dir="ltr" style="unicode-bidi: bidi-override">{escaped}</bdi>'
+            return escaped
+        headings = "".join(f"<th scope=\"col\">{html.escape(resolved.display['columns'].get(name, name))}</th>" for name in names)
         rows = "".join("<tr>" + "".join(
-            f"<td>{html.escape(str(row[name])) if row[name] is not None else ''}</td>" for name in names
-        ) + "</tr>" for row in resolved.config["data"])
+            f"<td>{cell_html(name, row[name])}</td>" for name in names
+        ) + "</tr>" for row in metrics["tableDisplay"])
         table_html = f"<table><thead><tr>{headings}</tr></thead><tbody>{rows}</tbody></table>"
     values = {
         "lang": spec.language, "dir": spec.direction or ("rtl" if spec.language == "ar" else "ltr"),
@@ -80,6 +87,8 @@ def _page(spec: Spec, resolved, metrics: dict, png: Path) -> str:
         "g2": _inline_json(metrics["g2"]), "format": _inline_json(resolved.number.model_dump()),
         "format2": _inline_json(resolved.number2.model_dump() if resolved.number2 else None),
         "format_js": SCRIPT.with_name("format.js").read_text(encoding="utf-8").replace("export ", ""),
+        "display_js": SCRIPT.with_name("display.js").read_text(encoding="utf-8").replace("export ", ""),
+        "display": _inline_json(resolved.display),
         "interactive": str(not metrics["functionPaths"] and spec.type != "table").lower(), "table": table_html,
     }
     page = SCRIPT.with_name("page.html").read_text(encoding="utf-8")
@@ -166,6 +175,7 @@ def render(spec: Spec, columns: list[ResultColumn], result: QueryResult, out_dir
                "format": resolved.number.model_dump(),
                "format2": resolved.number2.model_dump() if resolved.number2 else None,
                "tableFormats": resolved.table_formats,
+               "display": resolved.display,
                "output": str(png.resolve()), "trace": trace}
     try:
         process = subprocess.run(["node", str(SCRIPT), str(png.resolve())], input=json.dumps(payload), text=True,
@@ -191,6 +201,7 @@ def render(spec: Spec, columns: list[ResultColumn], result: QueryResult, out_dir
                                      "number": resolved.number.model_dump(), "g2": metrics["g2"],
                                      "number2": payload["format2"],
                                      "tableFormats": resolved.table_formats,
+                                     "display": resolved.display,
                                      "functionPaths": metrics["functionPaths"],
                                      **({"texts": metrics["texts"], "textBounds": metrics["textBounds"],
                                          "cardBounds": metrics["cardBounds"]} if spec.type == "indicator" else {})},

@@ -1,0 +1,120 @@
+[
+  {
+    "name": "prepared-comparison",
+    "csv": "evals/lead/prepared/comparison.csv",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "Compare total sales by region.",
+      "intent": "compare",
+      "column_descriptions": {"region": "Sales region", "sales_sar": "Total sales already calculated by the data agent"},
+      "units": {"sales_sar": "SAR"}
+    },
+    "turns": [{
+      "message": "Visualize the supplied CSV using the brief.\n\nAttached CSV: [comparison.csv](/datasets/{dataset_id}/profile)",
+      "tool": "draw", "outcome": "artifact", "charts": ["bar", "column"],
+      "bindings": {"category": "region", "value": "sales_sar"},
+      "axis_titles": {"bar": {"x": "Sales", "y": "Region"}, "column": {"x": "Region", "y": "Sales"}},
+      "prepared_csv": true, "require_delivery": true, "max_seconds": 60,
+      "source_columns": ["region", "sales_sar"],
+      "source_rows": [["North", 140], ["South", 90], ["West", 115]]
+    }]
+  },
+  {
+    "name": "prepared-trend",
+    "csv": "evals/lead/prepared/trend.csv",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "Show the monthly revenue trend.",
+      "intent": "trend",
+      "column_descriptions": {"month": "Gregorian calendar month", "revenue_sar": "Monthly revenue already calculated by the data agent"},
+      "units": {"revenue_sar": "SAR"}
+    },
+    "turns": [{
+      "message": "Visualize the supplied CSV using the brief.\n\nAttached CSV: [trend.csv](/datasets/{dataset_id}/profile)",
+      "tool": "draw", "outcome": "artifact", "charts": ["line"],
+      "bindings": {"time": "month", "value": "revenue_sar"},
+      "axis_titles": {"line": {"x": "Month", "y": "Revenue"}},
+      "prepared_csv": true, "require_delivery": true, "max_seconds": 60,
+      "source_columns": ["month", "revenue_sar"],
+      "source_rows": [["2026-01", 100.5], ["2026-02", 125.25], ["2026-03", 110]]
+    }]
+  },
+  {
+    "name": "prepared-kpi",
+    "csv": "evals/lead/prepared/kpi.csv",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "Show net revenue as a KPI card.",
+      "intent": "summary", "suggested_chart_type": "indicator",
+      "column_descriptions": {"net_revenue_sar": "Net revenue already calculated by the data agent"},
+      "units": {"net_revenue_sar": "SAR"}
+    },
+    "turns": [{
+      "message": "Visualize the supplied CSV using the brief.\n\nAttached CSV: [kpi.csv](/datasets/{dataset_id}/profile)",
+      "tool": "draw", "outcome": "indicator", "charts": ["indicator"],
+      "prepared_csv": true, "require_delivery": true, "max_seconds": 60,
+      "source_columns": ["net_revenue_sar"], "source_rows": [[1250.75]],
+      "metrics": {"card_count": 1, "values": [1250.75], "units": ["SAR"]}
+    }]
+  },
+  {
+    "name": "prepared-explicit-review",
+    "csv": "evals/lead/prepared/comparison.csv",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "Compare total sales by region.",
+      "intent": "compare",
+      "column_descriptions": {"region": "Sales region", "sales_sar": "Total sales already calculated by the data agent"},
+      "units": {"sales_sar": "SAR"}
+    },
+    "turns": [{
+      "message": "Visualize the supplied CSV using the brief. Ask the visual reviewer to inspect the chart before you publish it.\n\nAttached CSV: [comparison.csv](/datasets/{dataset_id}/profile)",
+      "tool": "draw", "outcome": "artifact", "charts": ["bar", "column"],
+      "bindings": {"category": "region", "value": "sales_sar"}, "review_required": true,
+      "axis_titles": {"bar": {"x": "Sales", "y": "Region"}, "column": {"x": "Region", "y": "Sales"}},
+      "prepared_csv": true, "require_delivery": true, "max_seconds": 60,
+      "source_columns": ["region", "sales_sar"],
+      "source_rows": [["North", 140], ["South", 90], ["West", 115]]
+    }]
+  },
+  {
+    "name": "prepared-arabic-hijri",
+    "csv": "evals/lead/prepared/hijri.csv",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "كيف تغير عدد سكان المدينة خلال الأشهر الهجرية؟",
+      "intent": "trend",
+      "column_descriptions": {"الشهر": "الشهر الهجري بالصيغة الأصلية وبالترتيب الزمني", "عدد_السكان": "عدد السكان الذي حسبه وكيل البيانات مسبقاً لكل شهر"},
+      "units": {"عدد_السكان": "شخص"}
+    },
+    "turns": [{
+      "message": "اعرض الرسم وفق السؤال في الموجز باستخدام هذا الملف.\n\nAttached CSV: [hijri.csv](/datasets/{dataset_id}/profile)",
+      "tool": "draw", "outcome": "artifact", "charts": ["line"], "language": "ar",
+      "bindings": {"time": "الشهر", "value": "عدد_السكان"},
+      "axis_titles": {"line": {"x": "الشهر", "y": "عدد السكان"}},
+      "prepared_csv": true, "require_delivery": true, "max_seconds": 60,
+      "source_columns": ["الشهر", "عدد_السكان"],
+      "source_rows": [["محرم ١٤٤٧", 1200], ["صفر ١٤٤٧", 1250], ["ربيع الأول ١٤٤٧", 1310]]
+    }]
+  },
+  {
+    "name": "prepared-column-axes",
+    "csv": "evals/lead/prepared/comparison.csv",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "Compare prepared total sales by region in a vertical column chart.",
+      "intent": "compare", "suggested_chart_type": "column",
+      "column_descriptions": {"region": "Sales region", "sales_sar": "Total sales already calculated by the data agent"},
+      "units": {"sales_sar": "SAR"}
+    },
+    "turns": [{
+      "message": "Show these prepared sales as a vertical column chart.\n\nAttached CSV: [comparison.csv](/datasets/{dataset_id}/profile)",
+      "tool": "draw", "outcome": "artifact", "charts": ["column"],
+      "bindings": {"category": "region", "value": "sales_sar"},
+      "axis_titles": {"column": {"x": "Region", "y": "Sales"}},
+      "prepared_csv": true, "require_delivery": true, "max_seconds": 60,
+      "source_columns": ["region", "sales_sar"],
+      "source_rows": [["North", 140], ["South", 90], ["West", 115]]
+    }]
+  }
+]

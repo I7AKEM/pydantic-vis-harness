@@ -69,6 +69,7 @@ class Spec(BaseModel):
     fold: list[str] = Field(default_factory=list)
     cards: list[IndicatorCard] = Field(default_factory=list)
     column_labels: dict[str, str] = Field(default_factory=dict)
+    value_labels: dict[str, dict[str, str]] = Field(default_factory=dict)
     sort: SortOrder | None = None
     limit: int | None = None
     other: str | None = None

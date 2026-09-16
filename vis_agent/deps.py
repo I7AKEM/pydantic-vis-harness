@@ -33,6 +33,8 @@ class AppDeps:
     caller_identity: str | None = None
     """Who talks to the lead in this run: the chat, the terminal, or a program; recorded on the requests it makes."""
     designer_fallback: Agent[DesignerDeps, Design | Clarification | AnalysisRevision] | None = None
-    """Runs the design step once more when the designer fails; the lead's model by default."""
+    """Alternate designer available only when the lead explicitly selects it."""
     reviewer: Agent[ReviewerDeps, Review] | None = None
-    """Judges the rendered chart; None records the review step as not reviewed."""
+    """Optional specialist that inspects a rendered chart when the lead asks."""
+    lead: Agent[AppDeps, str] | None = None
+    """The same team lead used by chat, saved requests, and the terminal."""

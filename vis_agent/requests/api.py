@@ -17,7 +17,7 @@ from starlette.routing import Route
 
 from vis_agent.deps import AppDeps
 from vis_agent.requests.models import DEFAULT_DEADLINE_SECONDS, Caller, RequestType
-from vis_agent.requests.runner import REQUEST_LIMIT, answer_request, create_request, requests_of, run_request
+from vis_agent.requests.service import REQUEST_LIMIT, TOOL_LIMIT, answer_request, create_request, requests_of, run_request
 from vis_agent.requests.store import ArtifactNotFound, RequestNotFound, now
 from vis_agent.store import DatasetNotFound
 
@@ -81,6 +81,7 @@ async def read_json(request: HttpRequest, model):
 
 
 def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.AsyncClient | None = None) -> None:
+    deps = replace(deps, lead=lead)
     client = http or httpx.AsyncClient(timeout=CALLBACK_TIMEOUT_SECONDS)
 
     async def notify(request_id: str) -> None:
@@ -205,7 +206,7 @@ def add_request_routes(app: Starlette, deps: AppDeps, lead: Agent, http: httpx.A
         # the way is recorded as that program's request, not the chat's.
         try:
             result = await lead.run(prompt, deps=replace(deps, caller_kind="agent", caller_identity=data.caller.identity),
-                                    usage_limits=UsageLimits(request_limit=REQUEST_LIMIT))
+                                    usage_limits=UsageLimits(request_limit=REQUEST_LIMIT, tool_calls_limit=TOOL_LIMIT))
         except UsageLimitExceeded:
             return error(f"The question used its budget of {REQUEST_LIMIT} model requests; ask a narrower question.", 400)
         return JSONResponse({"answer": result.output, "caller": data.caller.identity})

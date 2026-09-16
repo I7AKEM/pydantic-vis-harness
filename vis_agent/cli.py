@@ -28,7 +28,7 @@ from dataclasses import replace
 
 from pydantic_ai.usage import UsageLimits
 
-from vis_agent.requests.runner import REQUEST_LIMIT, answer_request, create_request, run_request
+from vis_agent.requests.service import REQUEST_LIMIT, answer_request, create_request, run_request
 from vis_agent.requests.store import ArtifactNotFound, RequestNotFound
 from vis_agent.store import DatasetNotFound
 
@@ -37,8 +37,9 @@ def resources():
     """Import the wired application lazily so tests and --help never touch the real data directory."""
     import vis_agent.app
 
-    return (vis_agent.app.agent, vis_agent.app.deps, vis_agent.app.store,
-            vis_agent.app.profiler, vis_agent.app.analyst, vis_agent.app.designer)
+    team = vis_agent.app.default
+    return (team.lead, team.deps, vis_agent.app.store,
+            team.deps.profiler, team.deps.analyst, team.deps.designer)
 
 
 def build_parser() -> argparse.ArgumentParser:

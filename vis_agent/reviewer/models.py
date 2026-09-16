@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from vis_agent.analyst.models import Cell, ColumnKind
 from vis_agent.designer.models import ChartType
 from vis_agent.findings import Finding
-from vis_agent.models import QuestionAnswer
+from vis_agent.models import DisplayLabels, QuestionAnswer
 
 
 class ReviewColumn(BaseModel):
@@ -37,6 +37,8 @@ class ReviewerPrompt(BaseModel):
     warnings: list[str] = []
     caveats: list[str] = []
     round: int = 1
+    code_meanings: dict[str, dict[str, str]] = Field(default_factory=dict)
+    display_labels: DisplayLabels = Field(default_factory=DisplayLabels)
 
 
 class Review(BaseModel):

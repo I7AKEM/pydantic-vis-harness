@@ -1,7 +1,7 @@
 import pytest
 
-from pydantic_ai import capture_run_messages
-from pydantic_ai.messages import ModelResponse, RetryPromptPart, TextPart, ToolCallPart, ToolReturnPart
+from pydantic_ai import BinaryContent, capture_run_messages
+from pydantic_ai.messages import ModelResponse, RetryPromptPart, TextPart, ToolCallPart, ToolReturnPart, UserPromptPart
 from pydantic_ai.models.function import FunctionModel
 from pydantic_ai.models.test import TestModel
 
@@ -46,7 +46,7 @@ def test_lead_exposes_its_tools_to_the_model(store):
     with lead.override(model=FunctionModel(drive)):
         lead.run_sync("hello", deps=AppDeps(store=store, profiler=create_profiler("test"), analyst=create_analyst("test"), designer=create_designer("test")))
     assert lead.name == "vis-lead"
-    assert {"profile_csv", "find_dataset"} <= seen["tools"]
+    assert {"profile_csv", "find_dataset", "chart_capabilities"} <= seen["tools"]
 
 
 def test_lead_profiles_a_csv_through_the_agent(store):
@@ -148,7 +148,7 @@ def test_lead_answers_a_question_through_the_analyst(store, people):
         calls = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
         if not calls:
             return ModelResponse(parts=[ToolCallPart(tool_name="run_query", args={
-                "sql": f'SELECT region, sum(amount) AS total FROM "{dataset}" GROUP BY 1 ORDER BY 2 DESC',
+                "sql": f'SELECT region, sum(amount) AS total FROM "{dataset}_values" GROUP BY 1 ORDER BY 2 DESC',
                 "columns": [{"name": "region", "meaning": "Region", "kind": "geography", "source": "region"},
                             {"name": "total", "meaning": "Total", "kind": "measure", "source": "amount", "aggregate": "sum"}]})])
         return ModelResponse(parts=[ToolCallPart(tool_name="deliver_analysis", args={"summary": "West leads with 65."})])
@@ -192,231 +192,127 @@ def test_lead_tool_reports_unknown_datasets_as_failures(store):
         assert lead.run_sync("?", deps=deps).output == "No such dataset."
 
 
-CHART_SPEC = (
-    "vis bar\ntitle Total by region\ndescription Total sales by region\n"
-    "bind\n  category region\n  value total\nsort value desc\n"
+
+# The request fixtures run the real lead and tool functions. Only model responses and rendering are fake.
+from tests.requests.conftest import (  # noqa: E402,F401
+    agents, call, dataset_id, deps, fake_models, fake_render, finish, reviewer,
 )
-CHART_EXPLANATION = "West leads with 20. A bar chart compares regional totals."
 
 
-def analyst_chart_drive(messages, info):
-    if not tool_returns(messages):
-        import json
-
-        prompt = json.loads(messages[0].parts[-1].content)
-        return ModelResponse(parts=[ToolCallPart(tool_name="run_query", args={
-            "sql": f'SELECT region, sum(amount) AS total FROM {prompt["table"]} GROUP BY 1 ORDER BY 2 DESC',
-            "columns": [{"name": "region", "meaning": "Region", "kind": "category", "source": "region"},
-                        {"name": "total", "meaning": "Total sales", "kind": "measure", "source": "amount",
-                         "aggregate": "sum"}],
-        })])
-    return ModelResponse(parts=[ToolCallPart(tool_name="deliver_analysis", args={"summary": "West leads with 20."})])
-
-
-def designer_chart_drive(messages, info):
-    returns = tool_returns(messages)
-    if not returns:
-        return ModelResponse(parts=[ToolCallPart(tool_name="recommend_charts", args={"intent": "compare"})])
-    if len(returns) == 1:
-        return ModelResponse(parts=[ToolCallPart(tool_name="check_spec", args={"spec": CHART_SPEC})])
-    checked = returns[-1].model_response_object()
-    assert checked["ok"]
-    return ModelResponse(parts=[ToolCallPart(tool_name="deliver_design", args={
-        "spec": checked["canonical"], "explanation": CHART_EXPLANATION,
-    })])
+def complete_lead(start_tool, args):
+    def drive(messages, info):
+        returned = tool_returns(messages)
+        if not returned:
+            return call(start_tool, **args)
+        last = returned[-1]
+        context = last.model_response_object()
+        if last.tool_name in {"draw", "revise", "resume"}:
+            if context.get("render"):
+                return call("publish_visualization", request_id=context["request_id"])
+            return call("design_visualization", request_id=context["request_id"])
+        if last.tool_name == "design_visualization":
+            return call("render_visualization", request_id=context["request_id"])
+        if last.tool_name == "render_visualization":
+            return call("publish_visualization", request_id=context["request_id"])
+        return finish(context["card"])
+    return drive
 
 
-@pytest.fixture
-def conversation(store, monkeypatch):
-    """A lead with fake specialists and a fake renderer, run the way the web chat runs it."""
-    from vis_agent.render.base import Rendered
-    from vis_agent.requests.store import RequestStore
-
-    source = store.save_upload("sales.csv", SALES)
-    lead, profiler = create_lead("test"), create_profiler("test")
-    analyst, designer = create_analyst("test"), create_designer("test")
-    deps = AppDeps(store=store, profiler=profiler, analyst=analyst, designer=designer, requests=RequestStore(store))
-
-    def render(report, design, out_dir, renderer="gptvis"):
-        out_dir.mkdir(parents=True, exist_ok=True)
-        (out_dir / "chart.png").write_bytes(b"png")
-        return Rendered(png=out_dir / "chart.png", html=out_dir / "chart.html", config=out_dir / "config.json",
-                        width=2400, height=1350, seconds=0.1, non_background_share=0.2, compromises=[],
-                        drawn_rows=2, folded_rows=0, dropped_rows=0)
-
-    monkeypatch.setattr("vis_agent.requests.runner.render_design", render)
-
-    def run(message, drive, analyst_drive=analyst_chart_drive, designer_drive=designer_chart_drive, run_deps=None, **kwargs):
-        with profiler.override(model=TestModel(call_tools=[], custom_output_args=semantic_output(source.headers))), \
-                analyst.override(model=FunctionModel(analyst_drive)), \
-                designer.override(model=FunctionModel(designer_drive)), lead.override(model=FunctionModel(drive)):
-            return lead.run_sync(message, deps=run_deps or deps, **kwargs)
-
-    return source.dataset_id, deps, run
-
-
-def outcome_of(part):
-    from vis_agent.requests.models import RequestOutcome
-
-    return RequestOutcome.model_validate(part.model_response_object())
-
-
-def test_lead_exposes_the_phase_6_tools(store):
-    lead = create_lead("test")
+def test_lead_exposes_direct_specialist_tools(deps, agents):
+    lead = agents[-1]
 
     def drive(messages, info):
         names = {tool.name for tool in info.function_tools}
-        assert {"profile_csv", "find_dataset", "answer_question", "draw", "revise", "resume", "find_artifact"} <= names
+        assert {"draw", "revise", "consult_analyst", "design_visualization", "review_visualization",
+                "render_visualization", "publish_visualization", "find_dataset", "find_artifact"} <= names
         assert "make_chart" not in names
-        return ModelResponse(parts=[TextPart(content="ok")])
+        return finish()
 
-    deps = AppDeps(store=store, profiler=create_profiler("test"), analyst=create_analyst("test"),
-                   designer=create_designer("test"))
     with lead.override(model=FunctionModel(drive)):
-        assert lead.run_sync("hello", deps=deps).output == "ok"
+        lead.run_sync("What can you do?", deps=deps)
 
 
-def test_draw_delivers_an_artifact_and_records_the_conversation(conversation):
-    dataset_id, deps, run = conversation
-    drive = call_then_summarize("draw", {"dataset_id": dataset_id, "question": "Total by region"},
-                                lambda part: outcome_of(part).model_dump_json())
-    result = run("Chart total by region", drive, conversation_id="chat-1")
-    from vis_agent.requests.models import RequestOutcome
-
-    outcome = RequestOutcome.model_validate_json(result.output)
-    assert outcome.status == "done" and outcome.artifact.chart == "bar" and outcome.artifact.rows == [["West", 20], ["East", 10]]
-    assert outcome.artifact.png_url.startswith("/renders/")
-    request = deps.requests.get_request(outcome.request_id)
-    assert request.caller.kind == "chat" and request.caller.conversation_id == "chat-1"
-    # The specialists' model requests count against the lead's run: lead 2, profiler 1, analyst 2, designer 3.
-    assert result.usage.requests == 8
-
-
-def test_draw_returns_the_question_and_resume_answers_it(conversation):
-    import json
-
-    dataset_id, deps, run = conversation
-
-    def asking(messages, info):
-        prompt = json.loads(messages[0].parts[-1].content)
-        if not prompt.get("clarifications"):
-            return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification",
-                                                     args={"ask": "Which amount?", "reason": "Two."})])
-        assert prompt["clarifications"][0]["answer"] == "The amount column"
-        return analyst_chart_drive(messages, info)
-
-    drive = call_then_summarize("draw", {"dataset_id": dataset_id, "question": "Total by region"},
-                                lambda part: outcome_of(part).model_dump_json())
-    from vis_agent.requests.models import RequestOutcome
-
-    first = RequestOutcome.model_validate_json(run("Chart total by region", drive, analyst_drive=asking,
-                                                   conversation_id="chat-1").output)
-    assert first.status == "waiting" and first.clarification.question == "Which amount?"
-
-    def resume(messages, info):
-        returns = tool_returns(messages)
-        if not returns:
-            assert "resume" in [t.name for t in info.function_tools]
-            return ModelResponse(parts=[ToolCallPart(tool_name="resume", args={
-                "request_id": "", "answer": "The amount column",
-            })])
-        return ModelResponse(parts=[TextPart(content=outcome_of(returns[-1]).model_dump_json())])
-
-    second = RequestOutcome.model_validate_json(run("The amount column", resume, analyst_drive=asking,
-                                                    conversation_id="chat-1").output)
-    assert second.status == "done" and second.request_id == first.request_id and second.artifact.chart == "bar"
+def test_chat_lead_delegates_then_publishes_the_card(deps, dataset_id, agents, fake_models, fake_render):
+    lead = agents[-1]
+    drive = complete_lead("draw", {"dataset_id": dataset_id, "question": "Compare regional sales"})
+    with capture_run_messages() as messages, lead.override(model=FunctionModel(drive)):
+        result = lead.run_sync("Chart sales", deps=deps, conversation_id="chat-1")
+    summary = deps.requests.list_requests()[0]
+    request = deps.requests.get_request(summary.request_id)
+    artifact = deps.requests.get_artifact(summary.artifact_id)
+    assert request.status == "done" and request.caller.conversation_id == "chat-1"
+    assert artifact.png_url in result.output and artifact.artifact_id in result.output
+    assert artifact.report.result.rows == [["East", 10], ["West", 20]]
+    preview = [part for message in messages for part in message.parts if isinstance(part, UserPromptPart)
+               and isinstance(part.content, list)
+               and any(isinstance(item, BinaryContent) for item in part.content)]
+    assert len(preview) == 1
+    picture = next(item for item in preview[0].content if isinstance(item, BinaryContent))
+    assert picture.media_type == "image/png" and picture.data == b"png"
+    # Five lead decisions and one designer call; delegation usage belongs to this run.
+    assert result.usage.requests == 6
+    assert fake_models[0] == {"profiler": 0, "analyst": 0}
 
 
-def test_revise_links_a_new_version(conversation):
-    dataset_id, deps, run = conversation
-    from vis_agent.requests.models import RequestOutcome
-
-    draw = call_then_summarize("draw", {"dataset_id": dataset_id, "question": "Total by region"},
-                               lambda part: outcome_of(part).model_dump_json())
-    v1 = RequestOutcome.model_validate_json(run("Chart total by region", draw).output).artifact
-    revise = call_then_summarize("revise", {"artifact_id": v1.artifact_id, "change": "Make it blue", "redo_analysis": False},
-                                 lambda part: outcome_of(part).model_dump_json())
-    v2 = RequestOutcome.model_validate_json(run("Make it blue", revise).output).artifact
-    assert v2.version == 2 and v2.parent_artifact_id == v1.artifact_id and v2.change == "Make it blue"
-    found = call_then_summarize("find_artifact", {"artifact_id": v1.artifact_id, "dataset_id": ""},
-                                lambda part: str(len(part.content)))
-    assert run("Show the versions", found).output == "2"
+def test_chat_revision_links_a_new_version(deps, dataset_id, agents, fake_models, fake_render):
+    lead = agents[-1]
+    with lead.override(model=FunctionModel(complete_lead("draw", {"dataset_id": dataset_id, "question": "Sales"}))):
+        lead.run_sync("Chart sales", deps=deps)
+    first = deps.requests.list_artifacts(dataset_id=dataset_id)[0]
+    with lead.override(model=FunctionModel(complete_lead("revise", {"artifact_id": first.artifact_id, "change": "Make it blue"}))):
+        lead.run_sync("Make it blue", deps=deps)
+    second = deps.requests.list_artifacts(dataset_id=dataset_id)[0]
+    assert second.version == 2 and second.parent_artifact_id == first.artifact_id
+    assert len(fake_render) == 2
 
 
-def test_lead_tools_report_unknown_ids_as_failures(conversation):
-    dataset_id, deps, run = conversation
+def test_chat_draw_accepts_exact_uploaded_file_name(deps, dataset_id, agents, fake_models, fake_render):
+    with agents[-1].override(model=FunctionModel(complete_lead("draw", {"dataset_id": "sales.csv", "question": "Sales"}))):
+        agents[-1].run_sync("Chart sales.csv", deps=deps)
+    assert deps.requests.list_artifacts(dataset_id=dataset_id)[0].dataset_id == dataset_id
+
+
+def test_an_unknown_file_name_is_a_plain_failure_not_an_unrelated_upload(deps, dataset_id, agents, fake_models, fake_render):
+    def drive(messages, info):
+        returned = tool_returns(messages)
+        if not returned:
+            return call("draw", dataset_id="nothing.csv", question="Sales")
+        assert returned[-1].outcome == "failed"
+        assert "no uploaded dataset is named" in str(returned[-1].content).lower()
+        return finish("Upload nothing.csv first.")
+
+    with agents[-1].override(model=FunctionModel(drive)):
+        result = agents[-1].run_sync("Chart nothing.csv", deps=deps)
+    assert result.output == "Upload nothing.csv first." and deps.requests.list_requests() == []
+
+
+def test_resume_is_offered_only_for_an_unfinished_chat_request(deps, agents, dataset_id):
+    from vis_agent.requests.models import Caller
+    from vis_agent.requests.service import create_request
+
+    observed = []
 
     def drive(messages, info):
-        returns = tool_returns(messages)
-        if not returns:
-            return ModelResponse(parts=[ToolCallPart(tool_name="revise", args={
-                "artifact_id": "art_" + "0" * 32, "change": "x", "redo_analysis": False})])
-        assert "not found" in str(returns[-1].content).lower()
-        return ModelResponse(parts=[TextPart(content="No such artifact.")])
+        observed.append("resume" in {tool.name for tool in info.function_tools})
+        return finish()
 
-    assert run("Change it", drive).output == "No such artifact."
-
-
-def test_resume_is_not_offered_without_an_unfinished_request(conversation):
-    dataset_id, deps, run = conversation
-
-    def drive(messages, info):
-        assert "resume" not in [t.name for t in info.function_tools]
-        return ModelResponse(parts=[TextPart(content="Nothing to continue.")])
-
-    assert run("continue", drive, conversation_id="chat-9").output == "Nothing to continue."
+    with agents[-1].override(model=FunctionModel(drive)):
+        agents[-1].run_sync("continue", deps=deps, conversation_id="chat-1")
+        create_request(deps, type="new", dataset_id=dataset_id, question="Sales",
+                       caller=Caller(kind="chat", conversation_id="chat-1"))
+        agents[-1].run_sync("continue", deps=deps, conversation_id="other-chat")
+        agents[-1].run_sync("continue", deps=deps, conversation_id="chat-1")
+    assert observed == [False, False, True]
 
 
-def test_resume_stays_offered_for_the_terminal(conversation):
+def test_terminal_caller_identity_survives_delegation(deps, dataset_id, agents, fake_models, fake_render):
     from dataclasses import replace
 
-    dataset_id, deps, run = conversation
-
-    def drive(messages, info):
-        assert "resume" in [t.name for t in info.function_tools]
-        return ModelResponse(parts=[TextPart(content="Name the request to continue.")])
-
-    result = run("continue", drive, run_deps=replace(deps, caller_kind="terminal"))
-    assert result.output == "Name the request to continue."
-
-
-def test_the_lead_records_the_callers_kind_from_its_deps(conversation):
-    from dataclasses import replace
-
-    from vis_agent.requests.models import RequestOutcome
-
-    dataset_id, deps, run = conversation
-    drive = call_then_summarize("draw", {"dataset_id": dataset_id, "question": "Total by region"},
-                                lambda part: outcome_of(part).model_dump_json())
-    result = run("Chart total by region", drive, run_deps=replace(deps, caller_kind="terminal"))
-    outcome = RequestOutcome.model_validate_json(result.output)
-    assert deps.requests.get_request(outcome.request_id).caller.kind == "terminal"
-
-
-def test_draw_accepts_the_uploaded_file_name(conversation):
-    from vis_agent.requests.models import RequestOutcome
-
-    dataset_id, deps, run = conversation
-    drive = call_then_summarize("draw", {"dataset_id": "sales.csv", "question": "Total by region"},
-                                lambda part: outcome_of(part).model_dump_json())
-    outcome = RequestOutcome.model_validate_json(run("Chart total by region in sales.csv", drive).output)
-    assert outcome.status == "done" and outcome.artifact.dataset_id == dataset_id
-
-
-def test_an_unknown_file_name_is_a_plain_failure_not_a_guess(conversation):
-    dataset_id, deps, run = conversation
-
-    def drive(messages, info):
-        returns = tool_returns(messages)
-        if not returns:
-            return ModelResponse(parts=[ToolCallPart(tool_name="draw", args={"dataset_id": "nothing.csv",
-                                                                            "question": "Total by region"})])
-        assert "no uploaded dataset is named" in str(returns[-1].content).lower()
-        return ModelResponse(parts=[TextPart(content="Upload nothing.csv first.")])
-
-    assert run("Chart nothing.csv", drive).output == "Upload nothing.csv first."
-    assert deps.requests.list_requests() == []
-
+    drive = complete_lead("draw", {"dataset_id": dataset_id, "question": "Sales"})
+    with agents[-1].override(model=FunctionModel(drive)):
+        agents[-1].run_sync("Chart sales", deps=replace(deps, caller_kind="terminal", caller_identity="terminal-user"))
+    request = deps.requests.get_request(deps.requests.list_requests()[0].request_id)
+    assert request.caller.kind == "terminal" and request.caller.identity == "terminal-user"
 
 def test_an_empty_clarification_is_sent_back_to_the_model(store, people):
     from vis_agent.analyst.agent import analyze_dataset

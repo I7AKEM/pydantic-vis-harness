@@ -19,6 +19,7 @@ KEYS = {
     "bind": ("bind", "section:pairs"), "fold": ("fold", "section:list"), "style": ("style", "section:pairs"),
     "cards": ("cards", "section:cards"),
     "columnLabels": ("column_labels", "section:labels"),
+    "valueLabels": ("value_labels", "section:value_labels"),
     "sort": ("sort", "enum:SortOrder"), "limit": ("limit", "int"), "other": ("other", "text"), "unknown": ("unknown", "text"),
     "emphasis": ("emphasis", "section:list"), "palette": ("palette", "section:list"),
     "direction": ("direction", "enum:Direction"), "zero": ("zero", "bool"),
@@ -112,7 +113,7 @@ def parse(text: str) -> Spec:
                 issue(number, f"'{key}' is a section; put its lines indented below it")
             if kind in ("section:list", "section:cards"):
                 data[field] = []
-            elif key == "bind" or kind == "section:labels":
+            elif key == "bind" or kind in ("section:labels", "section:value_labels"):
                 data[field] = {}
         elif not value:
             issue(number, f"missing value for '{key}'")
@@ -186,6 +187,21 @@ def parse(text: str) -> Spec:
                 issue(number, f"duplicate column label '{pair[0]}'")
             else:
                 data["column_labels"][pair[0]] = pair[1]
+        elif indent == 2 and parent == "valueLabels":
+            try:
+                record = json.loads(content[2:]) if content.startswith("- ") else None
+            except json.JSONDecodeError:
+                record = None
+            if (not isinstance(record, list) or len(record) != 3 or
+                    any(not isinstance(item, str) for item in record) or
+                    not record[0].strip() or not record[2].strip()):
+                issue(number, 'valueLabels records are - ["exact column name", "original value", "display label"]')
+            else:
+                labels = data["value_labels"].setdefault(record[0], {})
+                if record[1] in labels:
+                    issue(number, f"duplicate value label for '{record[0]}' value '{record[1]}'")
+                else:
+                    labels[record[1]] = record[2]
         elif indent == 2 and parent == "bind":
             if key not in ROLES:
                 issue(number, f"unknown role '{key}'; roles are {', '.join(ROLES)}")
@@ -258,6 +274,10 @@ def to_text(spec: Spec) -> str:
         elif key == "columnLabels":
             lines.append(key)
             lines.extend("  - " + json.dumps([name, label], ensure_ascii=False) for name, label in value.items())
+        elif key == "valueLabels":
+            lines.append(key)
+            lines.extend("  - " + json.dumps([name, original, label], ensure_ascii=False)
+                         for name, labels in value.items() for original, label in labels.items())
         elif kind == "section:list":
             lines.append(key)
             lines.extend(f"  - {item}" for item in value)

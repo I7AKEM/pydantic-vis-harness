@@ -21,7 +21,7 @@ COLUMNS = [
 
 
 def sql_for(dataset):
-    return f'SELECT region, sum(amount) AS total FROM "{dataset}" GROUP BY 1 ORDER BY 2 DESC'
+    return f'SELECT region, sum(amount) AS total FROM "{dataset}_values" GROUP BY 1 ORDER BY 2 DESC'
 
 
 def tool_call(name, **args):
@@ -136,7 +136,7 @@ def test_repair_after_a_query_error_and_the_call_cap(store, people, agents):
         if calls:
             seen.append(last_return(messages).model_response_object())
         if len(calls) < MAX_QUERY_CALLS:
-            return tool_call("run_query", sql=f'SELECT nope FROM "{dataset}"', columns=[{"name": "nope", "meaning": "x", "kind": "measure"}])
+            return tool_call("run_query", sql=f'SELECT nope FROM "{dataset}_values"', columns=[{"name": "nope", "meaning": "x", "kind": "measure"}])
         assert "run_query" not in [t.name for t in info.function_tools]
         return tool_call("ask_clarification", ask="Which column holds the amount?", reason="The query kept failing.")
 
@@ -236,7 +236,7 @@ def test_undeclared_share_scale_exhausts_existing_query_budget(store, people, ag
     question = "What percentage of people are in the East?"
     usage = RunUsage()
     checked_queries = []
-    sql = f"SELECT 100.0 * count(*) FILTER (WHERE region = 'East') / count(*) AS share FROM \"{dataset}\""
+    sql = f"SELECT 100.0 * count(*) FILTER (WHERE region = 'East') / count(*) AS share FROM \"{dataset}_values\""
     columns = [{"name": "share", "meaning": "East share of people", "kind": "share", "aggregate": "share"}]
 
     def drive(messages, info):
@@ -266,7 +266,7 @@ def test_undeclared_share_scale_exhausts_existing_query_budget(store, people, ag
 def test_two_queries_in_one_response_past_the_budget_get_one_retry(store, people, agents):
     dataset, _profile = people
     profiler, analyst = agents
-    good = f'SELECT region, sum(amount) AS total FROM "{dataset}" GROUP BY 1'
+    good = f'SELECT region, sum(amount) AS total FROM "{dataset}_values" GROUP BY 1'
     columns = [{"name": "region", "meaning": "Region", "kind": "geography", "source": "region"},
                {"name": "total", "meaning": "Sum of amount", "kind": "measure", "source": "amount", "aggregate": "sum"}]
     calls = []
@@ -291,7 +291,7 @@ def test_two_queries_in_one_response_past_the_budget_get_one_retry(store, people
 def test_failed_checks_come_back_in_the_tool_result_and_are_recorded(store, people, agents):
     dataset, _profile = people
     profiler, analyst = agents
-    filtered = f"SELECT region, sum(amount) AS total FROM \"{dataset}\" WHERE region = 'East' GROUP BY 1"
+    filtered = f"SELECT region, sum(amount) AS total FROM \"{dataset}_values\" WHERE region = 'East' GROUP BY 1"
 
     def drive(messages, info):
         calls = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
@@ -330,7 +330,7 @@ def test_omitted_columns_are_refused_through_the_agent(store, agents):
     def drive(messages, info):
         calls = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
         if not calls:
-            return tool_call("run_query", sql=f'SELECT WKT FROM "{source.dataset_id}"',
+            return tool_call("run_query", sql=f'SELECT WKT FROM "{source.dataset_id}_values"',
                              columns=[{"name": "WKT", "meaning": "Geometry", "kind": "geography", "source": "WKT"}])
         returned = last_return(messages).model_response_object()
         assert "cannot be queried" in returned["error"]
@@ -343,24 +343,23 @@ def test_omitted_columns_are_refused_through_the_agent(store, agents):
     assert report.analysis is None
 
 
-def test_unprofiled_dataset_is_profiled_first(store, agents):
+def test_explicit_analysis_uses_local_facts_without_a_profiler_model(store, agents):
     profiler, analyst = agents
     source = store.save_upload("sales.csv", b"region,amount\nEast,1\nWest,2\n")
-    profile_output = {"description": "Sales.", "row_meaning": "A sale.", "questions": [],
-                      "columns": [{"name": n, "meaning": None, "role": r, "unit": None, "confidence": "high", "evidence": "x"}
-                                  for n, r in (("region", "geography"), ("amount", "measure"))]}
+    def unexpected_profile(messages, info):
+        pytest.fail("Explicit analysis must not trigger a semantic profiler model call")
 
     def drive(messages, info):
         calls = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
         if not calls:
-            return tool_call("run_query", sql=f'SELECT sum(amount) AS total FROM "{source.dataset_id}"',
+            return tool_call("run_query", sql=f'SELECT sum(amount) AS total FROM "{source.dataset_id}_values"',
                              columns=[{"name": "total", "meaning": "Total", "kind": "measure", "source": "amount", "aggregate": "sum"}])
         return tool_call("deliver_analysis", summary="The total is 3.")
 
-    with profiler.override(model=TestModel(call_tools=[], custom_output_args=profile_output)):
+    with profiler.override(model=FunctionModel(unexpected_profile)):
         with analyst.override(model=FunctionModel(drive)):
             report = run(store, profiler, analyst, source.dataset_id, "Total?")
-    assert store.get_profile(source.dataset_id).status == "complete"
+    assert store.get_profile(source.dataset_id) is None
     assert report.result.rows == [[3]]
 
 
@@ -450,7 +449,7 @@ def test_described_names_may_carry_the_alias_quotes(store, people, agents):
 def test_a_spent_query_budget_with_no_pass_ends_the_run_with_the_check_messages(store, people, agents):
     dataset, _profile = people
     profiler, analyst = agents
-    sql = f'SELECT region, sum(amount) AS total FROM "{dataset}" GROUP BY 1'
+    sql = f'SELECT region, sum(amount) AS total FROM "{dataset}_values" GROUP BY 1'
     wrong = [{"name": "somewhere", "meaning": "Wrong name", "kind": "geography", "source": "region"},
              {"name": "total", "meaning": "Sum of amount", "kind": "measure", "source": "amount", "aggregate": "sum"}]
 

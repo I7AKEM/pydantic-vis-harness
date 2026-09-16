@@ -59,7 +59,7 @@ class ResultShape:
         raise KeyError(name)
 
 
-def describe(columns: list[ResultColumn], result: QueryResult) -> ResultShape:
+def describe(columns: list[ResultColumn], result: QueryResult, *, relationships: bool = True) -> ResultShape:
     summaries = []
     label_values = {}
     cells_by_name = {}
@@ -87,6 +87,8 @@ def describe(columns: list[ResultColumn], result: QueryResult) -> ResultShape:
         identifiers=[c for c in summaries if c.kind == "identifier"],
     )
     shape._label_values = label_values
+    if not relationships:
+        return shape
     # Measure new facts in DuckDB; physical result types may be fixture placeholders.
     # JSON preserves numeric codes versus text codes instead of coercing mixed lists.
     alias_cells = {c.name: [json.dumps(v) if v is not None else None for v in cells_by_name[c.name]]

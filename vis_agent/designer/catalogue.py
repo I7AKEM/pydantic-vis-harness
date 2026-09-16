@@ -74,7 +74,8 @@ class Catalogue(BaseModel):
                          "exact column names; every result column must be covered; ordinary bind is empty")
             lines.append(
                 f"{entry.name}: purposes={', '.join(entry.purposes)}; "
-                f"roles={roles}; rating={entry.rating}; {entry.summary}"
+                f"roles={roles}; chart-specific config={', '.join(entry.keys) or 'none'}; "
+                f"rating={entry.rating}; {entry.summary}"
             )
         return "\n".join(lines)
 

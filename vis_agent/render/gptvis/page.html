@@ -18,16 +18,19 @@
   {{table}}
   <script>
     {{format_js}}
+    {{display_js}}
     const interactive = {{interactive}};
     if (interactive) {
       const g2 = {{g2}}, format = {{format}}, format2 = {{format2}};
       const formatter = makeFormatter(format), formatter2 = makeFormatter(format2);
+      const displayCallbacks = makeDisplay({{display}}, formatter, formatter2);
       const img = document.getElementById('picture'), div = document.getElementById('chart');
       function revive(value) {
         if (value && typeof value === 'object') {
           if (value.$format === 'value') return formatter;
           if (value.$format === 'value2') return formatter2;
-          if (value.$label === 'category_value') return d => `${d.category}: ${formatter(d.value)}`;
+          if (value.$label === 'category_value') return displayCallbacks.callback({ kind: 'pie' });
+          if (value.$display) return displayCallbacks.callback(value.$display);
           if (Array.isArray(value)) return value.map(revive);
           return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, revive(item)]));
         }

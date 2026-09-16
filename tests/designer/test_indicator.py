@@ -147,21 +147,21 @@ def test_ordinary_charts_reject_cards_including_empty_section():
 
 
 @pytest.mark.parametrize("section", ['columnLabels\n', 'columnLabels\n  - ["total", "الإجمالي"]\n'])
-def test_ordinary_charts_reject_column_labels_including_empty_section(section):
+def test_ordinary_charts_accept_column_labels_including_empty_section(section):
     checked = check_spec("vis table\ntitle Total\ndescription Total\n" + section, *single_number())
-    assert any(v.rule == "C3" and "columnLabels" in v.message for v in checked.violations)
+    assert checked.ok, checked.violations
 
 
-def test_label_translations_require_exact_existing_and_bound_columns():
+def test_label_translations_require_exact_existing_columns():
     columns = [column("total", "measure"), column("city", "category"), column("count", "measure")]
     result = table(columns, [[100, "Riyadh", 5]])
     spec = card_spec({"value": "total", "context": ["city"], "support": ["count"]},
                      column_labels={"total": "الإجمالي", "city": "المدينة", "count": "العدد"})
     assert check_spec(spec, columns, result).ok
     unknown = spec + '  - ["absent", "غير موجود"]\n'
-    assert any(v.rule == "I5" for v in check_spec(unknown, columns, result).violations)
+    assert any(v.rule == "label_binding" for v in check_spec(unknown, columns, result).violations)
     unbound = card_spec({"value": "total"}, column_labels={"city": "المدينة"})
-    assert any(v.rule == "I5" for v in check_spec(unbound, columns, result).violations)
+    assert not any(v.rule == "label_binding" for v in check_spec(unbound, columns, result).violations)
 
 
 @pytest.mark.parametrize("unit,pattern,ok", [("%", "0.0%", True), ("%", "0.000", True),

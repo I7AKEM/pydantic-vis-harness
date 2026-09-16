@@ -7,7 +7,7 @@ from vis_agent.designer.models import Compromise
 from vis_agent.designer.syntax import KEYS, STYLE_KEYS, parse, to_text
 from vis_agent.render.base import Capability, RENDERERS, Rendered, capability_for
 
-from .conftest import (cities, gender_code_and_label, gender_share, monthly, own_share_by_region,
+from .conftest import (cities, column, gender_code_and_label, gender_share, monthly, own_share_by_region, table,
                        two_same_unit_measures, two_same_unit_measures_by_city, two_units)
 
 
@@ -24,6 +24,25 @@ def test_passing_arabic_donut_is_canonical_without_direction_compromise():
     assert check.violations == []
     assert check.canonical == to_text(parse(text))
     assert check.compromises == []
+
+
+def test_runtime_color_check_normalizes_hex_and_repairs_contrast_without_a_model_retry():
+    from vis_agent.designer.check import check_render_spec
+
+    checked = check_render_spec(COLUMN + "palette\n  - FFD700\n", *cities())
+    assert checked.ok
+    repaired = parse(checked.canonical).palette[0]
+    assert repaired.startswith("#") and repaired != "#FFD700"
+    assert checked.compromises == [Compromise(
+        key="palette", message=f"Adjusted #FFD700 to {repaired} to meet the 3:1 contrast requirement."
+    )]
+
+
+def test_runtime_color_check_rejects_non_hex_before_rendering():
+    from vis_agent.designer.check import check_render_spec
+
+    checked = check_render_spec(COLUMN + "palette\n  - gold\n", *cities())
+    assert not checked.ok and [violation.rule for violation in checked.violations] == ["color_hex"]
 
 
 def test_syntax_error_stops_before_semantic_checks():
@@ -148,7 +167,7 @@ def test_emphasis_can_name_a_folded_series():
     columns, result = two_same_unit_measures_by_city()
     columns[1].meaning = "Total revenue"
     text = ("vis grouped_column\ntitle Revenue and cost\ndescription Revenue and cost by city\nbind\n"
-            "  category city\nfold\n  - revenue\n  - cost\nemphasis\n  - Total revenue\n")
+            "  category city\nfold\n  - revenue\n  - cost\nemphasis\n  - revenue\n")
     check = check_spec(text, columns, result)
     assert check.ok
     assert not any(violation.rule == "C9" for violation in check.violations)
@@ -425,3 +444,44 @@ def test_c5_nonadditive_second_measure_cannot_be_folded():
     assert any(v.rule == "C5" for v in check_spec(text, columns, result).violations)
     columns[2].aggregate = "sum"
     assert check_spec(text, columns, result).ok
+
+
+def test_all_chart_types_accept_display_mappings():
+    from vis_agent.designer.catalogue import CATALOGUE
+    from vis_agent.designer.check import check_render_spec
+    from vis_agent.designer.models import IndicatorCard, Spec
+    from vis_agent.designer.syntax import to_text
+
+    columns = [column("label", "category"), column("group", "category"), column("period", "time"),
+               column("value", "measure"), column("second", "measure")]
+    result = table(columns, [["M", "A", "2026-01", 12, 17]])
+    bindings = {"category": "label", "group": "group", "time": "period", "value": "value",
+                "value2": "second", "x": "value", "y": "second"}
+    for entry in CATALOGUE.entries:
+        spec = Spec(type=entry.name, bind={role: bindings[role] for role in entry.roles},
+                    cards=[IndicatorCard(value="value")] if entry.name == "indicator" else [],
+                    column_labels={"label": "الجنس", "value": "القيمة"},
+                    value_labels={"label": {"M": "ذكور", "F": "إناث"}})
+        checked = check_render_spec(to_text(spec), columns, result)
+        assert checked.ok, (entry.name, checked.violations)
+
+
+@pytest.mark.parametrize("section", [
+    'columnLabels\n  - ["absent", "عنوان"]\n',
+    'valueLabels\n  - ["absent", "M", "ذكور"]\n',
+    'valueLabels\n  - ["violations", "10", "عشرة"]\n',
+])
+def test_label_mappings_require_existing_columns_and_keep_measurements_numeric(section):
+    from vis_agent.designer.check import check_render_spec
+
+    checked = check_render_spec(COLUMN + section, *cities())
+    assert any(issue.rule == "label_binding" for issue in checked.violations)
+
+
+def test_column_labels_can_name_original_measure_columns_before_fold():
+    from vis_agent.designer.check import check_render_spec
+
+    columns, result = two_same_unit_measures()
+    spec = MULTI_FOLD + 'columnLabels\n  - ["injuries", "الإصابات"]\n  - ["deaths", "الوفيات"]\n'
+    checked = check_render_spec(spec, columns, result)
+    assert checked.ok, checked.violations

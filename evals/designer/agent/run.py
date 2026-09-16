@@ -47,6 +47,8 @@ render_results: dict[str, dict[int, RenderResult | str]] = {}
 
 def _appropriate_deferral(ctx) -> bool:
     """Only an independently incomplete result may be sent back for analysis repair."""
+    if ctx.expected_output["expect"] == "no_chart":
+        return ctx.output.design is None and ctx.output.clarification is None and bool(ctx.output.warnings)
     gold = ctx.expected_output.get("indicator")
     if gold and gold["mode"] == "incomplete":
         return presentation_fit(IndicatorExpectation.model_validate(gold),

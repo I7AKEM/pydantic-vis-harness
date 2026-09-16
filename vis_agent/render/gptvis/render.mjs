@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { makeFormatter } from './format.js';
+import { makeDisplay, applyDisplay } from './display.js';
 import { drawIndicator } from './indicator.mjs';
 
 const plain = value => value !== null && typeof value === 'object' && Object.getPrototypeOf(value) === Object.prototype;
@@ -14,21 +15,33 @@ function deepMerge(base, overrides) {
 }
 
 try {
-  const { config, overrides = {}, format, format2, tableFormats = {}, output, trace = false } = JSON.parse(readFileSync(0, 'utf8'));
-  if (config.type === 'spreadsheet') {
-    const formatters = Object.fromEntries(Object.entries(tableFormats).map(([header, desc]) => [header, makeFormatter(desc)]));
-    config.data = config.data.map(row => Object.fromEntries(Object.entries(row).map(([header, value]) =>
-      [header, typeof value === 'number' && formatters[header] ? formatters[header](value) : value])));
-  }
+  const { config, overrides = {}, format, format2, display = {}, tableFormats = {}, output, trace = false } = JSON.parse(readFileSync(0, 'utf8'));
   const require = createRequire(import.meta.url);
   require.extensions['.css'] = () => {};
   const g2 = require('@antv/g2-ssr');
   const { render } = require('@antv/gpt-vis-ssr');
   const { CanvasRenderingContext2D, createCanvas, loadImage } = require('canvas');
-  const formatter = makeFormatter(format), pieLabel = d => `${d.category}: ${formatter(d.value)}`;
+  const formatter = makeFormatter(format);
   const formatter2 = makeFormatter(format2);
+  const displayCallbacks = makeDisplay(display, formatter, formatter2);
+  const pieLabel = displayCallbacks.callback({ kind: 'pie' });
   const ours = new WeakSet([formatter, formatter2, pieLabel]), functionPaths = [], formatPaths = [], texts = [];
   let captured = null;
+  function reserveLabelSpace(options) {
+    // The package sizes its frame before our unit formatter is installed. Leave
+    // room for complete formatted bar labels and for the bottom axis title.
+    if (config.axisXTitle || config.axisYTitle) {
+      options.marginBottom = Math.max(options.marginBottom || 0, 24);
+    }
+    const transposed = options.coordinate?.transform?.some(item => item.type === 'transpose');
+    if (transposed && options.labels?.length && Array.isArray(options.data)) {
+      const context = createCanvas(1, 1).getContext('2d');
+      const fontSize = Math.max(12, ...options.labels.map(label => label.fontSize || 12));
+      context.font = `${fontSize}px sans-serif`;
+      const widths = options.data.map(row => context.measureText(formatter(row.value)).width);
+      options.marginRight = Math.max(options.marginRight || 0, Math.ceil(Math.max(0, ...widths)) + 20);
+    }
+  }
   function applyFormat(options, path = '', activeFormatter = formatter) {
     if (overrides.labels?.length === 0) options.labels = [];
     if (overrides.legend === false) options.legend = false;
@@ -57,6 +70,9 @@ try {
   }
   function toJsonSafe(value, path = '') {
     if (typeof value === 'function') {
+      if (value === pieLabel) return { $label: 'category_value' };
+      const descriptor = displayCallbacks.descriptor(value);
+      if (descriptor) return { $display: descriptor };
       if (ours.has(value)) return value === pieLabel ? { $label: 'category_value' } : { $format: value === formatter2 ? 'value2' : 'value' };
       functionPaths.push(path);
       return { $function: path };
@@ -71,9 +87,26 @@ try {
     if (typeof options.title === 'string' && overrides.title) options.title = { title: options.title };
     const merged = deepMerge(options, overrides);
     applyFormat(merged);
+    applyDisplay(merged, display, displayCallbacks, config.type);
+    reserveLabelSpace(merged);
     captured = toJsonSafe(merged);
     return original(merged);
   };
+  let tableDisplay;
+  if (config.type === 'spreadsheet') {
+    const spreadsheet = require('@antv/s2-ssr'), createSpreadsheet = spreadsheet.createSpreadsheet;
+    const formatters = Object.fromEntries(Object.entries(tableFormats).map(([field, desc]) => [field, makeFormatter(desc)]));
+    const show = (field, value) => value == null ? value : typeof value === 'number' && formatters[field]
+      ? formatters[field](value) : displayCallbacks.label(field, value);
+    tableDisplay = config.data.map(row => Object.fromEntries(Object.entries(row).map(([field, value]) => [field, show(field, value)])));
+    spreadsheet.createSpreadsheet = options => createSpreadsheet({ ...options, dataCfg: { ...options.dataCfg,
+      meta: config.columns.map(field => ({ field, name: display.columns?.[field] || field,
+        formatter: value => {
+          const text = show(field, value);
+          return display.timeFields?.includes(field) && typeof text === 'string'
+            && /[٠-٩]/u.test(text) && /^[0-9٠-٩TZ :./+\-]+$/u.test(text) ? `\u202d${text}\u202c` : text;
+        } })) } });
+  }
   if (trace) {
     const fillText = CanvasRenderingContext2D.prototype.fillText;
     CanvasRenderingContext2D.prototype.fillText = function (text, ...args) {
@@ -104,7 +137,7 @@ try {
   }
   console.log(JSON.stringify({ renderMs, width, height, bytes: buffer.length,
     nonBackgroundShare: changed / sampled, g2: captured, functionPaths, formatPaths, texts,
-    ...(config.type === 'spreadsheet' ? { config } : {}),
+    ...(config.type === 'spreadsheet' ? { config, tableDisplay } : {}),
     ...(indicator ? { texts: indicator.texts, textBounds: indicator.textBounds, cardBounds: indicator.cardBounds,
       logicalWidth: indicator.logicalWidth, logicalHeight: indicator.logicalHeight } : {}) }));
 } catch (error) {

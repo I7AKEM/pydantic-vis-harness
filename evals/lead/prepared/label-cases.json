@@ -1,0 +1,86 @@
+[
+  {
+    "name": "approved-gender-labels",
+    "filename": "gender-labels.csv",
+    "csv_text": "gender,count\nM,42\nF,58\n",
+    "brief": {
+      "producer_agent": "synthetic-data-agent",
+      "raw_question": "قارن عدد الأشخاص حسب الجنس.",
+      "intent": "compare",
+      "column_descriptions": {"gender": "Gender code defined by the upstream data agent", "count": "Prepared number of people"},
+      "units": {"count": "شخص"},
+      "code_meanings": {"gender": {"M": "Male", "F": "Female"}},
+      "display_labels": {"ar": {
+        "column_labels": {"gender": "الجنس", "count": "عدد الأشخاص"},
+        "value_labels": {"gender": {"M": "ذكر", "F": "أنثى"}}
+      }}
+    },
+    "turns": [{
+      "message": "اعرض مقارنة وفق الموجز بالعربية، واستخدم تسميات العرض المعتمدة فيه.\n\nAttached CSV: [gender-labels.csv](/datasets/{dataset_id}/profile)",
+      "tool": "draw", "outcome": "artifact", "charts": ["bar", "column"], "language": "ar",
+      "bindings": {"category": "gender", "value": "count"},
+      "prepared_csv": true, "require_delivery": true, "max_seconds": 60,
+      "source_columns": ["gender", "count"], "source_rows": [["M", 42], ["F", 58]],
+      "display_labels": {
+        "column_labels": {"gender": "الجنس", "count": "عدد الأشخاص"},
+        "value_labels": {"gender": {"M": "ذكر", "F": "أنثى"}}
+      }
+    }]
+  },
+  {
+    "name": "approved-marital-labels",
+    "filename": "marital-labels.csv",
+    "csv_text": "marital_status,count\nM,35\nS,65\n",
+    "brief": {
+      "producer_agent": "synthetic-data-agent",
+      "raw_question": "قارن عدد الأشخاص حسب الحالة الاجتماعية.",
+      "intent": "compare",
+      "column_descriptions": {"marital_status": "Marital status code; M means Married in this column", "count": "Prepared number of people"},
+      "units": {"count": "شخص"},
+      "code_meanings": {"marital_status": {"M": "Married", "S": "Single"}},
+      "display_labels": {"ar": {
+        "column_labels": {"marital_status": "الحالة الاجتماعية", "count": "عدد الأشخاص"},
+        "value_labels": {"marital_status": {"M": "متزوج", "S": "أعزب"}}
+      }}
+    },
+    "turns": [{
+      "message": "اعرض مقارنة وفق الموجز بالعربية، واستخدم تسميات العرض المعتمدة فيه.\n\nAttached CSV: [marital-labels.csv](/datasets/{dataset_id}/profile)",
+      "tool": "draw", "outcome": "artifact", "charts": ["bar", "column"], "language": "ar",
+      "bindings": {"category": "marital_status", "value": "count"},
+      "prepared_csv": true, "require_delivery": true, "max_seconds": 60,
+      "source_columns": ["marital_status", "count"], "source_rows": [["M", 35], ["S", 65]],
+      "display_labels": {
+        "column_labels": {"marital_status": "الحالة الاجتماعية", "count": "عدد الأشخاص"},
+        "value_labels": {"marital_status": {"M": "متزوج", "S": "أعزب"}}
+      }
+    }]
+  },
+  {
+    "name": "approved-nationality-labels",
+    "filename": "nationality-labels.csv",
+    "csv_text": "nationality,count\nSaudi,70\nAlien,30\n",
+    "brief": {
+      "producer_agent": "synthetic-data-agent",
+      "raw_question": "قارن عدد الأشخاص حسب الجنسية.",
+      "intent": "compare",
+      "column_descriptions": {"nationality": "Nationality category as defined by the data producer", "count": "Prepared number of people"},
+      "units": {"count": "شخص"},
+      "code_meanings": {"nationality": {"Saudi": "Saudi citizen", "Alien": "Non-Saudi resident"}},
+      "display_labels": {"ar": {
+        "column_labels": {"nationality": "الجنسية", "count": "عدد الأشخاص"},
+        "value_labels": {"nationality": {"Saudi": "سعودي", "Alien": "غير سعودي"}}
+      }}
+    },
+    "turns": [{
+      "message": "اعرض مقارنة وفق الموجز بالعربية، واستخدم تسميات العرض المعتمدة فيه.\n\nAttached CSV: [nationality-labels.csv](/datasets/{dataset_id}/profile)",
+      "tool": "draw", "outcome": "artifact", "charts": ["bar", "column"], "language": "ar",
+      "bindings": {"category": "nationality", "value": "count"},
+      "prepared_csv": true, "require_delivery": true, "max_seconds": 60,
+      "source_columns": ["nationality", "count"], "source_rows": [["Saudi", 70], ["Alien", 30]],
+      "display_labels": {
+        "column_labels": {"nationality": "الجنسية", "count": "عدد الأشخاص"},
+        "value_labels": {"nationality": {"Saudi": "سعودي", "Alien": "غير سعودي"}}
+      }
+    }]
+  }
+]

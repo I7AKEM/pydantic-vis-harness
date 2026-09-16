@@ -52,31 +52,28 @@ def test_a_program_creates_a_request_and_receives_the_artifact(app, dataset_id, 
     assert app.state.received[0]["artifact_id"] == shown["artifact_id"]
 
 
-def test_a_question_round_trips_over_the_channel(app, deps, dataset_id, fake_models, fake_render, agents):
-    from tests.requests.conftest import analyst_drive, prompt_of
+def test_an_existing_caller_decision_round_trips_over_the_channel(app, deps, dataset_id, fake_models, fake_render):
+    import asyncio
 
-    _profiler, analyst, _designer, _lead = agents
+    from vis_agent.requests.models import Caller
+    from vis_agent.requests.service import create_request, pause_request
 
-    def ask_then_answer(messages, info):
-        if not prompt_of(messages).get("clarifications"):
-            return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification",
-                                                     args={"ask": "Which amount?", "reason": "Two."})])
-        return analyst_drive(messages, info)
-
-    with analyst.override(model=FunctionModel(ask_then_answer)), TestClient(app) as client:
-        request_id = client.post("/requests", json=body(dataset_id)).json()["request_id"]
+    request = create_request(deps, type="new", dataset_id=dataset_id, question="Compare regional sales",
+                             caller=Caller(kind="agent", identity="reporter", return_address="http://testserver/callback"))
+    asyncio.run(pause_request(deps, request, "Use your brand colours?", "An explicit presentation preference."))
+    request_id = request.request_id
+    with TestClient(app) as client:
         shown = client.get(f"/requests/{request_id}").json()
-        assert shown["status"] == "waiting" and shown["pending_question"] == "Which amount?" and shown["overdue"] is False
-        assert app.state.received[-1]["status"] == "waiting"
-        answered = client.post(f"/requests/{request_id}/answer", json={"answer": "The amount column"})
+        assert shown["status"] == "waiting" and shown["pending_question"] == "Use your brand colours?"
+        assert client.post(f"/requests/{request_id}/resume", headers=JSON).status_code == 409
+        answered = client.post(f"/requests/{request_id}/answer", json={"answer": "Use blue"})
         assert answered.status_code == 202
         shown = client.get(f"/requests/{request_id}").json()
         assert shown["status"] == "done"
         artifact = client.get(f"/artifacts/{shown['artifact_id']}").json()
         assert artifact["clarifications"][0]["answered_by"] == "agent"
-        again = client.post(f"/requests/{request_id}/answer", json={"answer": "x"})
-        assert again.status_code == 409
-    assert [r["status"] for r in app.state.received] == ["waiting", "done"]
+        assert client.post(f"/requests/{request_id}/answer", json={"answer": "x"}).status_code == 409
+    assert [r["status"] for r in app.state.received] == ["done"]
 
 
 def test_the_channel_refuses_bad_input(app, dataset_id):
@@ -94,9 +91,9 @@ def test_the_channel_refuses_bad_input(app, dataset_id):
 
 
 def test_resume_continues_a_failed_request(app, deps, dataset_id, fake_models, fake_render, monkeypatch):
-    from vis_agent.requests import runner
+    from vis_agent import lead as lead_module
 
-    real = runner.design_chart
+    real = lead_module.design_chart
     state = {"died": False}
 
     async def dying(*args, **kwargs):
@@ -105,7 +102,7 @@ def test_resume_continues_a_failed_request(app, deps, dataset_id, fake_models, f
             raise RuntimeError("died")
         return await real(*args, **kwargs)
 
-    monkeypatch.setattr(runner, "design_chart", dying)
+    monkeypatch.setattr(lead_module, "design_chart", dying)
     with TestClient(app) as client:
         request_id = client.post("/requests", json=body(dataset_id)).json()["request_id"]
         assert client.get(f"/requests/{request_id}").json()["status"] == "failed"
@@ -149,12 +146,20 @@ def test_a_program_question_that_draws_is_recorded_as_the_programs(app, deps, ag
         if not returns:
             return ModelResponse(parts=[ToolCallPart(tool_name="draw", args={"dataset_id": dataset_id,
                                                                             "question": "Total by region"})])
-        return ModelResponse(parts=[TextPart(content="Drawn.")])
+        context = returns[-1].model_response_object()
+        request_id = context["request_id"]
+        if returns[-1].tool_name == "draw":
+            return ModelResponse(parts=[ToolCallPart(tool_name="design_visualization", args={"request_id": request_id})])
+        if returns[-1].tool_name == "design_visualization":
+            return ModelResponse(parts=[ToolCallPart(tool_name="render_visualization", args={"request_id": request_id})])
+        if returns[-1].tool_name == "render_visualization":
+            return ModelResponse(parts=[ToolCallPart(tool_name="publish_visualization", args={"request_id": request_id})])
+        return ModelResponse(parts=[TextPart(content=context["card"])])
 
     with lead.override(model=FunctionModel(drawing)), TestClient(app) as client:
         answer = client.post("/agents/ask", json={"question": "Chart total by region", "dataset_id": dataset_id,
                                                   "caller": {"identity": "reporter"}})
-        assert answer.status_code == 200 and answer.json()["answer"] == "Drawn."
+        assert answer.status_code == 200 and "/renders/" in answer.json()["answer"]
     summaries = deps.requests.list_requests(dataset_id=dataset_id)
     assert len(summaries) == 1
     caller = deps.requests.get_request(summaries[0].request_id).caller

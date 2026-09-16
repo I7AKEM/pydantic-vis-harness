@@ -3,7 +3,6 @@
 import argparse
 import asyncio
 import json
-import os
 import random
 import math
 import re
@@ -16,19 +15,18 @@ from uuid import uuid4
 from dotenv import load_dotenv
 from pydantic_ai import capture_run_messages
 from pydantic_ai.messages import ToolCallPart, ToolReturnPart, ModelMessagesTypeAdapter
+from pydantic_ai.usage import UsageLimits
 from pydantic_core import to_jsonable_python
 
 from evals.designer.agent.corpus_tools.select import CORPUS, read_manifest
-from vis_agent.analyst.agent import ARABIC, DEFAULT_ANALYST_MODEL, create_analyst
+from vis_agent.analyst.agent import ARABIC
 from vis_agent.analyst.checks import numeric_mention_direction
 from vis_agent.deps import AppDeps
-from vis_agent.designer.agent import DEFAULT_DESIGNER_MODEL, DEFAULT_FALLBACK_DESIGNER_MODEL, create_designer
 import vis_agent.lead
-from vis_agent.lead import create_lead
 from vis_agent.models import DataBrief
-from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, create_profiler, profile_dataset
+from vis_agent.providers import teams_from_env
+from vis_agent.requests.service import REQUEST_LIMIT, TOOL_LIMIT
 from vis_agent.requests.store import RequestStore
-from vis_agent.reviewer.agent import DEFAULT_REVIEWER_MODEL, create_reviewer
 from vis_agent.store import DatasetStore
 from vis_agent.units import COUNT_NOUNS, canonical_unit, display_unit
 from vis_agent.designer.syntax import parse
@@ -38,6 +36,7 @@ from evals.designer.agent.indicator.scoring import numeric_text_matches
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA_TOOLS = {"draw", "answer_question", "revise", "resume"}
+OUTCOME_TOOLS = DATA_TOOLS | {"publish_visualization", "ask_user"}
 
 
 def load_cases(path: Path | None = None) -> list[dict]:
@@ -155,10 +154,10 @@ def score_turn(expected: dict, messages: list, reply: str | None = None) -> dict
     parts = [part for message in messages for part in message.parts]
     calls = [part for part in parts if isinstance(part, ToolCallPart)]
     data_calls = [part for part in calls if part.tool_name in DATA_TOOLS]
-    # The tool choice is the first data call of the turn; the outcome is the last one's, since a lead that
-    # retries after a specialist failure delivers what the user sees.
+    # Routing starts the request; publication or a question is the lead's final decision.
     call = data_calls[0] if data_calls else None
-    last = data_calls[-1] if data_calls else None
+    outcome_calls = [part for part in calls if part.tool_name in OUTCOME_TOOLS]
+    last = outcome_calls[-1] if outcome_calls else None
     returned = next((part for part in parts if isinstance(part, ToolReturnPart) and last is not None
                      and part.tool_call_id == last.tool_call_id and part.tool_name == last.tool_name), None)
     content = returned.content if returned is not None else None
@@ -222,6 +221,54 @@ def score_turn(expected: dict, messages: list, reply: str | None = None) -> dict
                 else not bool(ARABIC.search(spec.title or "")))
         except (KeyError, TypeError, SpecError):
             language_ok = False
+    source_fidelity_ok = None
+    if "source_rows" in expected:
+        source_fidelity_ok = bool(artifact) and artifact.get("rows") == expected["source_rows"]
+        if "source_columns" in expected:
+            source_fidelity_ok = source_fidelity_ok and [c["name"] for c in artifact.get("columns", [])] == expected["source_columns"]
+    delegation_ok = None
+    flow_ok = None
+    if expected.get("prepared_csv"):
+        delegation_ok = not any(c.tool_name in {"consult_analyst", "profile_csv", "ask_user"} for c in calls)
+        flow = [c.tool_name for c in calls]
+        required = ["draw", "design_visualization", "render_visualization", "publish_visualization"]
+        positions = [flow.index(name) for name in required if name in flow]
+        flow_ok = len(positions) == len(required) and positions == sorted(positions)
+    chart_ok = (bool(artifact) and artifact.get("chart") in expected["charts"]) if "charts" in expected else None
+    binding_ok = None
+    if "bindings" in expected:
+        try:
+            bindings = parse((artifact or {})["spec"]).bind
+            binding_ok = all(bindings.get(role) == column for role, column in expected["bindings"].items())
+        except (KeyError, TypeError, SpecError):
+            binding_ok = False
+    review_ok = None
+    if expected.get("review_required"):
+        names = [c.tool_name for c in calls]
+        review_ok = (bool(artifact) and (artifact.get("review") or {}).get("status") == "reviewed"
+                     and "review_visualization" in names and "publish_visualization" in names
+                     and names.index("review_visualization") < names.index("publish_visualization"))
+    axis_titles_ok = None
+    if "axis_titles" in expected:
+        try:
+            spec = parse((artifact or {})["spec"])
+            axes = expected["axis_titles"][spec.type]
+            axis_titles_ok = all(text.casefold() in (getattr(spec, f"axis_{axis}_title") or "").casefold()
+                                 for axis, text in axes.items())
+        except (KeyError, TypeError, SpecError):
+            axis_titles_ok = False
+    labels_ok = None
+    if "display_labels" in expected:
+        try:
+            spec = parse((artifact or {})["spec"])
+            labels = expected["display_labels"]
+            labels_ok = all(spec.column_labels.get(column) == label
+                            for column, label in labels.get("column_labels", {}).items())
+            labels_ok = labels_ok and all(spec.value_labels.get(column, {}).get(raw) == label
+                                          for column, mapping in labels.get("value_labels", {}).items()
+                                          for raw, label in mapping.items())
+        except (KeyError, TypeError, SpecError):
+            labels_ok = False
     return {
         "tool": tool, "tool_ok": tool in accepted,
         "redo_ok": redo_ok,
@@ -230,6 +277,12 @@ def score_turn(expected: dict, messages: list, reply: str | None = None) -> dict
         "fidelity_ok": fidelity_ok, "delivery_ok": delivery_ok,
         "answer_fidelity_ok": answer_fidelity_ok,
         "language_ok": language_ok,
+        "source_fidelity_ok": source_fidelity_ok, "delegation_ok": delegation_ok, "chart_ok": chart_ok,
+        "flow_ok": flow_ok,
+        "binding_ok": binding_ok,
+        "review_ok": review_ok,
+        "axis_titles_ok": axis_titles_ok,
+        "labels_ok": labels_ok,
         "tools_called": [part.tool_name for part in calls],
         "tool_args": args, "tool_return": content,
         "tool_sequence": [{"name": c.tool_name, "id": c.tool_call_id, "args": c.args_as_dict()} for c in calls],
@@ -245,7 +298,7 @@ def annotate_turns(record: dict) -> None:
     for turn in record["turns"]:
         request = requests.get(turn["request_id"], {})
         turn["revised"] = (request.get("revision") or {}).get("problem")
-        turn["requests_used"] = request.get("requests_used")
+        turn["requests_used"] = (turn.get("usage") or {}).get("requests", request.get("requests_used"))
         expected = turn["expected"]
         turn["revision_ok"] = ((turn["revised"] is not None) == expected["revision"]
                                if "revision" in expected else None)
@@ -257,23 +310,33 @@ def show_turn(name: str, index: int, turn: dict) -> None:
     error = f" error={turn['error']}" if turn.get("error") else ""
     print(f"{name} turn {index}: {turn['tool']} tool={turn['tool_ok']} "
           f"outcome={turn['outcome_ok']}{redo}{revision} revised={turn['revised']!r} "
-          f"questioned={turn['questioned']} requests={turn['requests_used']}{error}", flush=True)
+          f"questioned={turn['questioned']} requests={turn['requests_used']} "
+          f"seconds={turn.get('seconds', 0):.2f}{error}", flush=True)
 
 
 async def run_case(case: dict, lead, profiler, analyst, designer, designer_fallback=None,
                    evidence_dir: Path | None = None, reviewer=None) -> dict:
-    record = {"name": case["name"], "csv": case["csv"], "heldout": case.get("heldout", False), "turns": []}
+    record = {"name": case["name"], "csv": case.get("csv", case.get("filename")),
+              "heldout": case.get("heldout", False), "turns": []}
     with tempfile.TemporaryDirectory(prefix="vis-lead-eval-") as directory:
         try:
             store = DatasetStore(Path(directory))
             requests = RequestStore(store)
             deps = AppDeps(store, profiler, analyst, designer, requests, designer_fallback=designer_fallback,
-                           reviewer=reviewer)
-            csv = ROOT / case["csv"]
-            brief = DataBrief.model_validate_json((ROOT / case["brief"]).read_bytes()) if case.get("brief") else None
-            uploaded = store.save_upload(csv.name, csv.read_bytes(), brief)
+                           reviewer=reviewer, lead=lead)
+            if "csv_text" in case:
+                filename, content = case["filename"], case["csv_text"].encode("utf-8")
+            else:
+                csv = ROOT / case["csv"]
+                filename, content = csv.name, csv.read_bytes()
+            brief = None
+            if isinstance(case.get("brief"), dict):
+                brief = DataBrief.model_validate(case["brief"])
+            elif case.get("brief"):
+                brief = DataBrief.model_validate_json((ROOT / case["brief"]).read_bytes())
+            uploaded = store.save_upload(filename, content, brief)
             record["dataset_id"] = uploaded.dataset_id
-            await profile_dataset(store, profiler, uploaded.dataset_id)
+            store.import_csv(uploaded.dataset_id)
         except Exception as exc:
             record["error"] = f"{type(exc).__name__}: {exc}"
             for expected in case["turns"]:
@@ -295,7 +358,8 @@ async def run_case(case: dict, lead, profiler, analyst, designer, designer_fallb
             with capture_run_messages() as captured:
                 try:
                     result = await lead.run(prompt, deps=deps, message_history=history,
-                                            conversation_id=conversation_id)
+                                            conversation_id=conversation_id,
+                                            usage_limits=UsageLimits(request_limit=REQUEST_LIMIT, tool_calls_limit=TOOL_LIMIT))
                     history = result.all_messages()
                     reply = result.output
                     usage = to_jsonable_python(result.usage)
@@ -308,6 +372,7 @@ async def run_case(case: dict, lead, profiler, analyst, designer, designer_fallb
                     "messages": json.loads(ModelMessagesTypeAdapter.dump_json(fresh))}
             if error:
                 turn.update(error=error, outcome_ok=False)
+            turn["latency_ok"] = turn["seconds"] <= expected["max_seconds"] if "max_seconds" in expected else None
             record["turns"].append(turn)
         # The temporary files disappear; retain the records and IDs for controller review.
         try:
@@ -340,7 +405,9 @@ async def run_case(case: dict, lead, profiler, analyst, designer, designer_fallb
 def summarize(results: list[dict]) -> dict:
     """Report repair decisions and indicator fidelity, including held-out cases separately."""
     turns = [turn for case in results for turn in case["turns"]]
-    fidelity_keys = ("fidelity_ok", "delivery_ok", "answer_fidelity_ok", "analysis_reuse_ok", "language_ok")
+    fidelity_keys = ("fidelity_ok", "delivery_ok", "answer_fidelity_ok", "analysis_reuse_ok", "language_ok",
+                     "source_fidelity_ok", "delegation_ok", "chart_ok", "binding_ok", "axis_titles_ok", "labels_ok",
+                     "flow_ok", "review_ok", "latency_ok")
     passed = [all(t["tool_ok"] and t["outcome_ok"]
                   and all(t.get(key) is not False for key in ("redo_ok", "revision_ok", *fidelity_keys))
                   for t in case["turns"]) for case in results]
@@ -361,6 +428,8 @@ def summarize(results: list[dict]) -> dict:
         summary[key] = {"passed": sum(checked), "checked": len(checked)}
     summary["observed_outcomes"] = {name: sum(t.get("observed_outcome") == name for t in turns)
         for name in sorted({t["observed_outcome"] for t in turns if t.get("observed_outcome")})}
+    seconds = [t["seconds"] for t in turns if "seconds" in t]
+    summary["latency_seconds"] = {"mean": sum(seconds) / len(seconds), "max": max(seconds)} if seconds else None
     print(f"cases {summary['cases_ok']}/{summary['cases']}, tool choice {summary['tool_ok']}/{summary['turns']}, "
           f"outcome {summary['outcome_ok']}/{summary['turns']}, "
           f"redo analysis {summary['redo_ok']}/{summary['redo_turns']}, "
@@ -383,24 +452,25 @@ def use_instructions(path: Path) -> str:
 
 
 async def evaluate(cases: list[dict], evidence_dir: Path | None = None) -> dict:
-    profiler = create_profiler(os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL)
-    analyst = create_analyst(os.getenv("PYDANTIC_AI_ANALYST_MODEL") or DEFAULT_ANALYST_MODEL)
-    designer = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_MODEL") or DEFAULT_DESIGNER_MODEL)
-    model = os.getenv("PYDANTIC_AI_MODEL") or DEFAULT_PROFILER_MODEL
-    lead = create_lead(model, advisor_model="openrouter:openai/gpt-5.6-sol")
-    # The runner retries a failed design once on this model, as the app does.
-    designer_fallback = create_designer(os.getenv("PYDANTIC_AI_DESIGNER_FALLBACK_MODEL") or DEFAULT_FALLBACK_DESIGNER_MODEL)
-    # The runner reviews every rendered chart, as the app does; PYDANTIC_AI_REVIEW_ROUNDS bounds the send-backs.
-    reviewer = create_reviewer(os.getenv("PYDANTIC_AI_REVIEWER_MODEL") or DEFAULT_REVIEWER_MODEL)
-    semaphore = asyncio.Semaphore(3)
+    # Use exactly the application's provider, model settings, and optional specialists.
+    with tempfile.TemporaryDirectory(prefix="vis-lead-eval-config-") as directory:
+        store = DatasetStore(Path(directory))
+        team = teams_from_env(store, RequestStore(store))[0]
+        agents = {"lead": team.lead, "profiler": team.deps.profiler, "analyst": team.deps.analyst,
+                  "designer": team.deps.designer, "reviewer": team.deps.reviewer}
+        models = {name: agent.model if isinstance(agent.model, str) else agent.model.model_id
+                  for name, agent in agents.items() if agent is not None and agent.model is not None}
+        semaphore = asyncio.Semaphore(3)
 
-    async def bounded(case):
-        async with semaphore:
-            return await run_case(case, lead, profiler, analyst, designer, designer_fallback, evidence_dir, reviewer)
+        async def bounded(case):
+            async with semaphore:
+                return await run_case(case, team.lead, team.deps.profiler, team.deps.analyst,
+                                      team.deps.designer, team.deps.designer_fallback, evidence_dir,
+                                      team.deps.reviewer)
 
-    results = await asyncio.gather(*(bounded(case) for case in cases))
+        results = await asyncio.gather(*(bounded(case) for case in cases))
     summary = summarize(results)
-    return {"model": model, "summary": summary, "cases": results}
+    return {"model": models["lead"], "models": models, "provider": team.label, "summary": summary, "cases": results}
 
 
 def main() -> None:
@@ -424,14 +494,12 @@ def main() -> None:
             parser.error(f"Unknown case: {args.only}")
     results = asyncio.run(evaluate(cases, args.out.parent / (args.out.stem + "-assets")))
     from evals.evidence import provenance
-    results["provenance"] = provenance(args.cases, {"lead": results["model"],
-        "analyst": os.getenv("PYDANTIC_AI_ANALYST_MODEL") or DEFAULT_ANALYST_MODEL,
-        "designer": os.getenv("PYDANTIC_AI_DESIGNER_MODEL") or DEFAULT_DESIGNER_MODEL,
-        "profiler": os.getenv("PYDANTIC_AI_PROFILER_MODEL") or DEFAULT_PROFILER_MODEL,
-        "reviewer": os.getenv("PYDANTIC_AI_REVIEWER_MODEL") or DEFAULT_REVIEWER_MODEL})
+    results["provenance"] = provenance(args.cases, results["models"])
     results["provenance"]["prompts"]["lead"] = vis_agent.lead.LEAD_INSTRUCTIONS
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    if results["summary"]["cases_ok"] != results["summary"]["cases"]:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

@@ -241,16 +241,10 @@ def test_table_formats_numbers_and_meanings_in_png_config_and_page(digits, amoun
     spec = parse(f"vis table\ndigits {digits}")
     rendered = gptvis.render(spec, columns, result, tmp_path, trace=True)
     config = json.loads(rendered.config.read_text())
-    headers = [c.meaning for c in columns]
-    assert config["gptvis"]["columns"] == headers
-    rows = config["gptvis"]["data"]
-    assert list(rows[0]) == headers
-    assert rows[0]["Average amount"] == amount
-    assert rows[0]["Share of total"] == share
-    assert rows[0]["Orders"] == ("1,240" if digits == "western" else "١٬٢٤٠")
-    assert rows[1]["Share of total"] is None
-    assert rows[1]["Region <name>"] == "001"
-    assert config["tableFormats"]["Orders"]["unit"] is None
+    assert config["gptvis"]["columns"] == result.columns
+    assert config["gptvis"]["data"] == [dict(zip(result.columns, row)) for row in result.rows]
+    assert config["display"]["columns"] == {c.name: c.meaning for c in columns}
+    assert config["tableFormats"]["n"]["unit"] is None
     assert amount in rendered.texts and share in rendered.texts
     page = rendered.html.read_text()
     assert f"<td>{amount}</td>" in page and f"<td>{share}</td>" in page
@@ -378,7 +372,7 @@ def test_legend_switch_overrides_package_false(switch, tmp_path):
     options = json.loads(rendered.config.read_text())["g2"]
     assert options["encode"]["color"] == "category"
     if switch == "on":
-        assert "legend" not in options
+        assert options["legend"]["color"]["labelFormatter"] == {"$display": {"kind": "value", "field": "category"}}
     else:
         assert options["legend"] is False
 

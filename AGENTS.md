@@ -1,115 +1,74 @@
-# Phase 5: The reviewer and the team
+# Lead-directed visualization team
 
-The Phase 1 design is in docs/superpowers/specs/2026-09-06-vis-agent-design.md. It introduced the
-profiler as the model for every later agent, plus the lead skeleton, the upload path, and the store.
+The current design is `docs/lead-directed-team.md`. Earlier phase designs under
+`docs/superpowers/` describe the historical fixed-runner architecture.
 
-The Phase 2 design is in docs/superpowers/specs/2026-09-07-phase-2-analyst-design.md.
-It adds the data analyst to answer questions about profiled datasets.
+## Product contract
 
-The Phase 3 design is in docs/superpowers/specs/2026-09-07-phase-3-design-foundation-design.md.
-It adds deterministic chart recommendations, spec checks, and rendering without a designer model.
+- The upstream data agent supplies an authoritative CSV. The brief supplies visualization intent,
+  column meanings, units, and preferences. The visualization team presents that data; it does not
+  repeat upstream research, invent rows, check for missing data, or reaggregate prepared measures.
+- Only the visualization lead controls the flow. It chooses profiling, analysis, design, rendering,
+  review, repair, fallback, and publication through tools. Each tool returns control to the lead.
+  Do not add a fixed step order, automatic specialist handoffs, or automatic review/repair loops.
+- Optimize for correct charts and latency. Routine prepared CSVs need no profiler, analyst, or reviewer
+  model call. The designer can deliver a spec in one response. Reasonable presentation decisions are
+  the lead's responsibility, not questions to the user.
+- Code handles data access, executable schema/binding checks, read-only SQL safety, rendering,
+  persistence, and framework resource limits. Chart aesthetics and specialist selection belong to agents.
+  Historical chart policy checks may remain in offline evals; they do not gate runtime design.
+- Failures return diagnostics to the lead. They never become questions about missing data.
 
-The Phase 4 design is in docs/superpowers/specs/2026-09-07-phase-4-chart-designer-design.md.
-It adds the chart designer agent, checked delivery, rendering, and the lead's chart tool.
+## Implementation
 
-The Phase 4b design is in docs/superpowers/specs/2026-09-07-phase-4b-evaluation-at-scale-design.md.
-It adds the two-hundred-case scale set, the Hijri and Arabic seeded cases, the DSPy optimizer, and the
-lessons in docs/phase-4b-lessons.md.
+- Python 3.12, uv, Pydantic AI, OpenRouter or LiteLLM, and the built-in Web Chat UI.
+- `vis_agent/lead.py`: the lead and its delegation tools.
+- `vis_agent/providers.py`: one lead/team per provider. OpenRouter first when configured; default lead
+  is `openrouter:z-ai/glm-5.3-flash` with low thinking effort and latency routing. Environment overrides persist.
+- `vis_agent/analyst/source.py`: read the original CSV for direct charting without model calls.
+- `vis_agent/requests/service.py`: request persistence, publication, and API/CLI entry point to the same lead.
+- `vis_agent/requests/runner.py`: compatibility imports only; no flow control.
+- `vis_agent/requests/models.py` and `store.py`: saved tool results and linked artifact versions.
+- `vis_agent/designer/`, `analyst/`, `profiler/`, `reviewer/`: existing domain specialists.
+- `vis_agent/render/`: the pinned GPT-Vis renderer. Node 22 LTS on PATH and
+  `npm ci --prefix vis_agent/render/gptvis`; never edit node_modules. On Debian install
+  `libexpat1`, `fontconfig`, and `fonts-noto-core`. Check with `vis doctor`.
+- Keep code small and explicit. No workflow engine, external A2A package, additional planner, Docker,
+  second renderer, or generic orchestration layer.
+- Preserve optional Advisor and TemporalDurability capabilities on the lead. Ordinary web calls do
+  not run a Temporal worker. CodeMode is deferred until a tool actually needs its sandbox.
 
-The Phase 6 design is in docs/superpowers/specs/2026-09-08-phase-6-lead-and-conversation-design.md.
-It adds chart-first conversation, saved requests and artifact versions, clarification and resume,
-terminal commands, the agent channel, and the lead evaluation in `evals/lead/`.
+## Fidelity and recovery
 
-The Phase 5 design is in docs/superpowers/specs/2026-09-15-phase-5-reviewer-and-team-design.md.
-It adds the reviewer, the review round, the rules ledger with its two levels, and the lead's card. Plans:
-docs/superpowers/plans/2026-09-15-phase-5a-rules-ledger.md and 2026-09-15-phase-5b-reviewer-and-loop.md.
+- CSV values are immutable. SQL is the only computation path when the lead explicitly asks for a
+  calculation. Labels, Hijri time strings, and leading-zero identifiers survive direct charting.
+- Upstream `code_meanings` define codes per column. Approved `display_labels` supply exact localized
+  wording; preserve it in saved designs. Translate only established meanings and keep ambiguous codes.
+  Presentation mappings never change source cells or grouping identities. See `docs/data-agent-handoff.md`.
+- Geometry, WKT, and oversized column values never enter model context.
+- Never silently sample or aggregate the direct table. Resource bounds report technical limits.
+- A changed table or design invalidates stale renders/reviews before external work. Publishing an
+  already published request is idempotent. Resume returns saved work for the lead to choose from.
+- Use async Pydantic AI delegation with shared `ctx.usage` and parent usage limits. Budgets belong
+  to the framework. Test a model that ignores stop instructions and verify it terminates.
+- Use fake models through `agent.override`; never construct `RunContext` by hand.
 
-File map (the requests package and Phase 5's additions):
+## Verification
 
-- `vis_agent/requests/models.py`: request records, step names, callers, exchanges, and artifacts.
-- `vis_agent/requests/store.py`: requests and artifact versions in the datasets database.
-- `vis_agent/requests/runner.py`: the fixed step order, saved outputs, answers, and resume.
-- `vis_agent/requests/api.py`: the seven JSON routes and return-address callback.
-- `vis_agent/reviewer/`: the reviewer agent, its models, rulebook, and rubric.
-- `vis_agent/findings.py`: the Finding every agent and the card share.
-- `vis_agent/card.py`: the reply card the lead shows whole.
+```bash
+uv run pytest -q
+uv run python -m evals.designer.run
+uv run python -m evals.designer.agent.run
+uv run python -m evals.lead.run
+```
 
-- Use Python 3.12, uv, Pydantic AI, OpenRouter or a LiteLLM proxy, and the built-in Web Chat UI.
-- Providers: `vis_agent/providers.py` builds one team (lead + specialists + `AppDeps`) per configured provider,
-  LiteLLM and OpenRouter; a model-less menu agent owns the web page and the dropdown, and `add_chat_route` runs
-  the team whose lead model id the request names. LiteLLM is the default gateway and is listed first, and the first
-  team profiles uploads and serves the agent channel.
-- Keep code small, explicit, and readable. Application code lives in the `vis_agent` package, one subpackage per agent; tests and evals mirror it.
-- `vis_agent/designer/` holds the designer's tools; `vis_agent/render/` holds the renderers.
-- Rendering requires Node 22 LTS on PATH and `npm ci --prefix vis_agent/render/gptvis`.
-  On Debian install `libexpat1`, `fontconfig`, and `fonts-noto-core`; check the setup with `vis doctor`.
-- The renderer package is pinned; never edit node_modules.
-- Every statistic and every measurement label is a DuckDB query. Python assigns labels from results.
-- The profiler agent interprets. It never computes. review_profile is its only output tool: it runs the code
-  checks and sends failed error checks back once.
-- The brief is context, never fact. Conflicts become warnings.
-- Hijri dates stay text end to end: the profiler labels them `hijri` (and Arabic-Indic numbers
-  `arabic_digits`), the analyst buckets them as text with substr or a CASE over month names and never reads
-  them as Gregorian dates, and resolving never shortens or reorders non-Gregorian time text. Gregorian time
-  is drawn in order. The analyst's Hijri and digit rules live in `vis_agent/analyst/rulebook-localized.md`
-  and reach the model per run only when a column carries one of those levels: in the always-on rulebook
-  they cost three of 69 ordinary questions.
-- Values from oversized, WKT, and geometry-named columns never reach a model.
-- Failures the model cannot fix are ToolFailed. Fixable mistakes are ModelRetry, once.
-- A tool budget is enforced by the framework, never by a message: the tool's `prepare` hook withdraws it once
-  its calls are spent, so a model that still names it gets one unknown-tool retry and then the run ends; an
-  over-budget call inside one response is a ModelRetry on a tool registered with `retries=1`. Never answer a
-  repeated call with a retry prompt: a small model repeats it. The test for every budget drives a model that
-  ignores the message and asserts the run ends within a fixed number of requests.
-- A spent budget with nothing passing is a technical failure that carries its diagnostics (`UnexpectedModelBehavior`, reported as a warning and then as the request's error or no-chart reason); it is never turned into a question to the caller. A question is only for a decision the caller can make.
-- When the designer fails, the request runner runs the design step once more on `AppDeps.designer_fallback`
-  (`PYDANTIC_AI_DESIGNER_FALLBACK_MODEL`, the lead's model by default) and says so in a warning.
-- The design step may ask the analyst for a revised table once per request: the designer's `request_analysis_revision` output becomes an `AnalysisRevision`, the runner saves it on the request as `revision` before the analyst runs, runs the analyst with it as `previous.feedback` (loading `vis_agent/analyst/rulebook-repair.md`), keeps the earlier analysis under `steps.analyze_before_revision`, and runs the designer again with the request and the analyst's reply as `revision`. A second request, including from the fallback designer, is a failure, and a crash after the saved decision never revises again.
-- Tests use fake models through agent.override and never hand-build RunContext.
-- Preserve the Advisor and TemporalDurability capabilities on the lead. CodeMode was removed after
-  Phase 1 because no lead tool runs inside its sandbox yet; bring it back when the analyst's query tool does.
-- The request runner is code with a fixed step order and a saved output per step:
-  understand, profile, analyze, design, render, review, deliver. Resume reuses completed steps.
-- No workflow engine, no external A2A package, no new agents. Do not add a planner, Docker,
-  a second renderer, or a generic orchestration layer.
-- The analyst's and designer's revise rules live in `vis_agent/analyst/rulebook-revise.md` and
-  `vis_agent/designer/rulebook-revise.md` and reach the model per run only.
-- `make_chart` is gone; `draw` returns the table with the chart. Use `answer_question` for numbers only.
-- Run `uv run python -m evals.lead.run` before a merge that touches the lead.
-- The lead optimizer (`uv run python -m evals.lead.optimize_instructions run light OUT_DIR`) tunes a proxy of the lead's decision; adopt its instructions into `LEAD_INSTRUCTIONS` only when `uv run python -m evals.lead.run --corpus` on the runtime improves against the seed on the same day and the browser check passes.
-- The analyst writes one SELECT; code parses, allow-lists, runs, and checks it. The model never sees raw rows.
-- Each agent's rulebook is `vis_agent/<agent>/rulebook.md`; every confirmed mistake becomes an eval case plus a check or a rulebook line.
-- Run the evals before every merge, including `evals/designer/run.py` (`uv run python -m evals.designer.run`).
-  Also run `uv run python -m evals.designer.agent.run` (needs `OPENROUTER_API_KEY`).
-  Run the scale set with `uv run python -m evals.designer.agent.run --cases evals/designer/agent/scale/cases.json`
-  and `--split train`, `--split dev`, or `--split heldout`; judge the held-out forty with `--render`.
-  Use `uv run python -m evals.designer.agent.optimize_instructions check` before optimizing with
-  `uv run python -m evals.designer.agent.optimize_instructions run light OUT_DIR --split train`
-  (`medium` is also supported; both modes need `OPENROUTER_API_KEY` and the `optimize` dependency group).
-  The optimizer uses train and dev only. Adopt its rulebook changes only if the real runner's automatic
-  scores improve on dev and heldout without lowering the judged sample; otherwise keep the seed rulebook.
-- Rules have two levels. An error stops delivery at the agent that found it and is fixed there or handed one
-  step upstream with its diagnosis; a warning travels with the artifact as a compromise or a check and is shown
-  on the card. A rule code can decide never stays prose: the profiler's unit placeholders, the one list of
-  generic count markers in `vis_agent/units.py` (a noun the data names, such as person or شخص, is a real unit
-  and is shown beside a KPI number), and the designer's single colour are code. Rulebooks keep judgment rules
-  and one-line pointers to what the checks enforce.
-- The review step runs the reviewer (`AppDeps.reviewer`, `PYDANTIC_AI_REVIEWER_MODEL` or `LITELLM_REVIEWER_MODEL`,
-  never the designer's model) on the rendered picture. Any error-level finding the analyst, designer, or renderer
-  can fix sends the request back to the
-  design step with the findings as `review`; at most `PYDANTIC_AI_REVIEW_ROUNDS` (2) rounds, counted from the
-  persisted `request.rounds`. A chart still faulted after the last round delivers with its findings on the card;
-  a reviewer that cannot finish delivers the chart unreviewed with a warning. The reviewer never asks the user
-  and never reaches the analyst; the designer may still spend the request's one analysis revision inside a round.
-- The lead shows the card returned by draw, revise, resume, and answer_question whole; an output validator sends
-  it back once for a number no result and no user message holds.
-- Run `uv run python -m evals.reviewer.run` (needs the labelled set and a reviewer model) before a merge that
-  touches the reviewer or its rulebook; the exit line is agreement of at least 0.8 with the human verdicts.
+Real-model evals need credentials. Prepared-CSV lead cases measure source fidelity, delivered artifacts,
+model requests, and latency. Keep historical analyst/policy corpora separate from that objective.
+Before merging reviewer changes, run `uv run python -m evals.reviewer.run` with the labelled set;
+target at least 0.8 agreement. Confirmed failures become representative eval cases.
 
-Run with:
+Run locally:
 
-    uv run uvicorn vis_agent.app:app --host 127.0.0.1 --port 7932 --reload
-
-Run tests with:
-
-    uv run pytest -q
+```bash
+uv run uvicorn vis_agent.app:app --host 127.0.0.1 --port 7932 --reload
+```

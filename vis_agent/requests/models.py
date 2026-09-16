@@ -7,10 +7,10 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from vis_agent.analyst.models import AnalysisReport, AnalysisRevision, Clarification, ResultColumn
 from vis_agent.designer.models import ChartType, Compromise, Design, ReviewRound
+from vis_agent.models import DisplayLabels
 
 RequestType = Literal["new", "revise"]
 StepName = Literal["understand", "profile", "analyze", "design", "render", "review", "deliver"]
-STEPS: tuple[StepName, ...] = ("understand", "profile", "analyze", "design", "render", "review", "deliver")
 RequestStatus = Literal["running", "waiting", "done", "failed", "stopped"]
 CallerKind = Literal["chat", "terminal", "agent"]
 MAX_QUESTIONS = 2
@@ -87,6 +87,8 @@ class Request(BaseModel):
     language: str | None = None
     status: RequestStatus = "running"
     requests_used: int = 0
+    analyst_attempts: int = 0
+    analyst_failure: str | None = None
     revision: AnalysisRevision | None = None
     rounds: list[Round] = Field(default_factory=list)
     review_feedback: ReviewRound | None = None
@@ -102,13 +104,6 @@ class Request(BaseModel):
         for exchange in reversed(self.clarifications):
             if exchange.answer is None:
                 return exchange
-        return None
-
-    def next_step(self) -> StepName | None:
-        """The first step with no saved output, or None when every step has one."""
-        for step in STEPS:
-            if step not in self.steps:
-                return step
         return None
 
     def summary(self, now: datetime) -> RequestSummary:
@@ -204,10 +199,20 @@ class LeadArtifact(BaseModel):
     html_url: str | None = None
     warnings: list[str] = []
     review: dict[str, Any] | None = None
+    display_labels: DisplayLabels = Field(default_factory=DisplayLabels)
 
     @classmethod
     def from_artifact(cls, artifact: Artifact) -> "LeadArtifact":
         analysis, table, design = artifact.report.analysis, artifact.report.result, artifact.design
+        from vis_agent.designer.syntax import parse
+        from vis_agent.designer.models import SpecError
+        display = DisplayLabels()
+        if design:
+            try:
+                spec = parse(design.spec)
+                display = DisplayLabels(column_labels=spec.column_labels, value_labels=spec.value_labels)
+            except SpecError:
+                pass  # Historical artifacts with obsolete specs still expose their source table.
         return cls(
             artifact_id=artifact.artifact_id, request_id=artifact.request_id, dataset_id=artifact.dataset_id,
             version=artifact.version, parent_artifact_id=artifact.parent_artifact_id,
@@ -222,7 +227,7 @@ class LeadArtifact(BaseModel):
             compromises=list(artifact.compromises) or (list(design.compromises) if design else []),
             no_chart_reason=artifact.no_chart_reason, png_url=artifact.png_url, html_url=artifact.html_url,
             warnings=list(artifact.report.warnings),
-            review=artifact.review,
+            review=artifact.review, display_labels=display,
         )
 
 

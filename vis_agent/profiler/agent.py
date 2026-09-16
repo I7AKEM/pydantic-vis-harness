@@ -117,6 +117,26 @@ async def _run_with_one_retry(profiler, prompt: ProfilerInput, usage: RunUsage |
             prompt.review_attempts = 0
 
 
+async def measure_dataset(
+    store: DatasetStore, dataset_id: str, brief: DataBrief | None = None, *, table_name: str | None = None,
+) -> DatasetProfile:
+    """Provide local column facts to an explicitly requested analysis, without a model.
+
+    Semantic profiling is a separate expert consultation. A visualization or an
+    analyst's read-only query never needs to wait for it.
+    """
+    source = await asyncio.to_thread(store.import_csv, dataset_id)
+    if brief is not None:
+        source = await asyncio.to_thread(store.update_brief, dataset_id, brief)
+    fingerprint = source.brief.fingerprint() if source.brief else None
+    cached = await asyncio.to_thread(store.get_profile, dataset_id)
+    if table_name is None and cached and cached.schema_version == PROFILE_VERSION:
+        return cached.model_copy(update={"source": source, "brief_fingerprint": fingerprint})
+    statistics = await asyncio.to_thread(compute_statistics, store, source, table_name=table_name)
+    return DatasetProfile(source=source, status="partial", deterministic=statistics,
+                          brief_fingerprint=fingerprint, created_at=datetime.now(timezone.utc))
+
+
 async def _profile_dataset(
     store: DatasetStore,
     profiler: Agent[ProfilerInput, SemanticProfile],

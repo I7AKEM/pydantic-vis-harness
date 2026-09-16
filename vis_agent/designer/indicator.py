@@ -13,11 +13,13 @@ NUMERIC_KINDS = {"measure", "share"}
 CONTEXT_KINDS = {"category", "ordinal", "time", "geography", "identifier"}
 INDICATOR_KEYS = {
     "cards", "title", "subtitle", "description", "language", "theme", "width", "height",
-    "direction", "digits", "style", "backgroundColor", "palette", "columnLabels",
+    "direction", "digits", "style", "backgroundColor", "palette", "columnLabels", "valueLabels",
 }
 
 
-def indicator_data_violations(columns: list[ResultColumn], result: QueryResult) -> list[Violation]:
+def indicator_data_violations(
+    columns: list[ResultColumn], result: QueryResult, *, policy: bool = True,
+) -> list[Violation]:
     """Eligibility does not choose a primary metric or claim to answer the question."""
     issues = []
 
@@ -47,7 +49,7 @@ def indicator_data_violations(columns: list[ResultColumn], result: QueryResult) 
             continue
         unit = (canonical_unit(column.unit) or "").strip().casefold()
         scale = 100 if unit == "%" else 1 if unit == "fraction" else None
-        if column.kind == "share" and scale is not None and not -1e-9 * scale <= value <= scale + 1e-9 * scale:
+        if policy and column.kind == "share" and scale is not None and not -1e-9 * scale <= value <= scale + 1e-9 * scale:
             issues.append(Violation(
                 rule="I6", message=f"'{column.name}' is a part-of-whole share in {unit}; its value {value} is outside 0–{scale}.",
                 fix="Correct the share's numerator/denominator SQL. If this is percentage change, describe it as kind measure with unit % instead of share.",
@@ -55,8 +57,10 @@ def indicator_data_violations(columns: list[ResultColumn], result: QueryResult) 
     return issues
 
 
-def check_indicator(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> list[Violation]:
-    issues = indicator_data_violations(columns, result)
+def check_indicator(
+    spec: Spec, columns: list[ResultColumn], result: QueryResult, *, policy: bool = True,
+) -> list[Violation]:
+    issues = indicator_data_violations(columns, result, policy=policy)
 
     def fail(rule: str, message: str, fix: str) -> None:
         issues.append(Violation(rule=rule, message=message, fix=fix))
@@ -97,23 +101,17 @@ def check_indicator(spec: Spec, columns: list[ResultColumn], result: QueryResult
                     fail("I3", f"Card {number} format cannot change the unit of '{card.value}'.",
                          "Omit the format unit or use the column's unit (% includes explicit percent aliases); formatting never rescales values")
     missing = [name for name in by_name if name not in covered]
-    if missing:
+    if missing and policy:
         fail("I2", f"Indicator leaves result columns unbound: {', '.join(missing)}.",
              "Retain every column as a primary, context, or supporting value, or use a table")
-    for name, label in spec.column_labels.items():
-        if name not in by_name or name not in covered:
-            fail("I5", f"Column label '{name}' must identify an existing card-bound column.",
-                 "Translate only an exact primary, context, or supporting column name")
-        if not label.strip():
-            fail("I5", f"Column label '{name}' may not be empty.", "Use a nonempty translation of the column meaning")
-    if not spec.title or not spec.title.strip() or not spec.description or not spec.description.strip():
+    if policy and (not spec.title or not spec.title.strip() or not spec.description or not spec.description.strip()):
         fail("C8", "A title and a description are required.", "Write them")
     if len(spec.palette) > 1 or any(not _HEX.fullmatch(color) for color in spec.palette):
         fail("C6", "An indicator accepts one hex accent color.", "Use one color or omit the palette")
     background = spec.background_color or ("#141b26" if spec.theme == "dark" else "#f3f6fb")
     if not _HEX.fullmatch(background):
         fail("C7", "The background must be a hex color to check contrast.", "Choose a hex background color")
-    else:
+    elif policy:
         # The accent is painted against a card surface, which can differ from the outer background.
         surface = "#202938" if spec.theme == "dark" else "#FFFFFF"
         if any(min(_contrast(color, background), _contrast(color, surface)) < 3

@@ -5,13 +5,13 @@ import asyncio
 import logging
 import re
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 
 import duckdb
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed, ToolOutput
 from pydantic_ai.models import Model
 from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded
@@ -24,8 +24,9 @@ from vis_agent.analyst.query import run_sql
 from vis_agent.card import card as build_card
 from vis_agent.deps import AppDeps
 from vis_agent.language import ARABIC, language_of  # noqa: F401  (ARABIC is re-exported for the designer)
-from vis_agent.models import DataBrief, QuestionAnswer
-from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, ProfilerInput, profile_dataset
+from vis_agent.models import DataBrief, DisplayLabels, QuestionAnswer
+from vis_agent.labels import LABEL_INSTRUCTIONS, project_display_labels
+from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, ProfilerInput, measure_dataset
 from vis_agent.profiler.models import DatasetProfile, ProfileCheck, SemanticProfile
 from vis_agent.profiler.review import failed_checks
 from vis_agent.store import DatasetNotFound, DatasetStore, quote_identifier
@@ -95,6 +96,7 @@ class AnalystDeps:
     store: DatasetStore
     profile: DatasetProfile
     prompt: AnalystPrompt
+    table_name: str | None = None
     query_calls: int = 0
     passed: PassedQuery | None = None
     delivery_attempts: int = 0
@@ -122,9 +124,10 @@ def detect_language(question: str, brief: DataBrief | None, column_names: list[s
 def build_prompt(
     store: DatasetStore, profile: DatasetProfile, question: str, language: str,
     clarifications: list[QuestionAnswer] | None = None, previous: PreviousAnalysis | None = None,
+    *, table_name: str | None = None,
 ) -> AnalystPrompt:
     semantics = {c.name: c for c in profile.semantic.columns} if profile.semantic else {}
-    table = quote_identifier(store.table_name(profile.source.dataset_id))
+    table = quote_identifier(table_name or store.table_name(profile.source.dataset_id))
     columns = []
     with store.connect() as connection:
         for stats in profile.deterministic.columns:
@@ -181,6 +184,7 @@ async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[Result
     result = await asyncio.to_thread(
         run_sql, deps.store, deps.profile.source.dataset_id, sql,
         omitted={c.name.casefold() for c in deps.profile.deterministic.columns if c.values_omitted},
+        table_name=deps.table_name,
     )
     if isinstance(result, QueryError):
         deps.last_errors = [result.error]
@@ -194,7 +198,8 @@ async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[Result
     ]
     # Canonical unit names first, then the share and count convention; an older saved report keeps its metadata.
     columns = [normalise_units(column.model_copy(update={"unit": canonical_unit(column.unit)})) for column in columns]
-    result.checks = await asyncio.to_thread(check_result, deps.store, deps.profile, columns, result)
+    result.checks = await asyncio.to_thread(check_result, deps.store, deps.profile, columns, result,
+                                           table_name=deps.table_name)
     # New shares must state their scale; historical reports remain readable by check_result.
     result.checks.extend(
         ProfileCheck(column=column.name, check="share_scale_declared", severity="error", passed=False,
@@ -247,12 +252,12 @@ def deliver_analysis(
 
 
 def ask_clarification(ctx: RunContext[AnalystDeps], ask: str, reason: str) -> Clarification:
-    """Ask the caller for the one fact the columns do not hold, or the one term the question leaves undefined.
+    """Return a materially ambiguous calculation decision to the lead, never a missing-data request.
 
     Args:
         ask: The question for the caller, in the caller's language. Never the caller's own question, and never a
             question about units, labels, order, language, or format: decide those yourself and record an assumption.
-        reason: What is missing, in one sentence.
+        reason: Why this decision changes the requested calculation, in one sentence.
     """
     if not ask.strip():
         raise ModelRetry("The question is empty. Ask one question the caller can answer, or answer with SQL.")
@@ -272,7 +277,7 @@ def create_analyst(model: str | Model) -> Agent[AnalystDeps, Analysis | Clarific
         output_type=[ToolOutput(deliver_analysis, name="deliver_analysis"),
                      ToolOutput(ask_clarification, name="ask_clarification")],
         retries={"output": 2},
-        instructions=ANALYST_INSTRUCTIONS,
+        instructions=ANALYST_INSTRUCTIONS + "\n\n" + LABEL_INSTRUCTIONS,
         # Thinking off and temperature 0 until the Phase 2 benchmark says otherwise.
         model_settings={"thinking": False, "temperature": 0.0},
     )
@@ -308,23 +313,32 @@ async def analyze_dataset(
     clarifications: list[QuestionAnswer] | None = None,
     previous: PreviousAnalysis | None = None,
     language: str | None = None,
+    usage_limits: UsageLimits | None = None,
 ) -> AnalysisReport:
-    """Profile if needed, then answer one question. Raises DatasetNotFound, ValueError, or duckdb.Error.
+    """Answer an explicitly delegated data question using local facts, with no profiler model call.
 
     The caller's language is detected from the question unless given, as a request does for a revision."""
     started = time.perf_counter()
-    profile = await profile_dataset(store, profiler, dataset_id, brief=brief, usage=usage)
+    from vis_agent.analyst.source import prepare_csv_source
+
+    prepared = await asyncio.to_thread(prepare_csv_source, store, dataset_id, brief)
+    profile = await measure_dataset(store, dataset_id, brief=brief, table_name=prepared.table)
     language = language or detect_language(question, profile.source.brief, [c.name for c in profile.deterministic.columns])
     prompt = await asyncio.to_thread(build_prompt, store, profile, question, language,
-                                     clarifications=clarifications, previous=previous)
-    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+                                     clarifications=clarifications, previous=previous, table_name=prepared.table)
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt, table_name=prepared.table)
     output: Analysis | Clarification | None = None
     model_name = None
     warnings: list[str] = []
+    request_limit = (usage.requests if usage is not None else 0) + MAX_REQUESTS
+    if usage_limits is not None and usage_limits.request_limit is not None:
+        request_limit = min(request_limit, usage_limits.request_limit)
+    limits = replace(usage_limits, request_limit=request_limit) if usage_limits is not None \
+        else UsageLimits(request_limit=request_limit)
     try:
         async with asyncio.timeout(ANALYSIS_TIMEOUT_SECONDS):
             result = await analyst.run(prompt_json(prompt), deps=deps, usage=usage,
-                                       usage_limits=UsageLimits(request_limit=(usage.requests if usage is not None else 0) + MAX_REQUESTS))
+                                       usage_limits=limits)
         output = result.output
         model_name = result.response.model_name
     except (ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded, TimeoutError) as exc:
@@ -369,14 +383,17 @@ class LeadAnswer(BaseModel):
     sql: str | None = None
     warnings: list[str] = []
     card: str | None = None
+    display_labels: DisplayLabels = Field(default_factory=DisplayLabels)
 
     @classmethod
-    def from_report(cls, report: AnalysisReport) -> "LeadAnswer":
+    def from_report(cls, report: AnalysisReport, brief: DataBrief | None = None) -> "LeadAnswer":
         analysis, table = report.analysis, report.result
+        _, display = project_display_labels(brief, analysis.columns if analysis else [], report.language)
         rows = table.rows[:LEAD_ROWS] if table else []
         row_count = table.row_count if table else 0
         shown = build_card(language=report.language, summary=analysis.summary, columns=analysis.columns, rows=rows,
-                           row_count=row_count, assumptions=analysis.assumptions, warnings=report.warnings) \
+                           row_count=row_count, assumptions=analysis.assumptions, warnings=report.warnings,
+                           display_labels=display) \
             if analysis is not None else None
         return cls(
             dataset_id=report.dataset_id, question=report.question,
@@ -386,7 +403,7 @@ class LeadAnswer(BaseModel):
             columns=analysis.columns if analysis else [],
             rows=rows, row_count=row_count,
             sql=analysis.sql if analysis else None,
-            warnings=report.warnings, card=shown,
+            warnings=report.warnings, card=shown, display_labels=display,
         )
 
 
@@ -400,7 +417,7 @@ async def answer_question(ctx: RunContext["AppDeps"], dataset_id: str, question:
     """
     try:
         report = await analyze_dataset(ctx.deps.store, ctx.deps.profiler, ctx.deps.analyst, dataset_id, question,
-                                       usage=ctx.usage)
+                                       usage=ctx.usage, usage_limits=ctx.usage_limits)
     except DatasetNotFound as exc:
         raise ToolFailed(str(exc)) from exc
     except ValueError as exc:
@@ -408,4 +425,5 @@ async def answer_question(ctx: RunContext["AppDeps"], dataset_id: str, question:
     except duckdb.Error as exc:
         log.warning("DuckDB failed while answering %r on %s: %s", question, dataset_id, exc)
         raise ToolFailed("DuckDB could not run the analysis on this dataset.") from exc
-    return LeadAnswer.from_report(report)
+    source = await asyncio.to_thread(ctx.deps.store.get_upload, dataset_id)
+    return LeadAnswer.from_report(report, source.brief)
