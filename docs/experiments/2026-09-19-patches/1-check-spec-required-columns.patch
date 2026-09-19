@@ -1,0 +1,53 @@
+--- a/vis_agent/designer/agent.py
++++ b/vis_agent/designer/agent.py
+@@ -235,6 +235,17 @@
+     return to_text(apply_display_labels(spec, deps.prompt.display_labels))
+ 
+ 
++REQUIRED_COLUMNS_FIX = "Bind every required column or choose a chart type that can represent them."
++
++
++def _missing_required(parsed: models.Spec, deps: DesignerDeps) -> list[str]:
++    """Required result columns the spec leaves unbound; a table binds every column."""
++    used = set(deps.report.result.columns) if parsed.type == "table" else set(parsed.bind.values()) | set(parsed.fold)
++    for card in parsed.cards:
++        used.update([card.value, *card.context, *card.support])
++    return [name for name in deps.required_columns if name not in used]
++
++
+ def offer_check_spec(ctx: RunContext[DesignerDeps], tool_def: ToolDefinition) -> ToolDefinition | None:
+     return None if ctx.deps.check_calls >= MAX_CHECK_CALLS else tool_def
+ 
+@@ -251,6 +262,13 @@
+     check = run_check(_with_display_labels(spec, deps), deps.report.analysis.columns, deps.report.result,
+                       deps.renderer, intent=deps.intent)
+     if check.ok:
++        # The same executable requirement deliver_design enforces; a draft must not pass here and fail there.
++        missing = _missing_required(parse(check.canonical), deps)
++        if missing:
++            check = SpecCheck(ok=False, compromises=check.compromises, violations=[models.Violation(
++                rule="required_columns", message="the chart omits required result columns " + ", ".join(missing),
++                fix=REQUIRED_COLUMNS_FIX)])
++    if check.ok:
+         deps.last_check = check
+     else:
+         deps.last_violations = [f"{v.rule}: {v.message}" for v in check.violations]
+@@ -272,15 +290,10 @@
+     # Report all executable defects together. Otherwise an unsupported optional
+     # key hides missing required bindings until the only repair turn is spent.
+     if parsed is not None:
+-        used = set(report.result.columns) if parsed.type == "table" else set(parsed.bind.values()) | set(parsed.fold)
+-        for card in parsed.cards:
+-            used.update([card.value, *card.context, *card.support])
+-        missing = [name for name in deps.required_columns if name not in used]
++        missing = _missing_required(parsed, deps)
+         if missing:
+-            failures.append(
+-                "required_columns: the chart omits required result columns " + ", ".join(missing)
+-                + ". Bind every required column or choose a chart type that can represent them."
+-            )
++            failures.append("required_columns: the chart omits required result columns " + ", ".join(missing)
++                            + ". " + REQUIRED_COLUMNS_FIX)
+     failures[:0] = [f"line {v.line or 1}: {v.rule}: {v.message}. {v.fix}" for v in check.violations]
+     if failures:
+         message = "\n".join(failures)

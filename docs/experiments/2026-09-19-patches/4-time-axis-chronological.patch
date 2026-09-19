@@ -1,0 +1,23 @@
+--- a/vis_agent/designer/resolve.py
++++ b/vis_agent/designer/resolve.py
+@@ -131,7 +131,10 @@
+ 
+ 
+ def _chronological(records: list[dict], axis: str) -> list[dict]:
+-    """Gregorian time text goes in time order whatever order the analyst returned; other time text keeps it."""
++    """Gregorian time text and numeric periods go in time order whatever order the analyst returned; other time
++    text keeps it."""
++    if records and all(isinstance(record[axis], (int, float)) and not isinstance(record[axis], bool) for record in records):
++        return sorted(records, key=lambda record: record[axis])
+     if records and all(GREGORIAN_ISO.fullmatch(value_key(record[axis])) for record in records):
+         return sorted(records, key=lambda record: value_key(record[axis]))
+     return records
+@@ -324,7 +327,7 @@
+     if dropped:
+         compromises.append(Compromise(key="bind", message=f"Dropped {dropped} rows with null measures."))
+ 
+-    ordered = axis is not None and binding[axis].kind in {"time", "ordinal"}
++    ordered = axis is not None and (axis == "time" or binding[axis].kind in {"time", "ordinal"})
+     order = spec.sort or ("none" if ordered or axis is None else "value desc")
+     if order != "none" and order.split()[0] not in binding:
+         raise ResolveError("The sort target must be a bound role; remove the sort.")
