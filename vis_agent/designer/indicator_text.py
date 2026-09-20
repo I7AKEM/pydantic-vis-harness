@@ -8,7 +8,7 @@ from vis_agent.analyst.models import QueryResult, ResultColumn
 from vis_agent.labels import display_value
 from vis_agent.units import canonical_unit, indicator_unit
 
-from .indicator import indicator_data_violations
+from .indicator import _percent_named, indicator_data_violations
 from .models import NumberFormat, Spec
 from .syntax import parse_format
 
@@ -120,6 +120,8 @@ def resolve_cards(spec: Spec, columns: list[ResultColumn], result: QueryResult) 
             raise ValueError(f"indicator metric {name!r} must be a measure or share")
         unit = column.unit
         number = parse_format(pattern) if pattern is not None else NumberFormat()
+        if unit is None and canonical_unit(number.unit) == "%" and _percent_named(column):
+            unit = "%"
         if number.unit is not None and canonical_unit(number.unit) != canonical_unit(unit):
             raise ValueError(f"indicator format must preserve the unit of {name!r}")
         number.unit, number.digits = None, spec.digits

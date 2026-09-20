@@ -2,15 +2,14 @@
 """The reviewer's own rules, for what code cannot check, and how it treats what the team already conceded."""
 
 REVIEWER_RULES = [
-    ("R-1", "error", "The numbers and labels in the picture match the rows: each mark pairs with its label, and the "
-                     "axis range matches the values."),
-    ("R-2", "warning", "The picture is readable: no truncated or overlapping labels, legible text, a legend that matches "
-                       "the series. A label that cannot be read at all is an error."),
-    ("R-3", "error", "The chart answers the question asked, for the place, period, and measure it names."),
-    ("R-4", "warning", "The title, the axis titles, and the explanation are true to the picture and in the caller's "
-                       "language. A title that states what the picture does not show is an error."),
-    ("R-5", "error", "Nothing misleads: the baseline, the sort, the emphasis, a colour that implies a meaning it does "
-                     "not have."),
+    ("R-1", "error", "Every visible number, category label, and mark is paired with the same row and binding."),
+    ("R-2", "warning", "Visible text and marks are readable and not clipped or overlapping. Missing or unreadable "
+                       "meaning-bearing content is an error."),
+    ("R-3", "error", "Visible marks and bound series required by the supplied spec are not blank or missing. "
+                     "Do not demand a different chart, unbound column, or new analysis."),
+    ("R-4", "warning", "Visible titles, legend text, and localized labels match the spec and caller language; RTL "
+                       "placement is not itself a defect."),
+    ("R-5", "error", "The visible axis, sort, legend, or colour encoding does not misrepresent the supplied rows."),
 ]
 
 
@@ -19,10 +18,10 @@ def rubric_text() -> str:
     lines += [f"- {rule} ({level}): {text}" for rule, level, text in REVIEWER_RULES]
     lines += [
         "",
-        "The compromises and warnings in your input were already conceded by the team: do not report them again; "
-        "weigh only whether they mislead, and if one does, say so under R-5.",
-        "Owners: designer for the spec (type, bindings, sort, titles, labels, colours); analyst for the table (a "
-        "missing series, the wrong grain, a missing filter); renderer for the drawing (truncation, overlap); user for a "
-        "decision only the caller can make; none when nothing can change it.",
+        "Compromises and warnings describe known limitations, not proof of correctness or an instruction to fail. "
+        "Do not report them again without an independently visible meaning-changing defect.",
+        "Owners: designer when a supported spec/configuration change can fix the picture; renderer only for a drawing "
+        "failure the spec cannot control; none when nothing in this visual pipeline can change it. Findings owned by "
+        "analyst or user are outside your scope and must not be emitted.",
     ]
     return "\n".join(lines)

@@ -1,0 +1,145 @@
+{
+  "gptvis": {
+    "type": "scatter",
+    "theme": "default",
+    "width": 960,
+    "height": 640,
+    "title": "Detector response",
+    "axisXTitle": "Injection volume (mL)",
+    "axisYTitle": "Peak area (mAU*s)",
+    "style": {
+      "palette": [
+        "#1783FF"
+      ]
+    },
+    "data": [
+      {
+        "x": 1,
+        "y": 9
+      },
+      {
+        "x": 2,
+        "y": 16
+      },
+      {
+        "x": 4,
+        "y": 35
+      },
+      {
+        "x": 8,
+        "y": 65
+      }
+    ]
+  },
+  "overrides": {},
+  "number": {
+    "thousands": true,
+    "decimals": null,
+    "compact": false,
+    "unit": "mAU*s",
+    "digits": "western"
+  },
+  "g2": {
+    "devicePixelRatio": 3,
+    "type": "point",
+    "theme": {
+      "type": "light",
+      "view": {
+        "viewFill": "#FFF",
+        "plotFill": "transparent",
+        "mainFill": "transparent",
+        "contentFill": "transparent"
+      },
+      "interval": {
+        "rect": {
+          "fillOpacity": 0.8
+        }
+      },
+      "line": {
+        "line": {
+          "lineWidth": 2
+        }
+      },
+      "area": {
+        "area": {
+          "fillOpacity": 0.6
+        }
+      },
+      "point": {
+        "point": {
+          "lineWidth": 1
+        }
+      }
+    },
+    "data": [
+      {
+        "x": 1,
+        "y": 9
+      },
+      {
+        "x": 2,
+        "y": 16
+      },
+      {
+        "x": 4,
+        "y": 35
+      },
+      {
+        "x": 8,
+        "y": 65
+      }
+    ],
+    "width": 960,
+    "height": 640,
+    "title": {
+      "title": "Detector response"
+    },
+    "encode": {
+      "x": "x",
+      "y": "y",
+      "color": {
+        "$function": "encode.color"
+      }
+    },
+    "legend": false,
+    "axis": {
+      "x": {
+        "title": "Injection volume (mL)"
+      },
+      "y": {
+        "title": "Peak area (mAU*s)",
+        "labelFormatter": {
+          "$format": "value"
+        }
+      }
+    },
+    "style": {
+      "lineWidth": 1
+    },
+    "animate": false,
+    "tooltip": false,
+    "scale": {
+      "y": {
+        "nice": true
+      },
+      "color": {
+        "range": [
+          "#1783FF"
+        ]
+      }
+    },
+    "marginBottom": 24
+  },
+  "number2": null,
+  "tableFormats": {},
+  "display": {
+    "fields": {},
+    "columns": {
+      "x": "volume",
+      "y": "peak_area"
+    }
+  },
+  "functionPaths": [
+    "encode.color"
+  ]
+}

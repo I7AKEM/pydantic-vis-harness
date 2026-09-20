@@ -1,0 +1,48 @@
+{
+  "method": "Agent read final summaries and all findings against the pre-model inspected PNGs and synthetic constructions. This is not human-gold adjudication.",
+  "manifest_sha256": "d7ebce54bdd9c468368f9ebf17c0b0ecd6c8bda3d25c77c31ea9b8a00f8a959c",
+  "audit_sha256": "32d859d4cc44d9cbda5064bcd92dabd8c33f1cdddd34ffe5b14539eef00f4f72",
+  "baseline_report_sha256": "adba98128b4651d2f94ded5c31d13779b8b61076280f3cb28ccb318dbe3143ee",
+  "candidate_report_sha256": "8b02b860bc09f12102828a2409b745aafc168b8a8bb18dcfba4a59869244d0c0",
+  "clean_cases": {
+    "bar_pairing_clean": {"baseline_correct_pass": true, "candidate_correct_pass": true},
+    "line_unit_clean": {"baseline_correct_pass": true, "candidate_correct_pass": true},
+    "grouped_legend_clean": {"baseline_correct_pass": true, "candidate_correct_pass": true},
+    "table_missing_row_clean": {"baseline_correct_pass": true, "candidate_correct_pass": true},
+    "indicator_value_clean": {"baseline_correct_pass": true, "candidate_correct_pass": true},
+    "scatter_binding_clean": {"baseline_correct_pass": true, "candidate_correct_pass": true}
+  },
+  "defect_cases": {
+    "bar_pairing_defect": {
+      "baseline_identifies_actual_defect": true,
+      "candidate_identifies_actual_defect": true,
+      "reason": "Both identify Nozzle A 26 instead of 9 and C 9 instead of 26."
+    },
+    "line_unit_defect": {
+      "baseline_identifies_actual_defect": true,
+      "candidate_identifies_actual_defect": true,
+      "reason": "Both identify the visible psi Y title instead of the required kPa title/unit."
+    },
+    "grouped_legend_defect": {
+      "baseline_identifies_actual_defect": true,
+      "candidate_identifies_actual_defect": true,
+      "reason": "Both correctly identify reversed Aster/Beryl value pairing. Baseline cites Trial 1; candidate cites both trials."
+    },
+    "table_missing_row_defect": {
+      "baseline_identifies_actual_defect": true,
+      "candidate_identifies_actual_defect": true,
+      "reason": "Both name the absent Cobalt 0.86 row, which is missing from the complete PNG."
+    },
+    "indicator_value_defect": {
+      "baseline_identifies_actual_defect": true,
+      "candidate_identifies_actual_defect": true,
+      "reason": "Both identify the displayed 880 instead of the source value 88."
+    }
+  },
+  "excluded_before_calls": ["scatter_binding_defect"],
+  "limitations": [
+    "Small clear English synthetic images with full reference coverage, not a broad benchmark.",
+    "One trial per image/runtime; provider/cache/contention differences were not isolated.",
+    "No runtime or prompt was changed after the freeze; no failed trial was rerun."
+  ]
+}

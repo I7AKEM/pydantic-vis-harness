@@ -1,0 +1,11 @@
+{
+  "version": "transfer24-v1",
+  "frozen_at": "2026-09-17T03:32:26.154739+00:00",
+  "bank_sha256": "2548d627feb492d200ca11bd33113121ee1d9467c15a1d474f09a850759b84a5",
+  "semantic_sha256": "5a0159e25752d733441fc980adb12b8d21c51391b8978edc4c2ea1b4743185f1",
+  "authoring_code_sha256": "59ea1de40b34301b7af1fd2d32eefab45455ac09749efd4e81af5ff024201b13",
+  "case_count": 24,
+  "family_count": 6,
+  "pair_count": 18,
+  "tuning_allowed": false
+}

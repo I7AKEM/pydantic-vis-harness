@@ -1,0 +1,228 @@
+{
+  "id": "grouped_legend_defect",
+  "family": "grouped_legend",
+  "proposed_label": "revise",
+  "construction": "The defective legend relabels Aster's short 5/8 bars as Beryl and Beryl's long 16/22 bars as Aster.",
+  "reference": {
+    "report": {
+      "dataset_id": "synthetic_coating_trials",
+      "question": "Compare Aster and Beryl coating strength by trial; retain the literal series labels.",
+      "language": "English",
+      "brief_fingerprint": null,
+      "analysis": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          {
+            "name": "trial",
+            "meaning": "Trial",
+            "kind": "category",
+            "unit": null,
+            "source": "trial",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "coating",
+            "meaning": "Coating",
+            "kind": "category",
+            "unit": null,
+            "source": "coating",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "strength",
+            "meaning": "Strength",
+            "kind": "measure",
+            "unit": "MPa",
+            "source": "strength",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          }
+        ],
+        "summary": "Supplied synthetic measurements.",
+        "assumptions": []
+      },
+      "clarification": null,
+      "result": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          "trial",
+          "coating",
+          "strength"
+        ],
+        "types": [
+          "VARCHAR",
+          "VARCHAR",
+          "DOUBLE"
+        ],
+        "rows": [
+          [
+            "Trial 1",
+            "Aster",
+            5
+          ],
+          [
+            "Trial 1",
+            "Beryl",
+            16
+          ],
+          [
+            "Trial 2",
+            "Aster",
+            8
+          ],
+          [
+            "Trial 2",
+            "Beryl",
+            22
+          ]
+        ],
+        "row_count": 4,
+        "checks": [],
+        "seconds": 0.0
+      },
+      "checks": [],
+      "warnings": [],
+      "model": null,
+      "seconds": 0.0,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "design": {
+      "spec": "vis grouped_bar\ntitle Coating strength\ndescription Coatings within each trial\nwidth 960\nheight 640\naxisXTitle Strength (MPa)\naxisYTitle Trial\nbind\n  category trial\n  value strength\n  group coating\nsort none\nlabels on\nlegend on\n",
+      "chart": "grouped_bar",
+      "intent": null,
+      "explanation": "Direct presentation of the supplied values.",
+      "considered": [
+        "grouped_bar"
+      ],
+      "compromises": []
+    },
+    "brief": {
+      "source": null,
+      "query": null,
+      "pulled_at": null,
+      "raw_question": "Compare Aster and Beryl coating strength by trial; retain the literal series labels.",
+      "enriched_question": null,
+      "intent": null,
+      "suggested_chart_type": null,
+      "column_descriptions": {},
+      "units": {},
+      "code_meanings": {},
+      "display_labels": {},
+      "caveats": [
+        "Synthetic prepared values; preserve their exact meanings and units."
+      ],
+      "brand_colors": [],
+      "producer_agent": null
+    }
+  },
+  "render_input": {
+    "report": {
+      "dataset_id": "synthetic_coating_trials",
+      "question": "Compare Aster and Beryl coating strength by trial; retain the literal series labels.",
+      "language": "English",
+      "brief_fingerprint": null,
+      "analysis": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          {
+            "name": "trial",
+            "meaning": "Trial",
+            "kind": "category",
+            "unit": null,
+            "source": "trial",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "coating",
+            "meaning": "Coating",
+            "kind": "category",
+            "unit": null,
+            "source": "coating",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "strength",
+            "meaning": "Strength",
+            "kind": "measure",
+            "unit": "MPa",
+            "source": "strength",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          }
+        ],
+        "summary": "Supplied synthetic measurements.",
+        "assumptions": []
+      },
+      "clarification": null,
+      "result": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          "trial",
+          "coating",
+          "strength"
+        ],
+        "types": [
+          "VARCHAR",
+          "VARCHAR",
+          "DOUBLE"
+        ],
+        "rows": [
+          [
+            "Trial 1",
+            "Aster",
+            5
+          ],
+          [
+            "Trial 1",
+            "Beryl",
+            16
+          ],
+          [
+            "Trial 2",
+            "Aster",
+            8
+          ],
+          [
+            "Trial 2",
+            "Beryl",
+            22
+          ]
+        ],
+        "row_count": 4,
+        "checks": [],
+        "seconds": 0.0
+      },
+      "checks": [],
+      "warnings": [],
+      "model": null,
+      "seconds": 0.0,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "spec": "vis grouped_bar\ntitle Coating strength\ndescription Coatings within each trial\nwidth 960\nheight 640\naxisXTitle Strength (MPa)\naxisYTitle Trial\nbind\n  category trial\n  value strength\n  group coating\nvalueLabels\n  - [\"coating\", \"Aster\", \"Beryl\"]\n  - [\"coating\", \"Beryl\", \"Aster\"]\nsort none\nlabels on\nlegend on\n"
+  },
+  "render": {
+    "png": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/grouped_legend_defect/chart.png",
+    "html": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/grouped_legend_defect/chart.html",
+    "config": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/grouped_legend_defect/config.json",
+    "width": 2880,
+    "height": 1920,
+    "seconds": 0.21249145800000002,
+    "non_background_share": 0.19949652777777777,
+    "compromises": [],
+    "drawn_rows": 4,
+    "folded_rows": 0,
+    "dropped_rows": 0,
+    "texts": null,
+    "text_bounds": null
+  }
+}

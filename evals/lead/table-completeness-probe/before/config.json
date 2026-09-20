@@ -1,0 +1,101 @@
+{
+  "gptvis": {
+    "type": "spreadsheet",
+    "data": [
+      {
+        "region": "الحدود الشمالية",
+        "city": "رفحاء"
+      },
+      {
+        "region": "الحدود الشمالية",
+        "city": "عرعر"
+      },
+      {
+        "region": "منطقة الباحة",
+        "city": "الباحة"
+      },
+      {
+        "region": "منطقة الباحة",
+        "city": "بلجرشي"
+      },
+      {
+        "region": "منطقة الجوف",
+        "city": "دومة الجندل"
+      },
+      {
+        "region": "منطقة الجوف",
+        "city": "سكاكا"
+      },
+      {
+        "region": "منطقة الرياض",
+        "city": "الخرج"
+      },
+      {
+        "region": "منطقة الرياض",
+        "city": "الدرعية"
+      },
+      {
+        "region": "منطقة الرياض",
+        "city": "الرياض"
+      },
+      {
+        "region": "منطقة تبوك",
+        "city": "الوجه"
+      },
+      {
+        "region": "منطقة تبوك",
+        "city": "تبوك"
+      },
+      {
+        "region": "منطقة تبوك",
+        "city": "ضبا"
+      },
+      {
+        "region": "منطقة جازان",
+        "city": "جازان"
+      },
+      {
+        "region": "منطقة جازان",
+        "city": "صبيا"
+      },
+      {
+        "region": "منطقة مكة المكرمة",
+        "city": "جدة"
+      },
+      {
+        "region": "منطقة مكة المكرمة",
+        "city": "مكة المكرمة"
+      },
+      {
+        "region": "منطقة نجران",
+        "city": "نجران"
+      }
+    ],
+    "columns": [
+      "region",
+      "city"
+    ],
+    "width": 800,
+    "height": 450
+  },
+  "overrides": {},
+  "number": {
+    "thousands": true,
+    "decimals": null,
+    "compact": false,
+    "unit": null,
+    "digits": "western"
+  },
+  "g2": null,
+  "number2": null,
+  "tableFormats": {},
+  "display": {
+    "fields": {},
+    "columns": {
+      "region": "المنطقة",
+      "city": "المدينة"
+    },
+    "timeFields": []
+  },
+  "functionPaths": []
+}

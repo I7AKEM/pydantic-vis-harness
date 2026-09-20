@@ -24,7 +24,7 @@ from vis_agent.requests.models import (
 from vis_agent.requests.store import RequestStore, now
 
 log = logging.getLogger("requests")
-REQUEST_LIMIT = 24
+REQUEST_LIMIT = 18
 TOOL_LIMIT = 16
 _running: set[str] = set()
 _request_locks: WeakValueDictionary[str, asyncio.Lock] = WeakValueDictionary()
@@ -83,7 +83,15 @@ async def outcome_for(deps: AppDeps, request: Request, warnings: list[str] | Non
 
 async def prepare_request(deps: AppDeps, request: Request) -> dict:
     """Load the supplied table once. Resuming returns completed work, without selecting another action."""
-    from vis_agent.analyst.source import load_csv_report
+    from vis_agent.analyst.source import SourceUnavailable, load_csv_report
+
+    if "source_error" in request.steps:
+        if request.status != "failed" or request.error != request.steps["source_error"]:
+            request.status, request.error = "failed", request.steps["source_error"]
+            await asyncio.to_thread(requests_of(deps).save_request, request)
+        return {"request_id": request.request_id, "status": "failed", "terminal": True,
+                "error": request.steps["source_error"],
+                "next": "Explain this technical limitation honestly; another tool/model cannot change it."}
 
     source = await asyncio.to_thread(deps.store.get_upload, request.dataset_id)
     request.language = detect_language(request.question, source.brief, source.headers)
@@ -92,8 +100,14 @@ async def prepare_request(deps: AppDeps, request: Request) -> dict:
         if parent is not None and not request.redo_analysis:
             report = parent.report.model_copy(update={"language": request.language})
         else:
-            report = await asyncio.to_thread(load_csv_report, deps.store, request.dataset_id, request.question,
-                                             language=request.language)
+            try:
+                report = await asyncio.to_thread(load_csv_report, deps.store, request.dataset_id, request.question,
+                                                 language=request.language)
+            except SourceUnavailable as exc:
+                request.status, request.error = "failed", str(exc)
+                request.steps["source_error"] = str(exc)
+                await asyncio.to_thread(requests_of(deps).save_request, request)
+                return await prepare_request(deps, request)
         request.steps["analyze"] = report.model_dump(mode="json")
         await asyncio.to_thread(requests_of(deps).save_request, request)
     report = AnalysisReport.model_validate(request.steps["analyze"])
@@ -104,6 +118,10 @@ async def prepare_request(deps: AppDeps, request: Request) -> dict:
             "table": context, "completed": list(request.steps), "design": request.steps.get("design"),
             "render": request.steps.get("render"), "review": request.steps.get("review"),
             "specialist_feedback": request.steps.get("specialist_feedback"),
+            "convergence": {"render_attempts": request.render_attempts,
+                            "design_attempts": request.design_attempts,
+                            "visual_repairs": request.visual_repair_attempts,
+                            "routine_repairs_remaining": max(0, 1 - request.visual_repair_attempts)},
             "parent": parent.summary().model_dump(mode="json") if parent else None,
             "previous_spec": parent.design.spec if parent and parent.design else None,
             "answers": [p.model_dump() for p in pairs(request)],
@@ -139,21 +157,28 @@ async def pause_request(deps: AppDeps, request: Request, question: str, reason: 
     return await outcome_for(deps, request)
 
 
-async def publish(deps: AppDeps, request: Request) -> RequestOutcome:
-    """Persist the preview the lead selected; review is optional and never schedules more work."""
+async def publish(deps: AppDeps, request: Request, *, no_chart_reason: str | None = None,
+                  lead_run_id: str | None = None) -> RequestOutcome:
+    """Persist the lead's chosen preview or explicit source-table fallback; never schedule other work."""
     store = requests_of(deps)
     existing = await asyncio.to_thread(store.artifact_for_request, request.request_id)
     if existing:
         request.artifact_id, request.status = existing.artifact_id, "done"
         await asyncio.to_thread(store.save_request, request)
         return await outcome_for(deps, request)
-    render = request.steps.get("render", {})
-    if not render.get("png_url"):
+    fallback = no_chart_reason is not None
+    if fallback and not no_chart_reason.strip():
+        raise ValueError("A table fallback needs an honest, nonempty reason why no chart was delivered.")
+    if "analyze" not in request.steps:
+        raise ValueError(request.error or "No safe source table is available to publish.")
+    render = {} if fallback else request.steps.get("render", {})
+    if not fallback and not render.get("png_url"):
         raise ValueError("There is no rendered chart to publish. Call render_visualization on a successful design first.")
     report = AnalysisReport.model_validate(request.steps["analyze"])
-    designed = DesignReport.model_validate(request.steps["design"])
-    review = request.steps.get("review", {"status": "not_reviewed", "reason": "The lead did not request a visual review."})
-    report.warnings.extend([*designed.warnings, *review.get("warnings", [])])
+    designed = DesignReport.model_validate(request.steps["design"]) if request.steps.get("design") else None
+    review = ({"status": "not_reviewed", "reason": "No chart was delivered."} if fallback else
+              request.steps.get("review", {"status": "not_reviewed", "reason": "The lead did not request a visual review."}))
+    report.warnings.extend([*(designed.warnings if designed else []), *review.get("warnings", [])])
     parent = await asyncio.to_thread(store.get_artifact, request.parent_artifact_id) if request.parent_artifact_id else None
     source = await asyncio.to_thread(deps.store.get_upload, request.dataset_id)
     designer_dir = Path(__file__).resolve().parent.parent / "designer"
@@ -161,16 +186,22 @@ async def publish(deps: AppDeps, request: Request) -> RequestOutcome:
         artifact_id=store.new_artifact_id(), request_id=request.request_id, dataset_id=request.dataset_id,
         version=parent.version + 1 if parent else 1, parent_artifact_id=request.parent_artifact_id,
         question=parent.question if parent else request.question, change=request.question if parent else None,
-        report=report, design=designed.design,
+        report=report, design=designed.design if designed and not fallback else None,
+        no_chart_reason=no_chart_reason,
         compromises=[Compromise.model_validate(c) for c in render.get("rendered", {}).get("compromises", [])],
-        render_id=render["render_id"], png_url=render["png_url"], html_url=render["html_url"],
+        render_id=render.get("render_id"), png_url=render.get("png_url"), html_url=render.get("html_url"),
         review={**review, "rounds": [r.review for r in request.rounds]}, clarifications=list(request.clarifications),
         lineage=Lineage(brief_fingerprint=source.brief.fingerprint() if source.brief else None,
                         catalogue_version=sha256((designer_dir / "catalogue.json").read_bytes()).hexdigest()[:12],
-                        rules_version="expert-led-v1", analyst_model=report.model, designer_model=designed.model,
+                        rules_version="expert-led-v1", analyst_model=report.model, designer_model=designed.model if designed else None,
                         reviewer_model=review.get("model")), created_at=now(),
     )
     await asyncio.to_thread(store.save_artifact, artifact)
+    if lead_run_id is not None:
+        # Publication completes this turn's work. A later user turn may revise it, but this same lead
+        # run must not use a fresh revision to reset a spent repair budget. Idempotent re-publication
+        # above deliberately retains the original run ID rather than claiming an older artifact.
+        request.steps["publication_run_id"] = lead_run_id
     request.artifact_id, request.status, request.error = artifact.artifact_id, "done", None
     await asyncio.to_thread(store.save_request, request)
     return await outcome_for(deps, request)
@@ -181,6 +212,9 @@ async def run_request(deps: AppDeps, request_id: str, usage: RunUsage | None = N
     store = requests_of(deps)
     request = await asyncio.to_thread(store.get_request, request_id)
     if request.status in ("done", "waiting"):
+        return await outcome_for(deps, request)
+    if "source_error" in request.steps:
+        await prepare_request(deps, request)
         return await outcome_for(deps, request)
     if request_id in _running:
         return await outcome_for(deps, request, ["The request is still running."])
@@ -195,6 +229,9 @@ async def run_request(deps: AppDeps, request_id: str, usage: RunUsage | None = N
         async with request_lock(request_id):
             request = await asyncio.to_thread(store.get_request, request_id)
             if request.status in ("done", "waiting"):
+                return await outcome_for(deps, request)
+            if "source_error" in request.steps:
+                await prepare_request(deps, request)
                 return await outcome_for(deps, request)
             remaining = max(0, REQUEST_LIMIT - request.requests_used)
             request.status, request.error = "running", None

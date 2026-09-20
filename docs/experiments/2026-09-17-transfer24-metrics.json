@@ -1,0 +1,3996 @@
+{
+  "report_version": "transfer24-metrics-v1",
+  "created_at": "2026-09-17T03:59:57.301997+00:00",
+  "scope": "Independently authored blinded synthetic transfer/challenge bank; single trial per arm per case.",
+  "human_gold": false,
+  "population_generalization_proven": false,
+  "complete_independent_visual_audit_included": false,
+  "visual_spot_check_included": true,
+  "frozen_bank_sha256": "2548d627feb492d200ca11bd33113121ee1d9467c15a1d474f09a850759b84a5",
+  "scorer_version": "transfer-contract-v1",
+  "comparability_checks": {
+    "identical_models": true,
+    "identical_model_settings": true,
+    "identical_evaluator": true,
+    "identical_bank": true,
+    "identical_case_order": true,
+    "identical_concurrency": true,
+    "no_runtime_mutation_in_either_arm": true,
+    "no_evaluator_mutation_in_either_arm": true,
+    "all_24_attempts_retained_in_each_arm": true
+  },
+  "arms": {
+    "baseline": {
+      "arm": "baseline",
+      "raw_evidence_directory": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline",
+      "raw_file_sha256": {
+        "result.json": "b3269e9dfab0ddb25efa623b76071594df0a5147d94405434c3dcb6aeda18ce8",
+        "manifest.json": "0eede2ae5d3db6cb96320f93dbf7f05a6c6a214ba9e19c5f10332cd2e5c06bb7",
+        "g01-association-original/case.json": "7304db1ef274395fae5f9fa311fc51321a5129252ed1466896596f6e5c68ff92",
+        "g01-association-original/score.json": "54bb39d15595b83b5513bc7b25eff47955f77e69bab1f7df26d6435225a9b227",
+        "g01-association-transformed/case.json": "f31f8b4e9c1fcf4c2eacd808e2f1c8fc1d1026d83fc531266332af8f9e2faa26",
+        "g01-association-transformed/score.json": "2b50e6c854be52896c44b0a84889910c508229812830c036e8fbd73674f9fcc9",
+        "g01-trajectory-original/case.json": "a234de064644127d7416e54e93b8be995f0e81e04cf9e8acdc4929413e260306",
+        "g01-trajectory-original/score.json": "407f57dc39827930708996e159f275569cf5271b81e57a38af0545ca7ee49df1",
+        "g01-trajectory-transformed/case.json": "2243eec4372ab22ca65cc6385b78da90879039d222de594c706c8515ee71fc59",
+        "g01-trajectory-transformed/score.json": "0f4368d921a119d0d23116b467c6dfcc4a3cb7de9ac2f0b01ced1ebbc1d0f10f",
+        "g02-allocation-original/case.json": "87296d3c7b336d6c92ddfd2cce87c0b92d14f23eea92dc28bbd0e9c4eac1b308",
+        "g02-allocation-original/score.json": "09ef4df8bf6022bc270895ed64c7d5f36838ae0e690dd20acc6aa657153e22d2",
+        "g02-allocation-transformed/case.json": "fb8a2ffb06f291b186779f9098b68565a1806def06464a82c61aa58c247f80b8",
+        "g02-allocation-transformed/score.json": "bfb383b607da1fa22f670b604d24dbfddff75116593e5dae4fa01637ee8af6ba",
+        "g02-failure_comparison-original/case.json": "b06e6564ffc8ea6d1a16f00ac6d433e2635fdcb7619903c4b0018b41803663c7",
+        "g02-failure_comparison-original/score.json": "c6acce5d7ad374998f703c6af01f098d9f98a49f509f90972d954e1bff8234c4",
+        "g02-failure_comparison-transformed/case.json": "4bb3b3fecfdca1ae854dda14509e4523f20acb0c3a5c9f5e7baad8fb177ef810",
+        "g02-failure_comparison-transformed/score.json": "8ec5149199dd623e7a0f366e08edcf592c7abe8818ec063c3b847e05baa5494e",
+        "g03-parent_composition-original/case.json": "69fed1a3b35df1588da74f34081f6a20555a0201e720df8a7e78939d237e80be",
+        "g03-parent_composition-original/score.json": "3446e72dc3ac21142a258a818cf9ded66372720fe7a1ea788b1287e617c35ece",
+        "g03-parent_composition-transformed/case.json": "4144bb7fa1a1d2ce185ad361af9f5acd01c263a1dbc30156b3b2525a2b969a6e",
+        "g03-parent_composition-transformed/score.json": "de0a8c1c8a634ec9a646830610367e85954013482332a6f957291a29b4820fa6",
+        "g03-module_comparison-original/case.json": "0a582f908ec1ae966efadf492c582bee066eec84552dc8f24aeb54c43885647e",
+        "g03-module_comparison-original/score.json": "aa9b835bf10681e8deaedc56c245500d26088467e54cc3352825aef033b86319",
+        "g03-module_comparison-transformed/case.json": "dee7855148339021755627fd1a71a5e28c2c9f2aaad8f7efb81f56259a30a2d5",
+        "g03-module_comparison-transformed/score.json": "0a494e7a2d9c9724a135175aa4bd3fe5488b1330366265b6005827ca521a8fea",
+        "g04-curing_paths-original/case.json": "914a907d78c41a6d55d361fc464a2441f145ae4cc65df3564eff970d0ad23581",
+        "g04-curing_paths-original/score.json": "0971f0bb772d6ac7a38a12e38529b0ed59485e3fc765ad2de6e95e2b934eb758",
+        "g04-curing_paths-transformed/case.json": "d91146f278041bcb74c016675ac4266e43f949077b120705c2ffd67d81696516",
+        "g04-curing_paths-transformed/score.json": "7e2ac9a21aa6d19e8110e4e84686c303b9779a7a1c673d0efc231c6a510ec0a7",
+        "g04-sample_spreads-original/case.json": "fd6971802dffaaebaf675f78f6ffbc32fa2fb01b180e07450e14875eefe41619",
+        "g04-sample_spreads-original/score.json": "c9f330cb86340e9698a310e191e62c6a5b6a7dac7409818bfe683a162a8362a5",
+        "g04-sample_spreads-transformed/case.json": "b4820519bf6fb7e00e5bee0c4b3e177c251214c55274e02a24348567232b36a7",
+        "g04-sample_spreads-transformed/score.json": "a670c1664081123ad1381e396ded408433ea02447ccf261798e5b6d93b8d6db9",
+        "g05-overview-original/case.json": "c27a2576385f4f43f5059e8bb66a9a4c30b7671af4e5223e533ac6fff0c064eb",
+        "g05-overview-original/score.json": "a195f64a5db379f16f091c02e5122923c82f1081a45628d03cfa7001f36c4ffd",
+        "g05-overview-transformed/case.json": "1d7d769b4e30eea4b67558e42625ad1aef84ac2b122e98e493583ce5f4429777",
+        "g05-overview-transformed/score.json": "a6c503f35e228228a29afa63038ae27dcb23a7fad948a0e2ec5c0ba70fdcd85e",
+        "g05-exact_record-original/case.json": "b4f6f7e4d6ee777e7e5fab6af10a17594f4ccceaf9f8d1d1068f53c3e4767c2d",
+        "g05-exact_record-original/score.json": "e01a0bd12e11bbf0d4aa99b5791fe01ab81c8b6f1d050122b3db9bddda0b524d",
+        "g05-exact_record-transformed/case.json": "d45c66e97a6390a4f89c1f93e6d297f5ca1083a511def58c941abad70b47d3ca",
+        "g05-exact_record-transformed/score.json": "c15e71d4e5893511314b52dcdcb33e1469218de1d3a718ae9fddf0c11d4f6e4e",
+        "g06-demand_rank-original/case.json": "b26616ccb9fadab5887587c91fa4d3e775a7228696f953eb961567674f66767c",
+        "g06-demand_rank-original/score.json": "9c4806e9b40bb0983c2d9dc4bcdd11cf2fff2354af1e864e4a364f0e8ae0ffae",
+        "g06-demand_rank-transformed/case.json": "8ff479b8635ff4990d4085f69814166edc94ccec4b915c1d7165751e36f850df",
+        "g06-demand_rank-transformed/score.json": "c863f3f2643dfe549160a9b03db770893e84da5d7433f8a5a11b28d67e3e6e16",
+        "g06-efficiency_rank-original/case.json": "9b3de4212e3e2e601f0e83dcbbeedb14f235169b52932f23ef4247c0f02a4675",
+        "g06-efficiency_rank-original/score.json": "ea1a86bf00dfc9ab11f51f72b5e5afd8b0b02dad79a68e5abe6e9fad3b6d1da8",
+        "g06-efficiency_rank-transformed/case.json": "0b4a1f19905fa2b896ccc841e3021909b62c87e462d96d09205e13660604e95d",
+        "g06-efficiency_rank-transformed/score.json": "05ba706cc39f16fba1054ea7ce50341ffac81c78b3dac98e7ae15c6a89586b61"
+      },
+      "models": {
+        "lead": "openrouter:z-ai/glm-5.3",
+        "profiler": "openrouter:z-ai/glm-5.3",
+        "analyst": "openrouter:z-ai/glm-5.3",
+        "designer": "openrouter:z-ai/glm-5.3",
+        "designer_fallback": "openrouter:z-ai/glm-5.3",
+        "reviewer": "openrouter:google/gemma-4-31b-it:nitro"
+      },
+      "model_settings": {
+        "lead": {
+          "openrouter_reasoning": {
+            "effort": "low"
+          },
+          "openrouter_provider": {
+            "require_parameters": true
+          }
+        },
+        "profiler": {
+          "openrouter_reasoning": {
+            "effort": "low"
+          },
+          "openrouter_provider": {
+            "require_parameters": true
+          },
+          "temperature": 0.0
+        },
+        "analyst": {
+          "openrouter_reasoning": {
+            "effort": "low"
+          },
+          "openrouter_provider": {
+            "require_parameters": true
+          },
+          "temperature": 0.0
+        },
+        "designer": {
+          "openrouter_reasoning": {
+            "effort": "low"
+          },
+          "openrouter_provider": {
+            "require_parameters": true
+          },
+          "temperature": 0.0
+        },
+        "designer_fallback": {
+          "openrouter_reasoning": {
+            "effort": "low"
+          },
+          "openrouter_provider": {
+            "require_parameters": true
+          },
+          "temperature": 0.0
+        },
+        "reviewer": {
+          "thinking": false,
+          "temperature": 0.0
+        }
+      },
+      "started_at": "2026-09-17T03:40:13.456368+00:00",
+      "finished_at": "2026-09-17T03:49:36.663432+00:00",
+      "runtime_sha256": "573f65b5b612013ffd94558a396ba375d7891df3be68da410328136b354a6218",
+      "runtime_after_sha256": "573f65b5b612013ffd94558a396ba375d7891df3be68da410328136b354a6218",
+      "evaluator_sha256": "ca70b18caf8c048a4a7229f0d2a62ad8cbae70f7e064301c2fd39790fab9d3b3",
+      "evaluator_after_sha256": "ca70b18caf8c048a4a7229f0d2a62ad8cbae70f7e064301c2fd39790fab9d3b3",
+      "bank_sha256": "2548d627feb492d200ca11bd33113121ee1d9467c15a1d474f09a850759b84a5",
+      "scorer_version": "transfer-contract-v1",
+      "runtime_changed_during_run": false,
+      "evaluator_changed_during_run": false,
+      "case_order": [
+        "g04-curing_paths-transformed",
+        "g03-parent_composition-original",
+        "g02-failure_comparison-transformed",
+        "g04-sample_spreads-transformed",
+        "g03-module_comparison-original",
+        "g02-failure_comparison-original",
+        "g01-trajectory-transformed",
+        "g03-parent_composition-transformed",
+        "g03-module_comparison-transformed",
+        "g06-demand_rank-original",
+        "g06-demand_rank-transformed",
+        "g02-allocation-transformed",
+        "g01-trajectory-original",
+        "g01-association-original",
+        "g04-curing_paths-original",
+        "g05-overview-original",
+        "g02-allocation-original",
+        "g05-overview-transformed",
+        "g06-efficiency_rank-transformed",
+        "g06-efficiency_rank-original",
+        "g04-sample_spreads-original",
+        "g05-exact_record-original",
+        "g01-association-transformed",
+        "g05-exact_record-transformed"
+      ],
+      "concurrency": 1,
+      "shared_request_limit": 18,
+      "shared_tool_limit": 16,
+      "turn_timeout_seconds": 120,
+      "metrics": {
+        "attempts": 24,
+        "completed_attempt_journals": 24,
+        "deterministic_contract_pass": 19,
+        "deterministic_contract_plus_60s": 18,
+        "chart_type_contract_pass": 23,
+        "binding_contract_pass": 23,
+        "published_artifacts": 23,
+        "published_source_fidelity_pass": 23,
+        "published_source_units_pass": 23,
+        "delivered_png_links": 19,
+        "published_pngs_verified_header": 23,
+        "retained_png_files_all_attempts": 25,
+        "within_60s_regardless_quality": 23,
+        "timeouts_120s": 0,
+        "other_terminal_errors": 1,
+        "framework_recorded_model_requests": 205,
+        "latency_seconds": {
+          "mean": 23.40218248962871,
+          "median_conventional": 19.13729335454991,
+          "p50_nearest_rank_frozen": 19.12382229208015,
+          "p95_nearest_rank_frozen": 54.42668995796703,
+          "sum": 561.652379751089,
+          "min": 9.068414042005315,
+          "max": 72.72057033295278,
+          "timeouts_retained_as_censored_observations": false
+        },
+        "tool_attempt_counts": {
+          "draw": 24,
+          "design_visualization": 30,
+          "render_visualization": 25,
+          "review_visualization": 25,
+          "publish_visualization": 23
+        },
+        "extra_tool_attempts_over_one_per_case": {
+          "draw": 0,
+          "design_visualization": 6,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 0
+        },
+        "cases_with_repeated_tool_attempts": {
+          "design_visualization": [
+            "g04-curing_paths-original",
+            "g04-curing_paths-transformed",
+            "g04-sample_spreads-original",
+            "g05-exact_record-original",
+            "g05-exact_record-transformed"
+          ],
+          "render_visualization": [
+            "g04-curing_paths-transformed",
+            "g04-sample_spreads-original"
+          ],
+          "review_visualization": [
+            "g04-curing_paths-transformed",
+            "g04-sample_spreads-original"
+          ]
+        },
+        "captured_schema_or_tool_retry_prompts": {
+          "design_visualization": 1
+        },
+        "request_counter_design_attempts": 26,
+        "request_counter_render_attempts": 25,
+        "request_counter_visual_repair_attempts": 3,
+        "distinct_returned_review_reports": 25,
+        "repeated_identical_review_returns": 0,
+        "review_completion_status_counts": {
+          "reviewed": 25
+        },
+        "online_review_verdicts_not_gold": {
+          "revise": 8,
+          "pass": 17
+        }
+      },
+      "pair_metrics": {
+        "meaning_preserving": {
+          "denominator": 12,
+          "complete_pairs": 12,
+          "pass": 7,
+          "failed_pair_ids": [
+            "g01-trajectory-meaning-preserving",
+            "g02-allocation-meaning-preserving",
+            "g04-curing_paths-meaning-preserving",
+            "g04-sample_spreads-meaning-preserving",
+            "g05-exact_record-meaning-preserving"
+          ]
+        },
+        "goal_contrast": {
+          "denominator": 6,
+          "complete_pairs": 6,
+          "pass": 4,
+          "failed_pair_ids": [
+            "g02-goal-contrast",
+            "g04-goal-contrast"
+          ]
+        }
+      },
+      "families": {
+        "relationship_sequence": {
+          "attempts": 4,
+          "contract_pass": 3
+        },
+        "composition_independent_rates": {
+          "attempts": 4,
+          "contract_pass": 3
+        },
+        "nested_allocation": {
+          "attempts": 4,
+          "contract_pass": 4
+        },
+        "repeated_measurement_views": {
+          "attempts": 4,
+          "contract_pass": 2
+        },
+        "mixed_unit_summary": {
+          "attempts": 4,
+          "contract_pass": 3
+        },
+        "opaque_metric_choice": {
+          "attempts": 4,
+          "contract_pass": 4
+        }
+      },
+      "cases": [
+        {
+          "id": "g01-association-original",
+          "family": "relationship_sequence",
+          "goal": "association",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 12.78422375000082,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "scatter",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "13d3511c6958e8fcbd72e7fe73afb5323689a8f9bfa61a3f7ab2988ba4b0b3ed"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "revise": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g01-association-transformed",
+          "family": "relationship_sequence",
+          "goal": "association",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 23.612806332996115,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 7,
+          "chart": "scatter",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "7c8557f0c66a77d707d910d63693fe1d733823c471c9b732f5cf2a351d009f3c"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "revise": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g01-trajectory-original",
+          "family": "relationship_sequence",
+          "goal": "trajectory",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 21.407201166031882,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "line",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "ef81782301c71d30c2b2bf76e2efc71d7c190eb7de7f602d6404263d12eeb459"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g01-trajectory-transformed",
+          "family": "relationship_sequence",
+          "goal": "trajectory",
+          "variant": "transformed",
+          "contract_pass": false,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": false,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [
+            "delivered_link"
+          ],
+          "seconds": 10.971212125034072,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "line",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "453d61a5e98968fafa194724ab275b3fd7458bed115733d263ce9bc21ee5ccf7"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g02-allocation-original",
+          "family": "composition_independent_rates",
+          "goal": "allocation",
+          "variant": "original",
+          "contract_pass": false,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": false,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [
+            "delivered_link"
+          ],
+          "seconds": 11.921715082949959,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "donut",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "2fa55c2619c3d16012d2360e5f30bd4946a78b010141e6de3e0e45e0595dc97d"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g02-allocation-transformed",
+          "family": "composition_independent_rates",
+          "goal": "allocation",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 9.068414042005315,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "donut",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "2fa55c2619c3d16012d2360e5f30bd4946a78b010141e6de3e0e45e0595dc97d"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g02-failure_comparison-original",
+          "family": "composition_independent_rates",
+          "goal": "failure_comparison",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 19.12382229208015,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "a2cdb49246890b727800e71630abe6c93a96042cff7b35ad8ca3e8ef995b16ff"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g02-failure_comparison-transformed",
+          "family": "composition_independent_rates",
+          "goal": "failure_comparison",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 32.105052541941404,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "a89303fc64225139bba96d1d67646eff2c5555e8bbcf5f3671c0e1230987acfd"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g03-parent_composition-original",
+          "family": "nested_allocation",
+          "goal": "parent_composition",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 15.476324334042147,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "stacked_bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "9b35bcd057c00f13515e3fc3b1f72cbd9dba15f84de6e1f2e93b6b066d20c879"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g03-parent_composition-transformed",
+          "family": "nested_allocation",
+          "goal": "parent_composition",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 9.358659083023667,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "stacked_bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "35c9f57c198f41401cc2c0c7105d3d817a56a79510d0b18a7d1b7b9ac4c92d16"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g03-module_comparison-original",
+          "family": "nested_allocation",
+          "goal": "module_comparison",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 19.150764417019673,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 9,
+          "chart": "grouped_column",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "7bc53dc9ed96f34f3aeb2a8bce6d8c7af76a975aada13d8d18919c5f42394f73"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g03-module_comparison-transformed",
+          "family": "nested_allocation",
+          "goal": "module_comparison",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 25.87817229202483,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "grouped_column",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "6986527af7be0b3eafa9e84525532085f8a8f7ed7e0d269a468d015662e72f65"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "revise": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g04-curing_paths-original",
+          "family": "repeated_measurement_views",
+          "goal": "curing_paths",
+          "variant": "original",
+          "contract_pass": false,
+          "checks": {
+            "artifact_persisted": false,
+            "source_fidelity": false,
+            "source_units": false,
+            "chart_appropriate": false,
+            "bindings": false,
+            "visible_fields": false,
+            "measure_selection": false,
+            "literal_codes": false,
+            "no_unrequested_limit": false,
+            "sort": false,
+            "render_file": false,
+            "delivered_link": false,
+            "final_reply": false,
+            "completed": false
+          },
+          "failed_checks": [
+            "artifact_persisted",
+            "source_fidelity",
+            "source_units",
+            "chart_appropriate",
+            "bindings",
+            "visible_fields",
+            "measure_selection",
+            "literal_codes",
+            "no_unrequested_limit",
+            "sort",
+            "render_file",
+            "delivered_link",
+            "final_reply",
+            "completed"
+          ],
+          "seconds": 17.094508333015256,
+          "within_60s": true,
+          "timed_out": false,
+          "error": "UnexpectedModelBehavior: Tool 'design_visualization' exceeded max retries count of 1. Consider raising the retry limit, or see the docs on tool retries: https://pydantic.dev/docs/ai/tools-toolsets/tools-advanced/#tool-retries",
+          "framework_requests": 3,
+          "chart": null,
+          "retained_png_count": 0,
+          "retained_png_hashes": [],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 2
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 1
+            },
+            "captured_schema_or_tool_retry_prompts": {
+              "design_visualization": 1
+            },
+            "request_counter_design_attempts": 0,
+            "request_counter_render_attempts": 0,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 0,
+            "distinct_returned_review_reports": 0,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {},
+            "online_review_verdicts_not_gold": {},
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g04-curing_paths-transformed",
+          "family": "repeated_measurement_views",
+          "goal": "curing_paths",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 54.42668995796703,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 16,
+          "chart": "multi_line",
+          "retained_png_count": 2,
+          "retained_png_hashes": [
+            "01b68858c9511f71c4489cc4ecbcdad3deebf37f54e1e1f697334c6a9e222213",
+            "050ecf358326fc73ee6fefa113e69c7a5125617f607fcd0f9bcdf1fd10829485"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 2,
+              "render_visualization": 2,
+              "review_visualization": 2,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 2,
+            "request_counter_render_attempts": 2,
+            "request_counter_visual_repair_attempts": 1,
+            "distinct_saved_design_reports": 2,
+            "distinct_returned_review_reports": 2,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 2
+            },
+            "online_review_verdicts_not_gold": {
+              "revise": 2
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g04-sample_spreads-original",
+          "family": "repeated_measurement_views",
+          "goal": "sample_spreads",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 32.25722454092465,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 14,
+          "chart": "boxplot",
+          "retained_png_count": 2,
+          "retained_png_hashes": [
+            "6e0ecb79b672a01cd17b2a659990d5694f3628363193c4c6bc87a07ae5b8eff7",
+            "9907d5152c69b6464db3738e1a6ab77d7492e5684b81d7f7b6096981a6aa0b31"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 3,
+              "render_visualization": 2,
+              "review_visualization": 2,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 2,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 2,
+            "request_counter_render_attempts": 2,
+            "request_counter_visual_repair_attempts": 1,
+            "distinct_saved_design_reports": 2,
+            "distinct_returned_review_reports": 2,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 2
+            },
+            "online_review_verdicts_not_gold": {
+              "revise": 2
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g04-sample_spreads-transformed",
+          "family": "repeated_measurement_views",
+          "goal": "sample_spreads",
+          "variant": "transformed",
+          "contract_pass": false,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": false,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [
+            "delivered_link"
+          ],
+          "seconds": 27.909017500001937,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "boxplot",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "b22b06ad31c35065c47f5674e03ef777231ac779fe141b57fca8f015d9231fde"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g05-overview-original",
+          "family": "mixed_unit_summary",
+          "goal": "overview",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 10.649883792037144,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "indicator",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "4229aa9ba1cf0b1d808749c4355a2e091aa17ba22c131fa64c825e9d422a84bc"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g05-overview-transformed",
+          "family": "mixed_unit_summary",
+          "goal": "overview",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 10.424477459047921,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "indicator",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "f68662b2a7a6feeea2cdf62a70fc0d945fd3f8ab2e1c832a9482e634c28b60f7"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g05-exact_record-original",
+          "family": "mixed_unit_summary",
+          "goal": "exact_record",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 49.776691875071265,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 9,
+          "chart": "table",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "a19c6790164d7f13b191f6209b3abadc7a55d0818f1c36a27ff48e582551e982"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 2,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 1,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g05-exact_record-transformed",
+          "family": "mixed_unit_summary",
+          "goal": "exact_record",
+          "variant": "transformed",
+          "contract_pass": false,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": false,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [
+            "delivered_link"
+          ],
+          "seconds": 21.713336499989964,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 11,
+          "chart": "table",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "714cc15f78f6bf3fd87c707a08c60f4ca9901586726664dc5281cd3155139a5f"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 2,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 1,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 2,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 1,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "revise": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g06-demand_rank-original",
+          "family": "opaque_metric_choice",
+          "goal": "demand_rank",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 72.72057033295278,
+          "within_60s": false,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "c79e3a3963e2669217b373c33fecdc0a60df25fbfbbe618ba377e6f3e656e7f2"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g06-demand_rank-transformed",
+          "family": "opaque_metric_choice",
+          "goal": "demand_rank",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 29.994384667021222,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "67983d749b5453ed473ca90303acc02311aed5a458af3e3935228e14f1f3fb6d"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g06-efficiency_rank-original",
+          "family": "opaque_metric_choice",
+          "goal": "efficiency_rank",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 12.765007916954346,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "73d16aed03358e403a6b08cf8bcb4333e9c08d659ecdbbd4d26cc858c4ae9a34"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g06-efficiency_rank-transformed",
+          "family": "opaque_metric_choice",
+          "goal": "efficiency_rank",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 11.062219416955486,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "d68e2d3a8eb0f64bee968491b84aa67b98799a0e9f47034264ca49b7c3513cc5"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        }
+      ]
+    },
+    "candidate": {
+      "arm": "candidate",
+      "raw_evidence_directory": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate",
+      "raw_file_sha256": {
+        "result.json": "5944d428199300d23f86e0f7333b9f582a568767d7e8ed3d507735fabb85f773",
+        "manifest.json": "82b8e5047bb9560567e1464b0712602dcdd000f032508356a8a72edc5e1d5037",
+        "g01-association-original/case.json": "cec093215cb9453ca5d8828608392235681469523d879bbb04a420b16c2e3975",
+        "g01-association-original/score.json": "181e8afcc90215f645612dc695fc1f67a4d308c0dfd502ba68fd6b79fb60f9fb",
+        "g01-association-transformed/case.json": "b910c13bb2e0ca30f1f4338df48e9bbbf3a2bc1cd67354725e0e616f94374035",
+        "g01-association-transformed/score.json": "3a05413624b4acc9596122cef8bafaf5519b4af9754bd4c27470d955f4b8de08",
+        "g01-trajectory-original/case.json": "e89aa915fe1558fd19f8380587e406295814bd63bc6f217d95159e28026d4604",
+        "g01-trajectory-original/score.json": "ef2f32dde36398cda564c2e4a30e00677f64648ee375ae22fa759816d69411a0",
+        "g01-trajectory-transformed/case.json": "6e384e18770f68efc345931d3985de94b6e5434bf0c1c29df621a821d9543677",
+        "g01-trajectory-transformed/score.json": "1394cc6375d98df12168d4f5d488894e8390898eca0f1db4f0715d4511142053",
+        "g02-allocation-original/case.json": "38d7c561976b3d4f230c384c067a82cdc254ac037d282868d35599b030271bf8",
+        "g02-allocation-original/score.json": "9090c57807409c19419a553d1026698568a0c221d2a39b8dca3dc983538b670d",
+        "g02-allocation-transformed/case.json": "e5e650c52a6133d405231e60b8d7ac8c1dab4490d4d1fcf1f6fabb78292f3472",
+        "g02-allocation-transformed/score.json": "81b5d11c0a3a09372d3afbca2edb5543dcbdfe7909921187d023e832b32b500c",
+        "g02-failure_comparison-original/case.json": "061beb421cdbbaf22b2236f4e4281db3f9b52ca3a5c4fdbe50dc59f32527ff23",
+        "g02-failure_comparison-original/score.json": "18f7ff78195ae36d47f78e8c100d7349810816a5bb060ab3d22bcb62e32f1de8",
+        "g02-failure_comparison-transformed/case.json": "edbb88dc855a63f6f08ff290cee29c9406a3c1e59a8f5f016e0607fb612db1ab",
+        "g02-failure_comparison-transformed/score.json": "04d4384031feb0ba0b2e82e29d6de61168ded24c411814335c4da9031f597be3",
+        "g03-parent_composition-original/case.json": "9d83008abd737527c028aa4e580bc8ceb690e2c25e238ec7ab01a5ba6084107a",
+        "g03-parent_composition-original/score.json": "9ffc573c089843a2af1edcee974e1a1c1943f8c059d8f573c9a48095440728b7",
+        "g03-parent_composition-transformed/case.json": "2682ab89cf6b852625294b3e2644ca42fff151bddd61586fb3b8c34eadaac64e",
+        "g03-parent_composition-transformed/score.json": "a0a74afb9ed49e320aacb58a694f97305a42fb4b9a1667ea3d0bfe787ae8a702",
+        "g03-module_comparison-original/case.json": "265cd6cf1fbd95755f080273f6b1f575ced9ed6c27b74348e617f4258f712ce7",
+        "g03-module_comparison-original/score.json": "4056e4b6f2c0ee9013a365703bbaaead7d00d73bf4953f9d542f3649b6910ecf",
+        "g03-module_comparison-transformed/case.json": "8f33368dd437287f79e5ee34a46b1895be3f5e503bb2a15663ff88889f3cb18c",
+        "g03-module_comparison-transformed/score.json": "8c37e8555694168333bb99587b5b45866ebde5fc4fd9f85c30569a98d42c3ffe",
+        "g04-curing_paths-original/case.json": "4fea6a10d54a3279435c3888b8cb987ac4429a6628756ef2728e29ab5c8270da",
+        "g04-curing_paths-original/score.json": "38a86c8755f9a1b2fdbb9b18c36aa4d653a29c5fe2faf1cff602277d830fd01d",
+        "g04-curing_paths-transformed/case.json": "a3c69e1bee4b8b13917d00c407e775bb781588fd7c0210e2361a113e60a25fcd",
+        "g04-curing_paths-transformed/score.json": "d0080de9fe33e7212e56b23da580d908585fb4b5ef8b1a6d744c5f0e986c62c1",
+        "g04-sample_spreads-original/case.json": "e2cc39210221e64e43d0425406defd81b9809cc773eaa36f54eda056f8ef6e91",
+        "g04-sample_spreads-original/score.json": "4991fd68d60c3dd961385a98ac806fa7be13941720e88aef86d501e89cb0673d",
+        "g04-sample_spreads-transformed/case.json": "051d8ea49fc4cee7302aa14aecee7b784fd13bf8128196bb67d350feaff729dd",
+        "g04-sample_spreads-transformed/score.json": "5660bd248b309d2a97ace1fa506e3ab12e8413a876bd88a561fe608b81daf7f0",
+        "g05-overview-original/case.json": "caca7956c7734e3fcc569cea11b8d8537860e48e6fdf35b43bc072d32947197a",
+        "g05-overview-original/score.json": "10bad39d3410ed733ca47c7843dbc3ee54adacb73ab274a7bb02d68f516d2964",
+        "g05-overview-transformed/case.json": "a0fa2a01d6e0db37496cb84ba4d0c5f5702b828c36395de3a4786d1b13329141",
+        "g05-overview-transformed/score.json": "aa5968696eab91fb82099c917fa285eff59ea644a06616dda619aa60152ce140",
+        "g05-exact_record-original/case.json": "954b0903649da3ca514f311c5fe804c5514044cc056884bba033615452e4ced3",
+        "g05-exact_record-original/score.json": "de102d4b8ae2f474ab605142abe1228c3a5f89ad850c54e031adf5937723e5da",
+        "g05-exact_record-transformed/case.json": "66a9c494c07663480f078b691e92355d2b4650654abb58225354286a8d6b2bf2",
+        "g05-exact_record-transformed/score.json": "91a5a190a8b8b3d8c7d1bcd41c76d45edf7121512f2c91131469fda59632c3a8",
+        "g06-demand_rank-original/case.json": "8be6fc4208f5b35d17aa9352047405cda92d6fad1cd48d281fbaf023fa8e9227",
+        "g06-demand_rank-original/score.json": "6578d7f1ec9b360102b49a1153d192896631c336e2d186092f5015489777b834",
+        "g06-demand_rank-transformed/case.json": "c1d6ce923fa9618eeb4ba2b6c9025ec01495b0e81bc169be0e28a98624930caf",
+        "g06-demand_rank-transformed/score.json": "260f786650fd3b479b2608578c3456ad3d72fca9b6ae80cacafd560d66be51c6",
+        "g06-efficiency_rank-original/case.json": "f414ebfe783ff4740d54370bfc54fde3311328e30ab7ee98caa9923b50afe114",
+        "g06-efficiency_rank-original/score.json": "35c3e877e0ab693d5b387024eb797b7b45c3010c62e918da56a43e99f2e8a627",
+        "g06-efficiency_rank-transformed/case.json": "b80946ec5ab34768196c6a68f60151f76a2d3442d658bbe9ed79e162fb06e4f3",
+        "g06-efficiency_rank-transformed/score.json": "4d81acd8a73bab2ed4b4fe70ee9b61de4adeb117ded3a913a4d04fca74e0b06a"
+      },
+      "models": {
+        "lead": "openrouter:z-ai/glm-5.3",
+        "profiler": "openrouter:z-ai/glm-5.3",
+        "analyst": "openrouter:z-ai/glm-5.3",
+        "designer": "openrouter:z-ai/glm-5.3",
+        "designer_fallback": "openrouter:z-ai/glm-5.3",
+        "reviewer": "openrouter:google/gemma-4-31b-it:nitro"
+      },
+      "model_settings": {
+        "lead": {
+          "openrouter_reasoning": {
+            "effort": "low"
+          },
+          "openrouter_provider": {
+            "require_parameters": true
+          }
+        },
+        "profiler": {
+          "openrouter_reasoning": {
+            "effort": "low"
+          },
+          "openrouter_provider": {
+            "require_parameters": true
+          },
+          "temperature": 0.0
+        },
+        "analyst": {
+          "openrouter_reasoning": {
+            "effort": "low"
+          },
+          "openrouter_provider": {
+            "require_parameters": true
+          },
+          "temperature": 0.0
+        },
+        "designer": {
+          "openrouter_reasoning": {
+            "effort": "low"
+          },
+          "openrouter_provider": {
+            "require_parameters": true
+          },
+          "temperature": 0.0
+        },
+        "designer_fallback": {
+          "openrouter_reasoning": {
+            "effort": "low"
+          },
+          "openrouter_provider": {
+            "require_parameters": true
+          },
+          "temperature": 0.0
+        },
+        "reviewer": {
+          "thinking": false,
+          "temperature": 0.0
+        }
+      },
+      "started_at": "2026-09-17T03:40:12.683488+00:00",
+      "finished_at": "2026-09-17T03:56:57.511607+00:00",
+      "runtime_sha256": "7ff116ba5c5a222c69f3e7d9806f1356d5e1658524b4de10aa7edebe9150929d",
+      "runtime_after_sha256": "7ff116ba5c5a222c69f3e7d9806f1356d5e1658524b4de10aa7edebe9150929d",
+      "evaluator_sha256": "ca70b18caf8c048a4a7229f0d2a62ad8cbae70f7e064301c2fd39790fab9d3b3",
+      "evaluator_after_sha256": "ca70b18caf8c048a4a7229f0d2a62ad8cbae70f7e064301c2fd39790fab9d3b3",
+      "bank_sha256": "2548d627feb492d200ca11bd33113121ee1d9467c15a1d474f09a850759b84a5",
+      "scorer_version": "transfer-contract-v1",
+      "runtime_changed_during_run": false,
+      "evaluator_changed_during_run": false,
+      "case_order": [
+        "g04-curing_paths-transformed",
+        "g03-parent_composition-original",
+        "g02-failure_comparison-transformed",
+        "g04-sample_spreads-transformed",
+        "g03-module_comparison-original",
+        "g02-failure_comparison-original",
+        "g01-trajectory-transformed",
+        "g03-parent_composition-transformed",
+        "g03-module_comparison-transformed",
+        "g06-demand_rank-original",
+        "g06-demand_rank-transformed",
+        "g02-allocation-transformed",
+        "g01-trajectory-original",
+        "g01-association-original",
+        "g04-curing_paths-original",
+        "g05-overview-original",
+        "g02-allocation-original",
+        "g05-overview-transformed",
+        "g06-efficiency_rank-transformed",
+        "g06-efficiency_rank-original",
+        "g04-sample_spreads-original",
+        "g05-exact_record-original",
+        "g01-association-transformed",
+        "g05-exact_record-transformed"
+      ],
+      "concurrency": 1,
+      "shared_request_limit": 18,
+      "shared_tool_limit": 16,
+      "turn_timeout_seconds": 120,
+      "metrics": {
+        "attempts": 24,
+        "completed_attempt_journals": 24,
+        "deterministic_contract_pass": 21,
+        "deterministic_contract_plus_60s": 18,
+        "chart_type_contract_pass": 23,
+        "binding_contract_pass": 23,
+        "published_artifacts": 23,
+        "published_source_fidelity_pass": 23,
+        "published_source_units_pass": 23,
+        "delivered_png_links": 21,
+        "published_pngs_verified_header": 23,
+        "retained_png_files_all_attempts": 24,
+        "within_60s_regardless_quality": 19,
+        "timeouts_120s": 1,
+        "other_terminal_errors": 0,
+        "framework_recorded_model_requests": 197,
+        "latency_seconds": {
+          "mean": 41.8037616025346,
+          "median_conventional": 36.159585479064845,
+          "p50_nearest_rank_frozen": 30.812114166095853,
+          "p95_nearest_rank_frozen": 117.64067912497558,
+          "sum": 1003.2902784608305,
+          "min": 13.112549249897711,
+          "max": 120.00441829196643,
+          "timeouts_retained_as_censored_observations": true
+        },
+        "tool_attempt_counts": {
+          "draw": 24,
+          "design_visualization": 25,
+          "render_visualization": 25,
+          "review_visualization": 26,
+          "publish_visualization": 23
+        },
+        "extra_tool_attempts_over_one_per_case": {
+          "draw": 0,
+          "design_visualization": 1,
+          "render_visualization": 1,
+          "review_visualization": 2,
+          "publish_visualization": 0
+        },
+        "cases_with_repeated_tool_attempts": {
+          "design_visualization": [
+            "g05-overview-transformed"
+          ],
+          "render_visualization": [
+            "g05-overview-transformed"
+          ],
+          "review_visualization": [
+            "g01-association-original",
+            "g01-association-transformed"
+          ]
+        },
+        "captured_schema_or_tool_retry_prompts": {},
+        "request_counter_design_attempts": 25,
+        "request_counter_render_attempts": 25,
+        "request_counter_visual_repair_attempts": 0,
+        "distinct_returned_review_reports": 24,
+        "repeated_identical_review_returns": 2,
+        "review_completion_status_counts": {
+          "not_reviewed": 4,
+          "reviewed": 20
+        },
+        "online_review_verdicts_not_gold": {
+          "none": 4,
+          "pass": 19,
+          "revise": 1
+        }
+      },
+      "pair_metrics": {
+        "meaning_preserving": {
+          "denominator": 12,
+          "complete_pairs": 12,
+          "pass": 9,
+          "failed_pair_ids": [
+            "g04-curing_paths-meaning-preserving",
+            "g05-overview-meaning-preserving",
+            "g05-exact_record-meaning-preserving"
+          ]
+        },
+        "goal_contrast": {
+          "denominator": 6,
+          "complete_pairs": 6,
+          "pass": 5,
+          "failed_pair_ids": [
+            "g05-goal-contrast"
+          ]
+        }
+      },
+      "families": {
+        "relationship_sequence": {
+          "attempts": 4,
+          "contract_pass": 4
+        },
+        "composition_independent_rates": {
+          "attempts": 4,
+          "contract_pass": 4
+        },
+        "nested_allocation": {
+          "attempts": 4,
+          "contract_pass": 4
+        },
+        "repeated_measurement_views": {
+          "attempts": 4,
+          "contract_pass": 3
+        },
+        "mixed_unit_summary": {
+          "attempts": 4,
+          "contract_pass": 2
+        },
+        "opaque_metric_choice": {
+          "attempts": 4,
+          "contract_pass": 4
+        }
+      },
+      "cases": [
+        {
+          "id": "g01-association-original",
+          "family": "relationship_sequence",
+          "goal": "association",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 44.8709612499224,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "scatter",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "fdbba0590c251aaef4194e93272ea135c28d4081b6613322c14a482f274a7ed4"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 2,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 1,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 1,
+            "review_completion_status_counts": {
+              "not_reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "none": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g01-association-transformed",
+          "family": "relationship_sequence",
+          "goal": "association",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 60.623406625003554,
+          "within_60s": false,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "scatter",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "2ee71ba89f86d62c44f330c54b78795103153ffdd54f761712edb8fff523a57f"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 2,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 1,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 1,
+            "review_completion_status_counts": {
+              "not_reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "none": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g01-trajectory-original",
+          "family": "relationship_sequence",
+          "goal": "trajectory",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 14.068888625013642,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "line",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "2e29d17d6af662dc46c20d3deee3d4406e77f2d1a05688fa23db235bb6b3c209"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g01-trajectory-transformed",
+          "family": "relationship_sequence",
+          "goal": "trajectory",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 15.112930958974175,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "line",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "3cc5ac941d110e0a23b6b4ed400ef7e8a999b69ee4eee0eee0e3e8e03d1dd34f"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g02-allocation-original",
+          "family": "composition_independent_rates",
+          "goal": "allocation",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 27.13117304199841,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "donut",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "2fa55c2619c3d16012d2360e5f30bd4946a78b010141e6de3e0e45e0595dc97d"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g02-allocation-transformed",
+          "family": "composition_independent_rates",
+          "goal": "allocation",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 16.57175058394205,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "donut",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "2fa55c2619c3d16012d2360e5f30bd4946a78b010141e6de3e0e45e0595dc97d"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g02-failure_comparison-original",
+          "family": "composition_independent_rates",
+          "goal": "failure_comparison",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 16.584613332990557,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "1d26fd115219402b61aefe072bbd65c0af5e7f3af7ccc158acc01800268b93c3"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g02-failure_comparison-transformed",
+          "family": "composition_independent_rates",
+          "goal": "failure_comparison",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 16.509487417060882,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "ca9316df0c8825fba294f48b9681c067981ee074afabd67a1214fad22587da7f"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g03-parent_composition-original",
+          "family": "nested_allocation",
+          "goal": "parent_composition",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 46.75231699994765,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 7,
+          "chart": "stacked_bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "58be8dc9657548f530b16e9fffd6ed1a6c400abeac152e9b37843384fe9378dc"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "not_reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "none": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g03-parent_composition-transformed",
+          "family": "nested_allocation",
+          "goal": "parent_composition",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 117.64067912497558,
+          "within_60s": false,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "stacked_bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "a0ed4253352ca0623f528dbc2e60d3b4df9aee737fdb76345becb35b06ff4cfc"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g03-module_comparison-original",
+          "family": "nested_allocation",
+          "goal": "module_comparison",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 66.92947633308358,
+          "within_60s": false,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 9,
+          "chart": "grouped_column",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "4a4ac5cb0454cc7e4bc7ae4f7532b321bd84f3037b04067632a2e04635743aca"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g03-module_comparison-transformed",
+          "family": "nested_allocation",
+          "goal": "module_comparison",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 56.71914795902558,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 9,
+          "chart": "grouped_column",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "ffc6608c1d6575b4f7698459080d5d64c25652878094e296df7f17999297d14e"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g04-curing_paths-original",
+          "family": "repeated_measurement_views",
+          "goal": "curing_paths",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 41.507056792033836,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "multi_line",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "02410e5763b6967d5269ce92d337d1bf987cf7969449094583d3d70f9f19b86d"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g04-curing_paths-transformed",
+          "family": "repeated_measurement_views",
+          "goal": "curing_paths",
+          "variant": "transformed",
+          "contract_pass": false,
+          "checks": {
+            "artifact_persisted": false,
+            "source_fidelity": false,
+            "source_units": false,
+            "chart_appropriate": false,
+            "bindings": false,
+            "visible_fields": false,
+            "measure_selection": false,
+            "literal_codes": false,
+            "no_unrequested_limit": false,
+            "sort": false,
+            "render_file": false,
+            "delivered_link": false,
+            "final_reply": false,
+            "completed": false
+          },
+          "failed_checks": [
+            "artifact_persisted",
+            "source_fidelity",
+            "source_units",
+            "chart_appropriate",
+            "bindings",
+            "visible_fields",
+            "measure_selection",
+            "literal_codes",
+            "no_unrequested_limit",
+            "sort",
+            "render_file",
+            "delivered_link",
+            "final_reply",
+            "completed"
+          ],
+          "seconds": 120.00441829196643,
+          "within_60s": false,
+          "timed_out": true,
+          "error": "TimeoutError: evaluation turn exceeded 120s wall-clock deadline",
+          "framework_requests": 7,
+          "chart": null,
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "efcaf718e17641e47ee9ecb1554442a1cc5fe5f669bd3a3a0bd4c08a86638ce7"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "revise": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g04-sample_spreads-original",
+          "family": "repeated_measurement_views",
+          "goal": "sample_spreads",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 51.012701499974355,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 10,
+          "chart": "boxplot",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "a8d4763a77b4840c7e482f10724e17dc7665ceaa7d9e6b2921616c137311d61a"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "not_reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "none": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g04-sample_spreads-transformed",
+          "family": "repeated_measurement_views",
+          "goal": "sample_spreads",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 14.08167237509042,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "boxplot",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "afc3505d798cfd189133543cbd575ee1170a9c1a22a550ce0ef7144b33d33db9"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g05-overview-original",
+          "family": "mixed_unit_summary",
+          "goal": "overview",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 30.812114166095853,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "indicator",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "f21f0a03bcd2c53ea6f61f0fe162321941bb9eca60665a26724b8ee8bcbf4229"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g05-overview-transformed",
+          "family": "mixed_unit_summary",
+          "goal": "overview",
+          "variant": "transformed",
+          "contract_pass": false,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": false,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [
+            "delivered_link"
+          ],
+          "seconds": 24.112609957926907,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 11,
+          "chart": "indicator",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "b3981f514a364e55d6e7d2456e7a483fc12122544a111d919cc86fcf0c338241"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 2,
+              "render_visualization": 2,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 2,
+            "request_counter_render_attempts": 2,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g05-exact_record-original",
+          "family": "mixed_unit_summary",
+          "goal": "exact_record",
+          "variant": "original",
+          "contract_pass": false,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": false,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [
+            "delivered_link"
+          ],
+          "seconds": 69.57700004195794,
+          "within_60s": false,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "table",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "8078053d796ff94eabc29656806a94ef62aa9c9118eb7789d35e8bae30767daf"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g05-exact_record-transformed",
+          "family": "mixed_unit_summary",
+          "goal": "exact_record",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 53.26777312497143,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "table",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "2b71cc1d97f39a918a6f7c8e2a4c8978ffb55376e6094b2b95da90b01b0185ea"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g06-demand_rank-original",
+          "family": "opaque_metric_choice",
+          "goal": "demand_rank",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 15.3705027080141,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "41de081c4e35e80dd22a7f96060ee4304415786072a83b01352fcfaf209d4e81"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g06-demand_rank-transformed",
+          "family": "opaque_metric_choice",
+          "goal": "demand_rank",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 16.772879792028107,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "0c46fcacfba44d3203920cb05a1bda0fcef3211ff7457f2202abcbfcda33dad2"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g06-efficiency_rank-original",
+          "family": "opaque_metric_choice",
+          "goal": "efficiency_rank",
+          "variant": "original",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 13.112549249897711,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "7ffa991819fc51ea777dad2046c2e73beb72e155ebe4527343b58832292e37d9"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        },
+        {
+          "id": "g06-efficiency_rank-transformed",
+          "family": "opaque_metric_choice",
+          "goal": "efficiency_rank",
+          "variant": "transformed",
+          "contract_pass": true,
+          "checks": {
+            "artifact_persisted": true,
+            "source_fidelity": true,
+            "source_units": true,
+            "chart_appropriate": true,
+            "bindings": true,
+            "visible_fields": true,
+            "measure_selection": true,
+            "literal_codes": true,
+            "no_unrequested_limit": true,
+            "sort": true,
+            "render_file": true,
+            "delivered_link": true,
+            "final_reply": true,
+            "completed": true
+          },
+          "failed_checks": [],
+          "seconds": 54.1441682089353,
+          "within_60s": true,
+          "timed_out": false,
+          "error": null,
+          "framework_requests": 8,
+          "chart": "bar",
+          "retained_png_count": 1,
+          "retained_png_hashes": [
+            "23adfad72c8746df8a794174b1d95dea5a94cebe3deced4281d4751a7636419c"
+          ],
+          "counts": {
+            "captured_tool_attempts": {
+              "draw": 1,
+              "design_visualization": 1,
+              "render_visualization": 1,
+              "review_visualization": 1,
+              "publish_visualization": 1
+            },
+            "extra_tool_attempts_over_one_per_case": {
+              "draw": 0,
+              "design_visualization": 0,
+              "render_visualization": 0,
+              "review_visualization": 0,
+              "publish_visualization": 0
+            },
+            "captured_schema_or_tool_retry_prompts": {},
+            "request_counter_design_attempts": 1,
+            "request_counter_render_attempts": 1,
+            "request_counter_visual_repair_attempts": 0,
+            "distinct_saved_design_reports": 1,
+            "distinct_returned_review_reports": 1,
+            "repeated_identical_review_returns": 0,
+            "review_completion_status_counts": {
+              "reviewed": 1
+            },
+            "online_review_verdicts_not_gold": {
+              "pass": 1
+            },
+            "visible_tool_return_errors": []
+          }
+        }
+      ]
+    }
+  },
+  "paired_comparison": {
+    "denominator": 24,
+    "contract_improvements": [
+      "g01-trajectory-transformed",
+      "g02-allocation-original",
+      "g04-curing_paths-original",
+      "g04-sample_spreads-transformed",
+      "g05-exact_record-transformed"
+    ],
+    "contract_regressions": [
+      "g04-curing_paths-transformed",
+      "g05-overview-transformed",
+      "g05-exact_record-original"
+    ],
+    "both_contract_pass": 16,
+    "both_contract_fail": 0,
+    "candidate_faster_count": 6,
+    "mean_paired_latency_delta_seconds": 18.401579112905893,
+    "median_paired_latency_delta_seconds": 19.27789256296819,
+    "cases": [
+      {
+        "id": "g01-association-original",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 12.78422375000082,
+        "candidate_seconds": 44.8709612499224,
+        "candidate_minus_baseline_seconds": 32.08673749992158
+      },
+      {
+        "id": "g01-association-transformed",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 23.612806332996115,
+        "candidate_seconds": 60.623406625003554,
+        "candidate_minus_baseline_seconds": 37.01060029200744
+      },
+      {
+        "id": "g01-trajectory-original",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 21.407201166031882,
+        "candidate_seconds": 14.068888625013642,
+        "candidate_minus_baseline_seconds": -7.33831254101824
+      },
+      {
+        "id": "g01-trajectory-transformed",
+        "baseline_contract": false,
+        "candidate_contract": true,
+        "baseline_seconds": 10.971212125034072,
+        "candidate_seconds": 15.112930958974175,
+        "candidate_minus_baseline_seconds": 4.141718833940104
+      },
+      {
+        "id": "g02-allocation-original",
+        "baseline_contract": false,
+        "candidate_contract": true,
+        "baseline_seconds": 11.921715082949959,
+        "candidate_seconds": 27.13117304199841,
+        "candidate_minus_baseline_seconds": 15.20945795904845
+      },
+      {
+        "id": "g02-allocation-transformed",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 9.068414042005315,
+        "candidate_seconds": 16.57175058394205,
+        "candidate_minus_baseline_seconds": 7.503336541936733
+      },
+      {
+        "id": "g02-failure_comparison-original",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 19.12382229208015,
+        "candidate_seconds": 16.584613332990557,
+        "candidate_minus_baseline_seconds": -2.539208959089592
+      },
+      {
+        "id": "g02-failure_comparison-transformed",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 32.105052541941404,
+        "candidate_seconds": 16.509487417060882,
+        "candidate_minus_baseline_seconds": -15.595565124880522
+      },
+      {
+        "id": "g03-parent_composition-original",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 15.476324334042147,
+        "candidate_seconds": 46.75231699994765,
+        "candidate_minus_baseline_seconds": 31.275992665905505
+      },
+      {
+        "id": "g03-parent_composition-transformed",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 9.358659083023667,
+        "candidate_seconds": 117.64067912497558,
+        "candidate_minus_baseline_seconds": 108.28202004195191
+      },
+      {
+        "id": "g03-module_comparison-original",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 19.150764417019673,
+        "candidate_seconds": 66.92947633308358,
+        "candidate_minus_baseline_seconds": 47.77871191606391
+      },
+      {
+        "id": "g03-module_comparison-transformed",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 25.87817229202483,
+        "candidate_seconds": 56.71914795902558,
+        "candidate_minus_baseline_seconds": 30.840975667000748
+      },
+      {
+        "id": "g04-curing_paths-original",
+        "baseline_contract": false,
+        "candidate_contract": true,
+        "baseline_seconds": 17.094508333015256,
+        "candidate_seconds": 41.507056792033836,
+        "candidate_minus_baseline_seconds": 24.41254845901858
+      },
+      {
+        "id": "g04-curing_paths-transformed",
+        "baseline_contract": true,
+        "candidate_contract": false,
+        "baseline_seconds": 54.42668995796703,
+        "candidate_seconds": 120.00441829196643,
+        "candidate_minus_baseline_seconds": 65.5777283339994
+      },
+      {
+        "id": "g04-sample_spreads-original",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 32.25722454092465,
+        "candidate_seconds": 51.012701499974355,
+        "candidate_minus_baseline_seconds": 18.7554769590497
+      },
+      {
+        "id": "g04-sample_spreads-transformed",
+        "baseline_contract": false,
+        "candidate_contract": true,
+        "baseline_seconds": 27.909017500001937,
+        "candidate_seconds": 14.08167237509042,
+        "candidate_minus_baseline_seconds": -13.827345124911517
+      },
+      {
+        "id": "g05-overview-original",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 10.649883792037144,
+        "candidate_seconds": 30.812114166095853,
+        "candidate_minus_baseline_seconds": 20.16223037405871
+      },
+      {
+        "id": "g05-overview-transformed",
+        "baseline_contract": true,
+        "candidate_contract": false,
+        "baseline_seconds": 10.424477459047921,
+        "candidate_seconds": 24.112609957926907,
+        "candidate_minus_baseline_seconds": 13.688132498878986
+      },
+      {
+        "id": "g05-exact_record-original",
+        "baseline_contract": true,
+        "candidate_contract": false,
+        "baseline_seconds": 49.776691875071265,
+        "candidate_seconds": 69.57700004195794,
+        "candidate_minus_baseline_seconds": 19.80030816688668
+      },
+      {
+        "id": "g05-exact_record-transformed",
+        "baseline_contract": false,
+        "candidate_contract": true,
+        "baseline_seconds": 21.713336499989964,
+        "candidate_seconds": 53.26777312497143,
+        "candidate_minus_baseline_seconds": 31.554436624981463
+      },
+      {
+        "id": "g06-demand_rank-original",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 72.72057033295278,
+        "candidate_seconds": 15.3705027080141,
+        "candidate_minus_baseline_seconds": -57.350067624938674
+      },
+      {
+        "id": "g06-demand_rank-transformed",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 29.994384667021222,
+        "candidate_seconds": 16.772879792028107,
+        "candidate_minus_baseline_seconds": -13.221504874993116
+      },
+      {
+        "id": "g06-efficiency_rank-original",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 12.765007916954346,
+        "candidate_seconds": 13.112549249897711,
+        "candidate_minus_baseline_seconds": 0.347541332943365
+      },
+      {
+        "id": "g06-efficiency_rank-transformed",
+        "baseline_contract": true,
+        "candidate_contract": true,
+        "baseline_seconds": 11.062219416955486,
+        "candidate_seconds": 54.1441682089353,
+        "candidate_minus_baseline_seconds": 43.08194879197981
+      }
+    ]
+  },
+  "logfire_supplement": {
+    "source": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/docs/experiments/2026-09-17-transfer24-logfire.json",
+    "source_sha256": "43a75dd7a14c0346328614d9014abd82af3d71c38cb75d86d3b1b2a540e156b3",
+    "retrieved_by": "parent agent through Logfire MCP; this reporting pass only reads the saved metadata export",
+    "raw_rows": 406,
+    "unique_trace_span_pairs": 406,
+    "arms": {
+      "baseline": {
+        "unique_chat_spans": 205,
+        "distinct_traces": 24,
+        "chat_span_parent_is_another_chat_span": 0,
+        "summed_chat_duration_seconds": 542.432854,
+        "summed_case_seconds": 561.652379751089,
+        "chat_time_fraction_of_summed_case_time": 0.9657803893582599,
+        "chat_spans_without_recorded_token_usage": 0,
+        "roles": {
+          "vis-lead": 149,
+          "designer": 31,
+          "reviewer": 25
+        }
+      },
+      "candidate": {
+        "unique_chat_spans": 201,
+        "distinct_traces": 24,
+        "chat_span_parent_is_another_chat_span": 0,
+        "summed_chat_duration_seconds": 984.187074,
+        "summed_case_seconds": 1003.2902784608305,
+        "chat_time_fraction_of_summed_case_time": 0.9809594442695717,
+        "chat_spans_without_recorded_token_usage": 4,
+        "roles": {
+          "vis-lead": 147,
+          "designer": 27,
+          "reviewer": 27
+        }
+      }
+    },
+    "limit": "Observed instrumented chat spans, not a complete HTTP/provider-internal retry census. Span duration does not distinguish provider queueing from inference or transport."
+  },
+  "definitions": {
+    "deterministic_contract": "All frozen source, metadata unit, type/binding, visible-column, measure, literal-ID, sort/limit, render-header and final-PNG-link checks plus successful completion. It is not a visual or prose truth oracle.",
+    "chart_type_contract_pass": "Published spec belongs to the frozen acceptable chart-family set. Missing publication counts false, not an observed wrong chart choice.",
+    "delivery": "Published PNG URL appears in final reply; retained-but-unpublished previews and standalone artifact IDs do not count.",
+    "pair_pass": "Both members satisfy their own contract and their persisted source observations are canonically equivalent; no pixel or chart-type equality requirement.",
+    "tool_attempts": "Every captured lead ToolCallPart, including schema-rejected, blocked or cached-repeat calls. Not equivalent to downstream model executions.",
+    "visual_repair_attempts": "Saved request counter; a model call blocked before invocation need not increment it.",
+    "model_requests": "Framework recorded requests. A cancelled in-flight request/provider retry may be absent; Logfire attempted counts are a separate measurement.",
+    "latency": "End-to-end case seconds, including failures/timeouts. p50/p95 use frozen nearest-rank evaluator; conventional median reported separately."
+  },
+  "trace_caveats": [
+    {
+      "arm": "candidate",
+      "case": "g01-association-original",
+      "finding": "Two review tool calls return the identical 30.0077-second timeout report; the second is a cached return instructing publication. Final prose says timed out twice, which overstates observed distinct inspection attempts."
+    },
+    {
+      "arm": "candidate",
+      "case": "g04-curing_paths-transformed",
+      "finding": "120-second outer timeout after one design, one render and one review; no repair-loop evidence. Retained preview is not a delivered artifact. Timeout remains a contract and latency failure."
+    },
+    {
+      "arm": "baseline",
+      "case": "g04-curing_paths-original",
+      "finding": "Terminates on design_visualization tool-argument retries before a design or image exists. First retry concerns assigning a unit to kind=time. Captured trace does not contain a second retry return; do not invent its precise cause."
+    },
+    {
+      "arm": "baseline",
+      "case": "g05-exact_record-transformed",
+      "finding": "Saved rounds reuse identical design/review report objects after no-progress handling; naive sums of stage_reports double-count those observations."
+    },
+    {
+      "arm": "candidate",
+      "case": "g01-association-transformed",
+      "finding": "Like its original partner, two review-tool calls return one identical 30.0066-second timeout report. Second call is cached; final prose again incorrectly says two timeouts."
+    },
+    {
+      "arm": "candidate",
+      "case": "g05-overview-transformed",
+      "finding": "Second design/render is a technical layout-height recovery, not a saved visual-review repair; only one PNG remains. Final reply omits the published image and artifact hyperlinks despite a correct publish-tool card."
+    },
+    {
+      "arm": "candidate",
+      "case": "g05-exact_record-original",
+      "finding": "Published table and publish-tool card exist, but final reply has only an artifact identifier and a Markdown transcription, not the required rendered artifact link."
+    }
+  ],
+  "visual_spot_check": {
+    "arm": "candidate",
+    "case": "g04-sample_spreads-original",
+    "image": "evals/generalization/results-candidate/g04-sample_spreads-original/renders/dafbb291cb7d/chart.png",
+    "image_sha256": "a8d4763a77b4840c7e482f10724e17dc7665ceaa7d9e6b2921616c137311d61a",
+    "method": "Direct local image viewing by this reporting agent, corroborating the independent image auditor; not human gold.",
+    "observation": "Labels 5 MPa, 8 MPa and 3 MPa (the three batches minima) appear adjacent to upper whiskers at 25, 21 and 24 MPa. Geometry/source values remain correct, but annotation placement is misleading.",
+    "raw_contract_pass_unchanged": true,
+    "inspection_status": "not_reviewed: reviewer exhausted output retries on an invalid source-row citation",
+    "consequence": "The 21/24 deterministic contract result must not be described as 21 visually correct charts."
+  },
+  "limitations": [
+    "24 synthetic cases with correlated pairs, not 24 independent population samples; one stochastic trial per arm.",
+    "No human-labelled visual gold. Independent PNG audits are separate and must qualify any correctness claim.",
+    "Acceptable chart family and preserved persisted data do not prove time ordering, scale/units on pixels, label readability, truthful prose or optimal chart selection.",
+    "The same model IDs/settings do not fix provider queueing, routing or stochastic behavior. Paired order is matched, but arm wall-clock windows/provider conditions can differ.",
+    "No trial rerun, metric rewrite, denominator exclusion, prompt tuning or model substitution was performed by this reporting pass.",
+    "All cases used for implementation after result disclosure must become regression cases, not remain a clean future holdout."
+  ]
+}

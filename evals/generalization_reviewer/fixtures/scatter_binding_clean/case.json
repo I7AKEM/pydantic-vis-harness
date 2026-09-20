@@ -1,0 +1,201 @@
+{
+  "id": "scatter_binding_clean",
+  "family": "scatter_binding",
+  "proposed_label": "pass",
+  "construction": "Faithful rendering of the reference.",
+  "reference": {
+    "report": {
+      "dataset_id": "synthetic_detector_response",
+      "question": "Plot injection volume on X and detector peak area on Y using the supplied bindings.",
+      "language": "English",
+      "brief_fingerprint": null,
+      "analysis": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          {
+            "name": "volume",
+            "meaning": "Injection volume",
+            "kind": "measure",
+            "unit": "mL",
+            "source": "volume",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "peak_area",
+            "meaning": "Peak area",
+            "kind": "measure",
+            "unit": "mAU*s",
+            "source": "peak_area",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          }
+        ],
+        "summary": "Supplied synthetic measurements.",
+        "assumptions": []
+      },
+      "clarification": null,
+      "result": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          "volume",
+          "peak_area"
+        ],
+        "types": [
+          "DOUBLE",
+          "DOUBLE"
+        ],
+        "rows": [
+          [
+            1,
+            9
+          ],
+          [
+            2,
+            16
+          ],
+          [
+            4,
+            35
+          ],
+          [
+            8,
+            65
+          ]
+        ],
+        "row_count": 4,
+        "checks": [],
+        "seconds": 0.0
+      },
+      "checks": [],
+      "warnings": [],
+      "model": null,
+      "seconds": 0.0,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "design": {
+      "spec": "vis scatter\ntitle Detector response\ndescription Peak area against injection volume\nwidth 960\nheight 640\naxisXTitle Injection volume (mL)\naxisYTitle Peak area (mAU*s)\nbind\n  x volume\n  y peak_area\nsort none\n",
+      "chart": "scatter",
+      "intent": null,
+      "explanation": "Direct presentation of the supplied values.",
+      "considered": [
+        "scatter"
+      ],
+      "compromises": []
+    },
+    "brief": {
+      "source": null,
+      "query": null,
+      "pulled_at": null,
+      "raw_question": "Plot injection volume on X and detector peak area on Y using the supplied bindings.",
+      "enriched_question": null,
+      "intent": null,
+      "suggested_chart_type": null,
+      "column_descriptions": {},
+      "units": {},
+      "code_meanings": {},
+      "display_labels": {},
+      "caveats": [
+        "Synthetic prepared values; preserve their exact meanings and units."
+      ],
+      "brand_colors": [],
+      "producer_agent": null
+    }
+  },
+  "render_input": {
+    "report": {
+      "dataset_id": "synthetic_detector_response",
+      "question": "Plot injection volume on X and detector peak area on Y using the supplied bindings.",
+      "language": "English",
+      "brief_fingerprint": null,
+      "analysis": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          {
+            "name": "volume",
+            "meaning": "Injection volume",
+            "kind": "measure",
+            "unit": "mL",
+            "source": "volume",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "peak_area",
+            "meaning": "Peak area",
+            "kind": "measure",
+            "unit": "mAU*s",
+            "source": "peak_area",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          }
+        ],
+        "summary": "Supplied synthetic measurements.",
+        "assumptions": []
+      },
+      "clarification": null,
+      "result": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          "volume",
+          "peak_area"
+        ],
+        "types": [
+          "DOUBLE",
+          "DOUBLE"
+        ],
+        "rows": [
+          [
+            1,
+            9
+          ],
+          [
+            2,
+            16
+          ],
+          [
+            4,
+            35
+          ],
+          [
+            8,
+            65
+          ]
+        ],
+        "row_count": 4,
+        "checks": [],
+        "seconds": 0.0
+      },
+      "checks": [],
+      "warnings": [],
+      "model": null,
+      "seconds": 0.0,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "spec": "vis scatter\ntitle Detector response\ndescription Peak area against injection volume\nwidth 960\nheight 640\naxisXTitle Injection volume (mL)\naxisYTitle Peak area (mAU*s)\nbind\n  x volume\n  y peak_area\nsort none\n"
+  },
+  "render": {
+    "png": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/scatter_binding_clean/chart.png",
+    "html": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/scatter_binding_clean/chart.html",
+    "config": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/scatter_binding_clean/config.json",
+    "width": 2880,
+    "height": 1920,
+    "seconds": 0.194932,
+    "non_background_share": 0.010570023148148148,
+    "compromises": [
+      {
+        "key": "page",
+        "message": "the page shows the picture, not an interactive chart, because the package's configuration holds functions"
+      }
+    ],
+    "drawn_rows": 4,
+    "folded_rows": 0,
+    "dropped_rows": 0,
+    "texts": null,
+    "text_bounds": null
+  }
+}

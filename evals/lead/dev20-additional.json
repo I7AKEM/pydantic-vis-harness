@@ -1,0 +1,10 @@
+{
+  "id": "vizcsv-8b3fd04765e40d3a",
+  "selection": "First ID outside the original seeded twenty in random.Random(11).sample(manifest_rows, len(manifest_rows)); preregistered before the new model comparisons.",
+  "audit": "One prepared total_count=0. The original query asks about import ports but supplies no port or transport column. The separate renderable handoff asks only to display this prepared count; it must not infer a port, mode, or national total.",
+  "handoff": {
+    "message": "اعرض total_count=0 الموجود في الملف في بطاقة مؤشر بعنوان total_count. لا تستنتج اسم منفذ أو وسيلة نقل أو تدّع الإجابة عن تفاصيل غير موجودة في هذه النتيجة.",
+    "charts": ["indicator"],
+    "visible_columns": ["total_count"]
+  }
+}

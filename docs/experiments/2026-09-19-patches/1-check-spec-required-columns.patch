@@ -1,0 +1,79 @@
+--- a/vis_agent/designer/agent.py
++++ b/vis_agent/designer/agent.py
+@@ -233,6 +233,31 @@
+     except models.SpecError:
+         return text
+     return to_text(apply_display_labels(spec, deps.prompt.display_labels))
++
++
++REQUIRED_COLUMNS_FIX = "Bind every required column or choose a chart type that can represent them."
++
++
++def _parsed_or_none(text: str) -> models.Spec | None:
++    try:
++        return parse(text)
++    except models.SpecError:
++        return None
++
++
++def _required_column_violations(parsed: models.Spec | None, deps: DesignerDeps) -> list[models.Violation]:
++    """The executable requirement both tools enforce: every required result column is bound. A table binds all."""
++    if parsed is None:
++        return []
++    used = set(deps.report.result.columns) if parsed.type == "table" else set(parsed.bind.values()) | set(parsed.fold)
++    for card in parsed.cards:
++        used.update([card.value, *card.context, *card.support])
++    missing = [name for name in deps.required_columns if name not in used]
++    if not missing:
++        return []
++    return [models.Violation(rule="required_columns",
++                             message="the chart omits required result columns " + ", ".join(missing),
++                             fix=REQUIRED_COLUMNS_FIX)]
+ 
+ 
+ def offer_check_spec(ctx: RunContext[DesignerDeps], tool_def: ToolDefinition) -> ToolDefinition | None:
+@@ -248,8 +273,12 @@
+                              "with your best spec; a spec that still fails ends the run.")
+         raise ModelRetry("You have used the three check calls of this run. Deliver the spec that passed.")
+     deps.check_calls += 1
+-    check = run_check(_with_display_labels(spec, deps), deps.report.analysis.columns, deps.report.result,
+-                      deps.renderer, intent=deps.intent)
++    labelled = _with_display_labels(spec, deps)
++    check = run_check(labelled, deps.report.analysis.columns, deps.report.result, deps.renderer, intent=deps.intent)
++    # Report the same executable defects deliver_design reports, together, so a draft cannot pass here and fail there.
++    required = _required_column_violations(_parsed_or_none(check.canonical if check.ok else labelled), deps)
++    if required:
++        check = SpecCheck(ok=False, violations=[*check.violations, *required], compromises=check.compromises)
+     if check.ok:
+         deps.last_check = check
+     else:
+@@ -264,24 +293,11 @@
+     labelled = _with_display_labels(spec, deps)
+     check = run_check(labelled, report.analysis.columns, report.result,
+                       deps.renderer, intent=deps.intent)
+-    failures = []
+-    try:
+-        parsed = parse(check.canonical if check.ok else labelled)
+-    except models.SpecError:
+-        parsed = None
+-    # Report all executable defects together. Otherwise an unsupported optional
+-    # key hides missing required bindings until the only repair turn is spent.
+-    if parsed is not None:
+-        used = set(report.result.columns) if parsed.type == "table" else set(parsed.bind.values()) | set(parsed.fold)
+-        for card in parsed.cards:
+-            used.update([card.value, *card.context, *card.support])
+-        missing = [name for name in deps.required_columns if name not in used]
+-        if missing:
+-            failures.append(
+-                "required_columns: the chart omits required result columns " + ", ".join(missing)
+-                + ". Bind every required column or choose a chart type that can represent them."
+-            )
+-    failures[:0] = [f"line {v.line or 1}: {v.rule}: {v.message}. {v.fix}" for v in check.violations]
++    parsed = _parsed_or_none(check.canonical if check.ok else labelled)
++    # Report all executable defects together, the same list check_spec reports. Otherwise an unsupported
++    # optional key hides missing required bindings until the only repair turn is spent.
++    failures = [f"line {v.line or 1}: {v.rule}: {v.message}. {v.fix}"
++                for v in [*check.violations, *_required_column_violations(parsed, deps)]]
+     if failures:
+         message = "\n".join(failures)
+         if deps.last_check is None and deps.check_calls >= MAX_CHECK_CALLS:

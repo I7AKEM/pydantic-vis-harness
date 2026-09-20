@@ -138,6 +138,7 @@ def check_spec(
         violations.append(Violation(rule=rule, message=message, fix=fix))
 
     color_compromises = []
+    dropped_sort: str | None = None
     if repair_colors:
         spec, color_compromises, invalid_colors = _repair_runtime_colors(spec)
         if invalid_colors:
@@ -197,8 +198,12 @@ def check_spec(
                      "Bind the role to a numeric CSV column")
     for role, requirement in entry.roles.items():
         if requirement.required and role not in bind:
-            fix = (f"Bind the '{role}' role, or use fold for measures of one unit"
-                   if "fold" in entry.keys else f"Bind the '{role}' role")
+            if role in {"category", "time"} and "fold" in entry.keys:
+                fix = (f"Explicitly bind an available column to '{role}'; fold automatically binds only group and value. "
+                       "If no suitable axis column exists, use indicator cards or a table")
+            else:
+                fix = (f"Bind the '{role}' role, or use fold for measures of one unit"
+                       if "fold" in entry.keys else f"Bind the '{role}' role")
             fail("C2", f"Required role '{role}' is missing; it takes {', '.join(requirement.kinds)}. "
                  f"The result offers {offered(shape)}.", fix)
 
@@ -230,8 +235,15 @@ def check_spec(
             violations.extend(check_rules(entry, spec, shape, binding))
         else:
             if spec.sort and spec.sort != "none" and spec.sort.split()[0] not in bind:
-                fail("C18", "The sort target must be a bound role.", "Remove the sort or bind its role")
+                # Sorting is presentational. Drop an inapplicable optional sort at runtime instead of
+                # spending another model request repairing a chart whose bindings are executable.
+                dropped_sort = spec.sort
+                spec.sort = None
         compromises = _rule_compromises(spec, binding, violations)
+    if dropped_sort is not None:
+        compromises.append(Compromise(
+            key="sort", message=f"Ignored sort '{dropped_sort}' because its role is not bound."
+        ))
     compromises.extend(color_compromises)
     for key in present:
         if key in capability.rejected:

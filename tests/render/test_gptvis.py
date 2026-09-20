@@ -13,9 +13,10 @@ from tests.designer.conftest import (cities, column, gender_share, grouped, mont
                                      two_same_unit_measures, two_units)
 from vis_agent.designer.catalogue import CATALOGUE
 from vis_agent.designer.resolve import resolve
+from vis_agent.designer.resolve import ResolveError
 from vis_agent.designer.syntax import parse
 from vis_agent.render import gptvis
-from vis_agent.render.base import RenderFailed, RendererUnavailable
+from vis_agent.render.base import RenderFailed, RendererUnavailable, concise_render_error
 
 pytestmark = pytest.mark.skipif(gptvis.available() is not None, reason=gptvis.available() or "")
 IMAGES = Path(__file__).with_name("images")
@@ -224,7 +225,8 @@ def test_histogram_discrete_bins_render_in_numeric_order_with_rtl(tmp_path):
     ]
     assert [row["value"] for row in options["data"]] == [15, 0, 15, 0, 0, 0, 0, 0, 0, 30]
     assert "domain" not in options["scale"].get("x", {})
-    assert options["labels"] == [{"text": "value", "formatter": {"$format": "value"}}]
+    assert options["labels"] == [{"text": "value", "style": {"dy": -12}, "fontSize": 10,
+                                  "transform": [{"type": "overlapHide"}], "formatter": {"$format": "value"}}]
     assert {"100–200", "15", "30"} <= set(rendered.texts)
     assert not any(text.endswith("SAR") for text in rendered.texts)
 
@@ -252,6 +254,33 @@ def test_table_formats_numbers_and_meanings_in_png_config_and_page(digits, amoun
     assert "<script>bad()</script>" not in page
     assert "533.2985542168675" not in page
     assert result == before
+
+
+def test_static_table_png_paints_all_seventeen_rows_including_final_arabic_cities(tmp_path):
+    columns = [column("region", "category"), column("city", "category")]
+    rows = [[f"Region {i}", f"City {i}"] for i in range(1, 15)] + [
+        ["منطقة مكة المكرمة", "جدة"], ["منطقة مكة المكرمة", "مكة المكرمة"], ["منطقة نجران", "نجران"],
+    ]
+    result = table(columns, rows)
+    before = result.model_copy(deep=True)
+    spec = parse('vis table\nlanguage ar\ncolumnLabels\n  - ["region", "المنطقة"]\n  - ["city", "المدينة"]')
+    rendered = gptvis.render(spec, columns, result, tmp_path, trace=True)
+    config = json.loads(rendered.config.read_text())
+    assert config["gptvis"]["height"] == 548
+    # Actual PNG dimensions include all 17x30px rows +30px header +2px border,
+    # at S2's 2x pixel ratio. Checking input/drawn_rows alone missed this bug.
+    assert rendered.height >= 2 * (17 * 30 + 30 + 2)
+    assert all(cell in rendered.texts for row in rows for cell in row)
+    assert rendered.drawn_rows == 17 and rendered.dropped_rows == 0
+    assert config["gptvis"]["data"] == [dict(zip(result.columns, row)) for row in rows]
+    assert rendered.html.read_text().count('<tr>') == 18 and result == before
+
+
+@pytest.mark.parametrize("rows,height", [(17, 450), (17, 547), (79, None)])
+def test_static_table_never_publishes_a_clipped_or_over_limit_png(rows, height, tmp_path):
+    with pytest.raises(ResolveError, match="static.table|static table"):
+        gptvis.render(parse("vis table").model_copy(update={"height": height}), *cities(rows), tmp_path)
+    assert not (tmp_path / "chart.png").exists()
 
 
 @pytest.mark.parametrize("axis_title", [None, "Attendance"])
@@ -311,6 +340,16 @@ def test_timeout(tmp_path, monkeypatch):
         gptvis.render(parse(SPECS["column"][0]), *arabic_cities(), tmp_path)
 
 
+def test_renderer_error_compacts_minified_source_and_keeps_exception():
+    source = "a=\"Error: embedded library string\";" + "x" * 20_000
+    error = f"{source}\nTypeError: labels.map is not a function\n    at render (bundle.js:1:2)"
+    compact = concise_render_error(error)
+    assert compact.startswith("TypeError: labels.map is not a function")
+    assert "detail omitted" in compact
+    assert len(compact) < 900
+    assert str(RenderFailed(error)) == compact
+
+
 def test_missing_package(tmp_path, monkeypatch):
     monkeypatch.setattr(gptvis, "SCRIPT", tmp_path / "render.mjs")
     assert "npm ci --prefix vis_agent/render/gptvis" in gptvis.available()
@@ -361,8 +400,48 @@ def test_labels_on_reaches_marks_and_formatter(chart, field, tmp_path):
         builder = lambda: scatter_points(3)
     rendered = gptvis.render(parse(text + "\nlabels on\nformat 0.0"), *builder(), tmp_path, trace=True)
     options = json.loads(rendered.config.read_text())["g2"]
-    assert options["labels"] == [{"text": field, "formatter": {"$format": "value"}}]
+    assert options["labels"][0]["text"] == field
+    assert options["labels"][0]["formatter"] == {"$format": "value"}
     assert any(text.endswith(".0") for text in rendered.texts)
+
+
+@pytest.mark.parametrize("chart", [
+    "pie", "donut", "column", "bar", "grouped_column", "stacked_column", "stacked_bar", "histogram",
+])
+def test_labels_on_preserves_package_placement_and_collision_defaults(chart, tmp_path):
+    text, builder = SPECS[chart]
+    spec = parse(text + "\nformat 0.0")
+    default = gptvis.render(spec, *builder(), tmp_path / "default")
+    enabled = gptvis.render(spec.model_copy(update={"labels": "on"}), *builder(), tmp_path / "on")
+    expected = json.loads(default.config.read_text())["g2"]["labels"]
+    actual = json.loads(enabled.config.read_text())["g2"]["labels"]
+    assert expected  # A no-op on an already enabled label must not erase its style.
+    assert actual == expected
+    assert {"type": "overlapHide"} in actual[0]["transform"]
+    if chart in {"pie", "donut"}:
+        assert actual[0]["position"] == "outside"
+        assert actual[0]["radius"] == .85
+        assert actual[0]["text"] == {"$label": "category_value"}
+
+
+@pytest.mark.parametrize("chart", ["pie", "donut", "bar", "stacked_column"])
+def test_labels_off_still_disables_package_defaults(chart, tmp_path):
+    text, builder = SPECS[chart]
+    rendered = gptvis.render(parse(text + "\nlabels off"), *builder(), tmp_path)
+    assert json.loads(rendered.config.read_text())["g2"]["labels"] == []
+
+
+@pytest.mark.parametrize("chart", ["pie", "donut", "grouped_bar", "boxplot"])
+def test_legend_on_preserves_package_layout(chart, tmp_path):
+    text, builder = SPECS[chart]
+    default = gptvis.render(parse(text), *builder(), tmp_path / "default")
+    enabled = gptvis.render(parse(text + "\nlegend on"), *builder(), tmp_path / "on")
+    expected = json.loads(default.config.read_text())["g2"]["legend"]
+    actual = json.loads(enabled.config.read_text())["g2"]["legend"]
+    assert actual == expected
+    if chart in {"pie", "donut"}:
+        assert actual["color"]["position"] == "bottom"
+        assert actual["color"]["layout"] == {"justifyContent": "center"}
 
 
 @pytest.mark.parametrize("switch", ["on", "off"])

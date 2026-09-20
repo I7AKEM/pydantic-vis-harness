@@ -1,0 +1,900 @@
+{
+  "created_at": "2026-09-16T23:53:37.338270+00:00",
+  "seed": 20260917,
+  "selection": "Existing coverage-first selector then seeded shuffle; model outcomes were not used.",
+  "cohort": "Initial frozen renderable20 + distinct frozen supplement30; never a held-out set.",
+  "cases_sha256": "eaa0510a99c6ba5cca3e76ee1b4dde58de766c558b982cfd0557fe1421f624f7",
+  "application_sha256": "096451ded74efcdae3058d3a635924fbc66b41c4796c978706078037f91755a6",
+  "evaluator_sha256": "5914d8a0037305557f9a822879261902b4c00172c58289717cdf62478c848403",
+  "case_count": 30,
+  "combined_count": 50,
+  "rendered_presentations": 28,
+  "technical_boundaries": 2,
+  "coverage": {
+    "shape": {
+      "one_number": 2,
+      "time_measure": 1,
+      "category_group_measure": 3,
+      "wide": 16,
+      "category_measure": 7,
+      "one_column": 1
+    },
+    "rows_bucket": {
+      "1": 7,
+      "11-50": 4,
+      "51-200": 2,
+      "2-10": 15,
+      "1001+": 1,
+      "201-1000": 1
+    },
+    "temporal": {
+      "False": 25,
+      "True": 5
+    },
+    "nulls": {
+      "False": 27,
+      "True": 3
+    },
+    "negatives": {
+      "False": 28,
+      "True": 2
+    },
+    "long_text": {
+      "False": 28,
+      "True": 2
+    }
+  },
+  "sources": [
+    {
+      "id": "vizcsv-00754e9ed454a58b",
+      "csv_sha256": "a648f5acd370d6a3d6d71b9ccc236fb539381d2526cc08109dcdf063d46db6fd",
+      "columns": [
+        "percentage"
+      ],
+      "features": {
+        "shape": "one_number",
+        "rows": 1,
+        "rows_bucket": "1",
+        "arabic_categories": false,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "indicator",
+        "selection_reason": "coverage:task=None"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-010c162b92ef3206",
+      "csv_sha256": "a2cfc26961ec045a574c04ea875474522f8ff872f01d2140c48c01b970e2ba0b",
+      "columns": [
+        "year",
+        "new_jobs_count"
+      ],
+      "features": {
+        "shape": "time_measure",
+        "rows": 11,
+        "rows_bucket": "11-50",
+        "arabic_categories": false,
+        "temporal": true,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "line",
+        "selection_reason": "coverage:shape=time_measure"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-03384a96e9fe5870",
+      "csv_sha256": "1ad44901b9a9669f16f9d7adfa3805bf265bca602e39d7e99035c8455dab7b84",
+      "columns": [
+        "airport",
+        "destination",
+        "flight_count"
+      ],
+      "features": {
+        "shape": "category_group_measure",
+        "rows": 51,
+        "rows_bucket": "51-200",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "table",
+        "selection_reason": "coverage:rows_bucket=51-200"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-09050180d3961b03",
+      "csv_sha256": "bfc8785799ba9633fe136a2911da95a6a59228eccb7d82120b0e6b54593141ce",
+      "columns": [
+        "percentage",
+        "domestic_workers_count",
+        "total_filipino_residents_count",
+        "snapshot_date"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 1,
+        "rows_bucket": "1",
+        "arabic_categories": false,
+        "temporal": true,
+        "nulls": true,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "indicator",
+        "selection_reason": "coverage:nulls=True"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-1706fb33ef7fd300",
+      "csv_sha256": "b4a67aea6b665759ece8dc999b0b512d84df314eef69dced6de6a94b2b311b38",
+      "columns": [
+        "grad_year",
+        "foreign_grad_count",
+        "growth_rate_percent"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 10,
+        "rows_bucket": "2-10",
+        "arabic_categories": false,
+        "temporal": true,
+        "nulls": true,
+        "negatives": true,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "line",
+        "selection_reason": "coverage:negatives=True"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-07d3a923817c343d",
+      "csv_sha256": "b1ff7df82fdcc144a6a9ac91e9fc7b3ac8d53e86efef4c2583fb925ae6de25be",
+      "columns": [
+        "violation_type_description",
+        "average_age",
+        "violation_count"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 5,
+        "rows_bucket": "2-10",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": true,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "grouped_bar",
+        "selection_reason": "coverage:long_text=True"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-099ca8ed3f245957",
+      "csv_sha256": "f662ad78714c30e43b6dfd19ab5964077a68da3cd0c2d65ddb1071f56e0f6d2b",
+      "columns": [
+        "person_type",
+        "population_count"
+      ],
+      "features": {
+        "shape": "category_measure",
+        "rows": 2,
+        "rows_bucket": "2-10",
+        "arabic_categories": false,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": "composition",
+        "requested_type": "donut",
+        "chosen_chart": "table",
+        "selection_reason": "coverage:task=composition"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-ac951afc1e53d382",
+      "csv_sha256": "4218d54c5ab6adc6733da11873e0c7ee7fb86a60e7bb6b7b022263dfad47c9ff",
+      "columns": [
+        "region"
+      ],
+      "features": {
+        "shape": "one_column",
+        "rows": 8,
+        "rows_bucket": "2-10",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "table",
+        "selection_reason": "coverage:shape=one_column"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-061a265236a642ce",
+      "csv_sha256": "a4ce6dee00c8619a514a83b6a0c425fb4769582eeca8fbc7312406ce7bd1e731",
+      "columns": [
+        "violation_date",
+        "paid_violations",
+        "unpaid_violations"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 22208,
+        "rows_bucket": "1001+",
+        "arabic_categories": false,
+        "temporal": true,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "line",
+        "selection_reason": "coverage:rows_bucket=1001+"
+      },
+      "expected_boundary": "source_limit"
+    },
+    {
+      "id": "vizcsv-1240bc417714a3e6",
+      "csv_sha256": "a54a809c7a5faada0168e4e02af791cf8defc82015ff5a66d961510f669d4461",
+      "columns": [
+        "region",
+        "gender",
+        "population_count",
+        "region_total",
+        "percentage"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 16,
+        "rows_bucket": "11-50",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": "ranking",
+        "requested_type": "bar",
+        "chosen_chart": "bar",
+        "selection_reason": "coverage:task=ranking"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-7a6c7f323afafbe3",
+      "csv_sha256": "a6dc8527a95b9b408c500b94ba49c633aead1c905cce5ceac1edb88bf555d615",
+      "columns": [
+        "path_wkt",
+        "app_name"
+      ],
+      "features": {
+        "shape": "category_measure",
+        "rows": 1000,
+        "rows_bucket": "201-1000",
+        "arabic_categories": false,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "table",
+        "selection_reason": "coverage:rows_bucket=201-1000"
+      },
+      "expected_boundary": "table_source_fallback"
+    },
+    {
+      "id": "vizcsv-18c8e508976a1ff7",
+      "csv_sha256": "060a4500ebdf67fb51e8609b4f095ac3c371b9f9904ee1d7561a8be17b539f11",
+      "columns": [
+        "male_population"
+      ],
+      "features": {
+        "shape": "one_number",
+        "rows": 1,
+        "rows_bucket": "1",
+        "arabic_categories": false,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": "single_value",
+        "requested_type": "indicator",
+        "chosen_chart": "indicator",
+        "selection_reason": "coverage:task=single_value"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-245c6996f0f23a81",
+      "csv_sha256": "d04590d358e6dfd4188b28ab1e277eeea96b4f5c4e7a9a12be4d7f3852ecbbe0",
+      "columns": [
+        "gender",
+        "population_count"
+      ],
+      "features": {
+        "shape": "category_measure",
+        "rows": 2,
+        "rows_bucket": "2-10",
+        "arabic_categories": false,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": "comparison",
+        "requested_type": "bar",
+        "chosen_chart": "bar",
+        "selection_reason": "coverage:task=comparison"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-442a491c20867c73",
+      "csv_sha256": "7d072fc2c33f0d8016269b78a0709b1c425b9d6d9ce11b340f6422d149abb285",
+      "columns": [
+        "age_group",
+        "population_count"
+      ],
+      "features": {
+        "shape": "category_measure",
+        "rows": 7,
+        "rows_bucket": "2-10",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": "distribution",
+        "requested_type": "bar",
+        "chosen_chart": "bar",
+        "selection_reason": "coverage:task=distribution"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-98f1ef4953f7c74d",
+      "csv_sha256": "94c4c94b8c46da5c48e4d65a8de5f81c1919d7f6d81a64e55abfd32e9c223412",
+      "columns": [
+        "منطقة_الدخول",
+        "عدد_الرحلات"
+      ],
+      "features": {
+        "shape": "category_measure",
+        "rows": 6,
+        "rows_bucket": "2-10",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": "table",
+        "requested_type": "table",
+        "chosen_chart": "table",
+        "selection_reason": "coverage:task=table"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-98fe17bdec87024a",
+      "csv_sha256": "09bf98dcce92c9dc710a8e3bbe8730d79c0b87f161f85eb4cd37045018fb78eb",
+      "columns": [
+        "city",
+        "population",
+        "percentage"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 5,
+        "rows_bucket": "2-10",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "donut",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-39d623d403ef86e5",
+      "csv_sha256": "0efa508b9c854add2d661b77c7d2acf636c8686e852aa40ec4d2c6307cdc7709",
+      "columns": [
+        "person_type",
+        "entry_mode_value",
+        "trip_count",
+        "unique_persons"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 19,
+        "rows_bucket": "11-50",
+        "arabic_categories": false,
+        "temporal": false,
+        "nulls": true,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": "composition",
+        "requested_type": "stacked_bar",
+        "chosen_chart": "stacked_bar",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-ed2d9d4b2f49d899",
+      "csv_sha256": "2a30b8a2c28d62594a7b1becce9eb3a8d378ad354747d83ce0d90f2f8d13b75b",
+      "columns": [
+        "region",
+        "population",
+        "active_jobs",
+        "jobs_per_capita_ratio"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 8,
+        "rows_bucket": "2-10",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "bar",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-ec9b6239518a7b5e",
+      "csv_sha256": "0f4bf6650b9e7a6835ff055c2fced002b640646020cf0703a1f6b290f8b1973f",
+      "columns": [
+        "district",
+        "population_increase"
+      ],
+      "features": {
+        "shape": "category_measure",
+        "rows": 4,
+        "rows_bucket": "2-10",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": true,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "horizontal_bar",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-244e80ce1f6ea1e6",
+      "csv_sha256": "0589e28b03355a80ba0542bd259a92b09def01edc3b0344bb0ee123a6e869e10",
+      "columns": [
+        "city",
+        "violation_type_description",
+        "violation_count"
+      ],
+      "features": {
+        "shape": "category_group_measure",
+        "rows": 85,
+        "rows_bucket": "51-200",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": true,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "stacked_bar",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-e384bfa45ac5ab8e",
+      "csv_sha256": "5f9c2686398e2e362f96910aafa04118d76e30a9e8ee30e203cbaea736fa25ad",
+      "columns": [
+        "region",
+        "population_count",
+        "active_job_count",
+        "jobs_per_capita"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 8,
+        "rows_bucket": "2-10",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "bar",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-44cfda42866aa5ae",
+      "csv_sha256": "12c1fc64b0f07ecd4c5127e566a57140706abbf977a1d0e4bcb2a288d40256f2",
+      "columns": [
+        "total_poor_population",
+        "higher_education_count",
+        "percentage"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 1,
+        "rows_bucket": "1",
+        "arabic_categories": false,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "table",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-e6f74cc7f3324781",
+      "csv_sha256": "c5628670510c8323b5824002453f9a10426d091b74df715404a96ab8b1bbd490",
+      "columns": [
+        "city",
+        "district",
+        "worker_count"
+      ],
+      "features": {
+        "shape": "category_group_measure",
+        "rows": 14,
+        "rows_bucket": "11-50",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "grouped_bar",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-2075320dff9f6ebd",
+      "csv_sha256": "3dba08d64f4df566e4cad479dfae9acccdb4ce7fa12e79f533c45a730d539ff8",
+      "columns": [
+        "returning_count",
+        "total_count",
+        "percentage"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 1,
+        "rows_bucket": "1",
+        "arabic_categories": false,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "indicator",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-57c25fcba38f1bb0",
+      "csv_sha256": "0ea2fe631f5413df8799f1b87599a0f86e9276f3d907abbf5d3349ab4fd98e2f",
+      "columns": [
+        "foreign_births",
+        "total_births",
+        "foreign_birth_percentage"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 1,
+        "rows_bucket": "1",
+        "arabic_categories": false,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "table",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-a723f837bb1cd6a9",
+      "csv_sha256": "25288624772dcd97bc953386741d82c121be5a3f62f2ba42713d805a8176f70a",
+      "columns": [
+        "نوع_الجامعة",
+        "إجمالي_الخريجين",
+        "الخريجون_الأثرياء",
+        "نسبة_الأثرياء_بالمئة"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 4,
+        "rows_bucket": "2-10",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "donut",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-1ea76a97e400d852",
+      "csv_sha256": "329a9684c90ab8103fb54e4cba56f65c1ef04055cea12cade63aa461215a70aa",
+      "columns": [
+        "year",
+        "month",
+        "visitor_count"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 9,
+        "rows_bucket": "2-10",
+        "arabic_categories": false,
+        "temporal": true,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "table",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-20d73400a693d49f",
+      "csv_sha256": "7a5a63fc89fc43fc253dd4d8991222c09dffcccc7d74b2f3721c4ddc80341851",
+      "columns": [
+        "region",
+        "population",
+        "percentage"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 8,
+        "rows_bucket": "2-10",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "table",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-a25bc59748f9842d",
+      "csv_sha256": "43d08f81a90e2d4613adaa04032ec95586950064de261f9e248184e31eb7328f",
+      "columns": [
+        "employment_rate_percentage",
+        "employed_count",
+        "total_count"
+      ],
+      "features": {
+        "shape": "wide",
+        "rows": 1,
+        "rows_bucket": "1",
+        "arabic_categories": false,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "indicator",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    },
+    {
+      "id": "vizcsv-ffcc0df19d7c2f61",
+      "csv_sha256": "ea805a06644f97ed0d81c1cfc3f420b507c722b59e8c11dc87ee14efbcfdacbc",
+      "columns": [
+        "job_title",
+        "job_count"
+      ],
+      "features": {
+        "shape": "category_measure",
+        "rows": 10,
+        "rows_bucket": "2-10",
+        "arabic_categories": true,
+        "temporal": false,
+        "nulls": false,
+        "negatives": false,
+        "long_text": false,
+        "geometry_only": false,
+        "task": null,
+        "requested_type": null,
+        "chosen_chart": "table",
+        "selection_reason": "seeded shuffle:20260917"
+      },
+      "expected_boundary": null
+    }
+  ],
+  "exclusions": [
+    {
+      "id": "vizcsv-113cb217c6077a95",
+      "reason": "individual-record identifiers: aggregate/non-identifying corpus preferred"
+    },
+    {
+      "id": "vizcsv-2177430e3e44a9a3",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-2571f37808cda8e2",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-2bc0cfa90c65f142",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-39471b0e4a5d3fc5",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-3b62e4047e2cb455",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-3dda20f66cddb9da",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-45980b90faceca07",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-45cb123b948dd498",
+      "reason": "individual-record identifiers: aggregate/non-identifying corpus preferred"
+    },
+    {
+      "id": "vizcsv-46dad75ae7fa7b62",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-54900fec5daab87f",
+      "reason": "individual-record identifiers: aggregate/non-identifying corpus preferred"
+    },
+    {
+      "id": "vizcsv-61793ff199102633",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-6eff7ae46ebb4edf",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-70ea08202f57d58f",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-85830f71807a6905",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-8b3fd04765e40d3a",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-97280400c00748a7",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-9e75590151f7b7a0",
+      "reason": "individual-record identifiers: aggregate/non-identifying corpus preferred"
+    },
+    {
+      "id": "vizcsv-9e75e9ae40758227",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-ae315d3da67a2d11",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-ba0187c944a3f829",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-c76808cc7a78dac8",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-e07c573241abdb02",
+      "reason": "initial20"
+    },
+    {
+      "id": "vizcsv-ef1e844505012eec",
+      "reason": "individual-record identifiers: aggregate/non-identifying corpus preferred"
+    },
+    {
+      "id": "vizcsv-f5ab9ce5e561e8b7",
+      "reason": "individual-record identifiers: aggregate/non-identifying corpus preferred"
+    },
+    {
+      "id": "vizcsv-f6687502449585a5",
+      "reason": "initial20"
+    }
+  ],
+  "scroll_contract": "Viewport cropping is not inherently a defect. Static-image coverage and complete accessible HTML/table are audited separately; an expected boundary is not a chart pass.",
+  "generator_path": "evals/lead/prepare_supplement30.py"
+}

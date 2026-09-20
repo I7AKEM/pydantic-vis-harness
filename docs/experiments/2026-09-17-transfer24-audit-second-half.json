@@ -1,0 +1,3715 @@
+{
+  "report_version": "1.0",
+  "date": "2026-09-17",
+  "title": "Transfer24 independent post-freeze visual audit — last three families",
+  "scope": {
+    "families": [
+      "repeated_measurement_views",
+      "mixed_unit_summary",
+      "opaque_metric_choice"
+    ],
+    "unique_tasks": 12,
+    "arms": [
+      "baseline",
+      "candidate"
+    ],
+    "arm_task_pairs": 24,
+    "retained_pngs_visually_inspected": 25,
+    "runtime_edits_from_audit": false,
+    "external_calls_or_exports": false
+  },
+  "methodology": {
+    "auditor": "generalize_reviewer subagent; same model family as the coding team",
+    "independence": "Case/source/first/repair PNG/final reply inspected independently of the online reviewer verdict. Non-blind to implementation: auditor authored candidate reviewer changes. Not an independent human gold label and not a blinded model comparison.",
+    "freeze": "Hidden bank and results were inspected only after root declared runtime freeze. No runtime changes or case-informed tuning in this audit.",
+    "basis": [
+      "Frozen synthetic bank request/meanings/units and exact source rows",
+      "Every retained first and repair PNG in assigned families",
+      "Saved executable design/config, tool/reviewer records, final replies",
+      "Independent SHA-256 of bank, scorer, protocol, case/score JSON, every PNG and renderer config"
+    ],
+    "limits": [
+      "Single paired run on 12 tasks from a 24-task synthetic challenge bank; not representative production sampling or evidence of universal reliability.",
+      "Each arm serial, two arms concurrently; timing is wall-clock observed and does not isolate model, provider, schema or prompt changes.",
+      "Image inspection only: native PNG may be resized by viewer; no interactive UI scroll, tooltip, hover or responsive layout was tested.",
+      "Artifact link delivery means a visible final-reply URL was provided; no browser publication endpoint was fetched.",
+      "Missing artifact causes multiple machine checks to default false; not proof of changed source values.",
+      "Recorded framework request counts may not include every provider-side attempt; see per-case completeness notes.",
+      "Reviewed historical corpus full89 gate remained pending explicit authorization for external export at the time of this audit.",
+      "Source-address/schema validation constrains output form and reference bounds, not truth of visual perception. No usable review is not a pass."
+    ]
+  },
+  "source_hashes": {
+    "bank": {
+      "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/bank.json",
+      "sha256": "2548d627feb492d200ca11bd33113121ee1d9467c15a1d474f09a850759b84a5"
+    },
+    "scorer": {
+      "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/scoring.py",
+      "sha256": "0865730bd4dc488af9f5785433446210665d36c9ba377939e2a788492a519987"
+    },
+    "protocol": {
+      "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/docs/experiments/2026-09-17-generalization-protocol.md",
+      "sha256": "0cdf51033667d225e19c5a8b5e931328e090b8391fd93874336345c5e46c6678"
+    },
+    "baseline_runtime_archive": {
+      "path": "/private/tmp/vis-generalization-baseline.3SEChZ/runtime.tar",
+      "sha256": "d10588641c1f695be78b1a00d08235601fa7e84f69d733d6d9cc042f0bef2bf2"
+    },
+    "candidate_reviewer_runtime": [
+      {
+        "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/vis_agent/reviewer/agent.py",
+        "sha256": "6d5d6fc73816baf5af6dc4d7e25471dbb5c8a729d2a17bf19d57ccf55f76a7b1"
+      },
+      {
+        "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/vis_agent/reviewer/models.py",
+        "sha256": "4733e348a618a54d6a4383392a7de45bb40ed86861aa3e482e21b10d36dca50a"
+      },
+      {
+        "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/vis_agent/reviewer/rulebook.md",
+        "sha256": "86128cd1d5aaffcf4ad879aa34ef539b377a971b469775aa69c8d8dad06f40f0"
+      },
+      {
+        "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/vis_agent/reviewer/rubric.py",
+        "sha256": "76ece7fb9657d19cb177b28b1d8d7fc04ef8294917f4b1817222d165ee8fed4b"
+      }
+    ]
+  },
+  "summary": [
+    {
+      "arm": "baseline",
+      "tasks": 12,
+      "images_inspected": 13,
+      "machine_contract_pass": 9,
+      "final_image_or_artifact_link_delivered": 9,
+      "turns_within_60_seconds_including_failed": 11,
+      "delivered_and_within_60_seconds_not_quality_verified": 8,
+      "median_turn_seconds_including_failures": 24.81117699999595,
+      "recorded_framework_requests": 109,
+      "median_framework_requests": 8,
+      "unnecessary_repair_attempt_cases": [
+        "g04-sample_spreads-original",
+        "g05-exact_record-transformed"
+      ],
+      "terminal_failures": [
+        {
+          "id": "g04-curing_paths-original",
+          "error": "UnexpectedModelBehavior: Tool 'design_visualization' exceeded max retries count of 1. Consider raising the retry limit, or see the docs on tool retries: https://pydantic.dev/docs/ai/tools-toolsets/tools-advanced/#tool-retries",
+          "seconds": 17.094508333015256
+        }
+      ],
+      "known_materially_incorrect_published_images": [],
+      "explicit_label_instruction_caveats": [
+        "g05-exact_record-original"
+      ]
+    },
+    {
+      "arm": "candidate",
+      "tasks": 12,
+      "images_inspected": 12,
+      "machine_contract_pass": 9,
+      "final_image_or_artifact_link_delivered": 9,
+      "turns_within_60_seconds_including_failed": 10,
+      "delivered_and_within_60_seconds_not_quality_verified": 9,
+      "median_turn_seconds_including_failures": 36.159585479064845,
+      "recorded_framework_requests": 100,
+      "median_framework_requests": 8,
+      "unnecessary_repair_attempt_cases": [],
+      "terminal_failures": [
+        {
+          "id": "g04-curing_paths-transformed",
+          "error": "TimeoutError: evaluation turn exceeded 120s wall-clock deadline",
+          "seconds": 120.00441829196643
+        }
+      ],
+      "known_materially_incorrect_published_images": [
+        "g04-sample_spreads-original"
+      ],
+      "explicit_label_instruction_caveats": [
+        "g05-exact_record-original"
+      ]
+    }
+  ],
+  "material_findings": [
+    {
+      "id": "candidate_boxplot_label_value_mismatch",
+      "case_id": "g04-sample_spreads-original",
+      "arm": "candidate",
+      "kind": "confirmed_visible_defect",
+      "details": "Upper-whisker label values are batch minima 5/8/3 MPa while marks and source maxima are 25/21/24 MPa. Persisted source and shape geometry are correct. Generic labels-on configuration visibly misrepresents values at those positions.",
+      "online_review": "No usable result: three requests exhausted retries for a reference row outside supplied context; raw rejected arguments unavailable.",
+      "delivery": "Incorrect image published with honest unreviewed disclaimer.",
+      "machine_contract": "Pass; cannot detect perceptual label placement/value mismatch.",
+      "causal_limit": "Config records g2.labels text=value and formatting; internal renderer cause not established by experiment. Do not attribute the visible defect solely to schema, model, or library without a separate isolated test."
+    },
+    {
+      "id": "chronology_error_and_different_recovery",
+      "case_id": "g04-curing_paths-transformed",
+      "arm": "both",
+      "kind": "confirmed_visible_defect_in_both_first_renders",
+      "details": "Both first PNGs connect times in source order 10,30,0,20,40. Both online inspectors correctly flag it. Baseline repairs to 0,10,20,30,40; candidate times out at 120s with no repaired artifact. Candidate review took 24.11s; cannot isolate that delay as the sole cause of timeout.",
+      "machine_contract": "sort:null does not test semantic axis chronology. Candidate unpublished score omits the completed saved inspector result, which remains in request.steps.review."
+    },
+    {
+      "id": "baseline_false_boxplot_repair",
+      "case_id": "g04-sample_spreads-original",
+      "arm": "baseline",
+      "kind": "confirmed_reviewer_false_positive",
+      "details": "First and repair PNGs have correct category-to-distribution associations. Reviewer invents a cyclic category mismatch and confuses Cedar upper box edge Q3=16 with max whisker=25. Designer separately promises overlaid points that its config does not implement; absence of points is not a caller requirement.",
+      "effect": "Unnecessary redesign/rerender; final reply transfers false verification doubt to user."
+    },
+    {
+      "id": "baseline_self_retracted_error",
+      "case_id": "g04-curing_paths-transformed",
+      "arm": "baseline",
+      "kind": "internally_contradictory_review",
+      "details": "Final saved R-1 error narrative checks every time/value, concludes all match and no R-1 error, while verdict stays revise. Final image is correct."
+    },
+    {
+      "id": "baseline_contract_retry_failure",
+      "case_id": "g04-curing_paths-original",
+      "arm": "baseline",
+      "kind": "pre_designer_tool_schema_failure",
+      "details": "Lead changes elapsed_min annotations to kind=time with unit=min, violating unit-only-for-measure/share schema. Retry budget ends before stored designer attempt; no PNG. Not a reviewer or visual-model failure."
+    },
+    {
+      "id": "delivery_gaps_persist",
+      "kind": "missing_usable_render_link",
+      "baseline": [
+        "g04-sample_spreads-transformed",
+        "g05-exact_record-transformed"
+      ],
+      "candidate": [
+        "g05-overview-transformed",
+        "g05-exact_record-original"
+      ],
+      "details": "Artifacts exist but final replies provide only IDs/text/Markdown rather than the requested usable render/artifact URL. Terminal failed turns are separate."
+    },
+    {
+      "id": "table_context_distinctions",
+      "kind": "avoid_false_visual_oracle",
+      "details": "Baseline exact-record original really abbreviates one header with an ellipsis; final Markdown recovers full wording but image does not meet no-abbreviation request. Baseline exact-record transformed image has full labels/units; reviewer false error calls approved unit suffixes a violation. Candidate transformed table is correct; candidate original uses conventional P95 wording, a minor literal no-abbreviation caveat, not source corruption. Width and hypothetical scroll/hover alone are not grounds for failure."
+    }
+  ],
+  "conclusion": "Do not claim all issues are fixed or the candidate is generally better. This half has equal machine-contract count, slower observed candidate median, persistent missing delivery links, candidate review schema exhaustion and a genuinely mislabeled published chart. There are successes (all four opaque-ID ranking variants in both arms, correct mixed-unit cards, candidate exact transformed table), but a quality/latency decision needs the full audit, approved legacy reviewer gate, repeated independent cases and an isolated trial of any next change. No runtime tuning was performed from these observations.",
+  "entries": [
+    {
+      "arm": "baseline",
+      "id": "g04-curing_paths-original",
+      "first_visual": "not_rendered",
+      "last_visual": "not_rendered",
+      "task_audit": "fail",
+      "delivery": "fail",
+      "review_assessment": "No inspector call or image; failure occurred at lead tool argument/schema stage, not a visual review failure.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Lead changes elapsed_min to kind=time while retaining unit=min; tool validation says unit belongs only on a measure or share.",
+        "Second design_visualization attempt keeps kind=time but removes min; retry budget exceeded before a design is saved (design_attempts0).",
+        "No published artifact, PNG or final response. Stored source is unchanged and initially correctly typed measure/min."
+      ],
+      "oracle_notes": [
+        "Source_fidelity/source_units checks default to false because no selected artifact; not proof that the CSV was corrupted."
+      ],
+      "viewed_render_ids": [],
+      "uncertainty": [
+        "Second failed tool call's exact final diagnostic is not retained as a retry-prompt; cause beyond visible first schema failure should not be inferred as observed."
+      ],
+      "task": {
+        "family": "repeated_measurement_views",
+        "goal": "curing_paths",
+        "variant": "original",
+        "request": "Compare each mixture's strength trajectory over elapsed curing time. Preserve batch identity and the ordering of time within each trajectory. No averaging or fitted prediction. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "source_csv_sha256": "6ddea5f88f53a5a2bbcf06cbe6e8dd0dc08378c0e7e159f3bb55e19cb6e4db01",
+        "source_row_count": 15,
+        "source_columns": [
+          "batch",
+          "elapsed_min",
+          "strength_mpa"
+        ],
+        "units": {
+          "elapsed_min": "min",
+          "strength_mpa": "MPa"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-curing_paths-original/score.json",
+          "sha256": "0971f0bb772d6ac7a38a12e38529b0ed59485e3fc765ad2de6e95e2b934eb758"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-curing_paths-original/case.json",
+          "sha256": "914a907d78c41a6d55d361fc464a2441f145ae4cc65df3564eff970d0ad23581"
+        }
+      },
+      "images": [],
+      "measured": {
+        "seconds": 17.094508333015256,
+        "within_60_seconds": true,
+        "framework_requests": 3,
+        "framework_tool_calls": 1,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": "UnexpectedModelBehavior: Tool 'design_visualization' exceeded max retries count of 1. Consider raising the retry limit, or see the docs on tool retries: https://pydantic.dev/docs/ai/tools-toolsets/tools-advanced/#tool-retries"
+      },
+      "machine_contract": {
+        "pass": false,
+        "diagnostics": [
+          "artifact_persisted",
+          "source_fidelity",
+          "source_units",
+          "chart_appropriate",
+          "bindings",
+          "visible_fields",
+          "measure_selection",
+          "literal_codes",
+          "no_unrequested_limit",
+          "sort",
+          "render_file",
+          "delivered_link",
+          "final_reply",
+          "completed"
+        ],
+        "checks": {
+          "artifact_persisted": false,
+          "source_fidelity": false,
+          "source_units": false,
+          "chart_appropriate": false,
+          "bindings": false,
+          "visible_fields": false,
+          "measure_selection": false,
+          "literal_codes": false,
+          "no_unrequested_limit": false,
+          "sort": false,
+          "render_file": false,
+          "delivered_link": false,
+          "final_reply": false,
+          "completed": false
+        },
+        "visual_quality_verified": false,
+        "artifact_id": null
+      },
+      "execution": {
+        "design_attempts": 0,
+        "render_attempts": 0,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": null,
+        "latest_saved_request_review": null,
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": null,
+      "error": "UnexpectedModelBehavior: Tool 'design_visualization' exceeded max retries count of 1. Consider raising the retry limit, or see the docs on tool retries: https://pydantic.dev/docs/ai/tools-toolsets/tools-advanced/#tool-retries"
+    },
+    {
+      "arm": "candidate",
+      "id": "g04-curing_paths-original",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with correct trajectories, units and batch legend.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Chronological0,10,20,30,40axis; all15values correctly paired to Cedar/Birch/Maple; MPa and min retained.",
+        "Labels legible; Birch20min dip visible; final reply links correctPNG and describes actual trends.",
+        "sortnone succeeds because original source rows are ordered; transformed-row failure demonstrates lack of time-order invariance in this paired task."
+      ],
+      "oracle_notes": [
+        "Contract.sort is null for curing_paths; machinecheck does not independently verify chronological rendered order. PNG audit is essential."
+      ],
+      "viewed_render_ids": [
+        "f2baefa8c232"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "repeated_measurement_views",
+        "goal": "curing_paths",
+        "variant": "original",
+        "request": "Compare each mixture's strength trajectory over elapsed curing time. Preserve batch identity and the ordering of time within each trajectory. No averaging or fitted prediction. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "source_csv_sha256": "6ddea5f88f53a5a2bbcf06cbe6e8dd0dc08378c0e7e159f3bb55e19cb6e4db01",
+        "source_row_count": 15,
+        "source_columns": [
+          "batch",
+          "elapsed_min",
+          "strength_mpa"
+        ],
+        "units": {
+          "elapsed_min": "min",
+          "strength_mpa": "MPa"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-curing_paths-original/score.json",
+          "sha256": "38a86c8755f9a1b2fdbb9b18c36aa4d653a29c5fe2faf1cff602277d830fd01d"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-curing_paths-original/case.json",
+          "sha256": "4fea6a10d54a3279435c3888b8cb987ac4429a6628756ef2728e29ab5c8270da"
+        }
+      },
+      "images": [
+        {
+          "render_id": "f2baefa8c232",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-curing_paths-original/renders/f2baefa8c232/chart.png",
+          "sha256": "02410e5763b6967d5269ce92d337d1bf987cf7969449094583d3d70f9f19b86d",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-curing_paths-original/renders/f2baefa8c232/config.json",
+          "config_sha256": "389f46c823ff70f389b2949f029a7462e4d20dbfd4bedf4dab3367a1aa853a22",
+          "width": 2280,
+          "height": 1440,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 41.507056792033836,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_224bffb614dd4ee8ab3536cd1e8d5a83"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly represents the strength trajectories for each mixture batch as specified.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "02410e5763b6967d5269ce92d337d1bf987cf7969449094583d3d70f9f19b86d"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 13.178148707957007,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly represents the strength trajectories for each mixture batch as specified.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "02410e5763b6967d5269ce92d337d1bf987cf7969449094583d3d70f9f19b86d"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 13.178148707957007,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Published a multi-line chart comparing each mixture batch's strength trajectory over elapsed curing time (art_224bffb614dd4ee8ab3536cd1e8d5a83).\n\n- One line per mixture batch (Mix Cedar, Mix Birch, Mix Maple), x = elapsed curing time (min), y = strength (MPa), English labels.\n- All 15 supplied rows plotted as points connected in within-batch time order; no averaging, fitting, or smoothing. Visual review passed.\n\n![chart](/renders/f2baefa8c232/chart.png)\n\nNotable pattern from the supplied data: Mix Cedar gains slowly then ends highest (25 MPa at 40 min), Mix Maple rises quickly to 24 MPa, while Mix Birch dips at 20 min before climbing to 21 MPa.",
+      "error": null
+    },
+    {
+      "arm": "baseline",
+      "id": "g04-curing_paths-transformed",
+      "first_visual": "fail",
+      "last_visual": "pass",
+      "task_audit": "pass_with_reporting_caveat",
+      "delivery": "pass",
+      "review_assessment": "First review correct real chronological-order defect; second review false/self-contradictory R-1 error explicitly retracts its own allegation.",
+      "unnecessary_repair": false,
+      "observations": [
+        "First X-axis order10,30,0,20,40 visibly violates within-trajectory time ordering.",
+        "Repair X-axis0,10,20,30,40; all three series and15 values match source; labels/MPa units readable.",
+        "Final reply includes correct PNG and accurately describes final chronology. It claims inspector verified every mark, although stored verdict remains revise with internally retracted finding."
+      ],
+      "oracle_notes": [],
+      "viewed_render_ids": [
+        "6405acbb31e5",
+        "ac30306b3bdc"
+      ],
+      "uncertainty": [
+        "Visual audit at provided PNG resolution; no interactive tooltip/UI verification."
+      ],
+      "task": {
+        "family": "repeated_measurement_views",
+        "goal": "curing_paths",
+        "variant": "transformed",
+        "request": "Compare each mixture's strength trajectory over elapsed curing time. Preserve batch identity and the ordering of time within each trajectory. No averaging or fitted prediction. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "source_csv_sha256": "87413b763a04d11f695b096892a42eacdcf0118b3191f0f1d3ce537f619b2cb5",
+        "source_row_count": 15,
+        "source_columns": [
+          "field_4_3",
+          "field_4_2",
+          "field_4_1"
+        ],
+        "units": {
+          "field_4_2": "min",
+          "field_4_3": "MPa"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-curing_paths-transformed/score.json",
+          "sha256": "7e2ac9a21aa6d19e8110e4e84686c303b9779a7a1c673d0efc231c6a510ec0a7"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-curing_paths-transformed/case.json",
+          "sha256": "d91146f278041bcb74c016675ac4266e43f949077b120705c2ffd67d81696516"
+        }
+      },
+      "images": [
+        {
+          "render_id": "6405acbb31e5",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-curing_paths-transformed/renders/6405acbb31e5/chart.png",
+          "sha256": "01b68858c9511f71c4489cc4ecbcdad3deebf37f54e1e1f697334c6a9e222213",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-curing_paths-transformed/renders/6405acbb31e5/config.json",
+          "config_sha256": "3a2fe6a3c6503b7ce32039c833cf531bf17109706f936fffc9847361ed5d313c",
+          "width": 2400,
+          "height": 1500,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        },
+        {
+          "render_id": "ac30306b3bdc",
+          "stage": "repair_render_1",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-curing_paths-transformed/renders/ac30306b3bdc/chart.png",
+          "sha256": "050ecf358326fc73ee6fefa113e69c7a5125617f607fcd0f9bcdf1fd10829485",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-curing_paths-transformed/renders/ac30306b3bdc/config.json",
+          "config_sha256": "6dc7ae5c40bbca7b1196e532f391606d124c6e65719e2ce610498ba7a7c94f10",
+          "width": 2400,
+          "height": 1500,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 54.42668995796703,
+        "within_60_seconds": true,
+        "framework_requests": 16,
+        "framework_tool_calls": 11,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_afae3c13e6bb42b8b59d340430f9f1b1"
+      },
+      "execution": {
+        "design_attempts": 2,
+        "render_attempts": 2,
+        "visual_repair_attempts": 1,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "revise",
+          "review": {
+            "verdict": "revise",
+            "summary": "The chart accurately represents the provided data trajectories for each mixture batch.",
+            "findings": [
+              {
+                "rule": "R-1",
+                "level": "error",
+                "owner": "designer",
+                "message": "The data point for Mix Cedar at 0 min is shown as 5 MPa, but the row data indicates 5 MPa for Mix Cedar at 0 min and 8 MPa for Mix Birch at 0 min. However, the line for Mix Birch starts at 8 MPa, and the line for Mix Cedar starts at 5 MPa. Wait, looking closer: Mix Cedar (teal) at 0 is 5, Mix Birch (blue) at 0 is 8, Mix Maple (orange) at 0 is 3. This matches the rows. Let me re-check the 10 min mark: Mix Cedar (teal) is 9, Mix Birch (blue) is 11, Mix Maple (orange) is 13. Rows: Mix Cedar 10min=9, Mix Birch 10min=11, Mix Maple 10min=13. This matches. Let me check 20 min: Mix Cedar (teal) is 15, Mix Birch (blue) is 10, Mix Maple (orange) is 18. Rows: Mix Cedar 20min=15, Mix Birch 20min=10, Mix Maple 20min=18. This matches. Let me check 30 min: Mix Cedar (teal) is 16, Mix Birch (blue) is 19, Mix Maple (orange) is 22. Rows: Mix Cedar 30min=16, Mix Birch 30min=19, Mix Maple 30min=22. This matches. Let me check 40 min: Mix Cedar (teal) is 25, Mix Birch (blue) is 21, Mix Maple (orange) is 24. Rows: Mix Cedar 40min=25, Mix Birch 40min=21, Mix Maple 40min=24. All marks match the rows. No R-1 error."
+              }
+            ]
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 5.925984082976356,
+          "requests": 1,
+          "rounds": [
+            {
+              "status": "reviewed",
+              "verdict": "revise",
+              "review": {
+                "verdict": "revise",
+                "summary": "The X-axis is not sorted chronologically, causing the strength trajectories to zig-zag incorrectly across time.",
+                "findings": [
+                  {
+                    "rule": "R-5",
+                    "level": "error",
+                    "owner": "designer",
+                    "message": "The X-axis (Elapsed curing time) is not sorted chronologically; it displays values in the order 10, 30, 0, 20, 40, which misrepresents the time trajectory."
+                  }
+                ]
+              },
+              "model": "google/gemma-4-31b-it",
+              "warnings": [],
+              "seconds": 2.846433792030439,
+              "requests": 1
+            }
+          ]
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "revise",
+          "review": {
+            "verdict": "revise",
+            "summary": "The chart accurately represents the provided data trajectories for each mixture batch.",
+            "findings": [
+              {
+                "rule": "R-1",
+                "level": "error",
+                "owner": "designer",
+                "message": "The data point for Mix Cedar at 0 min is shown as 5 MPa, but the row data indicates 5 MPa for Mix Cedar at 0 min and 8 MPa for Mix Birch at 0 min. However, the line for Mix Birch starts at 8 MPa, and the line for Mix Cedar starts at 5 MPa. Wait, looking closer: Mix Cedar (teal) at 0 is 5, Mix Birch (blue) at 0 is 8, Mix Maple (orange) at 0 is 3. This matches the rows. Let me re-check the 10 min mark: Mix Cedar (teal) is 9, Mix Birch (blue) is 11, Mix Maple (orange) is 13. Rows: Mix Cedar 10min=9, Mix Birch 10min=11, Mix Maple 10min=13. This matches. Let me check 20 min: Mix Cedar (teal) is 15, Mix Birch (blue) is 10, Mix Maple (orange) is 18. Rows: Mix Cedar 20min=15, Mix Birch 20min=10, Mix Maple 20min=18. This matches. Let me check 30 min: Mix Cedar (teal) is 16, Mix Birch (blue) is 19, Mix Maple (orange) is 22. Rows: Mix Cedar 30min=16, Mix Birch 30min=19, Mix Maple 30min=22. This matches. Let me check 40 min: Mix Cedar (teal) is 25, Mix Birch (blue) is 21, Mix Maple (orange) is 24. Rows: Mix Cedar 40min=25, Mix Birch 40min=21, Mix Maple 40min=24. All marks match the rows. No R-1 error."
+              }
+            ]
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 5.925984082976356,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": [
+          {
+            "render_id": "6405acbb31e5",
+            "review": {
+              "status": "reviewed",
+              "verdict": "revise",
+              "review": {
+                "verdict": "revise",
+                "summary": "The X-axis is not sorted chronologically, causing the strength trajectories to zig-zag incorrectly across time.",
+                "findings": [
+                  {
+                    "rule": "R-5",
+                    "level": "error",
+                    "owner": "designer",
+                    "message": "The X-axis (Elapsed curing time) is not sorted chronologically; it displays values in the order 10, 30, 0, 20, 40, which misrepresents the time trajectory."
+                  }
+                ]
+              },
+              "model": "google/gemma-4-31b-it",
+              "warnings": [],
+              "seconds": 2.846433792030439,
+              "requests": 1
+            }
+          }
+        ]
+      },
+      "final_reply": "Published: **art_afae3c13e6bb42b8b59d340430f9f1b1**\n\n![chart](/renders/ac30306b3bdc/chart.png)\n\nA multi-line chart comparing each mixture batch's strength trajectory over elapsed curing time:\n- **X axis:** Elapsed curing time (min), sorted ascending 0–40 so each trajectory is read in time order\n- **Y axis:** Material strength (MPa)\n- **One line per batch:** Mix Cedar, Mix Birch, Mix Maple — batch identity preserved via the legend\n\nAll 15 supplied observations are plotted as-is with no averaging, aggregation, or fitted predictions. The visual inspector verified every mark matches the source rows exactly.",
+      "error": null
+    },
+    {
+      "arm": "candidate",
+      "id": "g04-curing_paths-transformed",
+      "first_visual": "fail",
+      "last_visual": "fail",
+      "task_audit": "fail",
+      "delivery": "fail",
+      "review_assessment": "Correct evidence-grounded R-5 finding on genuine nonchronological X-axis; no hallucination seen.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Only retained render X-axis10,30,0,20,40; sources/legend/value identities preserved but trajectory order wrong.",
+        "Inspection1 request24.11s then overall120s timeout; no published artifact or final reply.",
+        "Failure cannot be attributed solely to reviewer prompt from one latency observation."
+      ],
+      "oracle_notes": [
+        "Score.online_reviewer is null when noartifact selected, yet request.steps.review preserves a completed correct review; audit reads steps, not score alone."
+      ],
+      "viewed_render_ids": [
+        "dc25dd49b958"
+      ],
+      "uncertainty": [
+        "Single paired run cannot isolate provider latency vs schema/context effects."
+      ],
+      "task": {
+        "family": "repeated_measurement_views",
+        "goal": "curing_paths",
+        "variant": "transformed",
+        "request": "Compare each mixture's strength trajectory over elapsed curing time. Preserve batch identity and the ordering of time within each trajectory. No averaging or fitted prediction. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "source_csv_sha256": "87413b763a04d11f695b096892a42eacdcf0118b3191f0f1d3ce537f619b2cb5",
+        "source_row_count": 15,
+        "source_columns": [
+          "field_4_3",
+          "field_4_2",
+          "field_4_1"
+        ],
+        "units": {
+          "field_4_2": "min",
+          "field_4_3": "MPa"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-curing_paths-transformed/score.json",
+          "sha256": "d0080de9fe33e7212e56b23da580d908585fb4b5ef8b1a6d744c5f0e986c62c1"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-curing_paths-transformed/case.json",
+          "sha256": "a3c69e1bee4b8b13917d00c407e775bb781588fd7c0210e2361a113e60a25fcd"
+        }
+      },
+      "images": [
+        {
+          "render_id": "dc25dd49b958",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-curing_paths-transformed/renders/dc25dd49b958/chart.png",
+          "sha256": "efcaf718e17641e47ee9ecb1554442a1cc5fe5f669bd3a3a0bd4c08a86638ce7",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-curing_paths-transformed/renders/dc25dd49b958/config.json",
+          "config_sha256": "9940182d038c81c4acbeada1c0bcb655398d4ad80c2ef0fb94c058dcad7e3a92",
+          "width": 2400,
+          "height": 1500,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 120.00441829196643,
+        "within_60_seconds": false,
+        "framework_requests": 7,
+        "framework_tool_calls": 4,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": true,
+        "error": "TimeoutError: evaluation turn exceeded 120s wall-clock deadline"
+      },
+      "machine_contract": {
+        "pass": false,
+        "diagnostics": [
+          "artifact_persisted",
+          "source_fidelity",
+          "source_units",
+          "chart_appropriate",
+          "bindings",
+          "visible_fields",
+          "measure_selection",
+          "literal_codes",
+          "no_unrequested_limit",
+          "sort",
+          "render_file",
+          "delivered_link",
+          "final_reply",
+          "completed"
+        ],
+        "checks": {
+          "artifact_persisted": false,
+          "source_fidelity": false,
+          "source_units": false,
+          "chart_appropriate": false,
+          "bindings": false,
+          "visible_fields": false,
+          "measure_selection": false,
+          "literal_codes": false,
+          "no_unrequested_limit": false,
+          "sort": false,
+          "render_file": false,
+          "delivered_link": false,
+          "final_reply": false,
+          "completed": false
+        },
+        "visual_quality_verified": false,
+        "artifact_id": null
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": null,
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "revise",
+          "review": {
+            "verdict": "revise",
+            "summary": "The X-axis is not sorted chronologically, which misrepresents the time trajectories.",
+            "findings": [
+              {
+                "rule": "R-5",
+                "level": "error",
+                "owner": "designer",
+                "message": "X-axis labels: The X-axis labels are ordered as 10, 30, 0, 20, 40. — The X-axis should represent elapsed curing time in chronological order (e.g., 0, 10, 20, 30, 40). [reference: {\"kind\":\"image\"}]"
+              }
+            ],
+            "evidence": [
+              {
+                "rule": "R-5",
+                "level": "error",
+                "owner": "designer",
+                "location": "X-axis labels",
+                "observed": "The X-axis labels are ordered as 10, 30, 0, 20, 40.",
+                "expected": "The X-axis should represent elapsed curing time in chronological order (e.g., 0, 10, 20, 30, 40).",
+                "reference": {
+                  "kind": "image",
+                  "row": null,
+                  "column": null,
+                  "quote": null
+                }
+              }
+            ],
+            "uncertainties": [],
+            "image_id": "efcaf718e17641e47ee9ecb1554442a1cc5fe5f669bd3a3a0bd4c08a86638ce7"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 24.109844709048048,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": null,
+      "error": "TimeoutError: evaluation turn exceeded 120s wall-clock deadline"
+    },
+    {
+      "arm": "baseline",
+      "id": "g04-sample_spreads-original",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "uncertain_reporting",
+      "delivery": "pass",
+      "review_assessment": "False category-swap finding on first and final image. Final review additionally notices absent overlaid points: true relative to designer's prose description, but not an explicit caller requirement or executable setting.",
+      "unnecessary_repair": true,
+      "observations": [
+        "First image correctly matches Cedar5/9/15/16/25, Maple3/13/18/22/24, Birch8/10/11/19/21; no cyclic mispairing.",
+        "Repair inserts identity valueLabels and sortnone, changing display order to Cedar/Birch/Maple without repairing a real mapping defect.",
+        "Final reviewer mistakes Cedar upper-quartile16 for maximum, despite visible whisker25, and repeats false mismatch.",
+        "Designer prose promises overlaid individual points although none are implemented; caller requested distribution display, not point overlays.",
+        "Final response links correctPNG/full15-row source but propagates unsupported 'may be mispaired' concern and asks user to verify."
+      ],
+      "oracle_notes": [
+        "Machine contract pass does not evaluate false narrative/reviewer allegations or a designer's unsupported prose promises."
+      ],
+      "viewed_render_ids": [
+        "8205712ef09c",
+        "686ec0a04092"
+      ],
+      "uncertainty": [
+        "Task audit is qualified because correct requested graphic/data are delivered but false review caveats undermine trust; not labelled definite chart corruption."
+      ],
+      "task": {
+        "family": "repeated_measurement_views",
+        "goal": "sample_spreads",
+        "variant": "original",
+        "request": "Compare the distributions of the supplied strength observations within the three mixture batches, using the renderer's distribution display. Time ordering is irrelevant for this view. Do not average the source CSV or invent new measurements. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "source_csv_sha256": "6ddea5f88f53a5a2bbcf06cbe6e8dd0dc08378c0e7e159f3bb55e19cb6e4db01",
+        "source_row_count": 15,
+        "source_columns": [
+          "batch",
+          "elapsed_min",
+          "strength_mpa"
+        ],
+        "units": {
+          "elapsed_min": "min",
+          "strength_mpa": "MPa"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-sample_spreads-original/score.json",
+          "sha256": "c9f330cb86340e9698a310e191e62c6a5b6a7dac7409818bfe683a162a8362a5"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-sample_spreads-original/case.json",
+          "sha256": "fd6971802dffaaebaf675f78f6ffbc32fa2fb01b180e07450e14875eefe41619"
+        }
+      },
+      "images": [
+        {
+          "render_id": "8205712ef09c",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-sample_spreads-original/renders/8205712ef09c/chart.png",
+          "sha256": "6e0ecb79b672a01cd17b2a659990d5694f3628363193c4c6bc87a07ae5b8eff7",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-sample_spreads-original/renders/8205712ef09c/config.json",
+          "config_sha256": "c270cf12e617ed36bc4e5fa742333e6aea8a11852de943e6dce405ea9a4d24fe",
+          "width": 2400,
+          "height": 1350,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        },
+        {
+          "render_id": "686ec0a04092",
+          "stage": "repair_render_1",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-sample_spreads-original/renders/686ec0a04092/chart.png",
+          "sha256": "9907d5152c69b6464db3738e1a6ab77d7492e5684b81d7f7b6096981a6aa0b31",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-sample_spreads-original/renders/686ec0a04092/config.json",
+          "config_sha256": "115a46681f7fbc7d2c9af89100fc0529af6d5a2ff066e5730015fd539c2c99f2",
+          "width": 2400,
+          "height": 1350,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 32.25722454092465,
+        "within_60_seconds": true,
+        "framework_requests": 14,
+        "framework_tool_calls": 8,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_b78b4b2552014952a9eda799c6eb26a1"
+      },
+      "execution": {
+        "design_attempts": 2,
+        "render_attempts": 2,
+        "visual_repair_attempts": 1,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "revise",
+          "review": {
+            "verdict": "revise",
+            "summary": "The chart has incorrect data mapping for the box plots and is missing the requested overlaid individual observation points.",
+            "findings": [
+              {
+                "rule": "R-1",
+                "level": "error",
+                "owner": "designer",
+                "message": "The box plots are incorrectly mapped to the batches: 'Mix Cedar' shows data for 'Mix Birch' (range 8-21), 'Mix Birch' shows data for 'Mix Cedar' (range 5-25), and 'Mix Maple' shows data for 'Mix Maple' (range 3-24) but the whiskers/boxes are shifted. Specifically, the first box (labeled Mix Cedar) has a max around 16, which matches the 75th percentile of Cedar, but the second box (labeled Mix Birch) has a max around 20, and the third (Mix Maple) has a max around 24. Wait, looking at the rows: Cedar is [5, 9, 15, 16, 25], Birch is [8, 11, 10, 19, 21], Maple is [3, 13, 18, 22, 24]. The chart shows: Mix Cedar box max ~16 (incorrect, should be 25), Mix Birch box max ~20 (incorrect, should be 21), Mix Maple box max ~24 (correct). The data points are not overlaid as requested in the spec."
+              },
+              {
+                "rule": "R-3",
+                "level": "error",
+                "owner": "designer",
+                "message": "The spec explicitly requests that 'individual observations are overlaid as points', but no points are visible on the chart."
+              }
+            ]
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 8.963690374977887,
+          "requests": 1,
+          "rounds": [
+            {
+              "status": "reviewed",
+              "verdict": "revise",
+              "review": {
+                "verdict": "revise",
+                "summary": "The box plots are incorrectly mapped to the mixture batch categories.",
+                "findings": [
+                  {
+                    "rule": "R-1",
+                    "level": "error",
+                    "owner": "designer",
+                    "message": "The box plots are mapped to the wrong batches: 'Mix Cedar' shows data for Mix Birch (range 8-21), 'Mix Maple' shows data for Mix Cedar (range 5-25), and 'Mix Birch' shows data for Mix Maple (range 3-24)."
+                  }
+                ]
+              },
+              "model": "google/gemma-4-31b-it",
+              "warnings": [],
+              "seconds": 2.8054199579637498,
+              "requests": 1
+            }
+          ]
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "revise",
+          "review": {
+            "verdict": "revise",
+            "summary": "The chart has incorrect data mapping for the box plots and is missing the requested overlaid individual observation points.",
+            "findings": [
+              {
+                "rule": "R-1",
+                "level": "error",
+                "owner": "designer",
+                "message": "The box plots are incorrectly mapped to the batches: 'Mix Cedar' shows data for 'Mix Birch' (range 8-21), 'Mix Birch' shows data for 'Mix Cedar' (range 5-25), and 'Mix Maple' shows data for 'Mix Maple' (range 3-24) but the whiskers/boxes are shifted. Specifically, the first box (labeled Mix Cedar) has a max around 16, which matches the 75th percentile of Cedar, but the second box (labeled Mix Birch) has a max around 20, and the third (Mix Maple) has a max around 24. Wait, looking at the rows: Cedar is [5, 9, 15, 16, 25], Birch is [8, 11, 10, 19, 21], Maple is [3, 13, 18, 22, 24]. The chart shows: Mix Cedar box max ~16 (incorrect, should be 25), Mix Birch box max ~20 (incorrect, should be 21), Mix Maple box max ~24 (correct). The data points are not overlaid as requested in the spec."
+              },
+              {
+                "rule": "R-3",
+                "level": "error",
+                "owner": "designer",
+                "message": "The spec explicitly requests that 'individual observations are overlaid as points', but no points are visible on the chart."
+              }
+            ]
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 8.963690374977887,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": [
+          {
+            "render_id": "8205712ef09c",
+            "review": {
+              "status": "reviewed",
+              "verdict": "revise",
+              "review": {
+                "verdict": "revise",
+                "summary": "The box plots are incorrectly mapped to the mixture batch categories.",
+                "findings": [
+                  {
+                    "rule": "R-1",
+                    "level": "error",
+                    "owner": "designer",
+                    "message": "The box plots are mapped to the wrong batches: 'Mix Cedar' shows data for Mix Birch (range 8-21), 'Mix Maple' shows data for Mix Cedar (range 5-25), and 'Mix Birch' shows data for Mix Maple (range 3-24)."
+                  }
+                ]
+              },
+              "model": "google/gemma-4-31b-it",
+              "warnings": [],
+              "seconds": 2.8054199579637498,
+              "requests": 1
+            }
+          }
+        ]
+      },
+      "final_reply": "The chart is published as artifact **art_b78b4b2552014952a9eda799c6eb26a1** — a box plot comparing the distributions of observed strength (MPa) across the three mixture batches (Mix Cedar, Mix Birch, Mix Maple), using all 15 supplied observations with no aggregation, sampling, or recalculation.\n\n![chart](/renders/686ec0a04092/chart.png)\n\n**Honest caveat on review findings:** the visual inspector flagged two unresolved issues on the final render: (1) it reports the boxes may be mispaired with their batch labels (e.g., the Mix Cedar box appearing to end near 16 rather than its max of 25), and (2) the overlaid individual observation points requested in the spec are not visible. The repair limit was reached before these could be addressed, so please verify the picture against the source table before relying on the visual; the published source table below is the authoritative record of all 15 observations.\n\n| Mixture batch | Elapsed curing time (min) | Observed strength (MPa) |\n|---|---|---|\n| Mix Cedar | 0 | 5 |\n| Mix Cedar | 10 | 9 |\n| Mix Cedar | 20 | 15 |\n| Mix Cedar | 30 | 16 |\n| Mix Cedar | 40 | 25 |\n| Mix Birch | 0 | 8 |\n| Mix Birch | 10 | 11 |\n| Mix Birch | 20 | 10 |\n| Mix Birch | 30 | 19 |\n| Mix Birch | 40 | 21 |\n| Mix Maple | 0 | 3 |\n| Mix Maple | 10 | 13 |\n| Mix Maple | 20 | 18 |\n| Mix Maple | 30 | 22 |\n| Mix Maple | 40 | 24 |",
+      "error": null
+    },
+    {
+      "arm": "candidate",
+      "id": "g04-sample_spreads-original",
+      "first_visual": "fail",
+      "last_visual": "fail",
+      "task_audit": "fail_visible_label_value_mismatch",
+      "delivery": "pass",
+      "review_assessment": "No usable review: 3 requests exhausted output retries due an out-of-reference source row. This is not a correct pass or evidence of reduced hallucination. Final response honestly discloses absent independent verification.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Single published PNG: correct batch associations and box/whisker geometry, but numeric labels at the upper whiskers are the minimum values: Mix Cedar 5 MPa next to y=25 MPa; Mix Birch 8 MPa next to y=21 MPa; Mix Maple 3 MPa next to y=24 MPa. These contradict the visible marks and source maxima.",
+        "Source five-number summaries (sorted observations): Cedar [5,9,15,16,25], Birch [8,10,11,19,21], Maple [3,13,18,22,24]. Correct summaries here are audit calculations, not changes to source data.",
+        "Design enables `labels on`; no repair image was produced.",
+        "Final reply links the image and complete source table and explicitly states no independent visual verification occurred. Honest uncertainty does not make the mislabeled chart correct."
+      ],
+      "oracle_notes": [
+        "All machine contract checks pass. Source/config fidelity and PNG existence do not detect the rendered label-to-mark mismatch."
+      ],
+      "viewed_render_ids": [
+        "dafbb291cb7d"
+      ],
+      "uncertainty": [
+        "Raw rejected reviewer model arguments are not retained in case.json; cannot characterize whether their visual conclusions were correct before schema rejection.",
+        "Position and value mismatch is directly visible; exact internal library cause is not proven by this frozen audit."
+      ],
+      "task": {
+        "family": "repeated_measurement_views",
+        "goal": "sample_spreads",
+        "variant": "original",
+        "request": "Compare the distributions of the supplied strength observations within the three mixture batches, using the renderer's distribution display. Time ordering is irrelevant for this view. Do not average the source CSV or invent new measurements. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "source_csv_sha256": "6ddea5f88f53a5a2bbcf06cbe6e8dd0dc08378c0e7e159f3bb55e19cb6e4db01",
+        "source_row_count": 15,
+        "source_columns": [
+          "batch",
+          "elapsed_min",
+          "strength_mpa"
+        ],
+        "units": {
+          "elapsed_min": "min",
+          "strength_mpa": "MPa"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-sample_spreads-original/score.json",
+          "sha256": "4991fd68d60c3dd961385a98ac806fa7be13941720e88aef86d501e89cb0673d"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-sample_spreads-original/case.json",
+          "sha256": "e2cc39210221e64e43d0425406defd81b9809cc773eaa36f54eda056f8ef6e91"
+        }
+      },
+      "images": [
+        {
+          "render_id": "dafbb291cb7d",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-sample_spreads-original/renders/dafbb291cb7d/chart.png",
+          "sha256": "a8d4763a77b4840c7e482f10724e17dc7665ceaa7d9e6b2921616c137311d61a",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-sample_spreads-original/renders/dafbb291cb7d/config.json",
+          "config_sha256": "90175fb56a3e38385f1edfd286077cc93a15820d0151c75ed58dfe945cb76911",
+          "width": 2160,
+          "height": 1440,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 51.012701499974355,
+        "within_60_seconds": true,
+        "framework_requests": 10,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_33c21279b2054923b696a253f286294a"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "not_reviewed",
+          "reason": "The reviewer could not finish: Exceeded maximum output retries (2): The cited source row is outside the supplied reference. Do not infer an error from unseen rows.",
+          "model": null,
+          "warnings": [
+            "The reviewer could not finish: Exceeded maximum output retries (2): The cited source row is outside the supplied reference. Do not infer an error from unseen rows."
+          ],
+          "seconds": 18.000678375014104,
+          "requests": 3,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "not_reviewed",
+          "reason": "The reviewer could not finish: Exceeded maximum output retries (2): The cited source row is outside the supplied reference. Do not infer an error from unseen rows.",
+          "model": null,
+          "warnings": [
+            "The reviewer could not finish: Exceeded maximum output retries (2): The cited source row is outside the supplied reference. Do not infer an error from unseen rows."
+          ],
+          "seconds": 18.000678375014104,
+          "requests": 3
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Published — the distribution chart is ready as artifact **art_33c21279b2054923b696a253f286294a**.\n\n![chart](/renders/dafbb291cb7d/chart.png)\n\n**What it shows:** A box plot (\"Distribution of Observed Strength by Mixture Batch\") comparing the spread, median, and range of all 15 raw strength observations (MPa) across Mix Cedar, Mix Birch, and Mix Maple — 5 observations per batch, no averaging, sampling, or aggregation. Elapsed time is intentionally excluded since time ordering is irrelevant for this view.\n\n**Honest limitation:** The visual inspector could not complete its review (it exceeded its output retries, citing a row outside the supplied reference), so no independent visual verification was performed. The render itself succeeded cleanly: all 15 rows were drawn, none dropped or folded.\n\n[Complete result table (JSON)](/artifacts/art_33c21279b2054923b696a253f286294a)",
+      "error": null
+    },
+    {
+      "arm": "baseline",
+      "id": "g04-sample_spreads-transformed",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "fail_delivery",
+      "delivery": "fail",
+      "review_assessment": "Pass is consistent with visible boxplots and source reference.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Correct boxplots Cedar[5,9,15,16,25], Maple[3,13,18,22,24], Birch[8,10,11,19,21]; MPa units and category labels legible.",
+        "All-blue redundant legend is not a material defect because categories are directly named.",
+        "Published artifact exists but final reply only names artifactID, with no clickable PNG/artifact link."
+      ],
+      "oracle_notes": [
+        "Distribution renderer may compute quartiles from unchanged raw rows; this does not violate prohibition on upstream reaggregation."
+      ],
+      "viewed_render_ids": [
+        "e098220f30b7"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "repeated_measurement_views",
+        "goal": "sample_spreads",
+        "variant": "transformed",
+        "request": "Compare the distributions of the supplied strength observations within the three mixture batches, using the renderer's distribution display. Time ordering is irrelevant for this view. Do not average the source CSV or invent new measurements. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "source_csv_sha256": "87413b763a04d11f695b096892a42eacdcf0118b3191f0f1d3ce537f619b2cb5",
+        "source_row_count": 15,
+        "source_columns": [
+          "field_4_3",
+          "field_4_2",
+          "field_4_1"
+        ],
+        "units": {
+          "field_4_2": "min",
+          "field_4_3": "MPa"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-sample_spreads-transformed/score.json",
+          "sha256": "a670c1664081123ad1381e396ded408433ea02447ccf261798e5b6d93b8d6db9"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-sample_spreads-transformed/case.json",
+          "sha256": "b4820519bf6fb7e00e5bee0c4b3e177c251214c55274e02a24348567232b36a7"
+        }
+      },
+      "images": [
+        {
+          "render_id": "e098220f30b7",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-sample_spreads-transformed/renders/e098220f30b7/chart.png",
+          "sha256": "b22b06ad31c35065c47f5674e03ef777231ac779fe141b57fca8f015d9231fde",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g04-sample_spreads-transformed/renders/e098220f30b7/config.json",
+          "config_sha256": "a02da2924bcf4bb13eb82690dc9253247eb2677cdc83827e99531891dee0c56c",
+          "width": 2400,
+          "height": 1350,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 27.909017500001937,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": false,
+        "diagnostics": [
+          "delivered_link"
+        ],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": false,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_2175a5dd7f6c4b7eb8f145612d1ca5a6"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The box plot correctly represents the strength distributions for the three mixture batches according to the provided data and specification.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.833171666949056,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The box plot correctly represents the strength distributions for the three mixture batches according to the provided data and specification.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.833171666949056,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Published a box plot comparing strength distributions across the three mixture batches (Mix Cedar, Mix Birch, Mix Maple), with each of the 15 supplied rows used as a separate observation in MPa — no aggregation, averaging, or new calculations, and the curing-time column omitted per the brief. Visual review passed with no findings. Artifact art_2175a5dd7f6c4b7eb8f145612d1ca5a6.",
+      "error": null
+    },
+    {
+      "arm": "candidate",
+      "id": "g04-sample_spreads-transformed",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with independently viewed boxplot.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Correct boxplots Cedar[5,9,15,16,25], Birch[8,10,11,19,21], Maple[3,13,18,22,24]; order difference is immaterial for distribution goal.",
+        "Readable batch labels/MPa unit; source table and PNG linked in final response."
+      ],
+      "oracle_notes": [
+        "Several cosmetic alternatives are valid; no requirement for matching baseline category order."
+      ],
+      "viewed_render_ids": [
+        "fa3793994e4e"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "repeated_measurement_views",
+        "goal": "sample_spreads",
+        "variant": "transformed",
+        "request": "Compare the distributions of the supplied strength observations within the three mixture batches, using the renderer's distribution display. Time ordering is irrelevant for this view. Do not average the source CSV or invent new measurements. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "source_csv_sha256": "87413b763a04d11f695b096892a42eacdcf0118b3191f0f1d3ce537f619b2cb5",
+        "source_row_count": 15,
+        "source_columns": [
+          "field_4_3",
+          "field_4_2",
+          "field_4_1"
+        ],
+        "units": {
+          "field_4_2": "min",
+          "field_4_3": "MPa"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-sample_spreads-transformed/score.json",
+          "sha256": "5660bd248b309d2a97ace1fa506e3ab12e8413a876bd88a561fe608b81daf7f0"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-sample_spreads-transformed/case.json",
+          "sha256": "051d8ea49fc4cee7302aa14aecee7b784fd13bf8128196bb67d350feaff729dd"
+        }
+      },
+      "images": [
+        {
+          "render_id": "fa3793994e4e",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-sample_spreads-transformed/renders/fa3793994e4e/chart.png",
+          "sha256": "afc3505d798cfd189133543cbd575ee1170a9c1a22a550ce0ef7144b33d33db9",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g04-sample_spreads-transformed/renders/fa3793994e4e/config.json",
+          "config_sha256": "98f48cc43af430514f2d3918b873627d5c79546242fdd6a5735b8da5ff6a6c64",
+          "width": 2100,
+          "height": 1350,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 14.08167237509042,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_dfa8c3019ee14f739c4a14e06f44a941"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The box plot correctly represents the distributions of strength observations for the three mixture batches as specified.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "afc3505d798cfd189133543cbd575ee1170a9c1a22a550ce0ef7144b33d33db9"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 2.6809437499614432,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The box plot correctly represents the distributions of strength observations for the three mixture batches as specified.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "afc3505d798cfd189133543cbd575ee1170a9c1a22a550ce0ef7144b33d33db9"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 2.6809437499614432,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Done. The chart is a box plot — the renderer's distribution display — comparing the raw strength observations (MPa) across the three mixture batches, with all 15 supplied rows shown as-is (no averaging, sampling, or new measurements). Curing time is excluded since ordering is irrelevant here.\n\n![chart](/renders/fa3793994e4e/chart.png)\n\nPublished as artifact **art_dfa8c3019ee14f739c4a14e06f44a941** — [source table (JSON)](/artifacts/art_dfa8c3019ee14f739c4a14e06f44a941). Review passed with no findings.",
+      "error": null
+    },
+    {
+      "arm": "baseline",
+      "id": "g05-exact_record-original",
+      "first_visual": "fail_explicit_label_requirement",
+      "last_visual": "fail_explicit_label_requirement",
+      "task_audit": "pass_with_visual_limitation",
+      "delivery": "pass",
+      "review_assessment": "Correct warning: header95th-percentile delay(ms) visibly ellipsized; not a hallucinated defect.",
+      "unnecessary_repair": false,
+      "observations": [
+        "PNG retains all5values and units: Evening trial,840jobs,185ms,73.5%,12.6kWh.",
+        "Delay header visibly ends95th-percentile dela...; explicit request said complete columnlabels without abbreviation.",
+        "Final reply acknowledges limitation and supplies complete Markdown row/header/units, so complete audit information is delivered despite PNG imperfection."
+      ],
+      "oracle_notes": [
+        "Machine visible_fields checks bound-column presence, not visible full text. Normal table viewport truncation is not universally an error, but this request explicitly prohibits abbreviation."
+      ],
+      "viewed_render_ids": [
+        "9f48a12cec41"
+      ],
+      "uncertainty": [
+        "No UI/hover/scroll interaction inspected; judgment concerns retained staticPNG and final response, not whether hidden table headers are interactively recoverable."
+      ],
+      "task": {
+        "family": "mixed_unit_summary",
+        "goal": "exact_record",
+        "variant": "original",
+        "request": "Produce an exact audit record: show the complete supplied row with all column labels and units together, without abbreviation, unit conversion or re-computation. A clearly labelled table is appropriate; independent metric cards are also acceptable only if every field remains visible. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "source_csv_sha256": "43cd05d6e8e195a7371325d2ac3491a3d640f83d44ad93b666c2882d836a078f",
+        "source_row_count": 1,
+        "source_columns": [
+          "window",
+          "completed_jobs",
+          "p95_delay_ms",
+          "utilization_percent",
+          "energy_kwh"
+        ],
+        "units": {
+          "completed_jobs": "jobs",
+          "p95_delay_ms": "ms",
+          "utilization_percent": "%",
+          "energy_kwh": "kWh"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-exact_record-original/score.json",
+          "sha256": "e01a0bd12e11bbf0d4aa99b5791fe01ab81c8b6f1d050122b3db9bddda0b524d"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-exact_record-original/case.json",
+          "sha256": "b4f6f7e4d6ee777e7e5fab6af10a17594f4ccceaf9f8d1d1068f53c3e4767c2d"
+        }
+      },
+      "images": [
+        {
+          "render_id": "9f48a12cec41",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-exact_record-original/renders/9f48a12cec41/chart.png",
+          "sha256": "a19c6790164d7f13b191f6209b3abadc7a55d0818f1c36a27ff48e582551e982",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-exact_record-original/renders/9f48a12cec41/config.json",
+          "config_sha256": "0038da2c67c7c8ff2ddb550da35eb4686847a1b4f151b54f7c3145ffd07a5ebc",
+          "width": 1432,
+          "height": 124,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 49.776691875071265,
+        "within_60_seconds": true,
+        "framework_requests": 9,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_03ef457dbf414149af5a9ad26dec3eee"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The table correctly displays the audit record, but one column header is clipped.",
+            "findings": [
+              {
+                "rule": "R-2",
+                "level": "warning",
+                "owner": "designer",
+                "message": "The column header '95th-percentile delay (ms)' is clipped to '95th-percentile dela...'."
+              }
+            ]
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 2.154487124993466,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The table correctly displays the audit record, but one column header is clipped.",
+            "findings": [
+              {
+                "rule": "R-2",
+                "level": "warning",
+                "owner": "designer",
+                "message": "The column header '95th-percentile delay (ms)' is clipped to '95th-percentile dela...'."
+              }
+            ]
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 2.154487124993466,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Published — the exact audit record is delivered as a fully labelled table (artifact art_03ef457dbf414149af5a9ad26dec3eee).\n\n![chart](/renders/9f48a12cec41/chart.png)\n\n| Trial label (window) | Completed jobs (jobs) | 95th-percentile delay (ms) | Utilization (%) | Energy use (kWh) |\n|---|---|---|---|---|\n| Evening trial | 840 | 185 | 73.5 | 12.6 |\n\nThe single authoritative row is shown verbatim — all five fields with English labels and units, no conversion, recomputation, or aggregation. One minor caveat: the visual inspector noted the \"95th-percentile delay (ms)\" header may be visually truncated in the rendered PNG; the source table above shows the full label.",
+      "error": null
+    },
+    {
+      "arm": "candidate",
+      "id": "g05-exact_record-original",
+      "first_visual": "pass_with_label_wording_caveat",
+      "last_visual": "pass_with_label_wording_caveat",
+      "task_audit": "fail_delivery",
+      "delivery": "fail",
+      "review_assessment": "Pass is consistent with legible values, complete row and units. However, the categorical claim that every label is exactly as requested overlooks the literal no-abbreviation caveat (`P95 delay` is an abbreviation, not clipping).",
+      "unnecessary_repair": false,
+      "observations": [
+        "The one-row rendered table visibly contains Evening trial, 840 jobs, 185 ms, 73.5%, and 12.6 kWh. Full configured headers are visible; no ellipsis.",
+        "Header `P95 delay (ms)` preserves the established meaning but abbreviates 95th-percentile despite the brief asking for no abbreviation. Treat this as a minor literal-instruction caveat, not source-value corruption or a materially wrong chart.",
+        "Final response provides the complete Markdown row but only a bare artifact ID; no rendered-image URL or usable artifact link. Request explicitly required a usable rendered artifact.",
+        "Final statement that a renderer warning did not materialize in the image is supported by visible complete configured headers."
+      ],
+      "oracle_notes": [
+        "Machine contract correctly fails delivered_link. It does not distinguish full configured header from a no-abbreviation instruction."
+      ],
+      "viewed_render_ids": [
+        "7be581a1c844"
+      ],
+      "uncertainty": [
+        "No interactive UI or actual responsive display inspected; the native PNG is wide. Do not infer failure from browser viewport or scroll behavior that was not tested."
+      ],
+      "task": {
+        "family": "mixed_unit_summary",
+        "goal": "exact_record",
+        "variant": "original",
+        "request": "Produce an exact audit record: show the complete supplied row with all column labels and units together, without abbreviation, unit conversion or re-computation. A clearly labelled table is appropriate; independent metric cards are also acceptable only if every field remains visible. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "source_csv_sha256": "43cd05d6e8e195a7371325d2ac3491a3d640f83d44ad93b666c2882d836a078f",
+        "source_row_count": 1,
+        "source_columns": [
+          "window",
+          "completed_jobs",
+          "p95_delay_ms",
+          "utilization_percent",
+          "energy_kwh"
+        ],
+        "units": {
+          "completed_jobs": "jobs",
+          "p95_delay_ms": "ms",
+          "utilization_percent": "%",
+          "energy_kwh": "kWh"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-exact_record-original/score.json",
+          "sha256": "de102d4b8ae2f474ab605142abe1228c3a5f89ad850c54e031adf5937723e5da"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-exact_record-original/case.json",
+          "sha256": "954b0903649da3ca514f311c5fe804c5514044cc056884bba033615452e4ced3"
+        }
+      },
+      "images": [
+        {
+          "render_id": "7be581a1c844",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-exact_record-original/renders/7be581a1c844/chart.png",
+          "sha256": "8078053d796ff94eabc29656806a94ef62aa9c9118eb7789d35e8bae30767daf",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-exact_record-original/renders/7be581a1c844/config.json",
+          "config_sha256": "f63384b6f93d0f5063d07d0b6831706775f7099b428c213fb271b71935dbde6e",
+          "width": 3272,
+          "height": 124,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 69.57700004195794,
+        "within_60_seconds": false,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": false,
+        "diagnostics": [
+          "delivered_link"
+        ],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": false,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_03ccc7723b504bf7abab67f5a386dc52"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The table correctly displays all supplied data, labels, and units as requested.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "8078053d796ff94eabc29656806a94ef62aa9c9118eb7789d35e8bae30767daf"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.7015980830183253,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The table correctly displays all supplied data, labels, and units as requested.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "8078053d796ff94eabc29656806a94ef62aa9c9118eb7789d35e8bae30767daf"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.7015980830183253,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "The audit record is published as a rendered table (artifact `art_03ccc7723b504bf7abab67f5a386dc52`), showing the complete supplied row with all five fields, full English labels, and units, with no conversion or recomputation:\n\n| Window (authoritative trial label) | Completed jobs (jobs) | P95 delay (ms) | Utilization (%) | Energy use (kWh) |\n|---|---|---|---|---|\n| Evening trial | 840 | 185 | 73.5 | 12.6 |\n\nThe visual inspector confirmed the rendered table displays all data, labels, and units correctly. One minor note: the renderer flagged that long headers (the window label) may be abbreviated by the table package; inspection found the full label displayed, so no repair was needed.",
+      "error": null
+    },
+    {
+      "arm": "baseline",
+      "id": "g05-exact_record-transformed",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "fail_delivery",
+      "delivery": "fail",
+      "review_assessment": "False/overstrict R-1: appending authoritative unit suffixes does not change values or convert units; caller explicitly wants labels and units. No raw-data corruption seen.",
+      "unnecessary_repair": true,
+      "observations": [
+        "Retained3212x124table shows full headers and all5fields:12.6kWh,73.5%,185ms,840jobs,Evening trial.",
+        "Reviewer misclassifies unit presentation as a value mismatch; lead requests unnecessary removal of suffixes; designer returns unchangedspec. One actual render/review, not two despite duplicated saved review in rounds.",
+        "Final response supplies full Markdown record but no PNG/artifact link; artifactID alone does not deliver requested usable rendered artifact.",
+        "Final warning that two headers may be shortened comes from renderer heuristic; retainedPNG headers are fully visible."
+      ],
+      "oracle_notes": [
+        "Unit suffix in a table is presentation, not a source rewrite; frozen brief does not explicitly ban suffixes.",
+        "Complete Markdown record remains usable for factual audit despite missing requested render link; report delivery separately."
+      ],
+      "viewed_render_ids": [
+        "2ddac40aef1e"
+      ],
+      "uncertainty": [
+        "PNG is unusually wide; actual responsive/mobile presentation was not tested."
+      ],
+      "task": {
+        "family": "mixed_unit_summary",
+        "goal": "exact_record",
+        "variant": "transformed",
+        "request": "Produce an exact audit record: show the complete supplied row with all column labels and units together, without abbreviation, unit conversion or re-computation. A clearly labelled table is appropriate; independent metric cards are also acceptable only if every field remains visible. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "source_csv_sha256": "5253a42cb19a4cec130e76197590f21062b0d1d914e76fbdcfc3f05d2cf809a0",
+        "source_row_count": 1,
+        "source_columns": [
+          "field_5_5",
+          "field_5_4",
+          "field_5_3",
+          "field_5_2",
+          "field_5_1"
+        ],
+        "units": {
+          "field_5_2": "jobs",
+          "field_5_3": "ms",
+          "field_5_4": "%",
+          "field_5_5": "kWh"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-exact_record-transformed/score.json",
+          "sha256": "c15e71d4e5893511314b52dcdcb33e1469218de1d3a718ae9fddf0c11d4f6e4e"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-exact_record-transformed/case.json",
+          "sha256": "d45c66e97a6390a4f89c1f93e6d297f5ca1083a511def58c941abad70b47d3ca"
+        }
+      },
+      "images": [
+        {
+          "render_id": "2ddac40aef1e",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-exact_record-transformed/renders/2ddac40aef1e/chart.png",
+          "sha256": "714cc15f78f6bf3fd87c707a08c60f4ca9901586726664dc5281cd3155139a5f",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-exact_record-transformed/renders/2ddac40aef1e/config.json",
+          "config_sha256": "1cd409af637fb0315f712bd2efd2a5cd82144fcda313fa7c79870d0273e1bab5",
+          "width": 3212,
+          "height": 124,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 21.713336499989964,
+        "within_60_seconds": true,
+        "framework_requests": 11,
+        "framework_tool_calls": 7,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": false,
+        "diagnostics": [
+          "delivered_link"
+        ],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": false,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_a4385d957f354873879b3c401cb4804f"
+      },
+      "execution": {
+        "design_attempts": 2,
+        "render_attempts": 1,
+        "visual_repair_attempts": 1,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "revise",
+          "review": {
+            "verdict": "revise",
+            "summary": "The table incorrectly appends units to the cell values, which deviates from the verbatim data requested for the audit record.",
+            "findings": [
+              {
+                "rule": "R-1",
+                "level": "error",
+                "owner": "designer",
+                "message": "The table cells include units (kWh, %, ms, jobs) that are already present in the column headers, which contradicts the 'verbatim' requirement of the audit record and the supplied rows."
+              }
+            ]
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 4.602475624997169,
+          "requests": 1,
+          "rounds": [
+            {
+              "status": "reviewed",
+              "verdict": "revise",
+              "review": {
+                "verdict": "revise",
+                "summary": "The table incorrectly appends units to the cell values, which deviates from the verbatim data requested for the audit record.",
+                "findings": [
+                  {
+                    "rule": "R-1",
+                    "level": "error",
+                    "owner": "designer",
+                    "message": "The table cells include units (kWh, %, ms, jobs) that are already present in the column headers, which contradicts the 'verbatim' requirement of the audit record and the supplied rows."
+                  }
+                ]
+              },
+              "model": "google/gemma-4-31b-it",
+              "warnings": [],
+              "seconds": 4.602475624997169,
+              "requests": 1
+            }
+          ]
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "revise",
+          "review": {
+            "verdict": "revise",
+            "summary": "The table incorrectly appends units to the cell values, which deviates from the verbatim data requested for the audit record.",
+            "findings": [
+              {
+                "rule": "R-1",
+                "level": "error",
+                "owner": "designer",
+                "message": "The table cells include units (kWh, %, ms, jobs) that are already present in the column headers, which contradicts the 'verbatim' requirement of the audit record and the supplied rows."
+              }
+            ]
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 4.602475624997169,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": [
+          {
+            "render_id": "2ddac40aef1e",
+            "review": {
+              "status": "reviewed",
+              "verdict": "revise",
+              "review": {
+                "verdict": "revise",
+                "summary": "The table incorrectly appends units to the cell values, which deviates from the verbatim data requested for the audit record.",
+                "findings": [
+                  {
+                    "rule": "R-1",
+                    "level": "error",
+                    "owner": "designer",
+                    "message": "The table cells include units (kWh, %, ms, jobs) that are already present in the column headers, which contradicts the 'verbatim' requirement of the audit record and the supplied rows."
+                  }
+                ]
+              },
+              "model": "google/gemma-4-31b-it",
+              "warnings": [],
+              "seconds": 4.602475624997169,
+              "requests": 1
+            }
+          }
+        ]
+      },
+      "final_reply": "The audit record is published — a single-row table showing the complete supplied row with all five fields, English labels, and units in the headers:\n\n| Measured energy use (kWh) | Utilization (%) | 95th-percentile delay (ms) | Completed jobs (jobs) | Trial label |\n|---|---|---|---|---|\n| 12.6 | 73.5 | 185 | 840 | Evening trial |\n\nNo conversion, rounding, aggregation, or recomputation was applied; every supplied value appears verbatim.\n\nTwo honest notes from review:\n- The visual inspector reported that the rendered cells append unit suffixes (e.g., \"12.6 kWh\") alongside the unit-bearing headers. One repair attempt was made, but the renderer produced the same picture, so this cosmetic duplication remains on the rendered PNG. The source table above shows the raw values as supplied.\n- Two long headers (\"Measured energy use (kWh)\", \"95th-percentile delay (ms)\") may be shortened by the rendering package on the image; the full labels appear in the source table.\n\nArtifact: art_a4385d957f354873879b3c401cb4804f",
+      "error": null
+    },
+    {
+      "arm": "candidate",
+      "id": "g05-exact_record-transformed",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass supported: all five source fields, values, full meaning labels and units are visibly present; no material finding.",
+      "unnecessary_repair": false,
+      "observations": [
+        "One-row table shows 12.6 kWh, 73.5%, 185 ms, 840 jobs, Evening trial in transformed source column order.",
+        "Full headers Measured energy use (kWh), Utilization (%), 95th-percentile delay (ms), Number of completed jobs (jobs), Authoritative trial label are visible. No actual ellipsis or cropped value.",
+        "Final response includes correct PNG and complete result-table URL; correctly states no recomputation or conversion.",
+        "Renderer warning of potentially shortened headers is heuristic only; final response qualifies it and accurately reports inspection found full labels."
+      ],
+      "oracle_notes": [],
+      "viewed_render_ids": [
+        "de120696dfe4"
+      ],
+      "uncertainty": [
+        "Native PNG is 3982x124; tool view rescales it. Values/headers are legible in this audit; actual browser viewport/scroll/tooltip not exercised."
+      ],
+      "task": {
+        "family": "mixed_unit_summary",
+        "goal": "exact_record",
+        "variant": "transformed",
+        "request": "Produce an exact audit record: show the complete supplied row with all column labels and units together, without abbreviation, unit conversion or re-computation. A clearly labelled table is appropriate; independent metric cards are also acceptable only if every field remains visible. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "source_csv_sha256": "5253a42cb19a4cec130e76197590f21062b0d1d914e76fbdcfc3f05d2cf809a0",
+        "source_row_count": 1,
+        "source_columns": [
+          "field_5_5",
+          "field_5_4",
+          "field_5_3",
+          "field_5_2",
+          "field_5_1"
+        ],
+        "units": {
+          "field_5_2": "jobs",
+          "field_5_3": "ms",
+          "field_5_4": "%",
+          "field_5_5": "kWh"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-exact_record-transformed/score.json",
+          "sha256": "91a5a190a8b8b3d8c7d1bcd41c76d45edf7121512f2c91131469fda59632c3a8"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-exact_record-transformed/case.json",
+          "sha256": "66a9c494c07663480f078b691e92355d2b4650654abb58225354286a8d6b2bf2"
+        }
+      },
+      "images": [
+        {
+          "render_id": "de120696dfe4",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-exact_record-transformed/renders/de120696dfe4/chart.png",
+          "sha256": "2b71cc1d97f39a918a6f7c8e2a4c8978ffb55376e6094b2b95da90b01b0185ea",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-exact_record-transformed/renders/de120696dfe4/config.json",
+          "config_sha256": "9be29e9a83d0db25f0971d29dc0bce03b4a36f6b6de1f9ecc4f5e2f1da20010e",
+          "width": 3982,
+          "height": 124,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 53.26777312497143,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_e12c62903ccc41ec93170feb7e4316e7"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The table correctly displays all supplied data, labels, and units exactly as specified.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "2b71cc1d97f39a918a6f7c8e2a4c8978ffb55376e6094b2b95da90b01b0185ea"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.7351541670504957,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The table correctly displays all supplied data, labels, and units exactly as specified.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "2b71cc1d97f39a918a6f7c8e2a4c8978ffb55376e6094b2b95da90b01b0185ea"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.7351541670504957,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "The exact audit record is published as artifact **art_e12c62903ccc41ec93170feb7e4316e7**.\n\n![chart](/renders/de120696dfe4/chart.png)\n\nIt renders the complete supplied row as a clearly labelled English table — every field visible, values shown exactly as provided (12.6 kWh, 73.5%, 185 ms, 840 jobs, \"Evening trial\") with no abbreviation of meaning, unit conversion, sampling, or re-computation. The 95th-percentile delay and utilization are presented as already computed.\n\nThe visual inspector passed the review with no findings; one renderer note flags that four long headers may be auto-shortened in the image, though the inspector confirmed all labels and units are displayed correctly. The full source table with all five columns is available at the artifact link below.\n\n[Complete result table (JSON)](/artifacts/art_e12c62903ccc41ec93170feb7e4316e7)",
+      "error": null
+    },
+    {
+      "arm": "baseline",
+      "id": "g05-overview-original",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with independently viewed four-card layout.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Four independent KPI cards show840jobs,185ms,73.5%,12.6kWh; every card includes Evening trial.",
+        "Units are distinct, no shared quantitative axis or invented total, all text readable.",
+        "Final response links PNG and repeats values faithfully."
+      ],
+      "oracle_notes": [
+        "For mixed-unit overview both indicators and a complete labelled table are purpose-appropriate; no pixel/format sameness required."
+      ],
+      "viewed_render_ids": [
+        "61fd4b44c4da"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "mixed_unit_summary",
+        "goal": "overview",
+        "variant": "original",
+        "request": "Create an at-a-glance overview of all four supplied trial metrics, retaining each metric's own unit and the trial label. They have different dimensions, so do not put them on a shared quantitative axis or invent a total. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "source_csv_sha256": "43cd05d6e8e195a7371325d2ac3491a3d640f83d44ad93b666c2882d836a078f",
+        "source_row_count": 1,
+        "source_columns": [
+          "window",
+          "completed_jobs",
+          "p95_delay_ms",
+          "utilization_percent",
+          "energy_kwh"
+        ],
+        "units": {
+          "completed_jobs": "jobs",
+          "p95_delay_ms": "ms",
+          "utilization_percent": "%",
+          "energy_kwh": "kWh"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-overview-original/score.json",
+          "sha256": "a195f64a5db379f16f091c02e5122923c82f1081a45628d03cfa7001f36c4ffd"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-overview-original/case.json",
+          "sha256": "c27a2576385f4f43f5059e8bb66a9a4c30b7671af4e5223e533ac6fff0c064eb"
+        }
+      },
+      "images": [
+        {
+          "render_id": "61fd4b44c4da",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-overview-original/renders/61fd4b44c4da/chart.png",
+          "sha256": "4229aa9ba1cf0b1d808749c4355a2e091aa17ba22c131fa64c825e9d422a84bc",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-overview-original/renders/61fd4b44c4da/config.json",
+          "config_sha256": "c30dd1a84539ddc23011d537d781727b312a24ccc057b3cbdf257fa478cf6ef1",
+          "width": 2400,
+          "height": 1341,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 10.649883792037144,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_98619f6b9a8a49759bf1b6e0ff7a8ed5"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly displays all four metrics with their corresponding values, labels, and units as specified.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.4557530420133844,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly displays all four metrics with their corresponding values, labels, and units as specified.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.4557530420133844,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Done — here's the at-a-glance overview of the Evening trial's four metrics, published as a four-card KPI layout (no shared quantitative axis, no totals, no aggregation):\n\n![chart](/renders/61fd4b44c4da/chart.png)\n\n- **Completed jobs: 840 jobs**\n- **P95 delay: 185 ms**\n- **Utilization: 73.5 %**\n- **Energy use: 12.6 kWh**\n\nEach card keeps its metric's own unit and carries the \"Evening trial\" label; the review passed with no findings. Artifact: `art_98619f6b9a8a49759bf1b6e0ff7a8ed5`.",
+      "error": null
+    },
+    {
+      "arm": "candidate",
+      "id": "g05-overview-original",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with correct complete mixed-unit indicator layout.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Independent cards show840jobs,185ms,73.5%,12.6kWh and Evening trial in each; all source fields represented.",
+        "No shared quantitative axis or invented total. Labels readable; longer explanatory text is a style choice, not a defect.",
+        "Final response includesPNG and faithful four values."
+      ],
+      "oracle_notes": [],
+      "viewed_render_ids": [
+        "f7db678ba72b"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "mixed_unit_summary",
+        "goal": "overview",
+        "variant": "original",
+        "request": "Create an at-a-glance overview of all four supplied trial metrics, retaining each metric's own unit and the trial label. They have different dimensions, so do not put them on a shared quantitative axis or invent a total. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "source_csv_sha256": "43cd05d6e8e195a7371325d2ac3491a3d640f83d44ad93b666c2882d836a078f",
+        "source_row_count": 1,
+        "source_columns": [
+          "window",
+          "completed_jobs",
+          "p95_delay_ms",
+          "utilization_percent",
+          "energy_kwh"
+        ],
+        "units": {
+          "completed_jobs": "jobs",
+          "p95_delay_ms": "ms",
+          "utilization_percent": "%",
+          "energy_kwh": "kWh"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-overview-original/score.json",
+          "sha256": "10bad39d3410ed733ca47c7843dbc3ee54adacb73ab274a7bb02d68f516d2964"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-overview-original/case.json",
+          "sha256": "caca7956c7734e3fcc569cea11b8d8537860e48e6fdf35b43bc072d32947197a"
+        }
+      },
+      "images": [
+        {
+          "render_id": "f7db678ba72b",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-overview-original/renders/f7db678ba72b/chart.png",
+          "sha256": "f21f0a03bcd2c53ea6f61f0fe162321941bb9eca60665a26724b8ee8bcbf4229",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-overview-original/renders/f7db678ba72b/config.json",
+          "config_sha256": "e316e1ad5b06a1058521c5301a866e39159cfc25b79d647f86d9cacd4a5fd3f8",
+          "width": 2400,
+          "height": 1473,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 30.812114166095853,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_f8881376bef74a53a4c78be966cccd62"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The image correctly displays all four trial metrics with their respective values, units, and trial labels as specified in the source data and spec.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "f21f0a03bcd2c53ea6f61f0fe162321941bb9eca60665a26724b8ee8bcbf4229"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 4.063403208041564,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The image correctly displays all four trial metrics with their respective values, units, and trial labels as specified in the source data and spec.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "f21f0a03bcd2c53ea6f61f0fe162321941bb9eca60665a26724b8ee8bcbf4229"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 4.063403208041564,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Done — published artifact **art_f8881376bef74a53a4c78be966cccd62**.\n\n![chart](/renders/f7db678ba72b/chart.png)\n\nThe overview uses four indicator cards, one per supplied metric, each showing its own unit and the trial label (\"Evening trial\") as context — no shared quantitative axis and no invented total:\n\n- **Completed jobs:** 840 jobs\n- **P95 delay:** 185 ms\n- **Utilization:** 73.5 %\n- **Energy use:** 12.6 kWh\n\nData is presented exactly as supplied (1 row, no calculations, sampling, or aggregation). Visual review passed with no findings.",
+      "error": null
+    },
+    {
+      "arm": "baseline",
+      "id": "g05-overview-transformed",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with independently viewed four-card layout.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Four independent KPI cards show840jobs,185ms,73.5%,12.6kWh; every card includes Evening trial.",
+        "Units are distinct, no shared quantitative axis or invented total, all text readable.",
+        "Final response links PNG and repeats values faithfully."
+      ],
+      "oracle_notes": [
+        "For mixed-unit overview both indicators and a complete labelled table are purpose-appropriate; no pixel/format sameness required."
+      ],
+      "viewed_render_ids": [
+        "f4d049d26151"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "mixed_unit_summary",
+        "goal": "overview",
+        "variant": "transformed",
+        "request": "Create an at-a-glance overview of all four supplied trial metrics, retaining each metric's own unit and the trial label. They have different dimensions, so do not put them on a shared quantitative axis or invent a total. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "source_csv_sha256": "5253a42cb19a4cec130e76197590f21062b0d1d914e76fbdcfc3f05d2cf809a0",
+        "source_row_count": 1,
+        "source_columns": [
+          "field_5_5",
+          "field_5_4",
+          "field_5_3",
+          "field_5_2",
+          "field_5_1"
+        ],
+        "units": {
+          "field_5_2": "jobs",
+          "field_5_3": "ms",
+          "field_5_4": "%",
+          "field_5_5": "kWh"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-overview-transformed/score.json",
+          "sha256": "a6c503f35e228228a29afa63038ae27dcb23a7fad948a0e2ec5c0ba70fdcd85e"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-overview-transformed/case.json",
+          "sha256": "1d7d769b4e30eea4b67558e42625ad1aef84ac2b122e98e493583ce5f4429777"
+        }
+      },
+      "images": [
+        {
+          "render_id": "f4d049d26151",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-overview-transformed/renders/f4d049d26151/chart.png",
+          "sha256": "f68662b2a7a6feeea2cdf62a70fc0d945fd3f8ab2e1c832a9482e634c28b60f7",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g05-overview-transformed/renders/f4d049d26151/config.json",
+          "config_sha256": "e72be42d4ec919726ed52a064a1df60e6f072ca662b760471fddd3f612ac7087",
+          "width": 2400,
+          "height": 1341,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 10.424477459047921,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_5627e922d558431f986743beb18607cc"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly displays the four trial metrics with their corresponding values, labels, and units as specified.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.4470127080567181,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly displays the four trial metrics with their corresponding values, labels, and units as specified.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.4470127080567181,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Done — the published overview card shows all four trial metrics for the **Evening trial**, each with its own unit and no shared axis or totals:\n\n![chart](/renders/f4d049d26151/chart.png)\n\n| Energy use (kWh) | Utilization (%) | 95th-percentile delay (ms) | Completed jobs | Trial |\n|---|---|---|---|---|\n| 12.6 | 73.5 | 185 | 840 | Evening trial |\n\nValues are presented exactly as supplied (no aggregation or recomputation), with the trial label on every card. Visual review passed with no findings. Artifact `art_5627e922d558431f986743beb18607cc`.",
+      "error": null
+    },
+    {
+      "arm": "candidate",
+      "id": "g05-overview-transformed",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "fail_delivery",
+      "delivery": "fail",
+      "review_assessment": "Pass consistent with correct image and retained independent units; no visible issue found.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Cards show840jobs,185.0ms,73.5%,12.6kWh with Evening trial. 185.0 equals supplied185; no rounding/conversion error.",
+        "Final response supplies values and artifactID but noPNG or artifactURL, so requested rendered artifact is not linked.",
+        "Final note about missing utilization denominator is extraneous to authoritative prepared percentage; it does not alter the73.5% value."
+      ],
+      "oracle_notes": [
+        "Machine delivered_link failure is supported by final reply; numeric185vs185.0 formatting is not source corruption."
+      ],
+      "viewed_render_ids": [
+        "597a676e5f5d"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "mixed_unit_summary",
+        "goal": "overview",
+        "variant": "transformed",
+        "request": "Create an at-a-glance overview of all four supplied trial metrics, retaining each metric's own unit and the trial label. They have different dimensions, so do not put them on a shared quantitative axis or invent a total. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "source_csv_sha256": "5253a42cb19a4cec130e76197590f21062b0d1d914e76fbdcfc3f05d2cf809a0",
+        "source_row_count": 1,
+        "source_columns": [
+          "field_5_5",
+          "field_5_4",
+          "field_5_3",
+          "field_5_2",
+          "field_5_1"
+        ],
+        "units": {
+          "field_5_2": "jobs",
+          "field_5_3": "ms",
+          "field_5_4": "%",
+          "field_5_5": "kWh"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-overview-transformed/score.json",
+          "sha256": "aa5968696eab91fb82099c917fa285eff59ea644a06616dda619aa60152ce140"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-overview-transformed/case.json",
+          "sha256": "a0fa2a01d6e0db37496cb84ba4d0c5f5702b828c36395de3a4786d1b13329141"
+        }
+      },
+      "images": [
+        {
+          "render_id": "597a676e5f5d",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-overview-transformed/renders/597a676e5f5d/chart.png",
+          "sha256": "b3981f514a364e55d6e7d2456e7a483fc12122544a111d919cc86fcf0c338241",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g05-overview-transformed/renders/597a676e5f5d/config.json",
+          "config_sha256": "09a87f848e7fcccc6a99b9f78aeb31ce6a7df956065e2456400034c29d775d54",
+          "width": 2160,
+          "height": 1560,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 24.112609957926907,
+        "within_60_seconds": true,
+        "framework_requests": 11,
+        "framework_tool_calls": 7,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": false,
+        "diagnostics": [
+          "delivered_link"
+        ],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": false,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_30e2ae5725de4c5d890fe40ae4c31d52"
+      },
+      "execution": {
+        "design_attempts": 2,
+        "render_attempts": 2,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The image correctly renders all four trial metrics with their respective values, units, and labels as specified in the source data and spec.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "b3981f514a364e55d6e7d2456e7a483fc12122544a111d919cc86fcf0c338241"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 2.7824732499429956,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The image correctly renders all four trial metrics with their respective values, units, and labels as specified in the source data and spec.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "b3981f514a364e55d6e7d2456e7a483fc12122544a111d919cc86fcf0c338241"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 2.7824732499429956,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Published **art_30e2ae5725de4c5d890fe40ae4c31d52** — an indicator-card overview of the Evening trial:\n\n- **Completed jobs: 840 jobs**\n- **95th-percentile delay: 185.0 ms** (precomputed, shown as-is)\n- **Utilization: 73.5 %**\n- **Energy use: 12.6 kWh**\n\nEach metric sits on its own card with its own unit and the trial label, so no shared quantitative axis and no invented total. Values are displayed exactly as supplied (no aggregation or recalculation), and the visual review passed. One noted limitation: the source does not state a denominator for utilization, so it's displayed without rescaling.",
+      "error": null
+    },
+    {
+      "arm": "baseline",
+      "id": "g06-demand_rank-original",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with correctly sorted, readable bar chart and literal identifiers.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Top-to-bottom ranking0026=5.1,0017=4.2,0091=3.8,0402=2.5,0700=1.7kW is correct.",
+        "Leading zeros preserved; Wh/transaction not encoded or used for ordering; appropriate graphical comparison.",
+        "Final response links the PNG and faithfully repeats the rank; no unsupported unit or category expansion."
+      ],
+      "oracle_notes": [],
+      "viewed_render_ids": [
+        "b62de15af08c"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "opaque_metric_choice",
+        "goal": "demand_rank",
+        "variant": "original",
+        "request": "Rank the equipment by peak demand, highest first, using a clear graphical comparison. Keep every opaque identifier exactly as supplied, including leading zeros. The per-transaction efficiency metric is not the quantity to rank. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "source_csv_sha256": "842caea2559ec366a61bdfd0e521da7894ce51716989b9801266db68ffb84ec4",
+        "source_row_count": 5,
+        "source_columns": [
+          "unit_id",
+          "peak_kw",
+          "wh_per_transaction"
+        ],
+        "units": {
+          "peak_kw": "kW",
+          "wh_per_transaction": "Wh/transaction"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-demand_rank-original/score.json",
+          "sha256": "9c4806e9b40bb0983c2d9dc4bcdd11cf2fff2354af1e864e4a364f0e8ae0ffae"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-demand_rank-original/case.json",
+          "sha256": "b26616ccb9fadab5887587c91fa4d3e775a7228696f953eb961567674f66767c"
+        }
+      },
+      "images": [
+        {
+          "render_id": "b62de15af08c",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-demand_rank-original/renders/b62de15af08c/chart.png",
+          "sha256": "c79e3a3963e2669217b373c33fecdc0a60df25fbfbbe618ba377e6f3e656e7f2",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-demand_rank-original/renders/b62de15af08c/config.json",
+          "config_sha256": "5680d8b8b4be90ce126592c29715d3e461da96a2407f114e52f845dc2dc1da1c",
+          "width": 2400,
+          "height": 1350,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 72.72057033295278,
+        "within_60_seconds": false,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_a5b1b7ed93b14bc6a0e2a5529869a802"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly ranks the equipment by peak demand in descending order, preserves the leading zeros in the unit IDs, and matches the provided data and specification.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.4518903329735622,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly ranks the equipment by peak demand in descending order, preserves the leading zeros in the unit IDs, and matches the provided data and specification.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.4518903329735622,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Published. The chart is a horizontal bar ranking of the five equipment units by peak demand (kW), highest first: **0026 (5.1 kW) → 0017 (4.2) → 0091 (3.8) → 0402 (2.5) → 0700 (1.7)**. Unit IDs are shown verbatim with leading zeros, English labels, no aggregation or new calculations, and the per-transaction efficiency metric was excluded from the ranking. Review passed with no findings.\n\n![chart](/renders/b62de15af08c/chart.png)",
+      "error": null
+    },
+    {
+      "arm": "candidate",
+      "id": "g06-demand_rank-original",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with correct ranking, literal leading-zero IDs and own kW measure.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Correct descending0026=5.1,0017=4.2,0091=3.8,0402=2.5,0700=1.7kW; Wh/transaction excluded.",
+        "Readable labels/axes, final response includes PNG and complete source-table artifact link."
+      ],
+      "oracle_notes": [],
+      "viewed_render_ids": [
+        "409e5224fa0b"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "opaque_metric_choice",
+        "goal": "demand_rank",
+        "variant": "original",
+        "request": "Rank the equipment by peak demand, highest first, using a clear graphical comparison. Keep every opaque identifier exactly as supplied, including leading zeros. The per-transaction efficiency metric is not the quantity to rank. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "source_csv_sha256": "842caea2559ec366a61bdfd0e521da7894ce51716989b9801266db68ffb84ec4",
+        "source_row_count": 5,
+        "source_columns": [
+          "unit_id",
+          "peak_kw",
+          "wh_per_transaction"
+        ],
+        "units": {
+          "peak_kw": "kW",
+          "wh_per_transaction": "Wh/transaction"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-demand_rank-original/score.json",
+          "sha256": "6578d7f1ec9b360102b49a1153d192896631c336e2d186092f5015489777b834"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-demand_rank-original/case.json",
+          "sha256": "8be6fc4208f5b35d17aa9352047405cda92d6fad1cd48d281fbaf023fa8e9227"
+        }
+      },
+      "images": [
+        {
+          "render_id": "409e5224fa0b",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-demand_rank-original/renders/409e5224fa0b/chart.png",
+          "sha256": "41de081c4e35e80dd22a7f96060ee4304415786072a83b01352fcfaf209d4e81",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-demand_rank-original/renders/409e5224fa0b/config.json",
+          "config_sha256": "532926726307e0662642ceb63c7bfaf8ccde724f2f2eda74f2474e5afe0d89da",
+          "width": 2400,
+          "height": 1350,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 15.3705027080141,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_7fe8539eddac499d90bb52075c5721c7"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly ranks the equipment by peak demand in descending order, preserves the opaque identifiers, and follows all specification requirements.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "41de081c4e35e80dd22a7f96060ee4304415786072a83b01352fcfaf209d4e81"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 3.519693374983035,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly ranks the equipment by peak demand in descending order, preserves the opaque identifiers, and follows all specification requirements.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "41de081c4e35e80dd22a7f96060ee4304415786072a83b01352fcfaf209d4e81"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 3.519693374983035,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Done — the chart is published.\n\n![chart](/renders/409e5224fa0b/chart.png)\n\nA horizontal bar chart ranks the five equipment units by peak demand (kW), highest first: **0026 (5.1) → 0017 (4.2) → 0091 (3.8) → 0402 (2.5) → 0700 (1.7)**.\n\n- Ranking is based solely on peak demand; the per-transaction efficiency metric was excluded from the chart and the ranking.\n- Opaque unit IDs (0017, 0402, 0091, 0700, 0026) are shown exactly as supplied, leading zeros intact.\n- Data is presented as-is — no aggregation, sampling, or new calculations. English labels used throughout.\n- Visual review passed with no findings.\n\nSource table and artifact: [art_7fe8539eddac499d90bb52075c5721c7](/artifacts/art_7fe8539eddac499d90bb52075c5721c7)",
+      "error": null
+    },
+    {
+      "arm": "baseline",
+      "id": "g06-demand_rank-transformed",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with correctly sorted, readable bar chart and literal identifiers.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Top-to-bottom ranking0026=5.1,0017=4.2,0091=3.8,0402=2.5,0700=1.7kW is correct.",
+        "Leading zeros preserved; Wh/transaction not encoded or used for ordering; appropriate graphical comparison.",
+        "Final response links the PNG and faithfully repeats the rank; no unsupported unit or category expansion."
+      ],
+      "oracle_notes": [],
+      "viewed_render_ids": [
+        "407b3204519b"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "opaque_metric_choice",
+        "goal": "demand_rank",
+        "variant": "transformed",
+        "request": "Rank the equipment by peak demand, highest first, using a clear graphical comparison. Keep every opaque identifier exactly as supplied, including leading zeros. The per-transaction efficiency metric is not the quantity to rank. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "source_csv_sha256": "674c3bfd9984f18b2e5f06c7a4ea6ef2a337acec3d1be9272c9c953cc7165df8",
+        "source_row_count": 5,
+        "source_columns": [
+          "field_6_3",
+          "field_6_2",
+          "field_6_1"
+        ],
+        "units": {
+          "field_6_2": "kW",
+          "field_6_3": "Wh/transaction"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-demand_rank-transformed/score.json",
+          "sha256": "c863f3f2643dfe549160a9b03db770893e84da5d7433f8a5a11b28d67e3e6e16"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-demand_rank-transformed/case.json",
+          "sha256": "8ff479b8635ff4990d4085f69814166edc94ccec4b915c1d7165751e36f850df"
+        }
+      },
+      "images": [
+        {
+          "render_id": "407b3204519b",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-demand_rank-transformed/renders/407b3204519b/chart.png",
+          "sha256": "67983d749b5453ed473ca90303acc02311aed5a458af3e3935228e14f1f3fb6d",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-demand_rank-transformed/renders/407b3204519b/config.json",
+          "config_sha256": "55702851b3cf31a97c78f3324e80e1dd0e7ad9fbaeab3d0d5554d55fc2922a68",
+          "width": 1920,
+          "height": 1080,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 29.994384667021222,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_7d3d3fdf5edc48ffabd4af996d5d01d9"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly displays the equipment ranked by peak demand as requested.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.1848728749901056,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly displays the equipment ranked by peak demand as requested.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.1848728749901056,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Published: a horizontal bar chart ranking equipment by peak electrical demand, highest first.\n\n![chart](/renders/407b3204519b/chart.png)\n\n- **Ranking (peak demand, kW):** 0026 (5.1) → 0017 (4.2) → 0091 (3.8) → 0402 (2.5) → 0700 (1.7)\n- Equipment identifiers are shown verbatim with leading zeros; the per-transaction efficiency metric (Wh/transaction) was excluded from the ranking. No aggregation or new calculations were applied — all 5 rows are shown. Review passed with no findings.",
+      "error": null
+    },
+    {
+      "arm": "candidate",
+      "id": "g06-demand_rank-transformed",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with correct ranking, literal leading-zero IDs and own kW measure.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Correct descending0026=5.1,0017=4.2,0091=3.8,0402=2.5,0700=1.7kW; Wh/transaction excluded.",
+        "Readable labels/axes, final response includes PNG and complete source-table artifact link."
+      ],
+      "oracle_notes": [],
+      "viewed_render_ids": [
+        "e2c3eed394ee"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "opaque_metric_choice",
+        "goal": "demand_rank",
+        "variant": "transformed",
+        "request": "Rank the equipment by peak demand, highest first, using a clear graphical comparison. Keep every opaque identifier exactly as supplied, including leading zeros. The per-transaction efficiency metric is not the quantity to rank. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "source_csv_sha256": "674c3bfd9984f18b2e5f06c7a4ea6ef2a337acec3d1be9272c9c953cc7165df8",
+        "source_row_count": 5,
+        "source_columns": [
+          "field_6_3",
+          "field_6_2",
+          "field_6_1"
+        ],
+        "units": {
+          "field_6_2": "kW",
+          "field_6_3": "Wh/transaction"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-demand_rank-transformed/score.json",
+          "sha256": "260f786650fd3b479b2608578c3456ad3d72fca9b6ae80cacafd560d66be51c6"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-demand_rank-transformed/case.json",
+          "sha256": "c1d6ce923fa9618eeb4ba2b6c9025ec01495b0e81bc169be0e28a98624930caf"
+        }
+      },
+      "images": [
+        {
+          "render_id": "e2c3eed394ee",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-demand_rank-transformed/renders/e2c3eed394ee/chart.png",
+          "sha256": "0c46fcacfba44d3203920cb05a1bda0fcef3211ff7457f2202abcbfcda33dad2",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-demand_rank-transformed/renders/e2c3eed394ee/config.json",
+          "config_sha256": "54cfbf91d24ddf3f8f36af19aa34cdf2b2e11aa4fcd577bdf8f4f7df6d40370b",
+          "width": 2400,
+          "height": 1350,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 16.772879792028107,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_d72a33393b354cbf8d8401df0b30ad97"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly ranks the equipment by peak demand in descending order, preserves the opaque identifiers, and matches the provided data and specification.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "0c46fcacfba44d3203920cb05a1bda0fcef3211ff7457f2202abcbfcda33dad2"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 5.616080707986839,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly ranks the equipment by peak demand in descending order, preserves the opaque identifiers, and matches the provided data and specification.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "0c46fcacfba44d3203920cb05a1bda0fcef3211ff7457f2202abcbfcda33dad2"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 5.616080707986839,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Published: a horizontal bar chart ranking equipment by peak demand (kW), highest first — **0026 (5.1 kW) > 0017 (4.2) > 0091 (3.8) > 0402 (2.5) > 0700 (1.7)**. Opaque identifiers display verbatim with leading zeros; the per-transaction efficiency metric was excluded from the ranking, and no data was recalculated. Visual review passed with no findings.\n\n![chart](/renders/e2c3eed394ee/chart.png)\n\n[Complete result table (JSON)](/artifacts/art_d72a33393b354cbf8d8401df0b30ad97)",
+      "error": null
+    },
+    {
+      "arm": "baseline",
+      "id": "g06-efficiency_rank-original",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with accurate lowest-energy-first graphical ranking.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Top-to-bottom0091=1.9,0026=2.1,0017=2.8,0700=3.4,0402=4Wh/transaction.",
+        "Literal leading-zero IDs preserved; neither reciprocal efficiency nor peak demand substituted.",
+        "Axes/value labels readable; final PNG link and tabular ordering correct."
+      ],
+      "oracle_notes": [],
+      "viewed_render_ids": [
+        "7feaf53ff6b9"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "opaque_metric_choice",
+        "goal": "efficiency_rank",
+        "variant": "original",
+        "request": "Rank the equipment by energy efficiency: lowest energy per transaction first. Show the supplied Wh/transaction measurement, not its reciprocal and not peak demand. Keep every opaque identifier literally, including leading zeros. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "source_csv_sha256": "842caea2559ec366a61bdfd0e521da7894ce51716989b9801266db68ffb84ec4",
+        "source_row_count": 5,
+        "source_columns": [
+          "unit_id",
+          "peak_kw",
+          "wh_per_transaction"
+        ],
+        "units": {
+          "peak_kw": "kW",
+          "wh_per_transaction": "Wh/transaction"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-efficiency_rank-original/score.json",
+          "sha256": "ea1a86bf00dfc9ab11f51f72b5e5afd8b0b02dad79a68e5abe6e9fad3b6d1da8"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-efficiency_rank-original/case.json",
+          "sha256": "9b3de4212e3e2e601f0e83dcbbeedb14f235169b52932f23ef4247c0f02a4675"
+        }
+      },
+      "images": [
+        {
+          "render_id": "7feaf53ff6b9",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-efficiency_rank-original/renders/7feaf53ff6b9/chart.png",
+          "sha256": "73d16aed03358e403a6b08cf8bcb4333e9c08d659ecdbbd4d26cc858c4ae9a34",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-efficiency_rank-original/renders/7feaf53ff6b9/config.json",
+          "config_sha256": "aada2a09bd1bcf118004dfcaba07afd876bd8a22e5f40bbdc553fbeac6e4716d",
+          "width": 2400,
+          "height": 1350,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 12.765007916954346,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_b82c0e4beae34580a598d21adb0dc23d"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly ranks the equipment by energy efficiency in ascending order of Wh/transaction, with all labels and values matching the provided data.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.742960250005126,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly ranks the equipment by energy efficiency in ascending order of Wh/transaction, with all labels and values matching the provided data.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.742960250005126,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "![chart](/renders/7feaf53ff6b9/chart.png)\n\n**Equipment ranked by energy efficiency** — horizontal bar chart sorted ascending by the supplied Wh/transaction measurement, with the most efficient unit (0091, 1.9 Wh/transaction) first. Identifiers are kept literally with leading zeros; peak demand is not encoded, per your instructions.\n\n| Equipment unit ID | Energy per transaction (Wh/transaction) |\n|---|---|\n| 0091 | 1.9 |\n| 0026 | 2.1 |\n| 0017 | 2.8 |\n| 0700 | 3.4 |\n| 0402 | 4.0 |\n\nReview passed with no findings. Artifact: art_b82c0e4beae34580a598d21adb0dc23d.",
+      "error": null
+    },
+    {
+      "arm": "candidate",
+      "id": "g06-efficiency_rank-original",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with independent image audit; no unwarranted repair.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Correct ascending energy ranking0091=1.9,0026=2.1,0017=2.8,0700=3.4,0402=4Wh/transaction; literal IDs retained.",
+        "Readable axes/values; no peak-demand or reciprocal substitution.",
+        "PNG and complete source links included; ranking in final response accurate."
+      ],
+      "oracle_notes": [],
+      "viewed_render_ids": [
+        "fef06f83a23e"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "opaque_metric_choice",
+        "goal": "efficiency_rank",
+        "variant": "original",
+        "request": "Rank the equipment by energy efficiency: lowest energy per transaction first. Show the supplied Wh/transaction measurement, not its reciprocal and not peak demand. Keep every opaque identifier literally, including leading zeros. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "source_csv_sha256": "842caea2559ec366a61bdfd0e521da7894ce51716989b9801266db68ffb84ec4",
+        "source_row_count": 5,
+        "source_columns": [
+          "unit_id",
+          "peak_kw",
+          "wh_per_transaction"
+        ],
+        "units": {
+          "peak_kw": "kW",
+          "wh_per_transaction": "Wh/transaction"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-efficiency_rank-original/score.json",
+          "sha256": "35c3e877e0ab693d5b387024eb797b7b45c3010c62e918da56a43e99f2e8a627"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-efficiency_rank-original/case.json",
+          "sha256": "f414ebfe783ff4740d54370bfc54fde3311328e30ab7ee98caa9923b50afe114"
+        }
+      },
+      "images": [
+        {
+          "render_id": "fef06f83a23e",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-efficiency_rank-original/renders/fef06f83a23e/chart.png",
+          "sha256": "7ffa991819fc51ea777dad2046c2e73beb72e155ebe4527343b58832292e37d9",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-efficiency_rank-original/renders/fef06f83a23e/config.json",
+          "config_sha256": "764ccea526ba0b9aa903ae40b540ef2dd860c1d91b427f6a204f7864115f3d63",
+          "width": 2400,
+          "height": 1350,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 13.112549249897711,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_bc8ec3ceb695473da06ea066713f7489"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly represents the data, sorting and labeling the equipment by energy efficiency as requested.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "7ffa991819fc51ea777dad2046c2e73beb72e155ebe4527343b58832292e37d9"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 3.1383643340086564,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly represents the data, sorting and labeling the equipment by energy efficiency as requested.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "7ffa991819fc51ea777dad2046c2e73beb72e155ebe4527343b58832292e37d9"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 3.1383643340086564,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Done — published artifact with the rendered chart and source data:\n\n![chart](/renders/fef06f83a23e/chart.png)\n\nHorizontal bars rank the five equipment units by the supplied Wh/transaction, ascending — most efficient first: 0091 (1.9), 0026 (2.1), 0017 (2.8), 0700 (3.4), 0402 (4.0). Identifiers are kept literally with leading zeros; peak demand is not encoded. Reviewer verdict: pass. Full table: [artifact link](/artifacts/art_bc8ec3ceb695473da06ea066713f7489)",
+      "error": null
+    },
+    {
+      "arm": "baseline",
+      "id": "g06-efficiency_rank-transformed",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with accurate lowest-energy-first graphical ranking.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Top-to-bottom0091=1.9,0026=2.1,0017=2.8,0700=3.4,0402=4Wh/transaction.",
+        "Literal leading-zero IDs preserved; neither reciprocal efficiency nor peak demand substituted.",
+        "Axes/value labels readable; final PNG link and tabular ordering correct."
+      ],
+      "oracle_notes": [],
+      "viewed_render_ids": [
+        "b797df996b48"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "opaque_metric_choice",
+        "goal": "efficiency_rank",
+        "variant": "transformed",
+        "request": "Rank the equipment by energy efficiency: lowest energy per transaction first. Show the supplied Wh/transaction measurement, not its reciprocal and not peak demand. Keep every opaque identifier literally, including leading zeros. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "source_csv_sha256": "674c3bfd9984f18b2e5f06c7a4ea6ef2a337acec3d1be9272c9c953cc7165df8",
+        "source_row_count": 5,
+        "source_columns": [
+          "field_6_3",
+          "field_6_2",
+          "field_6_1"
+        ],
+        "units": {
+          "field_6_2": "kW",
+          "field_6_3": "Wh/transaction"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-efficiency_rank-transformed/score.json",
+          "sha256": "05ba706cc39f16fba1054ea7ce50341ffac81c78b3dac98e7ae15c6a89586b61"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-efficiency_rank-transformed/case.json",
+          "sha256": "0b4a1f19905fa2b896ccc841e3021909b62c87e462d96d09205e13660604e95d"
+        }
+      },
+      "images": [
+        {
+          "render_id": "b797df996b48",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-efficiency_rank-transformed/renders/b797df996b48/chart.png",
+          "sha256": "d68e2d3a8eb0f64bee968491b84aa67b98799a0e9f47034264ca49b7c3513cc5",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-baseline/g06-efficiency_rank-transformed/renders/b797df996b48/config.json",
+          "config_sha256": "c17f424618e3db77fb90041b1dde82c5f07af7e69dc38618913375b7a45d5d92",
+          "width": 2400,
+          "height": 1350,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 11.062219416955486,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_9d7a9bb9b1d14852b61aa3ae70e840ef"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly ranks the equipment by energy efficiency in ascending order of Wh/transaction, with all labels and values matching the provided data.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.7459823749959469,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly ranks the equipment by energy efficiency in ascending order of Wh/transaction, with all labels and values matching the provided data.",
+            "findings": []
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 1.7459823749959469,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Done — the ranking is published.\n\n![chart](/renders/b797df996b48/chart.png)\n\n**Equipment Ranked by Energy Efficiency** (most efficient first):\n\n| Rank | Equipment ID | Energy per transaction (Wh/transaction) |\n|---|---|---|\n| 1 | 0091 | 1.9 |\n| 2 | 0026 | 2.1 |\n| 3 | 0017 | 2.8 |\n| 4 | 0700 | 3.4 |\n| 5 | 0402 | 4.0 |\n\n- The chart shows the supplied **Wh/transaction** measure only — no reciprocal and no peak demand encoding.\n- Opaque equipment identifiers (e.g. `0091`, `0402`) are kept literally with leading zeros preserved.\n- No recalculations, sampling, or aggregation were applied; the CSV is presented as-is.\n- Review passed with no findings. Artifact: `art_9d7a9bb9b1d14852b61aa3ae70e840ef`",
+      "error": null
+    },
+    {
+      "arm": "candidate",
+      "id": "g06-efficiency_rank-transformed",
+      "first_visual": "pass",
+      "last_visual": "pass",
+      "task_audit": "pass",
+      "delivery": "pass",
+      "review_assessment": "Pass consistent with independent image audit; no unwarranted repair.",
+      "unnecessary_repair": false,
+      "observations": [
+        "Correct ascending energy ranking0091=1.9,0026=2.1,0017=2.8,0700=3.4,0402=4Wh/transaction; literal IDs retained.",
+        "Readable axes/values; no peak-demand or reciprocal substitution.",
+        "PNG and complete source links included; ranking in final response accurate."
+      ],
+      "oracle_notes": [],
+      "viewed_render_ids": [
+        "bf1092d4af08"
+      ],
+      "uncertainty": [],
+      "task": {
+        "family": "opaque_metric_choice",
+        "goal": "efficiency_rank",
+        "variant": "transformed",
+        "request": "Rank the equipment by energy efficiency: lowest energy per transaction first. Show the supplied Wh/transaction measurement, not its reciprocal and not peak demand. Keep every opaque identifier literally, including leading zeros. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "source_csv_sha256": "674c3bfd9984f18b2e5f06c7a4ea6ef2a337acec3d1be9272c9c953cc7165df8",
+        "source_row_count": 5,
+        "source_columns": [
+          "field_6_3",
+          "field_6_2",
+          "field_6_1"
+        ],
+        "units": {
+          "field_6_2": "kW",
+          "field_6_3": "Wh/transaction"
+        }
+      },
+      "files": {
+        "score": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-efficiency_rank-transformed/score.json",
+          "sha256": "4d81acd8a73bab2ed4b4fe70ee9b61de4adeb117ded3a913a4d04fca74e0b06a"
+        },
+        "case": {
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-efficiency_rank-transformed/case.json",
+          "sha256": "b80946ec5ab34768196c6a68f60151f76a2d3442d658bbe9ed79e162fb06e4f3"
+        }
+      },
+      "images": [
+        {
+          "render_id": "bf1092d4af08",
+          "stage": "first_render",
+          "path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-efficiency_rank-transformed/renders/bf1092d4af08/chart.png",
+          "sha256": "23adfad72c8746df8a794174b1d95dea5a94cebe3deced4281d4751a7636419c",
+          "config_path": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization/results-candidate/g06-efficiency_rank-transformed/renders/bf1092d4af08/config.json",
+          "config_sha256": "8de072d3ee621fb50404af6a51d3cce13e2e5071d0e809f1be2a24455eabb79a",
+          "width": 2400,
+          "height": 1350,
+          "visually_inspected": true,
+          "score_hash_matches": true
+        }
+      ],
+      "measured": {
+        "seconds": 54.1441682089353,
+        "within_60_seconds": true,
+        "framework_requests": 8,
+        "framework_tool_calls": 5,
+        "provider_attempt_count_complete": false,
+        "attempt_count_note": "Framework usage may omit an in-flight cancelled provider attempt; timeouts remain failures.",
+        "timed_out": false,
+        "error": null
+      },
+      "machine_contract": {
+        "pass": true,
+        "diagnostics": [],
+        "checks": {
+          "artifact_persisted": true,
+          "source_fidelity": true,
+          "source_units": true,
+          "chart_appropriate": true,
+          "bindings": true,
+          "visible_fields": true,
+          "measure_selection": true,
+          "literal_codes": true,
+          "no_unrequested_limit": true,
+          "sort": true,
+          "render_file": true,
+          "delivered_link": true,
+          "final_reply": true,
+          "completed": true
+        },
+        "visual_quality_verified": false,
+        "artifact_id": "art_d9314b2a00a042398aa8cc0a23766276"
+      },
+      "execution": {
+        "design_attempts": 1,
+        "render_attempts": 1,
+        "visual_repair_attempts": 0,
+        "request_count": 1
+      },
+      "online_review": {
+        "score_summary": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly ranks the equipment by energy efficiency (lowest Wh/transaction first), preserves leading zeros in identifiers, and matches the provided data and specification.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "23adfad72c8746df8a794174b1d95dea5a94cebe3deced4281d4751a7636419c"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 2.5745392499957234,
+          "requests": 1,
+          "rounds": []
+        },
+        "latest_saved_request_review": {
+          "status": "reviewed",
+          "verdict": "pass",
+          "review": {
+            "verdict": "pass",
+            "summary": "The chart correctly ranks the equipment by energy efficiency (lowest Wh/transaction first), preserves leading zeros in identifiers, and matches the provided data and specification.",
+            "findings": [],
+            "evidence": [],
+            "uncertainties": [],
+            "image_id": "23adfad72c8746df8a794174b1d95dea5a94cebe3deced4281d4751a7636419c"
+          },
+          "model": "google/gemma-4-31b-it",
+          "warnings": [],
+          "seconds": 2.5745392499957234,
+          "requests": 1
+        },
+        "prior_saved_round_reviews": []
+      },
+      "final_reply": "Done. The chart ranks the five equipment units by the supplied energy-per-transaction measurement, lowest (most efficient) first: **0091 (1.9), 0026 (2.1), 0017 (2.8), 0700 (3.4), 0402 (4.0) Wh/transaction**.\n\n![chart](/renders/bf1092d4af08/chart.png)\n\nAs required, it encodes only the Wh/transaction measure (not its reciprocal or peak demand), keeps identifiers literal with leading zeros, and uses English labels. Review passed with no findings. Source data: [complete result table](/artifacts/art_d9314b2a00a042398aa8cc0a23766276).",
+      "error": null
+    }
+  ]
+}

@@ -6,11 +6,11 @@ from pydantic_ai.models.openrouter import OpenRouterModel
 from starlette.applications import Starlette
 from starlette.testclient import TestClient
 
-from vis_agent.analyst.agent import create_analyst
+from vis_agent.analyst.agent import DEFAULT_ANALYST_MODEL, create_analyst
 from vis_agent.deps import AppDeps
-from vis_agent.designer.agent import create_designer
+from vis_agent.designer.agent import DEFAULT_DESIGNER_MODEL, create_designer
 from vis_agent.lead import create_lead
-from vis_agent.profiler.agent import create_profiler
+from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, create_profiler
 from vis_agent.providers import DEFAULT_LEAD_MODEL, Team, add_chat_route, teams_from_env
 from vis_agent.requests.store import RequestStore
 
@@ -141,12 +141,21 @@ def test_teams_from_env_offers_openrouter_only_when_its_key_is_set(store, monkey
     monkeypatch.delenv("LITELLM_BASE_URL", raising=False)
     teams = teams_from_env(store, RequestStore(store))
     assert [team.label for team in teams] == ["OpenRouter"]
-    assert DEFAULT_LEAD_MODEL == "openrouter:z-ai/glm-5.3-flash"
+    assert DEFAULT_LEAD_MODEL == "openrouter:z-ai/glm-5.3"
     assert teams[0].model_id == DEFAULT_LEAD_MODEL
     assert isinstance(teams[0].lead.model, OpenRouterModel)
     assert teams[0].deps.lead is teams[0].lead
     assert teams[0].lead.model_settings["openrouter_reasoning"] == {"effort": "low"}
-    assert teams[0].lead.model_settings["openrouter_provider"] == {"sort": "latency", "require_parameters": True}
+    assert teams[0].lead.model_settings["openrouter_provider"] == {"require_parameters": True}
+    assert DEFAULT_PROFILER_MODEL == DEFAULT_ANALYST_MODEL == "openrouter:z-ai/glm-5.3"
+    assert DEFAULT_DESIGNER_MODEL == "openrouter:deepseek/deepseek-v4-pro"
+    assert teams[0].deps.designer.model.model_name == "deepseek/deepseek-v4-pro"
+    assert teams[0].deps.designer.model_settings["thinking"] is False
+    assert teams[0].deps.designer_fallback.model.model_name == "deepseek/deepseek-v4-pro"
+    assert teams[0].deps.analyst.model_settings["openrouter_reasoning"] == {"effort": "low"}
+    assert teams[0].deps.profiler.model_settings["openrouter_reasoning"] == {"effort": "low"}
+    assert teams[0].deps.reviewer.model.model_name == "google/gemma-4-31b-it"
+    assert teams[0].deps.reviewer.model_settings == {"thinking": False, "temperature": 0.0}
 
 
 def test_openrouter_lead_model_can_be_overridden(store, monkeypatch):

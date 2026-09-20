@@ -1,0 +1,374 @@
+[
+  {
+    "rollout": 18,
+    "case_id": "corpus-vizcsv-61793ff199102633",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Both prepared rates 13.19 and 7.17 remain per 100, correctly paired with education groups; readable RTL columns and truthful final reply. Repeated long unit ticks are verbose but not a defect. One render, no repair; 10.02s.",
+    "images": [
+      {
+        "render_id": "4626575442cc",
+        "sha256": "11278d5aa4f747823c73e86b3c75c840a35f629c06b77af9c1d32d32966022a5",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 19,
+    "case_id": "corpus-vizcsv-3dda20f66cddb9da",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Requested population-count indicator clearly shows 671, with no invented geography/time claim. One render, no repair; 8.31s.",
+    "images": [
+      {
+        "render_id": "57e6bcd49f22",
+        "sha256": "cafa38f4bc885fdea8d7fd1a70a410ff6bd6714d773b56e697077d68a44cc089",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 20,
+    "case_id": "corpus-vizcsv-8b3fd04765e40d3a",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Requested total_count title and zero are explicit/readable; no invented port or transport story. One render, no repair; 8.28s.",
+    "images": [
+      {
+        "render_id": "cb60b25f3f70",
+        "sha256": "cb3900d753a21458999a4e83f35807239fd532a80f06b16bb186c20768f69f12",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 21,
+    "case_id": "corpus-vizcsv-00754e9ed454a58b",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "no_image",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Initial accepted indicator spec height 220 failed rendering with minimum 280 diagnostic. Lead changed only height to 320; sole retained PNG is the successful retry. Shows 13.93% headline and exact 13.926325247079964% support line. Source exact, units correct, all readable. Technical retry was necessary after failure but preflight could avoid the extra calls; not a futile visual repair. 12.87s.",
+    "images": [
+      {
+        "render_id": "cd68e85a8328",
+        "sha256": "fdbfe3bc312d8bf868bd5211cc3ea47bfc8e8fa8a6b078c88f6dbcaac5fc15b4",
+        "phase": "repair_after_failed_render",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 22,
+    "case_id": "corpus-vizcsv-010c162b92ef3206",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Line preserves all 11 chronological year/count pairs, including 2025=461. Values/labels readable and final prose explicitly avoids interpreting the drop. Internal saved designer explanation calls 2025 partial without source support; that claim does not appear in PNG or final reply, so recorded as artifact-semantic caveat rather than final-task failure. 27.19s.",
+    "images": [
+      {
+        "render_id": "16aab8b2e45a",
+        "sha256": "33969b2c6cb54f62a6b95844d3d5f2cff307249bc7f59823f4979b183c3f6e13",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 23,
+    "case_id": "corpus-vizcsv-03384a96e9fe5870",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": true,
+    "unnecessary_repair": true,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Complete readable 51-row airport/destination/count table; renderer data exactly matches all source rows and original order. Inspector falsely claims extra Tunisia/Albania/Chad rows: Tunisia=708 exists at source row 31, just outside reviewer first-30 partial context; Albania/Chad are absent from source, context and image. No-op redesign retained identical PNG. Published artifact exists, but final reply has no image or artifact link and does not deliver the table. 51.15s total; the false finding induces unnecessary work, but available stage metadata does not isolate its share of total latency. Raw numeric gate also fails; no raw score changed.",
+    "images": [
+      {
+        "render_id": "1c21d0f8cc62",
+        "sha256": "6467747f6df85b1238d44751a8c52946400efa5a6a8e88ace0ec5b7049d860fa",
+        "phase": "first_and_final_noop_repair",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 24,
+    "case_id": "corpus-vizcsv-09050180d3961b03",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Appropriate one-row mixed-field table. Missing percentage appears as a dash, not zero; both count zeros and exact snapshot date 2026-02-01 are legible. Final reply explicitly preserves missingness and delivers image plus source row. One render; 40.12s.",
+    "images": [
+      {
+        "render_id": "ac5fa6d4140a",
+        "sha256": "231887cda3a4561840f9c43d335e443cf1d4bf782a1c1a20591887679763345b",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 25,
+    "case_id": "corpus-vizcsv-1706fb33ef7fd300",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "fail",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "First dual_axes image omits all of 2016, including its valid count 211, because growth is null; renderer explicitly reports dropped_rows=1. Correct reviewer rejection triggers a necessary table fallback. Final complete 10-row table preserves years, missing first growth and every negative growth value; saved source remains exact. Table years are cosmetically comma-formatted, not changed identities. 33.87s, 14 requests.",
+    "images": [
+      {
+        "render_id": "b9786ebdac44",
+        "sha256": "366741597f5dc195f10979339495d82ebe1ffb837e5c834d6167654115e40ca2",
+        "phase": "first",
+        "verdict": "fail"
+      },
+      {
+        "render_id": "e48b21c97346",
+        "sha256": "afddfb5b10cf7834a0824c47441490312390cdd7c3e6613f562cc0379b1c7c3f",
+        "phase": "repair",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 26,
+    "case_id": "corpus-vizcsv-07d3a923817c343d",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "fail",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": true,
+    "unnecessary_repair": true,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Both images preserve all five source category/value pairs on distinct scales; X labels are complete, not bottom-clipped as Gemma twice claims. First PNG has a minor left-title/legend-marker intersection, not the reported X-label defect. Unnecessary resize produces a 9600x5400 PNG with very small text when fitted to normal width; labels are complete at larger inspection resolution, but no UI readability test performed. Five design tool calls yield only two actual designs; two calls lack repair direction and the last exceeds the one-repair cap. 18 requests, 79.18s; designers consume 28.53s+14.64s, so delay is not solely reviewer latency. Final source table is complete but lead invents years as average_age's unit despite explicit no-unit-invention brief; this causes semantic task failure independently of missing final PNG link. Artifact is persisted; no infinite loop.",
+    "images": [
+      {
+        "render_id": "b0d3929f78a9",
+        "sha256": "cca03838e8ea95408ba8b14d627de02c8b0fe48ddcc7a7f314a4595c6792ae51",
+        "phase": "first",
+        "verdict": "pass"
+      },
+      {
+        "render_id": "520bf8daaec3",
+        "sha256": "cab076fa283403e28f58d14ec1132dabb29be8bade84d80a22846c46dac92b0d",
+        "phase": "repair",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 27,
+    "case_id": "corpus-vizcsv-099ca8ed3f245957",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": true,
+    "unnecessary_repair": false,
+    "final_delivery": false,
+    "task_correct": "pass",
+    "notes": "First design improperly translated Alien/Saudi despite literal-preservation direction; lead removes valueLabels before rendering. That semantic correction is necessary, not an unnecessary visual repair. Sole PNG accurately pairs Alien=2815 and Saudi=2750, with readable Arabic headings. Reviewer falsely rejects category order/English literals and confuses columnLabels with category translations; lead appropriately declines that change. Published PNG/HTML exist, final PNG link is missing, but the complete faithful two-row Markdown table fulfills the allowed presentation semantics. Automated delivery/review gates still fail unchanged. 18.19s, 10 requests.",
+    "images": [
+      {
+        "render_id": "87ab19b4888c",
+        "sha256": "faccf0fd28174e396ad8471a08bc05798a8510b9c2a2e919fcb797b44f3a7e7e",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 28,
+    "case_id": "corpus-vizcsv-ac951afc1e53d382",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": false,
+    "task_correct": "pass",
+    "notes": "Appropriate complete eight-row text table; no invented measure or counts. Correct PNG/HTML persisted and reviewer passes. Final reply supplies all eight exact region strings in a complete Markdown table but omits PNG link. Therefore final_delivery=false under the explicit image-link definition while substantive text-table task presentation passes. Automated strict result remains fail solely for missing image link. 11.02s, 8 requests.",
+    "images": [
+      {
+        "render_id": "b74a816e6ad4",
+        "sha256": "f844feedfed5a8a894b2c9d8474a2592ccf7a5dbb2f07c1d0ce08cd4a2a218ce",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 29,
+    "case_id": "corpus-vizcsv-061a265236a642ce",
+    "task_type": "boundary",
+    "chart_suitable": "not_applicable",
+    "source_roles_faithful": "not_applicable",
+    "first_render_visual": "no_image",
+    "final_render_visual": "no_image",
+    "reviewer_false_rejection": null,
+    "unnecessary_repair": false,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Correct single draw stop: 22208 rows exceed direct source cap 10000; no partial chart, aggregation, retry or specialist calls. Automated strict-pass measures technical boundary success, not chart success. However final recommendation says owner must split the file or supply a pre-summarized table, contrary to explicit instruction not to request new data. This is an implicit new-data demand without an ask_user tool, not a false statement about row count. No PNG is expected; final_delivery=false is not the failure reason. 3.48s, 2 requests.",
+    "images": []
+  },
+  {
+    "rollout": 30,
+    "case_id": "corpus-vizcsv-1240bc417714a3e6",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "fail",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "fail",
+    "notes": "Complete readable 16-row mixed-unit table is the correct representation; all five columns, counts, repeated totals and prepared percentages remain intact. But designer adds unapproved M->ذكور and F->إناث valueLabels; source/brief supply literal codes with no codebook and explicitly forbid invented meanings. Image and final prose assert that decoding. The image follows its spec, so the scoped visual reviewer can legitimately pass; overall automated strict-pass misses the upstream semantic violation. This belongs to lead/designer intent fidelity, not a request to expand visual-review scope. 15.30s, 9 requests.",
+    "images": [
+      {
+        "render_id": "fd3f8ea685bd",
+        "sha256": "93003dd2186d7675169e1d09063f5662f1003337f6fee2522d4683bfee0f5257",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 31,
+    "case_id": "corpus-vizcsv-7a6c7f323afafbe3",
+    "task_type": "boundary",
+    "chart_suitable": "not_applicable",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "no_image",
+    "final_render_visual": "no_image",
+    "reviewer_false_rejection": null,
+    "unnecessary_repair": false,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Correctly avoids quantitative chart and preserves all 1000 app_name values, duplicates and order in saved artifact; exact source-column equality verified without exposing geometry. Table render hits 30038px vs 2400px technical bound and publishes no-chart fallback once. Final unsupported claim says all 1000 rows are available by scrolling published card. Actual returned LeadArtifact has 50 rows; card is static Markdown with 20/1000 rows, no linked full table. Full rows exist in saved artifact/API, but final reply supplies neither artifact link nor table link, and no UI was tested. Failure is unsupported full-scroll delivery claim, not harmless viewport clipping or missing PNG. 13.32s, 6 requests.",
+    "images": []
+  },
+  {
+    "rollout": 32,
+    "case_id": "corpus-vizcsv-18c8e508976a1ff7",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Single-value indicator clearly shows 2768 with supplied male_population meaning. Exact source, readable heading/context, no invented time or geography. Final image and complete one-value table delivered. 8.15s, 8 requests.",
+    "images": [
+      {
+        "render_id": "a071cd38d495",
+        "sha256": "cfabd7b25cae127bf72dbd4289fec3b14ed48405b6dd990475f77b1969c27b8c",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 33,
+    "case_id": "corpus-vizcsv-245c6996f0f23a81",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Readable correct M=2768/F=2797 columns retain undefined source codes. Lead created draw question in English and first design inherited English language despite Arabic user brief; a necessary pre-render redesign restores Arabic headings. Sole retained PNG and final reply preserve codes without decoding. No post-image repair. 14.10s, 10 requests.",
+    "images": [
+      {
+        "render_id": "1a32d2a640df",
+        "sha256": "028012345716f08352e51f43c110ce9ceae7e6195f85a13143a5bc05286f0a23",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 34,
+    "case_id": "corpus-vizcsv-442a491c20867c73",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "All seven age/count pairs are readable, including 65+=620. Source descending-count order is preserved right-to-left, not chronological age order; this is permissible categorical value sorting. Internal designer explanation incorrectly calls it ascending age, but final reply only claims source order and is correct. Reviewer pass carries inaccurate cosmetic warning: bilingual Arabic+technical Y title matches explicit spec, not a missing Arabic title. No unnecessary repair from warning. 41.50s, 9 requests.",
+    "images": [
+      {
+        "render_id": "7bafd96703a7",
+        "sha256": "3065bdc7764f15e4ef686fb6e608ec8205eedffce6a6ec455bd1e4ba17b876a8",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  }
+]

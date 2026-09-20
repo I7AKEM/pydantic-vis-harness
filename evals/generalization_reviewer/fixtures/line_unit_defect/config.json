@@ -1,0 +1,268 @@
+{
+  "gptvis": {
+    "type": "line",
+    "theme": "default",
+    "width": 960,
+    "height": 640,
+    "title": "Pressure by run",
+    "axisXTitle": "Run",
+    "axisYTitle": "Pressure (psi)",
+    "style": {
+      "palette": [
+        "#1783FF"
+      ],
+      "startAtZero": true
+    },
+    "data": [
+      {
+        "value": 120,
+        "time": "Run 1"
+      },
+      {
+        "value": 180,
+        "time": "Run 2"
+      },
+      {
+        "value": 150,
+        "time": "Run 3"
+      },
+      {
+        "value": 210,
+        "time": "Run 4"
+      }
+    ]
+  },
+  "overrides": {},
+  "number": {
+    "thousands": true,
+    "decimals": null,
+    "compact": false,
+    "unit": "kPa",
+    "digits": "western"
+  },
+  "g2": {
+    "devicePixelRatio": 3,
+    "type": "view",
+    "title": {
+      "title": "Pressure by run"
+    },
+    "data": [
+      {
+        "value": 120,
+        "time": "Run 1"
+      },
+      {
+        "value": 180,
+        "time": "Run 2"
+      },
+      {
+        "value": 150,
+        "time": "Run 3"
+      },
+      {
+        "value": 210,
+        "time": "Run 4"
+      }
+    ],
+    "width": 960,
+    "height": 640,
+    "encode": {
+      "x": "time",
+      "y": "value"
+    },
+    "theme": {
+      "type": "light",
+      "view": {
+        "viewFill": "#FFF",
+        "plotFill": "transparent",
+        "mainFill": "transparent",
+        "contentFill": "transparent"
+      },
+      "interval": {
+        "rect": {
+          "fillOpacity": 0.8
+        }
+      },
+      "line": {
+        "line": {
+          "lineWidth": 2
+        }
+      },
+      "area": {
+        "area": {
+          "fillOpacity": 0.6
+        }
+      },
+      "point": {
+        "point": {
+          "lineWidth": 1
+        }
+      }
+    },
+    "style": {
+      "minHeight": 1
+    },
+    "axis": {
+      "y": {
+        "title": "Pressure (psi)",
+        "labelFormatter": {
+          "$format": "value"
+        }
+      },
+      "x": {
+        "title": "Run",
+        "labelFormatter": {
+          "$display": {
+            "kind": "value",
+            "field": "time"
+          }
+        }
+      }
+    },
+    "children": [
+      {
+        "type": "line",
+        "style": {
+          "lineWidth": 2,
+          "stroke": "#1783FF"
+        },
+        "labels": [
+          {
+            "text": "value",
+            "style": {
+              "textAlign": "center",
+              "dy": -12
+            },
+            "transform": [
+              {
+                "type": "overlapHide"
+              }
+            ],
+            "formatter": {
+              "$format": "value"
+            }
+          }
+        ],
+        "axis": {
+          "x": {
+            "labelFormatter": {
+              "$display": {
+                "kind": "value",
+                "field": "time"
+              }
+            }
+          }
+        },
+        "tooltip": {
+          "title": {
+            "$display": {
+              "kind": "datum",
+              "field": "time"
+            }
+          },
+          "items": [
+            {
+              "$display": {
+                "kind": "tooltip",
+                "field": "time"
+              }
+            },
+            {
+              "$display": {
+                "kind": "tooltip",
+                "field": "value",
+                "numeric": "value"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "point",
+        "encode": {
+          "shape": "point"
+        },
+        "style": {
+          "fill": "white",
+          "lineWidth": 1,
+          "stroke": "#1783FF"
+        },
+        "axis": {
+          "x": {
+            "labelFormatter": {
+              "$display": {
+                "kind": "value",
+                "field": "time"
+              }
+            }
+          }
+        },
+        "tooltip": {
+          "title": {
+            "$display": {
+              "kind": "datum",
+              "field": "time"
+            }
+          },
+          "items": [
+            {
+              "$display": {
+                "kind": "tooltip",
+                "field": "time"
+              }
+            },
+            {
+              "$display": {
+                "kind": "tooltip",
+                "field": "value",
+                "numeric": "value"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "scale": {
+      "y": {
+        "nice": true,
+        "zero": true
+      }
+    },
+    "tooltip": {
+      "title": {
+        "$display": {
+          "kind": "datum",
+          "field": "time"
+        }
+      },
+      "items": [
+        {
+          "$display": {
+            "kind": "tooltip",
+            "field": "time"
+          }
+        },
+        {
+          "$display": {
+            "kind": "tooltip",
+            "field": "value",
+            "numeric": "value"
+          }
+        }
+      ]
+    },
+    "marginBottom": 24
+  },
+  "number2": null,
+  "tableFormats": {},
+  "display": {
+    "fields": {
+      "time": {}
+    },
+    "columns": {
+      "value": "pressure",
+      "time": "run"
+    }
+  },
+  "functionPaths": []
+}

@@ -34,6 +34,14 @@ KNOWN_PROBLEMS = (
     "label_overlap", "legend_overlap", "clipping", "low_contrast", "too_many_categories",
 )
 
+PROBLEM_CONFIG = {
+    "label_overlap": {"labels", "width", "height", "format"},
+    "clipping": {"labels", "width", "height", "format"},
+    "legend_overlap": {"legend", "width", "height"},
+    "low_contrast": {"palette", "backgroundColor"},
+    "too_many_categories": {"sort", "limit", "other"},
+}
+
 
 def accepted_keys(entry: CatalogueEntry) -> set[str]:
     """Return the keys the runtime validator accepts for this internal chart type."""
@@ -163,6 +171,10 @@ def _config_schema(keys: set[str]) -> dict:
             item["roles"] = list(models.ROLES)
         elif key == "format":
             item["example"] = "0,0.00 SAR, 0.0%, or 0k"
+        elif key == "innerRadius":
+            item.update(minimum=0, maximum=1, unit="dimensionless ratio", example=0.6,
+                        note="Pinned SSR pie API uses a 0–1 radius ratio, not a percentage or pixel count. "
+                             "The harness rejects out-of-range values instead of letting the library clamp them.")
         elif key in {"palette", "backgroundColor"}:
             item["value"] = "3- or 6-digit hex colour"
         result[key] = item
@@ -197,6 +209,30 @@ def _chart_summary(entry: CatalogueEntry, renderer: str, problem: str = "") -> d
     }
 
 
+def _problem_summary(entry: CatalogueEntry, renderer: str, problem: str) -> dict:
+    """Return only the executable facts needed to repair one named visual problem."""
+    full = _chart_summary(entry, renderer, problem)
+    wanted = _normalise_problem(problem)
+    relevant = accepted_keys(entry) & PROBLEM_CONFIG.get(wanted, set())
+    return {
+        "chart_type": full["chart_type"],
+        "renderer": full["renderer"],
+        "repair_config_schema": _config_schema(relevant),
+        "repairs": full["repairs"],
+        "unsupported_repairs": full["unsupported_repairs"],
+        "detail_hint": "Call again without `problem` only if the complete configuration schema is needed.",
+    }
+
+
+def _compact_provenance(package: dict) -> dict:
+    return {
+        "package": package["name"],
+        "pinned_version": package["pinned_version"],
+        "installed_version": package["installed_version"],
+        "official_skill": OFFICIAL_SKILL["repository"],
+    }
+
+
 def chart_capabilities(chart_type: str = "", problem: str = "") -> dict:
     """Inspect executable chart configuration and renderer support.
 
@@ -208,7 +244,7 @@ def chart_capabilities(chart_type: str = "", problem: str = "") -> dict:
     package = _renderer_package()
     native_types = _installed_native_types()
     renderer_targets = {entry.draw.type for entry in CATALOGUE.entries if entry.name != "indicator"}
-    base = {
+    inventory = {
         "renderer": "gptvis",
         "package": package,
         "installed_native_types": native_types,
@@ -224,16 +260,31 @@ def chart_capabilities(chart_type: str = "", problem: str = "") -> dict:
         "known_problems": list(KNOWN_PROBLEMS),
     }
     if not chart_type.strip():
-        base["charts"] = [{
+        inventory["charts"] = [{
             "chart_type": entry.name,
             "renderer_target": entry.draw.type,
             "fixed_options": entry.draw.options,
             "additional_config": sorted(accepted_keys(entry) - set(common_keys())),
             "renderer_status": _chart_summary(entry, "gptvis")["renderer"]["status"],
         } for entry in CATALOGUE.entries]
-        return base
+        return inventory
     entry = CATALOGUE.find(chart_type)
     if entry is None:
-        return {**base, "error": f"Unknown chart type or alias: {chart_type}",
-                "available_chart_types": [item.name for item in CATALOGUE.entries]}
-    return {**base, "chart": _chart_summary(entry, "gptvis", problem)}
+        return {
+            "renderer": "gptvis",
+            "provenance": _compact_provenance(package),
+            "error": f"Unknown chart type or alias: {chart_type}",
+            "available_chart_types": [item.name for item in CATALOGUE.entries],
+        }
+    # A targeted lookup should not repeat the renderer inventory, every native type,
+    # every shared schema, and the official-skill prose. Those facts are useful for
+    # discovery, but expensive noise during a repair loop.
+    targeted_problem = _normalise_problem(problem) in KNOWN_PROBLEMS
+    chart = (_problem_summary(entry, "gptvis", problem) if targeted_problem
+             else _chart_summary(entry, "gptvis", problem))
+    return {
+        "renderer": "gptvis",
+        "provenance": _compact_provenance(package),
+        "response_scope": "problem_repair" if targeted_problem else "single_chart",
+        "chart": chart,
+    }

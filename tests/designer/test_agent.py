@@ -139,6 +139,16 @@ def test_grammar_and_instructions():
     assert "donut:" in instructions() and "table:" in instructions()
     assert '"- value <column name>"' in text
     assert "ordinary bind must be empty" in text
+    assert "support take measure/share columns" in text
+    assert "context takes only category/ordinal/time/geography/identifier" in text
+    assert "without quotes" in text
+    assert "% is a suffix and never rescales" in text
+    designer_instructions = instructions()
+    assert "Never put a numeric measure in `context`" in designer_instructions
+    assert "numeric cells" in designer_instructions and "`valueLabels`" in designer_instructions
+    assert "indicator accepts one shared accent color" in text
+    assert "sort" in text and "sum of their series" in text
+    assert "support total_females" in text and "context period" in text
 
 
 def test_prompt_retains_partition_claim_and_materialized_result_limit():
@@ -200,7 +210,7 @@ def test_designer_revise_rules_reach_the_model_only_with_previous_work():
         return tool_call("deliver_design", spec=DONUT, explanation=EXPLANATION)
 
     for previous, expected in ((None, False), (PreviousDesign(spec="vis donut\n", change="Blue"), True),
-                               (PreviousDesign(spec=None, change="Make it an indicator"), True)):
+                               (PreviousDesign(spec=None, change="Make it an indicator"), False)):
         prompt = build_prompt(source, None, previous=previous)
         deps = DesignerDeps(report=source, prompt=prompt, suggested=None)
         with designer.override(model=FunctionModel(drive)):
@@ -250,6 +260,23 @@ def test_delivery_repairs_invalid_bindings_once_then_stops(repair):
         assert 'invented' in designed.warnings[0]
 
 
+def test_delivery_accepts_quoted_valid_hex_without_a_retry():
+    calls = 0
+    spec = ("vis bar\ntitle Counts\ndescription Counts by city\nbind\n"
+            "  category city\n  value violations\npalette\n  - \"#2E5BFF\"\n")
+
+    def drive(messages, info):
+        nonlocal calls
+        calls += 1
+        return tool_call("deliver_design", spec=spec, explanation="Counts by city.")
+
+    designed = run(report(*cities()), FunctionModel(drive))
+    assert calls == designed.requests == 1
+    assert designed.design is not None
+    assert '  - #2E5BFF\n' in designed.design.spec
+    assert '"#2E5BFF"' not in designed.design.spec
+
+
 def test_required_columns_are_enforced_inside_one_designer_run():
     from tests.designer.conftest import column
 
@@ -269,6 +296,24 @@ def test_required_columns_are_enforced_inside_one_designer_run():
     designed = run(source, FunctionModel(drive), required_columns=["wealth"])
     assert len(calls) == 2
     assert designed.design is not None and "group wealth" in designed.design.spec
+
+
+def test_required_bindings_are_reported_with_other_semantic_errors():
+    calls = []
+
+    def drive(messages, info):
+        calls.append(1)
+        if len(calls) == 1:
+            return tool_call("deliver_design", spec=DONUT + "zero true\n", explanation=EXPLANATION)
+        feedback = str(retries(messages)[-1].content)
+        assert "does not accept key 'zero'" in feedback
+        assert "required_columns" in feedback and " n" in feedback
+        return tool_call("deliver_design", spec="vis table\ntitle Result\ndescription Counts and shares\n",
+                         explanation="The table keeps both requested measures visible.")
+
+    designed = run(report(*gender_share()), FunctionModel(drive), required_columns=["n", "share"])
+    assert designed.design is not None and designed.design.chart == "table"
+    assert len(calls) == designed.requests == 2
 
 
 def test_optional_check_tool_is_withdrawn_when_budget_is_spent():

@@ -38,7 +38,14 @@ def png(tmp_path):
 
 def reviewing(findings, summary="Looked at it."):
     def drive(messages, info):
-        return ModelResponse(parts=[ToolCallPart(tool_name="deliver_review", args={"summary": summary, "findings": findings})])
+        evidence = []
+        for finding in findings:
+            finding = dict(finding)
+            if "message" in finding:
+                finding.update(location="Plot", observed=finding.pop("message"), expected="Readable, correctly bound marks",
+                               reference={"kind": "image"})
+            evidence.append(finding)
+        return ModelResponse(parts=[ToolCallPart(tool_name="deliver_review", args={"summary": summary, "findings": evidence})])
     return drive
 
 
@@ -58,17 +65,27 @@ def test_an_error_finding_makes_the_verdict_revise_and_the_picture_reaches_the_m
     text, picture = seen["content"]
     assert isinstance(picture, BinaryContent) and picture.media_type == "image/png" and picture.data == b"\x89PNG fake"
     prompt = json.loads(text)
-    assert prompt["chart"] == "bar" and prompt["rows"][0] == ["City0", 50] and prompt["row_count"] == 5
-    assert prompt["compromises"] == ["the legend stays where the package puts it"] and prompt["assumptions"] == ["All years"]
+    assert prompt["chart"] == "bar" and prompt["rows"][0] == {"city": "City0", "violations": 50} and prompt["row_count"] == 5
+    assert prompt["row_ids"] == [1, 2, 3, 4, 5] and len(prompt["image_id"]) == 64
+    assert prompt["compromises"] == ["the legend stays where the package puts it"]
+    assert "assumptions" not in prompt and "summary" not in prompt and prompt["caveats"] == []
 
 
-def test_a_decision_only_the_caller_can_make_is_an_open_finding_not_a_send_back(png):
+def test_out_of_scope_user_or_analyst_findings_are_retried_away(png):
     report, design = inputs()
     reviewer = create_reviewer("test")
-    with reviewer.override(model=FunctionModel(reviewing([{"rule": "R-3", "level": "error", "owner": "user",
-                                                            "message": "Cities, not hospitals: the caller's call."}]))):
+    attempts = 0
+
+    def scoped(messages, info):
+        nonlocal attempts
+        attempts += 1
+        findings = ([{"rule": "R-3", "level": "error", "owner": "user",
+                      "message": "The caller should choose another dataset."}] if attempts == 1 else [])
+        return reviewing(findings, "The visible chart is readable.")(messages, info)
+
+    with reviewer.override(model=FunctionModel(scoped)):
         reviewed = asyncio.run(review_chart(report, design, png, reviewer))
-    assert reviewed.review.verdict == "pass" and reviewed.review.findings[0].owner == "user"
+    assert attempts == 2 and reviewed.review.verdict == "pass" and reviewed.review.findings == []
 
 
 def test_the_callers_answers_reach_the_reviewer(png):
@@ -89,7 +106,7 @@ def test_the_callers_answers_reach_the_reviewer(png):
 def test_warnings_alone_pass(png):
     report, design = inputs()
     reviewer = create_reviewer("test")
-    with reviewer.override(model=FunctionModel(reviewing([{"rule": "S5", "level": "warning", "owner": "designer",
+    with reviewer.override(model=FunctionModel(reviewing([{"rule": "R-2", "level": "warning", "owner": "designer",
                                                             "message": "Long labels crowd the axis."}]))):
         reviewed = asyncio.run(review_chart(report, design, png, reviewer))
     assert reviewed.review.verdict == "pass" and reviewed.warnings == []
@@ -118,7 +135,7 @@ def test_a_missing_picture_is_a_warning(tmp_path):
 def test_the_rubric_names_the_five_rules_and_their_levels():
     text = rubric_text()
     assert [rule for rule, _, _ in REVIEWER_RULES] == ["R-1", "R-2", "R-3", "R-4", "R-5"]
-    assert "R-1 (error)" in text and "R-2 (warning)" in text and "do not report them again" in text
+    assert "R-1 (error)" in text and "R-2 (warning)" in text and "do not report them again" in text.lower()
 
 
 def test_a_finding_rejects_unknown_levels_and_owners():

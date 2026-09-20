@@ -45,7 +45,7 @@ try {
   function applyFormat(options, path = '', activeFormatter = formatter) {
     if (overrides.labels?.length === 0) options.labels = [];
     if (overrides.legend === false) options.legend = false;
-    if (overrides.legend === true) delete options.legend;
+    if (overrides.legend === true && typeof options.legend === 'boolean') delete options.legend;
     for (const [key, axis] of Object.entries(options.axis || {})) {
       if ((key === 'y' || /^position\d*$/.test(key)) && plain(axis)) {
         axis.labelFormatter = activeFormatter;
@@ -86,6 +86,11 @@ try {
   g2.createChart = async options => {
     if (typeof options.title === 'string' && overrides.title) options.title = { title: options.title };
     const merged = deepMerge(options, overrides);
+    // The DSL exposes on/off switches, not replacement label/legend styling.
+    // Keep the pinned package's placement and collision handling when enabled;
+    // the resolver's generic labels are only a fallback for unlabelled marks.
+    if (overrides.labels?.length && options.labels?.length) merged.labels = options.labels;
+    if (overrides.legend === true && plain(options.legend)) merged.legend = options.legend;
     applyFormat(merged);
     applyDisplay(merged, display, displayCallbacks, config.type);
     reserveLabelSpace(merged);

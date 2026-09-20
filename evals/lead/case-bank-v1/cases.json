@@ -1,0 +1,2812 @@
+[
+  {
+    "name": "corpus-vizcsv-46dad75ae7fa7b62",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-46dad75ae7fa7b62.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "indicator"
+        ],
+        "visible_columns": [
+          "percentage",
+          "same_university_returners",
+          "total_postgrad"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض percentage كما وردت في الملف في بطاقة مؤشر، مع same_university_returners وtotal_postgrad كقيم داعمة. النسبة صفر بعد تقريب المصدر؛ لا تعِد حسابها.\n\nAttached CSV: [vizcsv-46dad75ae7fa7b62.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "One prepared percentage with numerator and denominator; preserve rounded zero, do not recalculate.",
+    "original_question": "ما نسبة الطلاب الذين عادوا الى الجامعات التي تخرجوا منها في مرحلة البكالوريوس للحصول على الماجستير أو الدكتوراه أو الزمالة، من اجمالي الحاصلين على هذه الشهادات؟",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض percentage كما وردت في الملف في بطاقة مؤشر، مع same_university_returners وtotal_postgrad كقيم داعمة. النسبة صفر بعد تقريب المصدر؛ لا تعِد حسابها.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-6eff7ae46ebb4edf",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-6eff7ae46ebb4edf.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "donut"
+        ],
+        "visible_columns": [
+          "نوع_السكان",
+          "العدد"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض نوع_السكان والعدد في رسم دونات كما طلب المستخدم، دون تعديل القيم أو الفئات.\n\nAttached CSV: [vizcsv-6eff7ae46ebb4edf.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Explicit donut; two source population categories and counts.",
+    "original_question": "عطني رسم بياني على شكل donut يمثل السكان على شكل مواطن او مقيم",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض نوع_السكان والعدد في رسم دونات كما طلب المستخدم، دون تعديل القيم أو الفئات.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-70ea08202f57d58f",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-70ea08202f57d58f.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "indicator"
+        ],
+        "visible_columns": [
+          "percentage_saudi"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض القيمة المحسوبة percentage_saudi كما وردت في بطاقة مؤشر؛ لا تعِد حساب النسبة أو تقسيمها على مئة.\n\nAttached CSV: [vizcsv-70ea08202f57d58f.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "One percentage value, 100.0, already computed upstream.",
+    "original_question": "ما هي نسبة المشتغلين السعوديين من إجمالي المشتغلين في المملكة؟",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض القيمة المحسوبة percentage_saudi كما وردت في بطاقة مؤشر؛ لا تعِد حساب النسبة أو تقسيمها على مئة.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-97280400c00748a7",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-97280400c00748a7.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "indicator"
+        ],
+        "visible_columns": [
+          "male_count"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض male_count=0 الموجود في الملف في بطاقة عدد فقط. لا تستنتج نسبة الذكور إلى الإناث ولا تضف مقاماً أو أعداداً غير موجودة.\n\nAttached CSV: [vizcsv-97280400c00748a7.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Original asks male/female ratio but CSV contains only male_count=0; a ratio cannot be established. Handoff deliberately asks only for the supplied count, not the missing ratio.",
+    "original_question": "كم نسبة الذكور إلى الإناث في السكان السعوديين بحسب آخر إحصائية متاحة؟",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض male_count=0 الموجود في الملف في بطاقة عدد فقط. لا تستنتج نسبة الذكور إلى الإناث ولا تضف مقاماً أو أعداداً غير موجودة.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-3b62e4047e2cb455",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-3b62e4047e2cb455.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "indicator"
+        ],
+        "visible_columns": [
+          "percentage"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض percentage المحسوبة في الملف في بطاقة مؤشر بالنسبة المئوية دون تعديلها.\n\nAttached CSV: [vizcsv-3b62e4047e2cb455.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "One prepared percentage, 26.11.",
+    "original_question": "كم نسبة الافراد أصحاب مؤشر الثروة المنخفض (Poor) الحاصلين على شهادات عليا (ماجستير ودكتوراه) مقارنة بمجموع الافراد منخفضي الثروة حسب احدث بيانات متوفرة؟",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض percentage المحسوبة في الملف في بطاقة مؤشر بالنسبة المئوية دون تعديلها.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-2177430e3e44a9a3",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-2177430e3e44a9a3.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "grouped_bar",
+          "grouped_column",
+          "stacked_bar",
+          "stacked_column",
+          "table"
+        ],
+        "visible_columns": [
+          "region",
+          "gender",
+          "percentage"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "قارن percentage بحسب region وgender في الرسم باستخدام القيم المحسوبة. احتفظ برموز gender كما وردت، ولا تعِد تجميع السكان أو حساب النسب.\n\nAttached CSV: [vizcsv-2177430e3e44a9a3.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Sixteen region/gender rows with percentage and counts. F/M codes have no supplied codebook; do not invent their meanings.",
+    "original_question": "عطني نسبة الذكور والاناث لكل منطقة",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "قارن percentage بحسب region وgender في الرسم باستخدام القيم المحسوبة. احتفظ برموز gender كما وردت، ولا تعِد تجميع السكان أو حساب النسب.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-ba0187c944a3f829",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-ba0187c944a3f829.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "table"
+        ],
+        "visible_columns": [
+          "region",
+          "city"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض قائمة region وcity الكاملة في جدول مرئي واضح دون اختراع عدد سكان أو اعتبارها حصراً لكل مدن المملكة.\n\nAttached CSV: [vizcsv-ba0187c944a3f829.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Seventeen region/city names, not a prepared scalar national count. Show the supplied list without claiming completeness.",
+    "original_question": "كم عدد المدن في السعودية؟",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض قائمة region وcity الكاملة في جدول مرئي واضح دون اختراع عدد سكان أو اعتبارها حصراً لكل مدن المملكة.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-e07c573241abdb02",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-e07c573241abdb02.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "indicator"
+        ],
+        "visible_columns": [
+          "population_count"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض population_count كما ورد في بطاقة عدد سكان. عمود wkt غير مطلوب ويبقى محلياً؛ لا تستنتج أي سكان من الشكل الهندسي.\n\nAttached CSV: [vizcsv-e07c573241abdb02.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Original explicitly requires text only: population_count=0. WKT remains local and is not needed. Handoff intentionally requests a numeric card instead.",
+    "original_question": "كم عدد السكان في مدينة الطائف؟ رد كالتالي: \"عدد السكان (الرقم)\"",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض population_count كما ورد في بطاقة عدد سكان. عمود wkt غير مطلوب ويبقى محلياً؛ لا تستنتج أي سكان من الشكل الهندسي.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-9e75e9ae40758227",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-9e75e9ae40758227.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "grouped_bar",
+          "grouped_column",
+          "stacked_bar",
+          "stacked_column",
+          "table"
+        ],
+        "visible_columns": [
+          "person_type",
+          "age_group",
+          "population_count"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض population_count حسب age_group وperson_type للمقارنة مع إبقاء الفئات كما وردت ودون أي إعادة تجميع.\n\nAttached CSV: [vizcsv-9e75e9ae40758227.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Ten prepared person-type/age-group population rows; report request permits faithful chart/table.",
+    "original_question": "اكتب تقرير عن السكان",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض population_count حسب age_group وperson_type للمقارنة مع إبقاء الفئات كما وردت ودون أي إعادة تجميع.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-85830f71807a6905",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-85830f71807a6905.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "table"
+        ],
+        "visible_columns": [
+          "city"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض النتيجة النصية الوحيدة city في جدول مرئي صغير. لا تضف عدداً أو نسبة أو قيمة مختلقة لصناعة رسم كمي.\n\nAttached CSV: [vizcsv-85830f71807a6905.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "One categorical answer, city=نجران; numeric chart would invent a measure. Handoff requests an honest rendered one-cell table.",
+    "original_question": "ماهي المدينة التي فيها أكثر عد من المواطنين المصنفين من الطبقة العليا في مؤشر الثروة ؟",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض النتيجة النصية الوحيدة city في جدول مرئي صغير. لا تضف عدداً أو نسبة أو قيمة مختلقة لصناعة رسم كمي.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-39471b0e4a5d3fc5",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-39471b0e4a5d3fc5.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "bar",
+          "column",
+          "table"
+        ],
+        "visible_columns": [
+          "profession_group",
+          "avg_violations_per_person"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "قارن avg_violations_per_person حسب profession_group كما وردت القيم؛ أبقِ الإجماليات كبيانات مصدر ولا تعِد حساب المتوسط.\n\nAttached CSV: [vizcsv-39471b0e4a5d3fc5.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Two profession groups, both prepared averages 3.76; do not recompute from totals.",
+    "original_question": "ما هو متوسط المخالفات للأشخاص العاملين بمهنة سائق مقارنة بالأشخاص الغير عاملين بالمهنة؟",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "قارن avg_violations_per_person حسب profession_group كما وردت القيم؛ أبقِ الإجماليات كبيانات مصدر ولا تعِد حساب المتوسط.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-f6687502449585a5",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-f6687502449585a5.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "dual_axes",
+          "table"
+        ],
+        "visible_columns": [
+          "district",
+          "violation_count",
+          "percentage"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض district وviolation_count وpercentage معاً لكل الصفوف دون إعادة حساب النسبة. استخدم جدولاً مرئياً إذا تعذر إظهار القياسين بوحدتين واضحتين في رسم واحد.\n\nAttached CSV: [vizcsv-f6687502449585a5.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Ten district/count/percentage rows; both counts and percentages requested. Table is truthful when a single chart cannot show both.",
+    "original_question": "ما هو اعلى حي في مدينة الرياض من حيث عدد المخالفات المرورية المرتكبة فيه وكم تمثل نسبته من اجمالي المخالفات في الرياض؟",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض district وviolation_count وpercentage معاً لكل الصفوف دون إعادة حساب النسبة. استخدم جدولاً مرئياً إذا تعذر إظهار القياسين بوحدتين واضحتين في رسم واحد.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-45980b90faceca07",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-45980b90faceca07.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "indicator",
+          "table"
+        ],
+        "visible_columns": [
+          "wealthy_female_pct",
+          "wealthy_male_pct",
+          "total_females",
+          "total_males",
+          "wealthy_females",
+          "wealthy_males"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض wealthy_female_pct وwealthy_male_pct في بطاقتي مؤشر للمقارنة؛ أضف إجمالي وأعداد الأثرياء لكل جنس كقيم داعمة. النسب محسوبة ولكل جنس مقام مستقل؛ لا تجمعهما في دونات.\n\nAttached CSV: [vizcsv-45980b90faceca07.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "One wide row, two independent prepared percentages and their supporting counts; not shares of a common total.",
+    "original_question": "قارن بين نسبة النساء الأثرياء الى اجمالي عدد النساء ونسبة الذكور الأثرياء الى اجمالي عدد الذكور حسب احدث اسناد",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض wealthy_female_pct وwealthy_male_pct في بطاقتي مؤشر للمقارنة؛ أضف إجمالي وأعداد الأثرياء لكل جنس كقيم داعمة. النسب محسوبة ولكل جنس مقام مستقل؛ لا تجمعهما في دونات.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-2571f37808cda8e2",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-2571f37808cda8e2.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "bar",
+          "column",
+          "pie",
+          "donut",
+          "table"
+        ],
+        "visible_columns": [
+          "gender",
+          "percentage"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "قارن percentage بحسب gender باستخدام النسب الواردة دون تغييرها. احتفظ بالرموز الأصلية ما دام لا توجد معاني رموز معتمدة.\n\nAttached CSV: [vizcsv-2571f37808cda8e2.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Two gender-code rows with prepared percentages. Preserve codes absent upstream code meanings.",
+    "original_question": "ما هي النسبة المئوية للذكور الذين تقل أعمارهم عن 30 عاماً مقارنة بالإناث في المملكة؟",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "قارن percentage بحسب gender باستخدام النسب الواردة دون تغييرها. احتفظ بالرموز الأصلية ما دام لا توجد معاني رموز معتمدة.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-c76808cc7a78dac8",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-c76808cc7a78dac8.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "grouped_bar",
+          "grouped_column",
+          "dual_axes",
+          "table"
+        ],
+        "visible_columns": [
+          "city",
+          "population",
+          "employed"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "قارن population وemployed لكل city كما وردت، حتى إن تجاوز العاملون السكان. يمكن استخدام fold لعرض القياسين أو جدول؛ لا تصحح القيم ولا تقيدها إلى 100 ولا تعِد حساب employment_rate.\n\nAttached CSV: [vizcsv-c76808cc7a78dac8.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Ten city rows with employed > population and rates >100. Supplied values are authoritative; do not repair data or hide a required measure.",
+    "original_question": "كم عدد العاملين مقارنة بعدد السكان في المدينة الرئيسية؟",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "قارن population وemployed لكل city كما وردت، حتى إن تجاوز العاملون السكان. يمكن استخدام fold لعرض القياسين أو جدول؛ لا تصحح القيم ولا تقيدها إلى 100 ولا تعِد حساب employment_rate.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-ae315d3da67a2d11",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-ae315d3da67a2d11.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "scatter"
+        ],
+        "visible_columns": [
+          "latitude",
+          "longitude"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض مواقع latitude وlongitude في مخطط مبعثر للإحداثيات فقط، وليس خريطة أو مسارات توصيل. احتفظ بكل الصفوف وبالحقول الأخرى في الجدول المصدر؛ لا تختلق مسارات بين النقاط.\n\nAttached CSV: [vizcsv-ae315d3da67a2d11.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Original requests delivery-route map; CSV has 1000 locations, no route paths. Scatter is only a labelled fallback, not a verified requested map. Handoff deliberately requests locations, not routes.",
+    "original_question": "عطني خريطة لمسارات طلبات التوصيل مع المدينة والسعر و اسم التطبيق من الجدول estishraf_llm_delivery_orders_information",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض مواقع latitude وlongitude في مخطط مبعثر للإحداثيات فقط، وليس خريطة أو مسارات توصيل. احتفظ بكل الصفوف وبالحقول الأخرى في الجدول المصدر؛ لا تختلق مسارات بين النقاط.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-2bc0cfa90c65f142",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-2bc0cfa90c65f142.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "bar",
+          "column",
+          "table"
+        ],
+        "visible_columns": [
+          "city",
+          "wealthy_count"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض city وwealthy_count لجميع الصفوف الخمسة للمقارنة المرتبة دون حساب أو انتقاء إضافي.\n\nAttached CSV: [vizcsv-2bc0cfa90c65f142.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Five prepared city wealthy-count rows, ranked as supplied.",
+    "original_question": "رتب لي اعلى خمس مدن من حيث عدد الأثرياء بين عمر 25 و 40 سنة الذين لا يملكون شهادات جامعية حسب احدث بيانات",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض city وwealthy_count لجميع الصفوف الخمسة للمقارنة المرتبة دون حساب أو انتقاء إضافي.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-61793ff199102633",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-61793ff199102633.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "bar",
+          "column",
+          "table"
+        ],
+        "visible_columns": [
+          "education_level",
+          "violation_rate_per_100"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "قارن violation_rate_per_100 بحسب education_level باستخدام المعدل المحسوب لكل مئة. لا تعِد حسابه من الإجماليات ولا تستبدله بعدد المخالفات الخام.\n\nAttached CSV: [vizcsv-61793ff199102633.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "Two education groups with prepared rates per100; compare13.19 vs7.17, not raw totals alone.",
+    "original_question": "هل ارتكب المواطنون الحاصلون على شهادات عليا (ماجستير-دكتوراة) مخالفات اقل مقارنة بالغير حاصلين على شهادات عليا خلال الفترة (2023-2025)؟ فقط للأعمار بين 30 و 50",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "قارن violation_rate_per_100 بحسب education_level باستخدام المعدل المحسوب لكل مئة. لا تعِد حسابه من الإجماليات ولا تستبدله بعدد المخالفات الخام.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-3dda20f66cddb9da",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-3dda20f66cddb9da.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "indicator"
+        ],
+        "visible_columns": [
+          "population_count"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض population_count كما ورد في بطاقة مؤشر لعدد السكان دون أي إعادة حساب.\n\nAttached CSV: [vizcsv-3dda20f66cddb9da.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "One prepared population_count=671.",
+    "original_question": "كم عدد سكان منطقة الرياض؟",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض population_count كما ورد في بطاقة مؤشر لعدد السكان دون أي إعادة حساب.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-8b3fd04765e40d3a",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-8b3fd04765e40d3a.csv",
+    "turns": [
+      {
+        "tool": "draw",
+        "outcome": "artifact",
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "forbid_questions": true,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1
+        },
+        "max_seconds": 60,
+        "charts": [
+          "indicator"
+        ],
+        "visible_columns": [
+          "total_count"
+        ],
+        "disposition": "chart",
+        "prepared_csv": true,
+        "message": "اعرض total_count=0 الموجود في الملف في بطاقة مؤشر بعنوان total_count. لا تستنتج اسم منفذ أو وسيلة نقل أو تدّع الإجابة عن تفاصيل غير موجودة في هذه النتيجة.\n\nAttached CSV: [vizcsv-8b3fd04765e40d3a.csv](/datasets/{dataset_id}/profile)"
+      }
+    ],
+    "evaluation_mode": "renderable",
+    "audit": "One prepared total_count=0. The original query asks about import ports but supplies no port or transport column. The separate renderable handoff asks only to display this prepared count; it must not infer a port, mode, or national total.",
+    "original_question": "ما هو المنفذ الأكثر استخدامًا من قبل الموردين من سكان مدينة الرياض خلال الفترة من 2022 الى 2024؟ احسب الواردات بناء على عدد الشحنات (وليس حجم الشحنة او القيمة) وحدد المنفذ الأكثر استخدامًا اجمالا، وكذلك لكل نوع نقل (بر، بحر، جو)",
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "اعرض total_count=0 الموجود في الملف في بطاقة مؤشر بعنوان total_count. لا تستنتج اسم منفذ أو وسيلة نقل أو تدّع الإجابة عن تفاصيل غير موجودة في هذه النتيجة.",
+      "caveats": [
+        "The CSV is authoritative. Present supplied values without recomputing them."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-00754e9ed454a58b",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-00754e9ed454a58b.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.\n\nAttached CSV: [vizcsv-00754e9ed454a58b.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "percentage"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "ما هي نسبة كبار السن من إجمالي السكان؟ رد بالنسبة فقط مثل: \"10%\"",
+    "coverage": {
+      "shape": "one_number",
+      "rows": 1,
+      "rows_bucket": "1",
+      "arabic_categories": false,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator",
+      "selection_reason": "coverage:task=None"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.",
+      "units": {
+        "percentage": "%"
+      },
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-010c162b92ef3206",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-010c162b92ef3206.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: year, new_jobs_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. حافظ على هوية الفترات والتواريخ الأصلية وترتيبها؛ لا تعِد حساب معدلات النمو.\n\nAttached CSV: [vizcsv-010c162b92ef3206.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "year",
+          "new_jobs_count"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "قارن عدد الوظائف الجديدة في سنة 2015 مع سنة 2025",
+    "coverage": {
+      "shape": "time_measure",
+      "rows": 11,
+      "rows_bucket": "11-50",
+      "arabic_categories": false,
+      "temporal": true,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "line",
+      "selection_reason": "coverage:shape=time_measure"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: year, new_jobs_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. حافظ على هوية الفترات والتواريخ الأصلية وترتيبها؛ لا تعِد حساب معدلات النمو.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-03384a96e9fe5870",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-03384a96e9fe5870.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: airport, destination, flight_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-03384a96e9fe5870.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "airport",
+          "destination",
+          "flight_count"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "لسكان جدة فقط وخلال سنة (2025) قارن استخدام مطار الملك خالد ومطار الملك عبدالعزيز للسفر الدولي، وحدد اعلى خمس وجهات لكل مطار، مع مقارنة عدد الرحلات لكل وجهة",
+    "coverage": {
+      "shape": "category_group_measure",
+      "rows": 51,
+      "rows_bucket": "51-200",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table",
+      "selection_reason": "coverage:rows_bucket=51-200"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: airport, destination, flight_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-09050180d3961b03",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-09050180d3961b03.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: percentage, domestic_workers_count, total_filipino_residents_count, snapshot_date. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. حافظ على هوية الفترات والتواريخ الأصلية وترتيبها؛ لا تعِد حساب معدلات النمو. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.\n\nAttached CSV: [vizcsv-09050180d3961b03.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "percentage",
+          "domestic_workers_count",
+          "total_filipino_residents_count",
+          "snapshot_date"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "كم تبلغ نسبة النساء من الفلبين المسجلين تحت مهنة \"عاملة منزلية\" مقارنة باجمالي المقيمات الفلبينيات حسب احدث اسناد؟",
+    "coverage": {
+      "shape": "wide",
+      "rows": 1,
+      "rows_bucket": "1",
+      "arabic_categories": false,
+      "temporal": true,
+      "nulls": true,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator",
+      "selection_reason": "coverage:nulls=True"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: percentage, domestic_workers_count, total_filipino_residents_count, snapshot_date. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. حافظ على هوية الفترات والتواريخ الأصلية وترتيبها؛ لا تعِد حساب معدلات النمو. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.",
+      "units": {
+        "percentage": "%"
+      },
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-1706fb33ef7fd300",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-1706fb33ef7fd300.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: grad_year, foreign_grad_count, growth_rate_percent. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. حافظ على هوية الفترات والتواريخ الأصلية وترتيبها؛ لا تعِد حساب معدلات النمو. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.\n\nAttached CSV: [vizcsv-1706fb33ef7fd300.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "grad_year",
+          "foreign_grad_count",
+          "growth_rate_percent"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "ما هي نسبة النمو السنوية لكل سنة في عدد الخريجين الأجانب من تخصصات الشريعة من الجامعات الحكومية في العشر سنوات الماضية (2016-2025)؟",
+    "coverage": {
+      "shape": "wide",
+      "rows": 10,
+      "rows_bucket": "2-10",
+      "arabic_categories": false,
+      "temporal": true,
+      "nulls": true,
+      "negatives": true,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "line",
+      "selection_reason": "coverage:negatives=True"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: grad_year, foreign_grad_count, growth_rate_percent. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. حافظ على هوية الفترات والتواريخ الأصلية وترتيبها؛ لا تعِد حساب معدلات النمو. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.",
+      "units": {
+        "growth_rate_percent": "%"
+      },
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-07d3a923817c343d",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-07d3a923817c343d.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: violation_type_description, average_age, violation_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. اجعل التسميات الطويلة مقروءة مع الحفاظ على هوية الفئات.\n\nAttached CSV: [vizcsv-07d3a923817c343d.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "violation_type_description",
+          "average_age",
+          "violation_count"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "كم عدد المخالفات المرورية المسجلة في منطقة الرياض خلال العام الماضي؟",
+    "coverage": {
+      "shape": "wide",
+      "rows": 5,
+      "rows_bucket": "2-10",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": true,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "grouped_bar",
+      "selection_reason": "coverage:long_text=True"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: violation_type_description, average_age, violation_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. اجعل التسميات الطويلة مقروءة مع الحفاظ على هوية الفئات.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-099ca8ed3f245957",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-099ca8ed3f245957.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: person_type, population_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-099ca8ed3f245957.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "person_type",
+          "population_count"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "كم سكان المملكة؟",
+    "coverage": {
+      "shape": "category_measure",
+      "rows": 2,
+      "rows_bucket": "2-10",
+      "arabic_categories": false,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": "composition",
+      "requested_type": "donut",
+      "chosen_chart": "table",
+      "selection_reason": "coverage:task=composition"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: person_type, population_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-ac951afc1e53d382",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-ac951afc1e53d382.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: region. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-ac951afc1e53d382.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "region"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "كم عدد السكان في المنطقة الشرقية؟",
+    "coverage": {
+      "shape": "one_column",
+      "rows": 8,
+      "rows_bucket": "2-10",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table",
+      "selection_reason": "coverage:shape=one_column"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: region. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-061a265236a642ce",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-061a265236a642ce.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: violation_date, paid_violations, unpaid_violations. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. إذا تجاوز الملف الحد التقني للمحرك، اشرح الحد بوضوح دون إنشاء رسم جزئي مضلل ودون طلب بيانات جديدة أو إعادة المحاولة على نفس المصدر.\n\nAttached CSV: [vizcsv-061a265236a642ce.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "handled",
+        "disposition": "unsupported",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 0,
+          "render_visualization": 0,
+          "review_visualization": 0,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "no_image": true,
+        "reply_patterns": [
+          "حد|يسمح|يدعم|تجاوز|limit|exceed|maximum|support",
+          "10[٬,، ]?000|١٠[٬,، ]?٠٠٠|عشرة آلاف|عشرة الاف|ten thousand"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "عطني تسلسل زمني للمخالفات في رسم بياني للمحالفات المسددة وغير المسددة لكل يوم",
+    "coverage": {
+      "shape": "wide",
+      "rows": 22208,
+      "rows_bucket": "1001+",
+      "arabic_categories": false,
+      "temporal": true,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "line",
+      "selection_reason": "coverage:rows_bucket=1001+"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: violation_date, paid_violations, unpaid_violations. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. إذا تجاوز الملف الحد التقني للمحرك، اشرح الحد بوضوح دون إنشاء رسم جزئي مضلل ودون طلب بيانات جديدة أو إعادة المحاولة على نفس المصدر.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-1240bc417714a3e6",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-1240bc417714a3e6.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: region, gender, population_count, region_total, percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.\n\nAttached CSV: [vizcsv-1240bc417714a3e6.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "region",
+          "gender",
+          "population_count",
+          "region_total",
+          "percentage"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "رتبها من الاقل الى الاعلى",
+    "coverage": {
+      "shape": "wide",
+      "rows": 16,
+      "rows_bucket": "11-50",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": "ranking",
+      "requested_type": "bar",
+      "chosen_chart": "bar",
+      "selection_reason": "coverage:task=ranking"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: region, gender, population_count, region_total, percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.",
+      "units": {
+        "percentage": "%"
+      },
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-7a6c7f323afafbe3",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-7a6c7f323afafbe3.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: app_name. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. لا توجد قيمة كمية مطلوبة هنا: حافظ على كل صفوف النص ولا تحول تكرار الأسماء إلى أعداد. يكفي تسليم الجدول المصدر الكامل إذا لم يتسع في صورة ثابتة؛ وضح أنه جدول وليس رسماً محققاً. لا تعتبر قص نافذة جدول قابلة للتمرير عيباً ما دامت كل صفوفه متاحة.\n\nAttached CSV: [vizcsv-7a6c7f323afafbe3.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "fallback",
+        "disposition": "table_fallback",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "no_image": true,
+        "reply_patterns": [
+          "جدول|table",
+          "كامل|جميع|صف|الصفوف|full|all|rows"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "عطني خريطة لمسارات طلبات التوصيل ف",
+    "coverage": {
+      "shape": "category_measure",
+      "rows": 1000,
+      "rows_bucket": "201-1000",
+      "arabic_categories": false,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table",
+      "selection_reason": "coverage:rows_bucket=201-1000"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: app_name. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. لا توجد قيمة كمية مطلوبة هنا: حافظ على كل صفوف النص ولا تحول تكرار الأسماء إلى أعداد. يكفي تسليم الجدول المصدر الكامل إذا لم يتسع في صورة ثابتة؛ وضح أنه جدول وليس رسماً محققاً. لا تعتبر قص نافذة جدول قابلة للتمرير عيباً ما دامت كل صفوفه متاحة.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-18c8e508976a1ff7",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-18c8e508976a1ff7.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: male_population. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-18c8e508976a1ff7.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "male_population"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "السلام عليكم. كم صار عدد الذكور؟",
+    "coverage": {
+      "shape": "one_number",
+      "rows": 1,
+      "rows_bucket": "1",
+      "arabic_categories": false,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": "single_value",
+      "requested_type": "indicator",
+      "chosen_chart": "indicator",
+      "selection_reason": "coverage:task=single_value"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: male_population. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-245c6996f0f23a81",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-245c6996f0f23a81.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: gender, population_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-245c6996f0f23a81.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "gender",
+          "population_count"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "عطني رسم بياني للسكان حسب الجنس",
+    "coverage": {
+      "shape": "category_measure",
+      "rows": 2,
+      "rows_bucket": "2-10",
+      "arabic_categories": false,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": "comparison",
+      "requested_type": "bar",
+      "chosen_chart": "bar",
+      "selection_reason": "coverage:task=comparison"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: gender, population_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-442a491c20867c73",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-442a491c20867c73.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: age_group, population_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-442a491c20867c73.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "age_group",
+          "population_count"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "استرجعها طيب واعد الرسم البياني",
+    "coverage": {
+      "shape": "category_measure",
+      "rows": 7,
+      "rows_bucket": "2-10",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": "distribution",
+      "requested_type": "bar",
+      "chosen_chart": "bar",
+      "selection_reason": "coverage:task=distribution"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: age_group, population_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-98f1ef4953f7c74d",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-98f1ef4953f7c74d.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: منطقة_الدخول, عدد_الرحلات. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-98f1ef4953f7c74d.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "منطقة_الدخول",
+          "عدد_الرحلات"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "ما طلع الجدول ضبطنا يالامير",
+    "coverage": {
+      "shape": "category_measure",
+      "rows": 6,
+      "rows_bucket": "2-10",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": "table",
+      "requested_type": "table",
+      "chosen_chart": "table",
+      "selection_reason": "coverage:task=table"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: منطقة_الدخول, عدد_الرحلات. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-98fe17bdec87024a",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-98fe17bdec87024a.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: city, population, percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.\n\nAttached CSV: [vizcsv-98fe17bdec87024a.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "city",
+          "population",
+          "percentage"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "عطني نسبة لكل مدينة لاعلى خمس مدن",
+    "coverage": {
+      "shape": "wide",
+      "rows": 5,
+      "rows_bucket": "2-10",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "donut",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: city, population, percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.",
+      "units": {
+        "percentage": "%"
+      },
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-39d623d403ef86e5",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-39d623d403ef86e5.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: person_type, entry_mode_value, trip_count, unique_persons. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-39d623d403ef86e5.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "person_type",
+          "entry_mode_value",
+          "trip_count",
+          "unique_persons"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": " عطني احصائية عن الحدود",
+    "coverage": {
+      "shape": "wide",
+      "rows": 19,
+      "rows_bucket": "11-50",
+      "arabic_categories": false,
+      "temporal": false,
+      "nulls": true,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": "composition",
+      "requested_type": "stacked_bar",
+      "chosen_chart": "stacked_bar",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: person_type, entry_mode_value, trip_count, unique_persons. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-ed2d9d4b2f49d899",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-ed2d9d4b2f49d899.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: region, population, active_jobs, jobs_per_capita_ratio. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-ed2d9d4b2f49d899.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "region",
+          "population",
+          "active_jobs",
+          "jobs_per_capita_ratio"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "ما هو متوسط عدد الوظائف النشطة مقارنة بعدد السكان في كل منطقة خلال السنة الماضية المتاحة؟",
+    "coverage": {
+      "shape": "wide",
+      "rows": 8,
+      "rows_bucket": "2-10",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: region, population, active_jobs, jobs_per_capita_ratio. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-ec9b6239518a7b5e",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-ec9b6239518a7b5e.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: district, population_increase. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-ec9b6239518a7b5e.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "district",
+          "population_increase"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "ما هي الأحياء التي شهدت أكبر زيادة في عدد السكان خلال السنوات الأخيرة؟",
+    "coverage": {
+      "shape": "category_measure",
+      "rows": 4,
+      "rows_bucket": "2-10",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": true,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "horizontal_bar",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: district, population_increase. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-244e80ce1f6ea1e6",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-244e80ce1f6ea1e6.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: city, violation_type_description, violation_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. اجعل التسميات الطويلة مقروءة مع الحفاظ على هوية الفئات.\n\nAttached CSV: [vizcsv-244e80ce1f6ea1e6.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "city",
+          "violation_type_description",
+          "violation_count"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "ما أكثر نوع من المخالفات يرتكبه الرجال في مدن معينة؟",
+    "coverage": {
+      "shape": "category_group_measure",
+      "rows": 85,
+      "rows_bucket": "51-200",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": true,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "stacked_bar",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: city, violation_type_description, violation_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. اجعل التسميات الطويلة مقروءة مع الحفاظ على هوية الفئات.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-e384bfa45ac5ab8e",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-e384bfa45ac5ab8e.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: region, population_count, active_job_count, jobs_per_capita. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-e384bfa45ac5ab8e.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "region",
+          "population_count",
+          "active_job_count",
+          "jobs_per_capita"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "ما هو متوسط عدد الوظائف النشطة مقارنة بعدد السكان في كل منطقة في المملكة في آخر إحصاء متاح؟",
+    "coverage": {
+      "shape": "wide",
+      "rows": 8,
+      "rows_bucket": "2-10",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "bar",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: region, population_count, active_job_count, jobs_per_capita. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-44cfda42866aa5ae",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-44cfda42866aa5ae.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: total_poor_population, higher_education_count, percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.\n\nAttached CSV: [vizcsv-44cfda42866aa5ae.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "total_poor_population",
+          "higher_education_count",
+          "percentage"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "كم نسبة الافراد الاحياء أصحاب طبقة الثروة الدنيا الحاصلين على شهادات عليا (ماجستير ودكتوراه) مقارنة بمجموع الافراد من نفس الطبقة حسب احدث بيانات متوفرة؟",
+    "coverage": {
+      "shape": "wide",
+      "rows": 1,
+      "rows_bucket": "1",
+      "arabic_categories": false,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: total_poor_population, higher_education_count, percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.",
+      "units": {
+        "percentage": "%"
+      },
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-e6f74cc7f3324781",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-e6f74cc7f3324781.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: city, district, worker_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-e6f74cc7f3324781.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "city",
+          "district",
+          "worker_count"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "في أي حي يتمركز المقيمين العاملين بمهنة عامل منزلي من الجنسية الفلبينية في كل من مدينة (جدة، والدمام، والرياض) وفقًا لأحدث اسناد؟",
+    "coverage": {
+      "shape": "category_group_measure",
+      "rows": 14,
+      "rows_bucket": "11-50",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "grouped_bar",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: city, district, worker_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-2075320dff9f6ebd",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-2075320dff9f6ebd.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: returning_count, total_count, percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.\n\nAttached CSV: [vizcsv-2075320dff9f6ebd.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "returning_count",
+          "total_count",
+          "percentage"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "ما نسبة الطلاب الذين عادوا الى الجامعات التي تخرجوا منها في مرحلة البكالوريوس للحصول على الماجستير أو الدكتوراه أو الزمالة، من اجمالي الحاصلين على هذه الشهادات؟",
+    "coverage": {
+      "shape": "wide",
+      "rows": 1,
+      "rows_bucket": "1",
+      "arabic_categories": false,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: returning_count, total_count, percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.",
+      "units": {
+        "percentage": "%"
+      },
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-57c25fcba38f1bb0",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-57c25fcba38f1bb0.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: foreign_births, total_births, foreign_birth_percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.\n\nAttached CSV: [vizcsv-57c25fcba38f1bb0.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "foreign_births",
+          "total_births",
+          "foreign_birth_percentage"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "كم تبلغ نسبة المواليد الأجانب هذا العام من اجمالي المواليد حسب احدث بيانات؟",
+    "coverage": {
+      "shape": "wide",
+      "rows": 1,
+      "rows_bucket": "1",
+      "arabic_categories": false,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: foreign_births, total_births, foreign_birth_percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.",
+      "units": {
+        "foreign_birth_percentage": "%"
+      },
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-a723f837bb1cd6a9",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-a723f837bb1cd6a9.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: نوع_الجامعة, إجمالي_الخريجين, الخريجون_الأثرياء, نسبة_الأثرياء_بالمئة. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.\n\nAttached CSV: [vizcsv-a723f837bb1cd6a9.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "نوع_الجامعة",
+          "إجمالي_الخريجين",
+          "الخريجون_الأثرياء",
+          "نسبة_الأثرياء_بالمئة"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "بناء على البيانات بين الفترة (2010-2025)، قارن بين نسبة الخريجين الاثرياء من الجامعات الحكومية والجامعات الاهلية؟",
+    "coverage": {
+      "shape": "wide",
+      "rows": 4,
+      "rows_bucket": "2-10",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "donut",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: نوع_الجامعة, إجمالي_الخريجين, الخريجون_الأثرياء, نسبة_الأثرياء_بالمئة. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.",
+      "units": {
+        "نسبة_الأثرياء_بالمئة": "%"
+      },
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-1ea76a97e400d852",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-1ea76a97e400d852.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: year, month, visitor_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. حافظ على هوية الفترات والتواريخ الأصلية وترتيبها؛ لا تعِد حساب معدلات النمو.\n\nAttached CSV: [vizcsv-1ea76a97e400d852.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "year",
+          "month",
+          "visitor_count"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "كم يبلغ عدد الزوار الذين قاموا بدخول المملكة في شهر ذو الحجة عبر المنافذ البرية في العام الماضي؟",
+    "coverage": {
+      "shape": "wide",
+      "rows": 9,
+      "rows_bucket": "2-10",
+      "arabic_categories": false,
+      "temporal": true,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: year, month, visitor_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. حافظ على هوية الفترات والتواريخ الأصلية وترتيبها؛ لا تعِد حساب معدلات النمو.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-20d73400a693d49f",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-20d73400a693d49f.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: region, population, percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.\n\nAttached CSV: [vizcsv-20d73400a693d49f.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "region",
+          "population",
+          "percentage"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "عطني رسم بياني لهم حسب نسبتهم من السكان",
+    "coverage": {
+      "shape": "wide",
+      "rows": 8,
+      "rows_bucket": "2-10",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: region, population, percentage. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.",
+      "units": {
+        "percentage": "%"
+      },
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-a25bc59748f9842d",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-a25bc59748f9842d.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: employment_rate_percentage, employed_count, total_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.\n\nAttached CSV: [vizcsv-a25bc59748f9842d.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "employment_rate_percentage",
+          "employed_count",
+          "total_count"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "ما هي نسبة الخريجين من تخصص اللغة العربية الذين تم توظيفهم خلال اول سنة من تخرجهم برواتب تزيد عن 6000 ريال في الخمسة سنوات الماضية (2021-2025)؟",
+    "coverage": {
+      "shape": "wide",
+      "rows": 1,
+      "rows_bucket": "1",
+      "arabic_categories": false,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "indicator",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: employment_rate_percentage, employed_count, total_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف. الحقول المئوية جاهزة بوحدة %، فلا تضربها في مئة أو تعِد حسابها.",
+      "units": {
+        "employment_rate_percentage": "%"
+      },
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  },
+  {
+    "name": "corpus-vizcsv-ffcc0df19d7c2f61",
+    "csv": "/Users/muhammad/Documents/NACI/Insightor/insightor_POC/exports/visualization_csv_corpus_dev_2026-09-01_500/csv/vizcsv-ffcc0df19d7c2f61.csv",
+    "turns": [
+      {
+        "message": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: job_title, job_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.\n\nAttached CSV: [vizcsv-ffcc0df19d7c2f61.csv](/datasets/{dataset_id}/profile)",
+        "tool": "draw",
+        "outcome": "artifact",
+        "disposition": "chart",
+        "forbid_questions": true,
+        "max_seconds": 60,
+        "max_tool_calls": {
+          "draw": 1,
+          "design_visualization": 2,
+          "render_visualization": 2,
+          "review_visualization": 2,
+          "publish_visualization": 1,
+          "profile_csv": 0,
+          "consult_analyst": 0
+        },
+        "strict_source": true,
+        "require_delivery": true,
+        "require_render_evidence": true,
+        "review_required": true,
+        "review_pass_required": true,
+        "prepared_csv": true,
+        "visible_columns": [
+          "job_title",
+          "job_count"
+        ]
+      }
+    ],
+    "evaluation_mode": "supplement30-prepared-handoff",
+    "audit": "Coverage-first then seeded selection; original question is provenance, not the new task.",
+    "original_question": "ما هي اكثر عشرة وظائف شائعة لخريجي التخصصات ذات معدلات التوظيف المنخفضة (اقل من 50% من الخريجين يتم توظيفهم خلال اول سنة من التخرج ) في الخمس سنوات الماضية (2021-2025)؟",
+    "coverage": {
+      "shape": "category_measure",
+      "rows": 10,
+      "rows_bucket": "2-10",
+      "arabic_categories": true,
+      "temporal": false,
+      "nulls": false,
+      "negatives": false,
+      "long_text": false,
+      "geometry_only": false,
+      "task": null,
+      "requested_type": null,
+      "chosen_chart": "table",
+      "selection_reason": "seeded shuffle:20260917"
+    },
+    "brief": {
+      "producer_agent": "data-agent",
+      "raw_question": "أنا وكيل البيانات؛ الملف المرفق نتيجة نهائية معتمدة. قدّم عرضاً واضحاً للقيم والحقول التالية كما وردت: job_title, job_count. اختر الرسم المناسب أو جدولاً عندما تتعدد الوحدات أو تكون النتيجة نصية. يجب تمثيل الحقول المذكورة بوضوح دون تغيير خلايا المصدر أو إعادة حساب المقاييس. احتفظ بالقيم المفقودة كمفقودة ولا تستبدلها بصفر؛ لا تعِد تجميع الصفوف أو تأخذ عينة. احتفظ بالرموز الأصلية دون اختراع معاني لها، ولا تفترض عملة أو وحدة غير مذكورة. أجب بالعربية، واترك القيم والأسماء الأصلية دون تحريف.",
+      "units": {},
+      "caveats": [
+        "Authoritative prepared CSV; no recomputation or invented code meanings."
+      ]
+    },
+    "caller_kind": "agent",
+    "caller_identity": "eval-data-agent"
+  }
+]

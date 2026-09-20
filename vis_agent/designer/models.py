@@ -63,7 +63,10 @@ class Spec(BaseModel):
     height: int | None = None
     axis_x_title: str | None = None
     axis_y_title: str | None = None
-    inner_radius: float | None = None
+    # Pinned GPT-Vis SSR 0.3.8 pie.ts passes a [0, 1] ratio to G2, clamping
+    # anything larger to 1. Reject wrong units rather than silently clamping.
+    inner_radius: float | None = Field(default=None, ge=0, le=1, allow_inf_nan=False,
+                                      description="Dimensionless radius ratio from 0 to 1; e.g. 0.6, not 60.")
     bin_number: int | None = None
     bind: dict[str, str] = Field(default_factory=dict)
     fold: list[str] = Field(default_factory=list)

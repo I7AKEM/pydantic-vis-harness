@@ -17,6 +17,12 @@ INDICATOR_KEYS = {
 }
 
 
+def _percent_named(column: ResultColumn) -> bool:
+    """Recognize an explicit percent concept without guessing from the numeric value."""
+    text = f"{column.name} {column.meaning}".casefold().replace("-", "_")
+    return any(hint in text for hint in ("percentage", "percent", "pct", "نسبة مئوية", "النسبة المئوية"))
+
+
 def indicator_data_violations(
     columns: list[ResultColumn], result: QueryResult, *, policy: bool = True,
 ) -> list[Violation]:
@@ -86,8 +92,13 @@ def check_indicator(
                 if name not in by_name:
                     fail("I2", f"Card {number} {role} column '{name}' does not exist.", "Bind an exact result column name")
                 elif by_name[name].kind not in kinds:
+                    fix = ("Move a numeric measure/share to support or make it another card's value"
+                           if role == "context" and by_name[name].kind in NUMERIC_KINDS
+                           else "Move a category, ordinal, time, geography, or identifier to context"
+                           if role == "support" and by_name[name].kind in CONTEXT_KINDS
+                           else f"Use one of these kinds: {', '.join(sorted(kinds))}")
                     fail("I2", f"Card {number} {role} column '{name}' has kind '{by_name[name].kind}'.",
-                         f"Use one of these kinds: {', '.join(sorted(kinds))}")
+                         fix)
         if card.format is not None:
             try:
                 number_format = parse_format(card.format)
@@ -96,8 +107,13 @@ def check_indicator(
             else:
                 if number_format.decimals is not None and number_format.decimals > 20:
                     fail("I3", f"Card {number} format exceeds twenty decimal places.", "Use at most twenty decimal places")
-                if (card.value in by_name and number_format.unit is not None and
-                        canonical_unit(number_format.unit) != canonical_unit(by_name[card.value].unit)):
+                source = by_name.get(card.value)
+                inferred_percent = bool(
+                    source is not None and source.unit is None and
+                    canonical_unit(number_format.unit) == "%" and _percent_named(source)
+                )
+                if (source is not None and number_format.unit is not None and not inferred_percent and
+                        canonical_unit(number_format.unit) != canonical_unit(source.unit)):
                     fail("I3", f"Card {number} format cannot change the unit of '{card.value}'.",
                          "Omit the format unit or use the column's unit (% includes explicit percent aliases); formatting never rescales values")
     missing = [name for name in by_name if name not in covered]

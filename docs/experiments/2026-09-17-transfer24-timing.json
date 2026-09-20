@@ -1,0 +1,372 @@
+{
+  "metadata_only": true,
+  "provider_calls": 0,
+  "arms": {
+    "baseline": {
+      "trace_count": 24,
+      "model_attempts": 205,
+      "framework_requests": 205,
+      "case_seconds": 561.652379751089,
+      "model_seconds": 542.432854,
+      "model_fraction": 0.9657803893582599,
+      "roles": {
+        "designer": {
+          "model_attempts": 31,
+          "seconds": 113.839433,
+          "median_seconds": 2.580447,
+          "p95_nearest_rank_seconds": 9.686273,
+          "max_seconds": 17.331979,
+          "missing_usage": 0
+        },
+        "reviewer": {
+          "model_attempts": 25,
+          "seconds": 73.327161,
+          "median_seconds": 1.740095,
+          "p95_nearest_rank_seconds": 8.956458,
+          "max_seconds": 11.770863,
+          "missing_usage": 0
+        },
+        "vis-lead": {
+          "model_attempts": 149,
+          "seconds": 355.26626,
+          "median_seconds": 1.351446,
+          "p95_nearest_rank_seconds": 6.808411,
+          "max_seconds": 30.368474,
+          "missing_usage": 0
+        }
+      },
+      "cases": {
+        "g04-curing_paths-transformed": {
+          "trace_id": "01a0ad735bf7acade4e663fad76bd001",
+          "seconds": 54.42668995796703,
+          "model_seconds": 52.356645,
+          "model_attempts": 16
+        },
+        "g03-parent_composition-original": {
+          "trace_id": "01a0ad7430d1f9e55f4ac416c77a5f87",
+          "seconds": 15.476324334042147,
+          "model_seconds": 14.791762,
+          "model_attempts": 8
+        },
+        "g02-failure_comparison-transformed": {
+          "trace_id": "01a0ad746d7a8121d702b822644edb7b",
+          "seconds": 32.105052541941404,
+          "model_seconds": 31.435266000000002,
+          "model_attempts": 8
+        },
+        "g04-sample_spreads-transformed": {
+          "trace_id": "01a0ad74eb18773c6a2de90c6afe96d5",
+          "seconds": 27.909017500001937,
+          "model_seconds": 27.179242000000002,
+          "model_attempts": 8
+        },
+        "g03-module_comparison-original": {
+          "trace_id": "01a0ad75584ce6d8b71a528988b0237b",
+          "seconds": 19.150764417019673,
+          "model_seconds": 18.41057,
+          "model_attempts": 9
+        },
+        "g02-failure_comparison-original": {
+          "trace_id": "01a0ad75a3515dd633b87fa559e80ad0",
+          "seconds": 19.12382229208015,
+          "model_seconds": 18.471793,
+          "model_attempts": 8
+        },
+        "g01-trajectory-transformed": {
+          "trace_id": "01a0ad75ee34b2054567a38c8ccd70fa",
+          "seconds": 10.971212125034072,
+          "model_seconds": 9.965987,
+          "model_attempts": 8
+        },
+        "g03-parent_composition-transformed": {
+          "trace_id": "01a0ad761940d222c11d6a6bff6c8ad3",
+          "seconds": 9.358659083023667,
+          "model_seconds": 8.644109,
+          "model_attempts": 8
+        },
+        "g03-module_comparison-transformed": {
+          "trace_id": "01a0ad763e0bfcbc6fa8fd36b41d94fd",
+          "seconds": 25.87817229202483,
+          "model_seconds": 25.128035,
+          "model_attempts": 8
+        },
+        "g06-demand_rank-original": {
+          "trace_id": "01a0ad76a360c9d952b4512c362f59bb",
+          "seconds": 72.72057033295278,
+          "model_seconds": 72.01326900000001,
+          "model_attempts": 8
+        },
+        "g06-demand_rank-transformed": {
+          "trace_id": "01a0ad77bfaf07fdbcc4543064cf8e07",
+          "seconds": 29.994384667021222,
+          "model_seconds": 29.28293,
+          "model_attempts": 8
+        },
+        "g02-allocation-transformed": {
+          "trace_id": "01a0ad78350ac4b011dc25fb295467c5",
+          "seconds": 9.068414042005315,
+          "model_seconds": 8.300013,
+          "model_attempts": 8
+        },
+        "g01-trajectory-original": {
+          "trace_id": "01a0ad7858a7c14690033c59293fcc3a",
+          "seconds": 21.407201166031882,
+          "model_seconds": 20.393637,
+          "model_attempts": 8
+        },
+        "g01-association-original": {
+          "trace_id": "01a0ad78ac79301f427015556c178e19",
+          "seconds": 12.78422375000082,
+          "model_seconds": 12.155754,
+          "model_attempts": 8
+        },
+        "g04-curing_paths-original": {
+          "trace_id": "01a0ad78de9e5e908248b6d52eb4a17c",
+          "seconds": 17.094508333015256,
+          "model_seconds": 16.968651,
+          "model_attempts": 3
+        },
+        "g05-overview-original": {
+          "trace_id": "01a0ad79218c230e704856c933bcce9c",
+          "seconds": 10.649883792037144,
+          "model_seconds": 10.040635,
+          "model_attempts": 8
+        },
+        "g02-allocation-original": {
+          "trace_id": "01a0ad794b5aa583a6359f91a7adfce4",
+          "seconds": 11.921715082949959,
+          "model_seconds": 11.185186,
+          "model_attempts": 8
+        },
+        "g05-overview-transformed": {
+          "trace_id": "01a0ad797a2a5323c333d4fc8720d8cb",
+          "seconds": 10.424477459047921,
+          "model_seconds": 9.745478,
+          "model_attempts": 8
+        },
+        "g06-efficiency_rank-transformed": {
+          "trace_id": "01a0ad79a31455c258e596786d226a40",
+          "seconds": 11.062219416955486,
+          "model_seconds": 10.375613,
+          "model_attempts": 8
+        },
+        "g06-efficiency_rank-original": {
+          "trace_id": "01a0ad79ce8067ca6430ec860ee4c105",
+          "seconds": 12.765007916954346,
+          "model_seconds": 12.068825,
+          "model_attempts": 8
+        },
+        "g04-sample_spreads-original": {
+          "trace_id": "01a0ad7a008c94a7ccb76b6670355b5c",
+          "seconds": 32.25722454092465,
+          "model_seconds": 30.857889,
+          "model_attempts": 14
+        },
+        "g05-exact_record-original": {
+          "trace_id": "01a0ad7a7ecefe91bde8299287a528fe",
+          "seconds": 49.776691875071265,
+          "model_seconds": 48.898865,
+          "model_attempts": 9
+        },
+        "g01-association-transformed": {
+          "trace_id": "01a0ad7b4171f4bab6038354c9a2320b",
+          "seconds": 23.612806332996115,
+          "model_seconds": 22.963351,
+          "model_attempts": 7
+        },
+        "g05-exact_record-transformed": {
+          "trace_id": "01a0ad7b9ddea12b6e6ec7cec82b285b",
+          "seconds": 21.713336499989964,
+          "model_seconds": 20.799349,
+          "model_attempts": 11
+        }
+      }
+    },
+    "candidate": {
+      "trace_count": 24,
+      "model_attempts": 201,
+      "framework_requests": 197,
+      "case_seconds": 1003.2902784608305,
+      "model_seconds": 984.187074,
+      "model_fraction": 0.9809594442695717,
+      "roles": {
+        "designer": {
+          "model_attempts": 27,
+          "seconds": 181.248232,
+          "median_seconds": 3.275734,
+          "p95_nearest_rank_seconds": 19.779091,
+          "max_seconds": 21.052668,
+          "missing_usage": 0
+        },
+        "reviewer": {
+          "model_attempts": 27,
+          "seconds": 209.240545,
+          "median_seconds": 4.031744,
+          "p95_nearest_rank_seconds": 29.999212,
+          "max_seconds": 30.000998,
+          "missing_usage": 3
+        },
+        "vis-lead": {
+          "model_attempts": 147,
+          "seconds": 593.698297,
+          "median_seconds": 1.466762,
+          "p95_nearest_rank_seconds": 18.442053,
+          "max_seconds": 51.740045,
+          "missing_usage": 1
+        }
+      },
+      "cases": {
+        "g04-curing_paths-transformed": {
+          "trace_id": "01a0ad7358fc5915f542e9d85984e62e",
+          "seconds": 120.00441829196643,
+          "model_seconds": 118.934496,
+          "model_attempts": 8
+        },
+        "g03-parent_composition-original": {
+          "trace_id": "01a0ad752dfde717d8d27a85f27b8e8b",
+          "seconds": 46.75231699994765,
+          "model_seconds": 46.071488,
+          "model_attempts": 8
+        },
+        "g02-failure_comparison-transformed": {
+          "trace_id": "01a0ad75e4cddaf6da506246c0026c6f",
+          "seconds": 16.509487417060882,
+          "model_seconds": 15.827449,
+          "model_attempts": 8
+        },
+        "g04-sample_spreads-transformed": {
+          "trace_id": "01a0ad76257cdf68a8c1bcf836a4b71d",
+          "seconds": 14.08167237509042,
+          "model_seconds": 13.356637,
+          "model_attempts": 8
+        },
+        "g03-module_comparison-original": {
+          "trace_id": "01a0ad765cb28b1247cf923175a93030",
+          "seconds": 66.92947633308358,
+          "model_seconds": 66.179106,
+          "model_attempts": 9
+        },
+        "g02-failure_comparison-original": {
+          "trace_id": "01a0ad776253c0132eed4856bb10f2ad",
+          "seconds": 16.584613332990557,
+          "model_seconds": 15.914725,
+          "model_attempts": 8
+        },
+        "g01-trajectory-transformed": {
+          "trace_id": "01a0ad77a34bb11e63c96bbb41f2d050",
+          "seconds": 15.112930958974175,
+          "model_seconds": 14.089906,
+          "model_attempts": 8
+        },
+        "g03-parent_composition-transformed": {
+          "trace_id": "01a0ad77de85bc4af60a846c7163f8e1",
+          "seconds": 117.64067912497558,
+          "model_seconds": 116.914406,
+          "model_attempts": 8
+        },
+        "g03-module_comparison-transformed": {
+          "trace_id": "01a0ad79aa427e85754bb22251d310cc",
+          "seconds": 56.71914795902558,
+          "model_seconds": 56.02362,
+          "model_attempts": 9
+        },
+        "g06-demand_rank-original": {
+          "trace_id": "01a0ad7a88001e3101fa79a1ab7ee606",
+          "seconds": 15.3705027080141,
+          "model_seconds": 14.683812,
+          "model_attempts": 8
+        },
+        "g06-demand_rank-transformed": {
+          "trace_id": "01a0ad7ac44a4a590653ec1a4f338b8f",
+          "seconds": 16.772879792028107,
+          "model_seconds": 16.07384,
+          "model_attempts": 8
+        },
+        "g02-allocation-transformed": {
+          "trace_id": "01a0ad7b060e113c7a3220b0a8ea72ae",
+          "seconds": 16.57175058394205,
+          "model_seconds": 15.861848,
+          "model_attempts": 8
+        },
+        "g01-trajectory-original": {
+          "trace_id": "01a0ad7b46feb8a15aac85edbb29a969",
+          "seconds": 14.068888625013642,
+          "model_seconds": 13.053155,
+          "model_attempts": 8
+        },
+        "g01-association-original": {
+          "trace_id": "01a0ad7b7e23ca3a5ccf51c5fbf9f31c",
+          "seconds": 44.8709612499224,
+          "model_seconds": 44.132702,
+          "model_attempts": 9
+        },
+        "g04-curing_paths-original": {
+          "trace_id": "01a0ad7c2da64e5baf440ff5ac97671d",
+          "seconds": 41.507056792033836,
+          "model_seconds": 40.396959,
+          "model_attempts": 8
+        },
+        "g05-overview-original": {
+          "trace_id": "01a0ad7ccffc6fa4bc638761d6b436bd",
+          "seconds": 30.812114166095853,
+          "model_seconds": 30.171187,
+          "model_attempts": 8
+        },
+        "g02-allocation-original": {
+          "trace_id": "01a0ad7d48896f095e2f6c22e24b7704",
+          "seconds": 27.13117304199841,
+          "model_seconds": 26.394335,
+          "model_attempts": 8
+        },
+        "g05-overview-transformed": {
+          "trace_id": "01a0ad7db2b763b9ef3ef738cf31a296",
+          "seconds": 24.112609957926907,
+          "model_seconds": 23.098481,
+          "model_attempts": 11
+        },
+        "g06-efficiency_rank-transformed": {
+          "trace_id": "01a0ad7e11174708633ec66c41716fb2",
+          "seconds": 54.1441682089353,
+          "model_seconds": 53.437394000000005,
+          "model_attempts": 8
+        },
+        "g06-efficiency_rank-original": {
+          "trace_id": "01a0ad7ee4c86d81c67e75847990e8ac",
+          "seconds": 13.112549249897711,
+          "model_seconds": 12.435249,
+          "model_attempts": 8
+        },
+        "g04-sample_spreads-original": {
+          "trace_id": "01a0ad7f1841455b3575dc0494be6ab8",
+          "seconds": 51.012701499974355,
+          "model_seconds": 50.221373,
+          "model_attempts": 10
+        },
+        "g05-exact_record-original": {
+          "trace_id": "01a0ad7fdfc29d7ce186319a933b37c7",
+          "seconds": 69.57700004195794,
+          "model_seconds": 68.694184,
+          "model_attempts": 8
+        },
+        "g01-association-transformed": {
+          "trace_id": "01a0ad80efbf144768c928a721d4daa6",
+          "seconds": 60.623406625003554,
+          "model_seconds": 59.871311,
+          "model_attempts": 9
+        },
+        "g05-exact_record-transformed": {
+          "trace_id": "01a0ad81dcb29cea6d8a04f3868860bf",
+          "seconds": 53.26777312497143,
+          "model_seconds": 52.349411,
+          "model_attempts": 8
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Counts are observed nonoverlapping chat spans, not provider billing or internal endpoint retries.",
+    "Model-span duration combines network, provider scheduling, and inference; these components are not separated.",
+    "Parallel arms and briefly concurrent synthetic reviewer probes shared the provider; one trial cannot isolate routing/cache variance.",
+    "Cancelled calls with absent usage remain attempts and timeouts; they are not discarded."
+  ]
+}

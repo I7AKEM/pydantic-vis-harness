@@ -19,3 +19,7 @@ evals/designer/agent/indicator/renders/
 outputs/
 evals/reviewer/labelled/png/
 evals/reviewer/verdicts/
+# Evaluation run outputs: rendered chart assets and raw result JSON. Audit notes stay in git.
+evals/**/results/
+evals/**/results-*/
+evals/**/results-*.json
