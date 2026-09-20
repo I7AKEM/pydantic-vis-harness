@@ -11,10 +11,12 @@ CARD_ROWS = 20
 LABELS = {
     "English": {"rows": "{shown} of {total} rows", "assumptions": "Assumptions", "compromises": "Compromises",
                 "warnings": "Warnings", "review": "Review", "findings": "Open findings", "no_chart": "No chart",
-                "ids": "Artifact {artifact} · Request {request}"},
+                "ids": "Artifact {artifact} · Request {request}", "source": "Complete result table (JSON)",
+                "unverified": "Unverified"},
     "Arabic": {"rows": "{shown} من {total} صفًا", "assumptions": "الافتراضات", "compromises": "التنازلات",
                "warnings": "تنبيهات", "review": "المراجعة", "findings": "ملاحظات مفتوحة", "no_chart": "بلا رسم",
-               "ids": "المخرج {artifact} · الطلب {request}"},
+               "ids": "المخرج {artifact} · الطلب {request}", "source": "جدول النتيجة الكامل (JSON)",
+               "unverified": "لم يُتحقق منه"},
 }
 
 
@@ -41,8 +43,10 @@ def _review(review: dict | None, labels: dict) -> str:
         return ""
     findings = review.get("review", {}).get("findings", [])
     open_findings = [f["message"] for f in findings if f.get("level") == "error"]
+    uncertainties = review.get("review", {}).get("uncertainties", [])
     return "\n".join(part for part in (f"**{labels['review']}**: {review.get('verdict', '')}",
-                                       _section(labels["findings"], open_findings)) if part)
+                                       _section(labels["findings"], open_findings),
+                                       _section(labels["unverified"], uncertainties)) if part)
 
 
 def card(*, language: str, png_url: str | None = None, no_chart_reason: str | None = None, summary: str | None = None,
@@ -58,6 +62,7 @@ def card(*, language: str, png_url: str | None = None, no_chart_reason: str | No
         summary or "",
         explanation or "",
         _table(columns, rows, row_count, labels, display_labels or DisplayLabels()) if columns else "",
+        f"[{labels['source']}](/artifacts/{artifact_id})" if artifact_id else "",
         _section(labels["assumptions"], list(assumptions)),
         _section(labels["compromises"], [c.message for c in compromises]),
         _section(labels["warnings"], list(warnings)),

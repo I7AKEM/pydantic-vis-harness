@@ -148,11 +148,301 @@ def test_corpus_sample(tmp_path):
     assert [c['name'] for c in cases] == ['corpus-' + r['dataset_id'] for r in random.Random(11).sample(rows, 10)]
     assert all(c['turns'][0]['outcome'] == 'answered' and c['turns'][0]['tool'] == ['draw', 'answer_question'] for c in cases)
 
+    twenty = runner().corpus_cases(tmp_path, count=20)
+    assert [c['name'] for c in twenty] == ['corpus-' + r['dataset_id'] for r in random.Random(11).sample(rows, 20)]
+
 
 def test_help_offline():
     result = subprocess.run([sys.executable, '-m', 'evals.lead.run', '--help'], cwd=ROOT, capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
-    assert all(flag in result.stdout for flag in ('--corpus', '--out', '--only'))
+    assert all(flag in result.stdout for flag in ('--corpus', '--corpus-count', '--out', '--only', '--concurrency', '--dev20'))
+
+
+def test_fixed_development_twenty_do_not_hide_unsupported_cases():
+    gold = json.loads((ROOT / 'evals/lead/dev20-expectations.json').read_text())
+    assert len(gold) == len({entry['id'] for entry in gold}) == 20
+    by_id = {entry['id']: entry for entry in gold}
+    assert by_id['vizcsv-839d109a0db9ce25']['handoff']['disposition'] == 'unsupported'
+    assert by_id['vizcsv-97280400c00748a7']['original']['disposition'] == 'source_insufficient'
+    assert by_id['vizcsv-e07c573241abdb02']['original']['no_image']
+    assert by_id['vizcsv-85830f71807a6905']['handoff']['charts'] == ['table']
+
+
+def test_renderable_twenty_is_a_separate_preregistered_cohort(tmp_path):
+    from evals.lead.dev20 import cases
+    gold = json.loads((ROOT / 'evals/lead/dev20-expectations.json').read_text())
+    extra = json.loads((ROOT / 'evals/lead/dev20-additional.json').read_text())
+    manifest = [{'dataset_id': entry['id'], 'csv_path': entry['id'] + '.csv',
+                 'occurrences': [{'question': 'The original question.'}]} for entry in [*gold, extra]]
+    (tmp_path / 'manifest.jsonl').write_text('\n'.join(json.dumps(row) for row in manifest))
+    original = cases('original', tmp_path)
+    handoff = cases('handoff', tmp_path)
+    rendered = cases('renderable', tmp_path)
+    assert len(original) == len(handoff) == len(rendered) == 20
+    omitted = 'corpus-vizcsv-839d109a0db9ce25'
+    assert omitted in {case['name'] for case in original} & {case['name'] for case in handoff}
+    assert omitted not in {case['name'] for case in rendered}
+    assert rendered[-1]['name'] == 'corpus-vizcsv-8b3fd04765e40d3a'
+    assert all(case['evaluation_mode'] == 'renderable' for case in rendered)
+    assert all(case['turns'][0]['require_render_evidence'] for case in rendered)
+    assert all(case['brief']['producer_agent'] == 'data-agent' for case in rendered)
+    assert all(case['caller_kind'] == 'agent' and case['caller_identity'] == 'eval-data-agent' for case in rendered)
+    assert all(case['brief']['raw_question'] != case['original_question'] for case in rendered)
+
+
+def test_audit_source_hash_covers_every_row_and_identifier():
+    signature = runner().source_signature
+    rows = [[str(index).zfill(5), index] for index in range(1000)]
+    expected = signature(['code', 'value'], rows)
+    assert expected['row_count'] == 1000
+    assert signature(['code', 'value'], rows[:50]) != expected
+    changed = [*rows[:-1], ['00999', 1000]]
+    assert signature(['code', 'value'], changed) != expected
+    assert signature(['code', 'value'], [[int(code), value] for code, value in rows]) != expected
+    assert signature(['value', 'code'], rows) != expected
+
+
+def test_strict_review_requires_pass_without_material_errors():
+    expected = {'tool': 'draw', 'outcome': 'artifact', 'review_required': True, 'review_pass_required': True}
+    artifact = {'artifact_id': 'art_a', 'review': {'status': 'reviewed', 'review': {'verdict': 'revise', 'findings': []}}}
+    captured = messages('draw', {'request_id': 'rq_a'})
+    captured += messages('render_visualization', {'request_id': 'rq_a'})
+    captured += messages('review_visualization', {'request_id': 'rq_a'})
+    captured += messages('publish_visualization', {'artifact': artifact})
+    assert runner().score_turn(expected, captured)['review_ok'] is False
+    artifact['review']['review']['verdict'] = 'pass'
+    assert runner().score_turn(expected, captured)['review_ok'] is True
+    artifact['review']['review']['findings'] = [{'level': 'error', 'owner': 'none'}]
+    assert runner().score_turn(expected, captured)['review_ok'] is False
+
+
+@pytest.mark.parametrize('field', ['level', 'severity'])
+def test_strict_review_rejects_material_error_even_when_pass_is_returned(field):
+    artifact = {'review': {'status': 'reviewed', 'review': {
+        'verdict': 'pass', 'findings': [{field: 'error', 'owner': 'none'}],
+    }}}
+    assert runner().approved_review(artifact) is False
+    artifact['review']['review']['findings'][0][field] = 'warning'
+    assert runner().approved_review(artifact) is True
+
+
+def test_strict_review_must_follow_the_latest_render_before_publication():
+    expected = {'tool': 'draw', 'outcome': 'artifact', 'review_pass_required': True}
+    artifact = {'artifact_id': 'art_a', 'review': {'status': 'reviewed', 'review': {'verdict': 'pass'}}}
+    first = messages('draw', {'request_id': 'rq_a'})
+    first += messages('render_visualization', {'request_id': 'rq_a'})
+    first += messages('review_visualization', {'request_id': 'rq_a'})
+    published = messages('publish_visualization', {'artifact': artifact})
+    assert runner().score_turn(expected, first + published)['review_ok'] is True
+    rerendered = first + messages('render_visualization', {'request_id': 'rq_a'})
+    assert runner().score_turn(expected, rerendered + published)['review_ok'] is False
+    reviewed = rerendered + messages('review_visualization', {'request_id': 'rq_a'})
+    assert runner().score_turn(expected, reviewed + published)['review_ok'] is True
+    assert runner().score_turn(expected, reviewed + published + messages('design_visualization', {}))['review_ok'] is False
+
+
+def test_strict_visible_columns_are_not_credited_from_hidden_source_fields():
+    expected = {'tool': 'draw', 'outcome': 'artifact', 'visible_columns': ['category', 'count', 'percentage']}
+    artifact = {'spec': 'vis bar\nbind category category\nbind value count',
+                'columns': [{'name': name} for name in ['category', 'count', 'percentage']]}
+    result = runner().score_turn(expected, messages('draw', {'artifact': artifact}))
+    assert result['visible_columns_ok'] is False
+    artifact['spec'] = 'vis table'
+    assert runner().score_turn(expected, messages('draw', {'artifact': artifact}))['visible_columns_ok'] is True
+
+
+def test_strict_repetition_counts_cached_calls_too():
+    expected = {'tool': 'draw', 'outcome': 'artifact', 'max_tool_calls': {'render_visualization': 1}}
+    captured = messages('draw', {'request_id': 'rq_a'})
+    captured += messages('render_visualization', {'cached': True}) * 2
+    captured += messages('publish_visualization', {'artifact': {'artifact_id': 'art_a'}})
+    assert runner().score_turn(expected, captured)['repetition_ok'] is False
+
+
+def test_unsupported_chart_is_separate_from_an_approved_chart():
+    expected = {'tool': ['draw', 'none'], 'outcome': 'handled', 'disposition': 'unsupported',
+                'reply_patterns': ['cannot', 'map'], 'forbid_questions': True}
+    result = runner().score_turn(expected, [], 'The current renderer cannot draw this route map.')
+    assert result['outcome_ok'] and result['reply_ok']
+    artifact = {'artifact_id': 'art_a', 'chart': 'scatter', 'png_url': '/renders/a/chart.png'}
+    wrong = runner().score_turn(expected, messages('draw', {'artifact': artifact}),
+                                'The current renderer cannot draw a map. Here is a scatter chart.')
+    assert wrong['outcome_ok'] is False
+    questioned = runner().score_turn(expected, messages('draw', {'clarification': {'question': 'Upload more data?'}}),
+                                     'The current renderer cannot draw a map.')
+    assert questioned['outcome_ok'] is False and questioned['reply_ok'] is False
+
+
+def test_failure_preserves_lead_and_nested_specialist_usage(monkeypatch):
+    import asyncio
+    from pydantic_ai import Agent, RunContext
+    from pydantic_ai.messages import TextPart
+    from pydantic_ai.models.function import FunctionModel
+    from vis_agent.deps import AppDeps
+
+    module = runner()
+    lead = Agent('test', deps_type=AppDeps)
+    specialist = Agent('test')
+    @lead.tool
+    async def draw(ctx: RunContext[AppDeps]) -> dict:
+        await specialist.run('Inspect', usage=ctx.usage)
+        raise RuntimeError('Failure after specialist used a request')
+
+    def respond(history, info):
+        return ModelResponse(parts=[ToolCallPart('draw', {})])
+    with lead.override(model=FunctionModel(respond)), specialist.override(
+        model=FunctionModel(lambda history, info: ModelResponse(parts=[TextPart('Done')]))
+    ):
+        record = asyncio.run(module.run_case(module.load_cases()[1], lead, None, None, None))
+    turn = record['turns'][0]
+    assert not turn['outcome_ok']
+    assert turn['usage']['requests'] == turn['requests_used'] == 2
+    assert 'Failure after specialist' in turn['error']
+
+
+@pytest.mark.parametrize('spec', [None, '', 123, []])
+def test_fallback_without_executable_spec_has_no_visible_bindings(spec):
+    artifact = {'artifact_id': 'art_fallback', 'chart': None, 'spec': spec,
+                'no_chart_reason': 'Design failed', 'columns': [{'name': 'value'}], 'rows': [[5]]}
+    assert runner().visible_columns(artifact) == set()
+    turn = runner().score_turn({'tool': 'draw', 'outcome': 'artifact', 'visible_columns': ['value']},
+                               messages('draw', {'artifact': artifact}))
+    assert turn['visible_columns_ok'] is False
+
+
+def test_scoring_exception_preserves_completed_model_reply_usage_and_messages(monkeypatch):
+    import asyncio
+    from pydantic_ai import Agent
+    from pydantic_ai.messages import TextPart
+    from pydantic_ai.models.function import FunctionModel
+    module = runner()
+    lead = Agent('test')
+    def broken_score(*args):
+        raise RuntimeError('Deliberate scorer failure')
+    monkeypatch.setattr(module, 'score_turn', broken_score)
+    case = {'name': 'scorer-failure', 'filename': 'tiny.csv', 'csv_text': 'value\n5\n',
+            'turns': [{'message': 'Show it.', 'tool': 'none', 'outcome': 'text'}]}
+    with lead.override(model=FunctionModel(lambda history, info: ModelResponse(parts=[TextPart('Completed answer')]))):
+        record = asyncio.run(module.run_case(case, lead, None, None, None))
+    turn = record['turns'][0]
+    assert turn['reply'] == 'Completed answer'
+    assert turn['messages'] and turn['usage']['requests'] == turn['requests_used'] == 1
+    assert turn['outcome_ok'] is False and 'Deliberate scorer failure' in turn['evaluation_error']
+    assert record['requests'] == record['artifacts'] == []
+    assert module.summarize([record])['cases_ok'] == 0
+
+
+def test_turn_deadline_keeps_evidence_and_continues_without_relaxing_pass_sla():
+    import asyncio
+    from pydantic_ai import Agent
+    from pydantic_ai.messages import TextPart
+    from pydantic_ai.models.function import FunctionModel
+    module = runner()
+    lead = Agent('test')
+    calls = 0
+    def respond(history, info):
+        nonlocal calls
+        calls += 1
+        return ModelResponse(parts=[ToolCallPart('slow', {})] if calls == 1 else [TextPart('Next turn completed')])
+    @lead.tool_plain
+    async def slow() -> str:
+        await asyncio.sleep(10)
+        return 'Too late'
+    expected = {'message': 'Show it.', 'tool': 'none', 'outcome': 'text', 'max_seconds': 60}
+    case = {'name': 'deadline', 'filename': 'tiny.csv', 'csv_text': 'value\n5\n', 'turns': [expected, expected]}
+    with lead.override(model=FunctionModel(respond)):
+        record = asyncio.run(module.run_case(case, lead, None, None, None, turn_timeout=.05))
+    first, second = record['turns']
+    assert first['error'].startswith('TimeoutError: evaluation turn exceeded 0.05s')
+    assert first['outcome_ok'] is False and first['latency_ok'] is True
+    assert first['messages'] and first['usage']['requests'] == 1
+    assert second['outcome_ok'] and second['reply'] == 'Next turn completed'
+    assert record['turn_timeout_seconds'] == .05
+
+
+def test_completed_case_checkpoints_survive_other_case_and_aggregate_errors(tmp_path, monkeypatch):
+    import asyncio
+    from types import SimpleNamespace
+    module = runner()
+    lead = SimpleNamespace(model='test')
+    deps = SimpleNamespace(profiler=None, analyst=None, designer=None, designer_fallback=None, reviewer=None)
+    monkeypatch.setattr(module, 'teams_from_env', lambda *args: [SimpleNamespace(lead=lead, deps=deps, label='test')])
+    async def fake_run(case, *args, **kwargs):
+        if case['name'] == 'broken':
+            raise RuntimeError('Unexpected case failure')
+        record = {'name': case['name'], 'turns': [{**module.score_turn(case['turns'][0], [], 'Saved answer'),
+                   'expected': case['turns'][0], 'reply': 'Saved answer', 'usage': {'requests': 1}}]}
+        module.annotate_turns(record)
+        return record
+    monkeypatch.setattr(module, 'run_case', fake_run)
+    cases = [{'name': name, 'turns': [{'tool': 'none', 'outcome': 'text'}]} for name in ('good', 'broken', 'next')]
+    result = asyncio.run(module.evaluate(cases, tmp_path, concurrency=1, turn_timeout=120))
+    assert result['summary']['cases'] == 3 and result['summary']['cases_ok'] == 2
+    for case in cases:
+        saved = json.loads((tmp_path / case['name'] / 'case.json').read_text())
+        assert saved['run_configuration']['turn_timeout_seconds'] == 120
+        assert saved['run_configuration']['application_code_sha256'] == result['application_code_sha256']
+        assert not (tmp_path / case['name'] / 'case.json.tmp').exists()
+    assert json.loads((tmp_path / 'broken/case.json').read_text())['turns'][0]['outcome_ok'] is False
+    def broken_summary(*args):
+        raise RuntimeError('Unexpected aggregate failure')
+    monkeypatch.setattr(module, 'summarize', broken_summary)
+    with pytest.raises(RuntimeError, match='aggregate failure'):
+        asyncio.run(module.evaluate(cases, tmp_path / 'aggregate', concurrency=1))
+    assert all((tmp_path / 'aggregate' / case['name'] / 'case.json').is_file() for case in cases)
+
+
+def test_application_hash_is_separate_from_evaluator_hash(tmp_path, monkeypatch):
+    module = runner()
+    application = tmp_path / 'app.py'
+    evaluator = tmp_path / 'eval.py'
+    application.write_text('app version 1')
+    evaluator.write_text('eval version 1')
+    monkeypatch.setattr(module, 'ROOT', tmp_path)
+    monkeypatch.setattr(module, 'code_paths', lambda: ([application], [evaluator]))
+    original_app = module.code_fingerprint([application])
+    original_eval = module.code_fingerprint([evaluator])
+    combined = module.runtime_fingerprint()
+    evaluator.write_text('eval version 2')
+    assert module.code_fingerprint([application]) == original_app
+    assert module.code_fingerprint([evaluator]) != original_eval
+    assert module.runtime_fingerprint() != combined
+
+
+@pytest.mark.parametrize('deadline', [0, -1, float('inf'), float('nan')])
+def test_evaluation_deadline_must_be_finite_positive(deadline):
+    import asyncio
+    with pytest.raises(ValueError, match='positive finite'):
+        asyncio.run(runner().evaluate([], turn_timeout=deadline))
+
+
+def test_latency_percentiles_and_missing_usage_are_explicit():
+    base = {'tool_ok': True, 'outcome_ok': True, 'redo_ok': None, 'revision_ok': None,
+            'revised': None, 'questioned': False, 'expected': {'outcome': 'text'}}
+    records = [{'name': str(i), 'turns': [{**base, 'seconds': i, 'requests_used': 1}]} for i in range(1, 21)]
+    summary = runner().summarize(records)
+    assert summary['requests'] == 20 and summary['usage_missing_turns'] == 0
+    assert summary['latency_seconds']['p50'] == 10.5
+    assert summary['latency_seconds']['p95'] == pytest.approx(19.05)
+
+
+def test_numeric_fidelity_accepts_context_ranges_units_and_measured_category_counts():
+    artifact = {'columns': [{'name': 'group', 'kind': 'category'},
+                            {'name': 'violation_rate_per_100', 'kind': 'measure'}],
+                'rows': [['A', 13.19], ['B', 7.17]], 'row_count': 2}
+    check = runner().answer_numbers_match
+    assert check('During 2023–2025, the 2 groups had 13.19 and 7.17 per 100.', artifact,
+                 'Show rates in 2023-2025.')
+    assert check('للأعمار 30–50، المعدلان 13.19 و7.17 لكل 100.', artifact,
+                 'أعطني المعدلات للأعمار بين 30 و50.')
+    assert check('The rate is 13.19 for ages 30-50.', artifact, 'Rates for ages between 30 and 50.')
+    assert not check('During 2024–2026, the groups had 13.19 and 7.17.', artifact,
+                     'Show rates in 2023-2025.')
+    assert not check('The source rate is 99.', artifact, 'Show rates.')
+    assert not check('The source rate is a decline of 13.19.', artifact, 'Show rates.')
+    negative = {**artifact, 'rows': [['A', -13.19], ['B', 7.17]]}
+    assert check('The source rate is -13.19.', negative, 'Show rates.')
+    assert not check('The source rate is -13.19.', artifact, 'Show rates.')
 
 
 def test_turn_history_and_capture(monkeypatch):
@@ -291,11 +581,13 @@ def test_summary_counts_revisions_false_questions_and_heldout(capsys):
         'cases': 4, 'cases_ok': 3, 'turns': 5, 'tool_ok': 5, 'outcome_ok': 4,
         'redo_turns': 1, 'redo_ok': 1, 'revision_turns': 3, 'revision_ok': 2,
         'revisions': 1, 'false_questions': 1, 'requests': 12,
+        'usage_missing_turns': 1,
         'heldout_cases': 2, 'heldout_cases_ok': 1,
         **{key: {'passed': 0, 'checked': 0} for key in (
             'fidelity_ok', 'delivery_ok', 'answer_fidelity_ok', 'analysis_reuse_ok', 'language_ok',
             'source_fidelity_ok', 'delegation_ok', 'chart_ok', 'binding_ok', 'axis_titles_ok', 'labels_ok',
-            'flow_ok', 'review_ok', 'latency_ok')},
+            'flow_ok', 'review_ok', 'latency_ok', 'render_evidence_ok', 'visible_columns_ok',
+            'repetition_ok', 'reply_ok', 'semantic_fidelity_ok')},
         'observed_outcomes': {},
         'latency_seconds': None,
     }
@@ -438,6 +730,83 @@ def test_final_answer_numeric_claims_are_checked_without_percent_rescaling():
     artifact['rows'] = [[0.6]]
     assert not module.answer_numbers_match('The rate is 60%.', artifact, 'What is the rate?')
     assert module.answer_numbers_match('The rate is 0.6%.', artifact, 'What is the rate?')
+
+
+@pytest.mark.parametrize('link', [
+    '/renders/da7b5f119a0b/chart.png',
+    '/renders/48a96b712af7/chart.html?version=123#view456',
+    '[/renders/2205da5bea28/chart.png](/renders/2205da5bea28/chart.png)',
+    '[https://example.test/renders/556d4fa63741/chart.png](https://example.test/renders/556d4fa63741/chart.png)',
+    '<https://example.test/renders/556d4fa63741/chart.png?trace=123>',
+    '`/renders/da7b5f119a0b/chart.html`',
+])
+def test_answer_numbers_ignore_url_identifiers_but_keep_adjacent_claims(link):
+    assert runner().answer_numbers_match(f'Total: 40. Chart: {link}', indicator_artifact(40), 'Total?')
+    assert not runner().answer_numbers_match(f'Total: 41. Chart: {link}', indicator_artifact(40), 'Total?')
+
+
+def test_answer_numbers_still_check_visible_numeric_link_labels():
+    link = '/renders/da7b5f119a0b/chart.png'
+    assert runner().answer_numbers_match(f'Total: [40]({link})', indicator_artifact(40), 'Total?')
+    assert not runner().answer_numbers_match(f'Total: [41]({link})', indicator_artifact(40), 'Total?')
+
+
+def test_answer_numbers_keep_real_precision_error_alongside_correct_value_and_chart_url():
+    artifact = indicator_artifact(49.5578231292517)
+    correct = 'M: 49.5578231292517%. /renders/9f9b7c03580b/chart.png'
+    wrong = 'M: 49.5571768707483% (49.5578231292517%). /renders/9f9b7c03580b/chart.png'
+    assert runner().answer_numbers_match(correct, artifact, 'Percentage by gender?')
+    assert not runner().answer_numbers_match(wrong, artifact, 'Percentage by gender?')
+
+
+def saved_answer_run():
+    module = runner()
+    public = indicator_artifact(1)
+    public['row_count'] = 2  # The model-visible preview omits the second persisted row.
+    expected = {'tool': 'draw', 'outcome': 'indicator', 'message': 'Show the supplied result.',
+                'strict_source': True, 'require_render_evidence': True, 'max_seconds': 60}
+    reply = 'The second value is 42. /renders/da7b5f119a0b/chart.png'
+    captured = messages('draw', {'artifact': public})
+    turn = module.score_turn(expected, captured, reply)
+    turn.update(expected=expected, reply=reply, answer_fidelity_ok=False, seconds=66,
+                latency_ok=False, review_ok=False, repetition_ok=False, usage={'requests': 13},
+                messages=[{'preserved': 'raw message fixture'}])
+    case = {'name': 'saved-handoff-case', 'evaluation_mode': 'renderable', 'turns': [turn],
+            'assets': ['saved-handoff-case/renders/da7b5f119a0b/chart.png'],
+            'artifacts': [{'artifact_id': 'art_a', 'report': {'result': {
+                'columns': ['orders'], 'rows': [[1], [42]], 'row_count': 2}}}]}
+    module.annotate_turns(case)
+    return {'cases': [case], 'summary': module.summarize([case]),
+            'evaluation_code_sha256': 'original-evaluator', 'provenance': {'frozen': 'original'}}
+
+
+def test_offline_numeric_rescore_uses_full_saved_rows_without_changing_other_evidence():
+    from copy import deepcopy
+    from evals.lead.rescore_answers import rescore
+    original = saved_answer_run()
+    snapshot = deepcopy(original)
+    rescored = rescore(original)
+    assert original == snapshot
+    assert rescored['cases'][0]['turns'][0]['answer_fidelity_ok'] is True
+    assert rescored['summary']['cases_ok'] == 0  # Review, latency and repetition still fail.
+    restored = deepcopy(rescored['cases'])
+    restored[0]['turns'][0]['answer_fidelity_ok'] = False
+    assert restored == original['cases']
+    assert rescored['provenance'] == original['provenance']
+    assert rescored['evaluation_code_sha256'] == original['evaluation_code_sha256']
+    assert rescored['offline_rescore']['raw_summary'] == original['summary']
+
+
+@pytest.mark.parametrize('damage', ['missing', 'truncated'])
+def test_offline_numeric_rescore_refuses_missing_full_artifact_evidence(damage):
+    from evals.lead.rescore_answers import rescore
+    record = saved_answer_run()
+    if damage == 'missing':
+        record['cases'][0]['artifacts'] = []
+    else:
+        record['cases'][0]['artifacts'][0]['report']['result']['rows'] = [[1]]
+    with pytest.raises(ValueError, match='persisted artifact rows'):
+        rescore(record)
 
 
 

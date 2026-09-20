@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "purpose": "Synthetic reviewer capability probe; not human gold or a replacement for the labelled production set.",
+  "label_policy": "Proposed labels are excluded until independently inspected in audit.json before any model calls.",
+  "renderer_hashes": {
+    "render.mjs": "f8b4c416eabe12981363505226c7a0108d24f2b28f141c3989072ff7e8746958",
+    "package-lock.json": "5dfa34c1cae1c65c6e1ac78f6d90b895e92867d8de8a1d55989c4f9225616305"
+  },
+  "cases": [
+    {
+      "id": "bar_pairing_clean",
+      "family": "bar_pairing",
+      "proposed_label": "pass",
+      "case": "bar_pairing_clean/case.json",
+      "case_sha256": "1b86f85346ff8e22e9a534aca49ac56691b0a749293a612f3efcaea3575a6eaa",
+      "image": "bar_pairing_clean/chart.png",
+      "image_sha256": "8139c3fc7a6626ccc299cac7d46a08d1291e2d6cf0b6f80436bd3deb1dfc2b5a"
+    },
+    {
+      "id": "bar_pairing_defect",
+      "family": "bar_pairing",
+      "proposed_label": "revise",
+      "case": "bar_pairing_defect/case.json",
+      "case_sha256": "33963bb68cbbfe522330bf4ef80f9946a006259145ff97bb4b5259802d71ceb4",
+      "image": "bar_pairing_defect/chart.png",
+      "image_sha256": "f2c1306c54e876c268b00c4dfe1cbb0db7fc83450d0cf36e829ebac23ee61178"
+    },
+    {
+      "id": "line_unit_clean",
+      "family": "line_unit",
+      "proposed_label": "pass",
+      "case": "line_unit_clean/case.json",
+      "case_sha256": "622b3431d20816e947faa4208b75283750d8f7710ebfeaae699e908b7ea1fbcf",
+      "image": "line_unit_clean/chart.png",
+      "image_sha256": "c64fd11715a87d2f312000fa40d702bb5a98d238d9aa90641a21a7d11f336a18"
+    },
+    {
+      "id": "line_unit_defect",
+      "family": "line_unit",
+      "proposed_label": "revise",
+      "case": "line_unit_defect/case.json",
+      "case_sha256": "f26538269ff79167dc4d32256a661a284daa8e9849c02e21fff42d32aefb04b6",
+      "image": "line_unit_defect/chart.png",
+      "image_sha256": "52c68f5c3e26bf1e07a027f6532d2a401ee484dcec662bdbdd68d85a668dfb45"
+    },
+    {
+      "id": "grouped_legend_clean",
+      "family": "grouped_legend",
+      "proposed_label": "pass",
+      "case": "grouped_legend_clean/case.json",
+      "case_sha256": "9333593a2778605333713b51dc38759415efac28ad18412644dc9daeb0a6a763",
+      "image": "grouped_legend_clean/chart.png",
+      "image_sha256": "2ce548a3e78d39ab5e1e1b3316c37cb9ebe339f5f1f838ecf204bd42bcf94d37"
+    },
+    {
+      "id": "grouped_legend_defect",
+      "family": "grouped_legend",
+      "proposed_label": "revise",
+      "case": "grouped_legend_defect/case.json",
+      "case_sha256": "34478a9a7c22d12ed2e67e44d1cfaa96482036605be98addd97113863bf80358",
+      "image": "grouped_legend_defect/chart.png",
+      "image_sha256": "746e4f06cc1a3e10a589e59f12b315832c143a50d119a89ebba0b741beacf546"
+    },
+    {
+      "id": "table_missing_row_clean",
+      "family": "table_missing_row",
+      "proposed_label": "pass",
+      "case": "table_missing_row_clean/case.json",
+      "case_sha256": "94f25a771c93c15efc0ae572cf87543c4a296afccc5982f304f202553c8d4651",
+      "image": "table_missing_row_clean/chart.png",
+      "image_sha256": "4844dda00abdfd11cb45f2c8fa82aedcc43fc05b11376638e50508c47194f0cb"
+    },
+    {
+      "id": "table_missing_row_defect",
+      "family": "table_missing_row",
+      "proposed_label": "revise",
+      "case": "table_missing_row_defect/case.json",
+      "case_sha256": "43a44b033f0cc1762bfcd5ab98d65e10a2e7554f6bf295829a98b6c01058982b",
+      "image": "table_missing_row_defect/chart.png",
+      "image_sha256": "59d91bfee17ac4f571e59aa64f416fbe0fa864945fe3ba92703bc3c151a9f0e2"
+    },
+    {
+      "id": "indicator_value_clean",
+      "family": "indicator_value",
+      "proposed_label": "pass",
+      "case": "indicator_value_clean/case.json",
+      "case_sha256": "6f18fe6899f7b154522cd3b2bfac6e6553d453f7084949717b74d19bfc2c263c",
+      "image": "indicator_value_clean/chart.png",
+      "image_sha256": "ac1aef18fbd274cc57462e4891dfbff7001aad797917d289c2ac515dd562396d"
+    },
+    {
+      "id": "indicator_value_defect",
+      "family": "indicator_value",
+      "proposed_label": "revise",
+      "case": "indicator_value_defect/case.json",
+      "case_sha256": "5581383a279712110c55362f88111a6f56f3ce46cc34dc7ed84c2a96bf2da866",
+      "image": "indicator_value_defect/chart.png",
+      "image_sha256": "1814c1c51a1f13c1cf00d5fa3e7a0637e142222651ed71803b8a1edac38480b0"
+    },
+    {
+      "id": "scatter_binding_clean",
+      "family": "scatter_binding",
+      "proposed_label": "pass",
+      "case": "scatter_binding_clean/case.json",
+      "case_sha256": "d0a55e97ae548280cd4a52165f46492f3073dcba4dad9fb0a7a6543de9db8a59",
+      "image": "scatter_binding_clean/chart.png",
+      "image_sha256": "db21b6ed7a8ad4ea81f4607f63f1ed23b39f94e38d807a6776032f8c18c71704"
+    },
+    {
+      "id": "scatter_binding_defect",
+      "family": "scatter_binding",
+      "proposed_label": "revise",
+      "case": "scatter_binding_defect/case.json",
+      "case_sha256": "98febfb8286fc02e7c0627f1c5e5a2e6bba2cacd09ae7a68a984be141fb9f7ab",
+      "image": "scatter_binding_defect/chart.png",
+      "image_sha256": "20e13f23f92b6b7d89c7cd4cc0446d05857f7f6a02a3da292504aa5c31387ebe"
+    }
+  ]
+}

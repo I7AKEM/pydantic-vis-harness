@@ -31,7 +31,7 @@ def test_lead_delivers_the_upstream_table_without_an_analysis_pipeline(deps, dat
     assert outcome.card and outcome.artifact.artifact_id in outcome.card
     counts, designer, reviewer = fake_models
     assert counts == {"profiler": 0, "analyst": 0}
-    assert designer.runs == 1 and reviewer.runs == 0
+    assert designer.runs == 1 and reviewer.runs == 1
     assert len(fake_render) == 1
 
 
@@ -52,6 +52,75 @@ def test_preparing_a_draw_does_not_run_any_specialist(deps, dataset_id, agents, 
     assert request.artifact_id is None and not fake_render
     assert fake_models[1].runs == fake_models[2].runs == 0
     assert request.caller.conversation_id == "chat-1"
+
+
+def test_repeated_draw_reuses_the_active_request(deps, dataset_id, agents, fake_models, fake_render):
+    lead = agents[-1]
+    request_ids = []
+
+    def draw_twice(messages, info):
+        returned = tool_returns(messages)
+        if not returned:
+            return call("draw", dataset_id=dataset_id, question="Compare regional sales")
+        request_ids.append(returned[-1].model_response_object()["request_id"])
+        if len(request_ids) == 1:
+            return call("draw", dataset_id=dataset_id, question="Compare regional sales")
+        return finish("Active request retained.")
+
+    with lead.override(model=FunctionModel(draw_twice)):
+        result = lead.run_sync("Show this CSV", deps=deps, conversation_id="chat-1")
+
+    assert result.output == "Active request retained."
+    assert request_ids[0] == request_ids[1]
+    assert len(deps.requests.list_requests()) == 1
+
+
+def test_identical_visual_repair_keeps_preview_and_cannot_render_again(
+        deps, dataset_id, agents, reviewer, fake_models, fake_render):
+    request = new_request(deps, dataset_id)
+    checked_cached_render = False
+
+    def same_design(messages, info):
+        return call("deliver_design", spec=(
+            "vis bar\ntitle Sales by region\ndescription Supplied regional sales\n"
+            "bind\n  category region\n  value amount\nsort value desc\n"
+        ), explanation="No visible change.")
+
+    def attempt_noop(messages, info):
+        nonlocal checked_cached_render
+        returned = tool_returns(messages)
+        request_id = request_id_of(messages)
+        offered = {tool.name for tool in info.function_tools}
+        if not returned:
+            return call("resume", request_id=request_id)
+        last = returned[-1].tool_name
+        if last == "resume":
+            return call("design_visualization", request_id=request_id)
+        if last == "design_visualization" and len(fake_render) == 0:
+            return call("render_visualization", request_id=request_id)
+        if last == "render_visualization" and not checked_cached_render:
+            return call("review_visualization", request_id=request_id)
+        if last == "review_visualization":
+            return call("design_visualization", request_id=request_id, direction="Increase title contrast.")
+        if last == "design_visualization":
+            assert returned[-1].model_response_object()["no_change"] is True
+            checked_cached_render = True
+            return call("render_visualization", request_id=request_id)
+        if last == "render_visualization" and checked_cached_render:
+            return call("publish_visualization", request_id=request_id)
+        if last == "publish_visualization":
+            return finish()
+        raise AssertionError(last)
+
+    with agents[2].override(model=FunctionModel(same_design)), \
+            reviewer.override(model=FunctionModel(reviewer_finding())), \
+            agents[-1].override(model=FunctionModel(attempt_noop)):
+        outcome = run(run_request(deps, request.request_id))
+
+    saved = deps.requests.get_request(request.request_id)
+    assert outcome.status == "done"
+    assert saved.visual_repair_attempts == 1
+    assert len(fake_render) == 1
 
 
 def test_review_returns_feedback_to_the_lead_without_automatic_repair(deps, dataset_id, agents, reviewer, fake_models, fake_render):
@@ -85,7 +154,7 @@ def test_review_returns_feedback_to_the_lead_without_automatic_repair(deps, data
 
 def test_only_the_lead_can_choose_a_second_design_after_review(deps, dataset_id, agents, reviewer, fake_models, fake_render):
     request = new_request(deps, dataset_id)
-    state = {"repaired": False}
+    state = {"repaired": False, "reviews": 0}
 
     def repair_once(messages, info):
         returned = tool_returns(messages)
@@ -97,24 +166,183 @@ def test_only_the_lead_can_choose_a_second_design_after_review(deps, dataset_id,
             return call("design_visualization", request_id=request_id)
         if last == "design_visualization":
             return call("render_visualization", request_id=request_id)
-        if last == "render_visualization" and not state["repaired"]:
+        if last == "render_visualization":
             return call("review_visualization", request_id=request_id)
         if last == "review_visualization":
-            state["repaired"] = True
-            return call("design_visualization", request_id=request_id, direction="Increase the title contrast.")
+            state["reviews"] += 1
+            if not state["repaired"]:
+                state["repaired"] = True
+                return call("design_visualization", request_id=request_id, direction="Increase the title contrast.")
+            return call("publish_visualization", request_id=request_id)
         if last == "publish_visualization":
             return finish()
         # A fresh design must not keep the earlier design's visual verdict.
         saved = deps.requests.get_request(request_id)
         assert "review" not in saved.steps
-        return call("publish_visualization", request_id=request_id)
+        return call("review_visualization", request_id=request_id)
 
-    with reviewer.override(model=FunctionModel(reviewer_finding())), \
+    reviews = 0
+
+    def finding_then_pass(messages, info):
+        nonlocal reviews
+        reviews += 1
+        if reviews == 1:
+            return reviewer_finding()(messages, info)
+        return call("deliver_review", summary="The repaired chart is readable.", findings=[])
+
+    with reviewer.override(model=FunctionModel(finding_then_pass)), \
             agents[-1].override(model=FunctionModel(repair_once)):
         outcome = run(run_request(deps, request.request_id))
     assert outcome.status == "done" and state["repaired"]
-    assert fake_models[1].runs == 2 and len(fake_render) == 2
-    assert outcome.artifact.review.get("verdict") != "revise"
+    assert fake_models[1].runs == 2 and reviews == len(fake_render) == 2
+    assert outcome.artifact.review.get("verdict") == "pass"
+
+
+def test_visual_repair_is_limited_to_one_even_after_a_material_finding(
+        deps, dataset_id, agents, reviewer, fake_models, fake_render):
+    request = new_request(deps, dataset_id)
+    renders = 0
+
+    def repair_once(messages, info):
+        nonlocal renders
+        returned = tool_returns(messages)
+        request_id = request_id_of(messages)
+        offered = {tool.name for tool in info.function_tools}
+        if not returned:
+            return call("resume", request_id=request_id)
+        last = returned[-1].tool_name
+        if last == "resume":
+            return call("design_visualization", request_id=request_id)
+        if last == "design_visualization":
+            return call("render_visualization", request_id=request_id)
+        if last == "render_visualization":
+            renders += 1
+            return call("review_visualization", request_id=request_id)
+        if last == "review_visualization":
+            if renders == 1:
+                assert "design_visualization" in offered
+                return call("design_visualization", request_id=request_id,
+                            direction="Restore the missing marks confirmed by visual review.")
+            return call("publish_visualization", request_id=request_id)
+        if last == "publish_visualization":
+            return finish()
+        raise AssertionError(last)
+
+    with reviewer.override(model=FunctionModel(reviewer_finding(message="Required marks are missing."))), \
+            agents[-1].override(model=FunctionModel(repair_once)):
+        outcome = run(run_request(deps, request.request_id))
+
+    saved = deps.requests.get_request(request.request_id)
+    assert outcome.status == "done"
+    assert saved.visual_repair_attempts == 1
+    assert fake_models[1].runs == 2 and renders == len(fake_render) == 2
+
+
+def test_visible_axis_title_repair_converges_after_one_redesign(
+        deps, dataset_id, agents, reviewer, fake_models, fake_render):
+    """A clipped-title observation must not turn capability lookup into an open redesign loop."""
+    request = new_request(deps, dataset_id)
+    capability_calls = 0
+    reviews = 0
+
+    def clipped_title_loop(messages, info):
+        nonlocal capability_calls
+        returned = tool_returns(messages)
+        request_id = request_id_of(messages)
+        offered = {tool.name for tool in info.function_tools}
+        if not returned:
+            return call("resume", request_id=request_id)
+        last = returned[-1].tool_name
+        if last == "resume":
+            return call("design_visualization", request_id=request_id,
+                        direction="Use grouped columns for the supplied population series.")
+        if last == "design_visualization":
+            return call("render_visualization", request_id=request_id)
+        if last == "render_visualization":
+            return call("review_visualization", request_id=request_id)
+        if last == "review_visualization" and capability_calls == 0:
+            capability_calls += 1
+            return call("chart_capabilities", chart_type="column",
+                        problem="The Arabic axis title is clipped.")
+        if last == "chart_capabilities" and "design_visualization" in offered:
+            return call("design_visualization", request_id=request_id,
+                        direction="Hide the clipped axis title; keep the same data and grouped columns.")
+        if last == "review_visualization":
+            return call("publish_visualization", request_id=request_id)
+        if last == "publish_visualization":
+            return finish()
+        return call("publish_visualization", request_id=request_id)
+
+    def clipped_then_pass(messages, info):
+        nonlocal reviews
+        reviews += 1
+        if reviews == 1:
+            return reviewer_finding(message="The Arabic axis title is clipped.")(messages, info)
+        return call("deliver_review", summary="The repaired chart is readable.", findings=[])
+
+    with reviewer.override(model=FunctionModel(clipped_then_pass)), \
+            agents[-1].override(model=FunctionModel(clipped_title_loop)):
+        outcome = run(run_request(deps, request.request_id))
+
+    assert outcome.status == "done" and outcome.artifact.png_url
+    assert capability_calls == 1
+    assert fake_models[1].runs <= 2
+    assert len(fake_render) <= 2
+
+
+def test_renderer_failure_and_axis_title_feedback_do_not_restart_design_repeatedly(
+        deps, dataset_id, agents, fake_models, fake_render, monkeypatch):
+    """The employer/average-wage failure case gets one repair, then publishes its readable preview."""
+    from vis_agent import lead as lead_module
+    from vis_agent.render.base import RenderFailed
+
+    request = create_request(deps, type="new", dataset_id=dataset_id,
+                             question="Compare employers and show average wage as context", caller=CHAT)
+    render_attempts = 0
+    renderer = lead_module.render_design
+
+    def fail_first_render(*args, **kwargs):
+        nonlocal render_attempts
+        render_attempts += 1
+        if render_attempts == 1:
+            raise RenderFailed("The renderer rejected a malformed colour value.")
+        return renderer(*args, **kwargs)
+
+    def employer_loop(messages, info):
+        returned = tool_returns(messages)
+        request_id = request_id_of(messages)
+        offered = {tool.name for tool in info.function_tools}
+        if not returned:
+            return call("resume", request_id=request_id)
+        last = returned[-1]
+        if last.tool_name == "resume":
+            return call("design_visualization", request_id=request_id,
+                        direction="Use bars for employer count; retain average wage as context.")
+        if last.tool_name == "design_visualization":
+            return call("render_visualization", request_id=request_id)
+        if last.tool_name == "render_visualization":
+            result = last.model_response_object()
+            if not result.get("render"):
+                # This reproduces the observed poor choice to redesign after a renderer diagnostic.
+                if "design_visualization" in offered:
+                    return call("design_visualization", request_id=request_id,
+                                direction="Use a valid hex colour and hide the axis title.")
+                return call("render_visualization", request_id=request_id)
+            return call("review_visualization", request_id=request_id)
+        if last.tool_name == "review_visualization":
+            return call("publish_visualization", request_id=request_id)
+        if last.tool_name == "publish_visualization":
+            return finish()
+        return call("publish_visualization", request_id=request_id)
+
+    monkeypatch.setattr(lead_module, "render_design", fail_first_render)
+    with agents[-1].override(model=FunctionModel(employer_loop)):
+        outcome = run(run_request(deps, request.request_id))
+
+    assert outcome.status == "done" and outcome.artifact.png_url
+    assert fake_models[1].runs <= 2
+    assert render_attempts <= 3
+    assert len(fake_render) == 1
 
 
 def test_resume_reuses_the_preview_instead_of_redesigning(deps, dataset_id, agents, fake_models, fake_render):
@@ -233,6 +461,8 @@ def test_an_explicit_analyst_call_invalidates_the_old_preview(deps, dataset_id, 
             observed.append(saved.steps["analyze"]["result"]["rows"])
             return call("design_visualization", request_id=request_id)
         if last == "render_visualization":
+            return call("review_visualization", request_id=request_id)
+        if last == "review_visualization":
             return call("publish_visualization", request_id=request_id)
         return finish()
 
@@ -244,7 +474,8 @@ def test_an_explicit_analyst_call_invalidates_the_old_preview(deps, dataset_id, 
     assert fake_models[0]["profiler"] == 0 and len(fake_render) == 2
 
 
-def test_failed_redesign_cannot_publish_the_obsolete_preview(deps, dataset_id, agents, fake_models, fake_render, monkeypatch):
+def test_failed_redesign_cannot_publish_the_obsolete_preview(
+        deps, dataset_id, agents, reviewer, fake_models, fake_render, monkeypatch):
     from vis_agent import lead as lead_module
 
     request = new_request(deps, dataset_id)
@@ -264,11 +495,13 @@ def test_failed_redesign_cannot_publish_the_obsolete_preview(deps, dataset_id, a
             return call("resume", request_id=request_id)
         if returned[-1].tool_name == "design_visualization":
             return call("render_visualization", request_id=request_id)
-        return call("design_visualization", request_id=request_id,
-                    direction="Draw the source" if len(returned) == 1 else "Use larger labels")
+        if returned[-1].tool_name == "render_visualization":
+            return call("review_visualization", request_id=request_id)
+        return call("design_visualization", request_id=request_id, direction="Use larger labels")
 
     monkeypatch.setattr(lead_module, "design_chart", fail_second)
-    with agents[-1].override(model=FunctionModel(change_design)):
+    with reviewer.override(model=FunctionModel(reviewer_finding())), \
+            agents[-1].override(model=FunctionModel(change_design)):
         result = run(run_request(deps, request.request_id))
     saved = deps.requests.get_request(request.request_id)
     assert result.status == "failed" and "designer disconnected" in result.error
@@ -292,6 +525,8 @@ def test_column_annotations_change_meanings_without_changing_values(deps, datase
         if returned[-1].tool_name == "design_visualization":
             return call("render_visualization", request_id=request_id)
         if returned[-1].tool_name == "render_visualization":
+            return call("review_visualization", request_id=request_id)
+        if returned[-1].tool_name == "review_visualization":
             return call("publish_visualization", request_id=request_id)
         return finish()
 
@@ -451,9 +686,11 @@ def test_accounting_storage_error_does_not_leave_request_marked_in_flight(deps, 
     assert result.status == "done" and result.artifact.png_url
 
 
-def test_concurrent_render_and_redesign_cannot_restore_an_obsolete_preview(deps, dataset_id, agents, fake_models, fake_render, monkeypatch):
+def test_concurrent_unreviewed_redesign_cannot_invalidate_the_new_preview(
+        deps, dataset_id, agents, fake_models, fake_render, monkeypatch):
     import threading
 
+    from pydantic_ai.exceptions import UnexpectedModelBehavior
     from tests.requests.conftest import CHART_SPEC
     from vis_agent import lead as lead_module
 
@@ -502,16 +739,18 @@ def test_concurrent_render_and_redesign_cannot_restore_an_obsolete_preview(deps,
                 await asyncio.wait_for(design_started.wait(), timeout=0.15)
         finally:
             release_render.set()
-        await asyncio.gather(rendering, redesigning)
+        outcomes = await asyncio.gather(rendering, redesigning, return_exceptions=True)
+        # The deliberately unfinished render run is now caught by the bounded delivery validator.
+        # That does not authorize the concurrent unreviewed redesign to mutate its saved preview.
+        assert isinstance(outcomes[0], UnexpectedModelBehavior)
+        assert "Exceeded maximum output retries" in str(outcomes[0])
+        assert not isinstance(outcomes[1], BaseException)
 
     monkeypatch.setattr(lead_module, "render_design", slow_render)
-    changed_spec = CHART_SPEC.replace("title Sales by region", "title Updated sales view")
-    with agents[2].override(model=FunctionModel(lambda messages, info: call(
-            "deliver_design", spec=changed_spec, explanation="The updated design uses the same supplied values."))):
-        run(concurrent())
+    run(concurrent())
     saved = deps.requests.get_request(request.request_id)
-    assert "Updated sales view" in saved.steps["design"]["design"]["spec"]
-    assert "render" not in saved.steps
+    assert saved.steps["design"]["design"]["spec"] == CHART_SPEC
+    assert "render" in saved.steps and saved.visual_repair_attempts == 0
 
 
 def test_concurrent_publications_create_one_artifact(deps, dataset_id, agents, fake_models, fake_render, monkeypatch):
@@ -527,6 +766,8 @@ def test_concurrent_publications_create_one_artifact(deps, dataset_id, agents, f
             return call("design_visualization", request_id=request.request_id)
         if returned[-1].tool_name == "design_visualization":
             return call("render_visualization", request_id=request.request_id)
+        if returned[-1].tool_name == "render_visualization":
+            return call("review_visualization", request_id=request.request_id)
         return finish()
 
     with agents[-1].override(model=FunctionModel(preview_then_stop)):

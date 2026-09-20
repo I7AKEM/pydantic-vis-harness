@@ -1,4 +1,5 @@
 import pytest
+from pydantic import ValidationError
 
 from vis_agent.designer.models import NumberFormat, Spec, SpecError
 from vis_agent.designer.syntax import parse, parse_format, to_text
@@ -38,6 +39,26 @@ def test_values_are_typed_by_key_not_by_look():
     assert spec.bind["category"] == "001"
 
 
+@pytest.mark.parametrize("ratio", [0, 0.4, 0.6, 1])
+def test_inner_radius_is_an_unscaled_renderer_api_ratio(ratio):
+    spec = parse(f"vis donut\ninnerRadius {ratio}\n")
+    assert spec.inner_radius == ratio
+    assert parse(to_text(spec)).inner_radius == ratio
+
+
+@pytest.mark.parametrize("value", ["60", "65", "-0.1", "1.01", "nan", "inf", "-inf"])
+def test_inner_radius_rejects_wrong_units_and_nonfinite_values_at_their_source_line(value):
+    with pytest.raises(SpecError) as error:
+        parse(f"vis donut\ntitle Counts\ninnerRadius {value}\n")
+    assert len(error.value.issues) == 1
+    issue = error.value.issues[0]
+    assert issue.line == 3
+    assert "innerRadius must be a finite ratio from 0 to 1 inclusive" in issue.message
+    assert "0.6" in issue.message and "values are not rescaled" in issue.message
+    with pytest.raises(ValidationError):
+        Spec(type="donut", inner_radius=float(value))
+
+
 def test_sections_and_lists():
     spec = parse("vis column\nemphasis\n  - جدة\n  - الرياض\npalette\n  - #1783FF\n  - #00C9C9\n"
                  "style\n  backgroundColor #FFFFFF\n")
@@ -53,6 +74,17 @@ def test_style_palette_is_the_palette():
     with pytest.raises(SpecError) as error:
         parse("vis column\npalette\n  - #FF0000\nstyle\n  palette\n    - #00FF00\n")
     assert "duplicate" in str(error.value)
+
+
+@pytest.mark.parametrize("quoted", ['"#2E5BFF"', "'#2E5BFF'"])
+def test_palette_canonicalizes_model_generated_quotes_around_valid_hex(quoted):
+    spec = parse(f"vis column\npalette\n  - {quoted}\n")
+    assert spec.palette == ["#2E5BFF"]
+    assert to_text(spec) == "vis column\npalette\n  - #2E5BFF\n"
+
+
+def test_palette_preserves_quotes_on_non_hex_data_for_validation():
+    assert parse('vis column\npalette\n  - "blue"\n').palette == ['"blue"']
 
 
 @pytest.mark.parametrize("text, line, fragment", [

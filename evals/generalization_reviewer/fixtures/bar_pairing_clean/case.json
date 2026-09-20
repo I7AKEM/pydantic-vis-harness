@@ -1,0 +1,188 @@
+{
+  "id": "bar_pairing_clean",
+  "family": "bar_pairing",
+  "proposed_label": "pass",
+  "construction": "Faithful rendering of the reference.",
+  "reference": {
+    "report": {
+      "dataset_id": "synthetic_nozzle_readings",
+      "question": "Compare flow by nozzle; preserve the supplied nozzle/value pairings.",
+      "language": "English",
+      "brief_fingerprint": null,
+      "analysis": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          {
+            "name": "nozzle",
+            "meaning": "Nozzle",
+            "kind": "category",
+            "unit": null,
+            "source": "nozzle",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "flow",
+            "meaning": "Flow",
+            "kind": "measure",
+            "unit": "L/min",
+            "source": "flow",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          }
+        ],
+        "summary": "Supplied synthetic measurements.",
+        "assumptions": []
+      },
+      "clarification": null,
+      "result": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          "nozzle",
+          "flow"
+        ],
+        "types": [
+          "VARCHAR",
+          "DOUBLE"
+        ],
+        "rows": [
+          [
+            "Nozzle A",
+            9
+          ],
+          [
+            "Nozzle B",
+            17
+          ],
+          [
+            "Nozzle C",
+            26
+          ]
+        ],
+        "row_count": 3,
+        "checks": [],
+        "seconds": 0.0
+      },
+      "checks": [],
+      "warnings": [],
+      "model": null,
+      "seconds": 0.0,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "design": {
+      "spec": "vis bar\ntitle Nozzle flow\ndescription Flow by nozzle\nwidth 960\nheight 640\naxisXTitle Flow (L/min)\naxisYTitle Nozzle\nbind\n  category nozzle\n  value flow\nsort none\nlabels on\n",
+      "chart": "bar",
+      "intent": null,
+      "explanation": "Direct presentation of the supplied values.",
+      "considered": [
+        "bar"
+      ],
+      "compromises": []
+    },
+    "brief": {
+      "source": null,
+      "query": null,
+      "pulled_at": null,
+      "raw_question": "Compare flow by nozzle; preserve the supplied nozzle/value pairings.",
+      "enriched_question": null,
+      "intent": null,
+      "suggested_chart_type": null,
+      "column_descriptions": {},
+      "units": {},
+      "code_meanings": {},
+      "display_labels": {},
+      "caveats": [
+        "Synthetic prepared values; preserve their exact meanings and units."
+      ],
+      "brand_colors": [],
+      "producer_agent": null
+    }
+  },
+  "render_input": {
+    "report": {
+      "dataset_id": "synthetic_nozzle_readings",
+      "question": "Compare flow by nozzle; preserve the supplied nozzle/value pairings.",
+      "language": "English",
+      "brief_fingerprint": null,
+      "analysis": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          {
+            "name": "nozzle",
+            "meaning": "Nozzle",
+            "kind": "category",
+            "unit": null,
+            "source": "nozzle",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "flow",
+            "meaning": "Flow",
+            "kind": "measure",
+            "unit": "L/min",
+            "source": "flow",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          }
+        ],
+        "summary": "Supplied synthetic measurements.",
+        "assumptions": []
+      },
+      "clarification": null,
+      "result": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          "nozzle",
+          "flow"
+        ],
+        "types": [
+          "VARCHAR",
+          "DOUBLE"
+        ],
+        "rows": [
+          [
+            "Nozzle A",
+            9
+          ],
+          [
+            "Nozzle B",
+            17
+          ],
+          [
+            "Nozzle C",
+            26
+          ]
+        ],
+        "row_count": 3,
+        "checks": [],
+        "seconds": 0.0
+      },
+      "checks": [],
+      "warnings": [],
+      "model": null,
+      "seconds": 0.0,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "spec": "vis bar\ntitle Nozzle flow\ndescription Flow by nozzle\nwidth 960\nheight 640\naxisXTitle Flow (L/min)\naxisYTitle Nozzle\nbind\n  category nozzle\n  value flow\nsort none\nlabels on\n"
+  },
+  "render": {
+    "png": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/bar_pairing_clean/chart.png",
+    "html": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/bar_pairing_clean/chart.html",
+    "config": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/bar_pairing_clean/config.json",
+    "width": 2880,
+    "height": 1920,
+    "seconds": 0.19825458299999998,
+    "non_background_share": 0.28984953703703703,
+    "compromises": [],
+    "drawn_rows": 3,
+    "folded_rows": 0,
+    "dropped_rows": 0,
+    "texts": null,
+    "text_bounds": null
+  }
+}

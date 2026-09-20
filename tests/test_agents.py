@@ -1,6 +1,6 @@
 import pytest
 
-from pydantic_ai import BinaryContent, capture_run_messages
+from pydantic_ai import capture_run_messages
 from pydantic_ai.messages import ModelResponse, RetryPromptPart, TextPart, ToolCallPart, ToolReturnPart, UserPromptPart
 from pydantic_ai.models.function import FunctionModel
 from pydantic_ai.models.test import TestModel
@@ -208,11 +208,13 @@ def complete_lead(start_tool, args):
         context = last.model_response_object()
         if last.tool_name in {"draw", "revise", "resume"}:
             if context.get("render"):
-                return call("publish_visualization", request_id=context["request_id"])
+                return call("review_visualization", request_id=context["request_id"])
             return call("design_visualization", request_id=context["request_id"])
         if last.tool_name == "design_visualization":
             return call("render_visualization", request_id=context["request_id"])
         if last.tool_name == "render_visualization":
+            return call("review_visualization", request_id=context["request_id"])
+        if last.tool_name == "review_visualization":
             return call("publish_visualization", request_id=context["request_id"])
         return finish(context["card"])
     return drive
@@ -243,14 +245,11 @@ def test_chat_lead_delegates_then_publishes_the_card(deps, dataset_id, agents, f
     assert request.status == "done" and request.caller.conversation_id == "chat-1"
     assert artifact.png_url in result.output and artifact.artifact_id in result.output
     assert artifact.report.result.rows == [["East", 10], ["West", 20]]
-    preview = [part for message in messages for part in message.parts if isinstance(part, UserPromptPart)
-               and isinstance(part.content, list)
-               and any(isinstance(item, BinaryContent) for item in part.content)]
-    assert len(preview) == 1
-    picture = next(item for item in preview[0].content if isinstance(item, BinaryContent))
-    assert picture.media_type == "image/png" and picture.data == b"png"
-    # Five lead decisions and one designer call; delegation usage belongs to this run.
-    assert result.usage.requests == 6
+    # The text-only lead never receives renderer image bytes; only the reviewer does.
+    assert not any(isinstance(part, UserPromptPart) and isinstance(part.content, list)
+                   for message in messages for part in message.parts)
+    # Six lead decisions plus one designer and one reviewer call.
+    assert result.usage.requests == 8
     assert fake_models[0] == {"profiler": 0, "analyst": 0}
 
 

@@ -108,6 +108,19 @@ def test_context_can_be_shared_and_a_primary_can_support_another_card():
     assert check_spec(text, columns, table(columns, [[4, "Riyadh", 6]])).ok
 
 
+def test_numeric_indicator_context_failure_points_to_support_or_primary_role():
+    columns = [column("percentage", "share", unit="%", denominator="all"),
+               column("graduate_count", "measure"), column("total_count", "measure")]
+    result = table(columns, [[26.79, 80380, 300075]])
+    invalid = check_spec(card_spec({"value": "percentage", "context": ["total_count"],
+                                    "support": ["graduate_count"]}), columns, result)
+    issue = next(item for item in invalid.violations if "context column 'total_count'" in item.message)
+    assert "support" in issue.fix and "another card's value" in issue.fix
+    valid = card_spec({"value": "percentage", "support": ["graduate_count"], "format": "0.00%"},
+                      {"value": "total_count", "format": "0,0"})
+    assert check_spec(valid, columns, result).ok
+
+
 @pytest.mark.parametrize("primary", ["100", "sum(total)", "total * 100", "missing"])
 def test_literal_and_formula_primaries_cannot_invent_numbers(primary):
     checked = check_spec(card_spec({"value": primary}), *single_number())
@@ -175,6 +188,20 @@ def test_per_card_format_preserves_units_and_does_not_guess_percent_scale(unit, 
     assert checked.ok is ok
     if ok:
         assert not checked.compromises
+
+
+def test_explicit_percentage_column_name_allows_percent_display_without_rescaling():
+    from vis_agent.designer.indicator_text import resolve_cards
+    from vis_agent.designer.syntax import parse
+
+    columns = [column("percentage_saudi", "measure")]
+    result = table(columns, [[100.0]])
+    checked = check_spec(card_spec({"value": "percentage_saudi", "format": "0.0%"}),
+                         columns, result)
+    assert checked.ok, checked.violations
+    assert "format 0.0%" in checked.canonical
+    resolved = resolve_cards(parse(checked.canonical), columns, result)[0]["value"]
+    assert resolved["display"] == "100.0%" and resolved["unitLabel"] == "%"
 
 
 def test_missing_share_basis_is_disclosed_without_rescaling():

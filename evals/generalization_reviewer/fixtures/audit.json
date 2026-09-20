@@ -1,0 +1,57 @@
+{
+  "manifest_sha256": "d7ebce54bdd9c468368f9ebf17c0b0ecd6c8bda3d25c77c31ea9b8a00f8a959c",
+  "model_calls_started_at_audit": false,
+  "inspection_completed_at": "2026-09-17T03:42:45Z",
+  "inspection_method": "All 12 original PNGs viewed through view_image before any model test; image content checked against construction and reference.",
+  "label_source": "Synthetic construction plus agent visual inspection; not human gold.",
+  "cases": {
+    "bar_pairing_clean": {
+      "eligible": true,
+      "reason": "Visible Nozzle A/B/C values 9/17/26 L/min match the complete three-row reference; labels and marks are readable."
+    },
+    "bar_pairing_defect": {
+      "eligible": true,
+      "reason": "Visible Nozzle A=26 and Nozzle C=9 contradict source A=9 and C=26. Nozzle B remains 17."
+    },
+    "line_unit_clean": {
+      "eligible": true,
+      "reason": "Four readable runs show 120, 180, 150, 210 kPa; the Y title also says kPa."
+    },
+    "line_unit_defect": {
+      "eligible": true,
+      "reason": "The visible Y title says Pressure (psi), contradicting its own kPa tick labels and the required kPa source unit."
+    },
+    "grouped_legend_clean": {
+      "eligible": true,
+      "reason": "Blue legend Aster matches 5/8 MPa bars and teal Beryl matches 16/22; labels are visible."
+    },
+    "grouped_legend_defect": {
+      "eligible": true,
+      "reason": "Blue 5/8 MPa bars are visibly called Beryl, and teal 16/22 bars Aster, reversing the supplied series/value relationship."
+    },
+    "table_missing_row_clean": {
+      "eligible": true,
+      "reason": "The full PNG visibly shows Amber 0.42, Cobalt 0.86, Dune 0.58, Ember 0.74 with correct mS units."
+    },
+    "table_missing_row_defect": {
+      "eligible": true,
+      "reason": "The full PNG contains only Amber, Dune and Ember; Cobalt 0.86 is absent, not merely outside a scroll viewport."
+    },
+    "indicator_value_clean": {
+      "eligible": true,
+      "reason": "Headline 88 kWh and Batch Z are plainly visible and match the supplied one-row reference."
+    },
+    "indicator_value_defect": {
+      "eligible": true,
+      "reason": "Headline visibly reads 880 kWh for Batch Z instead of the supplied 88 kWh."
+    },
+    "scatter_binding_clean": {
+      "eligible": true,
+      "reason": "X is injection volume 1/2/4/8 mL and Y shows the corresponding peak areas 9/16/35/65; all four marks are visible."
+    },
+    "scatter_binding_defect": {
+      "eligible": false,
+      "reason": "Excluded before model testing: the renderer also swaps/relabels axis titles and units, so the image is numerically coherent. It violates the requested orientation but is not an unambiguous misleading chart. The construction description's claim that titles remain unchanged is disproved by the PNG."
+    }
+  }
+}

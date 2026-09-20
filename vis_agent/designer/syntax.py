@@ -90,6 +90,7 @@ def parse(text: str) -> Spec:
     data = {"type": match[1]}
     issues: list[SpecIssue] = []
     seen: set[str] = set()
+    field_lines: dict[str, int] = {}
     seen_roles: set[str] = set()
     parent = "vis"
     style_parent: str | None = None
@@ -108,6 +109,7 @@ def parse(text: str) -> Spec:
             issue(number, f"duplicate key '{key}'")
             return
         seen.add(field)
+        field_lines[field] = number
         if kind.startswith("section:"):
             if value:
                 issue(number, f"'{key}' is a section; put its lines indented below it")
@@ -129,7 +131,15 @@ def parse(text: str) -> Spec:
         elif not content.startswith("- "):
             issue(number, "list items start with '- '")
         else:
-            data[field].append(content[2:].strip())
+            item = content[2:].strip()
+            # Models frequently carry JSON string quoting into this line-oriented
+            # grammar. A quoted valid hex is unambiguous and safe to canonicalize;
+            # keep quotes on every other list value because they may be data.
+            if field == "palette" and len(item) >= 2 and item[0] == item[-1] and item[0] in "\"'":
+                candidate = item[1:-1].strip()
+                if re.fullmatch(r"#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})", candidate):
+                    item = candidate
+            data[field].append(item)
 
     for number, line in lines[1:]:
         leading = line[:len(line) - len(line.lstrip())]
@@ -231,8 +241,11 @@ def parse(text: str) -> Spec:
     except ValidationError as error:
         # Nested contract errors belong to the same bounded spec-repair path.
         raise SpecError([SpecIssue(
-            line=card_lines[e["loc"][1]] if len(e["loc"]) > 1 and e["loc"][0] == "cards" else first_number,
-            message=e["msg"],
+            line=(card_lines[e["loc"][1]] if len(e["loc"]) > 1 and e["loc"][0] == "cards"
+                  else field_lines.get(e["loc"][0], first_number)),
+            message=("innerRadius must be a finite ratio from 0 to 1 inclusive (for example 0.6), "
+                     "not a percentage or pixel count such as 60. Supply the intended ratio; values are not rescaled."
+                     if e["loc"] == ("inner_radius",) else e["msg"]),
         ) for e in error.errors()]) from None
 
 

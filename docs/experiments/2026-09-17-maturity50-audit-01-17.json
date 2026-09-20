@@ -1,0 +1,400 @@
+[
+  {
+    "rollout": "rollout-0001",
+    "case_id": "corpus-vizcsv-46dad75ae7fa7b62",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Prepared rounded 0% KPI and supporting 2/370783 are correct and delivered; no recomputation or repair.",
+    "images": [
+      {
+        "render_id": "03ab5f2439d7",
+        "sha256": "a2785e6256091e255930257cf9326673b9bc5532bd2c9ebc0e151677bb70a206",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0002",
+    "case_id": "corpus-vizcsv-6eff7ae46ebb4edf",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": true,
+    "unnecessary_repair": true,
+    "final_delivery": true,
+    "task_correct": "fail",
+    "notes": "First donut already maps blue وافد 375161 and green مواطن 373877 consistently with its legend. Reviewer alleges the opposite. Adding sort none changes valid color order, not broken binding. Final chart is correct but final prose falsely claims an initial mapping error was fixed.",
+    "images": [
+      {
+        "render_id": "896f2b397fb0",
+        "sha256": "920fcb0e72ec0c00ef12a6abd333c1735c9b0d9a322b46e3db514ac195541d2f",
+        "phase": "first",
+        "verdict": "pass"
+      },
+      {
+        "render_id": "5c362cddb06d",
+        "sha256": "0958c3dc393d77caa35c68672e09c9250d9f848957d3bf9ae8655d0108e93910",
+        "phase": "repair_1",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0003",
+    "case_id": "corpus-vizcsv-70ea08202f57d58f",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "KPI 100 preserves percentage_saudi. Minor note: no percent glyph although lead requested one; Arabic title explicitly states percentage. No material value/unit ambiguity or repair.",
+    "images": [
+      {
+        "render_id": "9dba621096b9",
+        "sha256": "75e919109bd8d928b3505c4971dddc2830edc2ae294afc0a7ab0b28b2fc97a4a",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0004",
+    "case_id": "corpus-vizcsv-97280400c00748a7",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Count-only male_count=0 KPI, correct Arabic labels; no invented denominator or ratio.",
+    "images": [
+      {
+        "render_id": "b6029d3384a7",
+        "sha256": "45e2d44a1aa934680a89faa7bc34a4c04e0c6d1cda900b3ad31ddfc9d3c7f932",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0005",
+    "case_id": "corpus-vizcsv-3b62e4047e2cb455",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Source 26.11% correctly displayed without scale change or recomputation; no repair.",
+    "images": [
+      {
+        "render_id": "376243703be8",
+        "sha256": "93a56a998c863f87c4338324afd2d367ae8825eb475d62f0f578ec60e41a45aa",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0006",
+    "case_id": "corpus-vizcsv-2177430e3e44a9a3",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": true,
+    "unnecessary_repair": true,
+    "final_delivery": true,
+    "task_correct": "uncertain",
+    "notes": "First grouped bars retain all 16 correct marks and F/M codes. Overlap hiding omits some optional numeric labels; reviewer observes this but wrongly treats all labels as required. Enlargement improves readability but was not necessary for valid comparison. Final chart/source table correct; final 'clipped' description is not established (task narrative uncertain). Ungrounded F=female/M=male internal tool metadata is noted separately; visible chart and final reply preserve codes. Invalid revise used request ID as artifact ID.",
+    "images": [
+      {
+        "render_id": "74073bb2e845",
+        "sha256": "2b1b8fca7f542ab2a8434540e99117533f60c981e5cc0459491b0c289c897ff8",
+        "phase": "first",
+        "verdict": "pass"
+      },
+      {
+        "render_id": "cb8a71d37c5e",
+        "sha256": "c6a9918f2ba5822106128041e9c9122b9ad54d5bceb3cdebd32aef0d8bc7aba4",
+        "phase": "repair_1",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0007",
+    "case_id": "corpus-vizcsv-ba0187c944a3f829",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": true,
+    "unnecessary_repair": true,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Both PNGs are byte-identical complete 17-row tables with correct region/city headers and values. Reviewer falsely alleges swaps twice; designer falsely says removing direction rtl fixed reversal. No cropping or inaccessible viewport. Repair limit then causes lead to discard the valid PNG. Final has no image and shows eight grouped region rows while describing 17 rows. final_render_visual means last retained PNG, not delivered artifact.",
+    "images": [
+      {
+        "render_id": "f771154dc743",
+        "sha256": "126d032d3c9e4e7169cb3b00452453cb9d9c624d4837ef95e6c016143dda439a",
+        "phase": "first",
+        "verdict": "pass"
+      },
+      {
+        "render_id": "02794f0a3598",
+        "sha256": "126d032d3c9e4e7169cb3b00452453cb9d9c624d4837ef95e6c016143dda439a",
+        "phase": "repair_1",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0008",
+    "case_id": "corpus-vizcsv-e07c573241abdb02",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Correct population_count=0 KPI. Runtime report only includes the required count and recorded model messages contain no raw geometry. No spatial inference or repair.",
+    "images": [
+      {
+        "render_id": "270893013e26",
+        "sha256": "248e3b3891fff2cd2b00530c62cb6cfe821483c2bdbe154c5b50fd181a4b6a8e",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0009",
+    "case_id": "corpus-vizcsv-9e75e9ae40758227",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": true,
+    "unnecessary_repair": true,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "First RTL grouped columns correctly align all ten values, youngest right to oldest left. Reviewer incorrectly alleges shifted labels while acknowledging correct pairs in its finding. Designer changes to horizontal bars and claims to fix nonexistent drift. Final chart and final reply correct. Invalid revise used request ID as artifact ID.",
+    "images": [
+      {
+        "render_id": "7fba0f771160",
+        "sha256": "c4c36f001d22c3ace04768bd32adcb4fc6e044e0848b5791b0db47921a343223",
+        "phase": "first",
+        "verdict": "pass"
+      },
+      {
+        "render_id": "faaf85b11c6d",
+        "sha256": "863e42f96acd2460898598c0472fc00b423b1cf0f4d3c7b9fc2df2b61ac609a8",
+        "phase": "repair_1",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0010",
+    "case_id": "corpus-vizcsv-85830f71807a6905",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Suitable single-text-cell city table, Najran complete and delivered; no invented quantitative data or repair.",
+    "images": [
+      {
+        "render_id": "226e2bea1923",
+        "sha256": "be2955c91ea27852bf1acf68c880d4e0d400444a8cd28e6e44e723a1c3268ac4",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0011",
+    "case_id": "corpus-vizcsv-39471b0e4a5d3fc5",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Two prepared 3.76 averages shown as equal zero-based bars; source totals retained correctly in final table, no recomputation.",
+    "images": [
+      {
+        "render_id": "ec295bd7a682",
+        "sha256": "3a2d3d2590a37a177c802d689aa799140bec61ac3a30aef272017fe4b18b726d",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0012",
+    "case_id": "corpus-vizcsv-f6687502449585a5",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Explicitly permitted table correctly presents all ten rows and three columns with unlike units. Reviewer only warns about percent-symbol placement in RTL header; lead appropriately publishes without repair.",
+    "images": [
+      {
+        "render_id": "c27a26bf94f0",
+        "sha256": "b4d45782e5af76cd93d2cb5ccd3fa97677c343952b01103a1fb07c2128c3c494",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0013",
+    "case_id": "corpus-vizcsv-45980b90faceca07",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Two independent percentage KPIs correctly retain different denominators and all six source values; not a false part-to-whole donut. Complete Arabic/RTL display.",
+    "images": [
+      {
+        "render_id": "0d89f3dad84e",
+        "sha256": "5bdddfb804c8652c88dbd6dd1c2f16e53b275cc75705e5196fa274d682892b9f",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0014",
+    "case_id": "corpus-vizcsv-2571f37808cda8e2",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "F/M codes retained without supplied code meanings. Correct zero-based comparison; source precision retained while labels use two decimals. Correct source counts in final reply.",
+    "images": [
+      {
+        "render_id": "fb1475aca628",
+        "sha256": "2a9d170af4e564d60bd8c22eed01ad18b00397882f17fba87ee7f90b625adf41",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0015",
+    "case_id": "corpus-vizcsv-c76808cc7a78dac8",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Appropriate grouped columns retain all ten cities and twenty supplied population/employed values even where employed exceeds population. No clamping, aggregation, invented employment rate, or repair.",
+    "images": [
+      {
+        "render_id": "21769dc34c2a",
+        "sha256": "ff6a0534e1197de4cbd6dc9a1ac6bc2b11f97f0ec2999d71ed15756c6b9327ff",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0016",
+    "case_id": "corpus-vizcsv-ae315d3da67a2d11",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Suitable coordinate scatter with correct longitude/latitude axes and readable app legend, no routes or map invention. All 1000 source coordinate/app tuples equal both saved GPT-Vis and G2 records in exact order; complete five-column source report retained. Dense coincident points cannot be individually counted visually.",
+    "images": [
+      {
+        "render_id": "5d2b483790a0",
+        "sha256": "40a0c382b14ec5fee948b394e4f27ebc50cb158d98a1379b98f62d9ebcc35157",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": "rollout-0017",
+    "case_id": "corpus-vizcsv-2bc0cfa90c65f142",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Appropriate descending horizontal bars correctly show all five city/count pairs 6,5,4,4,4 on a zero-based axis; complete city/value labels and final table.",
+    "images": [
+      {
+        "render_id": "5fe5558ea227",
+        "sha256": "c3abfe15c00045ceaa04d655189539db755ca7b2ad6068f564df391c4b3192bd",
+        "phase": "first_and_final",
+        "verdict": "pass"
+      }
+    ]
+  }
+]

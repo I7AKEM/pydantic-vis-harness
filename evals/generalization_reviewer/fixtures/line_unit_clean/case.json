@@ -1,0 +1,201 @@
+{
+  "id": "line_unit_clean",
+  "family": "line_unit",
+  "proposed_label": "pass",
+  "construction": "Faithful rendering of the reference.",
+  "reference": {
+    "report": {
+      "dataset_id": "synthetic_pressure_runs",
+      "question": "Show pressure over the four runs in kPa; no unit conversion is requested.",
+      "language": "English",
+      "brief_fingerprint": null,
+      "analysis": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          {
+            "name": "run",
+            "meaning": "Run",
+            "kind": "category",
+            "unit": null,
+            "source": "run",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "pressure",
+            "meaning": "Pressure",
+            "kind": "measure",
+            "unit": "kPa",
+            "source": "pressure",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          }
+        ],
+        "summary": "Supplied synthetic measurements.",
+        "assumptions": []
+      },
+      "clarification": null,
+      "result": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          "run",
+          "pressure"
+        ],
+        "types": [
+          "VARCHAR",
+          "DOUBLE"
+        ],
+        "rows": [
+          [
+            "Run 1",
+            120
+          ],
+          [
+            "Run 2",
+            180
+          ],
+          [
+            "Run 3",
+            150
+          ],
+          [
+            "Run 4",
+            210
+          ]
+        ],
+        "row_count": 4,
+        "checks": [],
+        "seconds": 0.0
+      },
+      "checks": [],
+      "warnings": [],
+      "model": null,
+      "seconds": 0.0,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "design": {
+      "spec": "vis line\ntitle Pressure by run\ndescription Pressure in kPa\nwidth 960\nheight 640\naxisXTitle Run\naxisYTitle Pressure (kPa)\nbind\n  value pressure\n  time run\nsort none\nlabels on\n",
+      "chart": "line",
+      "intent": null,
+      "explanation": "Direct presentation of the supplied values.",
+      "considered": [
+        "line"
+      ],
+      "compromises": []
+    },
+    "brief": {
+      "source": null,
+      "query": null,
+      "pulled_at": null,
+      "raw_question": "Show pressure over the four runs in kPa; no unit conversion is requested.",
+      "enriched_question": null,
+      "intent": null,
+      "suggested_chart_type": null,
+      "column_descriptions": {},
+      "units": {},
+      "code_meanings": {},
+      "display_labels": {},
+      "caveats": [
+        "Synthetic prepared values; preserve their exact meanings and units."
+      ],
+      "brand_colors": [],
+      "producer_agent": null
+    }
+  },
+  "render_input": {
+    "report": {
+      "dataset_id": "synthetic_pressure_runs",
+      "question": "Show pressure over the four runs in kPa; no unit conversion is requested.",
+      "language": "English",
+      "brief_fingerprint": null,
+      "analysis": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          {
+            "name": "run",
+            "meaning": "Run",
+            "kind": "category",
+            "unit": null,
+            "source": "run",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "pressure",
+            "meaning": "Pressure",
+            "kind": "measure",
+            "unit": "kPa",
+            "source": "pressure",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          }
+        ],
+        "summary": "Supplied synthetic measurements.",
+        "assumptions": []
+      },
+      "clarification": null,
+      "result": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          "run",
+          "pressure"
+        ],
+        "types": [
+          "VARCHAR",
+          "DOUBLE"
+        ],
+        "rows": [
+          [
+            "Run 1",
+            120
+          ],
+          [
+            "Run 2",
+            180
+          ],
+          [
+            "Run 3",
+            150
+          ],
+          [
+            "Run 4",
+            210
+          ]
+        ],
+        "row_count": 4,
+        "checks": [],
+        "seconds": 0.0
+      },
+      "checks": [],
+      "warnings": [],
+      "model": null,
+      "seconds": 0.0,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "spec": "vis line\ntitle Pressure by run\ndescription Pressure in kPa\nwidth 960\nheight 640\naxisXTitle Run\naxisYTitle Pressure (kPa)\nbind\n  value pressure\n  time run\nsort none\nlabels on\n"
+  },
+  "render": {
+    "png": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/line_unit_clean/chart.png",
+    "html": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/line_unit_clean/chart.html",
+    "config": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/line_unit_clean/config.json",
+    "width": 2880,
+    "height": 1920,
+    "seconds": 0.545283417,
+    "non_background_share": 0.009152199074074075,
+    "compromises": [
+      {
+        "key": "labels",
+        "message": "labels on cannot reach the marks of line; the package's labels are retained."
+      }
+    ],
+    "drawn_rows": 4,
+    "folded_rows": 0,
+    "dropped_rows": 0,
+    "texts": null,
+    "text_bounds": null
+  }
+}

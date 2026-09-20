@@ -1,0 +1,164 @@
+{
+  "gptvis": {
+    "type": "pie",
+    "innerRadius": 0.6,
+    "theme": "default",
+    "width": 800,
+    "height": 450,
+    "title": "توزيع السكان حسب النوع",
+    "data": [
+      {
+        "category": "وافد",
+        "value": 375161
+      },
+      {
+        "category": "مواطن",
+        "value": 373877
+      }
+    ]
+  },
+  "overrides": {
+    "title": {
+      "align": "right"
+    },
+    "legend": true
+  },
+  "number": {
+    "thousands": true,
+    "decimals": null,
+    "compact": false,
+    "unit": null,
+    "digits": "western"
+  },
+  "g2": {
+    "devicePixelRatio": 3,
+    "type": "interval",
+    "theme": {
+      "type": "light",
+      "view": {
+        "viewFill": "#FFF",
+        "plotFill": "transparent",
+        "mainFill": "transparent",
+        "contentFill": "transparent"
+      },
+      "interval": {
+        "rect": {
+          "fillOpacity": 0.8
+        }
+      },
+      "line": {
+        "line": {
+          "lineWidth": 2
+        }
+      },
+      "area": {
+        "area": {
+          "fillOpacity": 0.6
+        }
+      },
+      "point": {
+        "point": {
+          "lineWidth": 1
+        }
+      }
+    },
+    "title": {
+      "title": "توزيع السكان حسب النوع",
+      "align": "right"
+    },
+    "width": 800,
+    "height": 450,
+    "data": [
+      {
+        "category": "وافد",
+        "value": 375161
+      },
+      {
+        "category": "مواطن",
+        "value": 373877
+      }
+    ],
+    "encode": {
+      "y": "value",
+      "color": "category"
+    },
+    "transform": [
+      {
+        "type": "stackY"
+      }
+    ],
+    "coordinate": {
+      "type": "theta",
+      "outerRadius": 0.95,
+      "innerRadius": 0.6
+    },
+    "style": {
+      "radius": 4,
+      "stroke": "#fff",
+      "lineWidth": 1
+    },
+    "labels": [
+      {
+        "text": {
+          "$label": "category_value"
+        },
+        "position": "outside",
+        "radius": 0.85,
+        "fontSize": 12,
+        "transform": [
+          {
+            "type": "overlapHide"
+          }
+        ]
+      }
+    ],
+    "animate": false,
+    "axis": false,
+    "legend": {
+      "color": {
+        "title": "نوع السكان",
+        "labelFormatter": {
+          "$display": {
+            "kind": "value",
+            "field": "category"
+          }
+        }
+      }
+    },
+    "tooltip": {
+      "title": {
+        "$display": {
+          "kind": "datum",
+          "field": "category"
+        }
+      },
+      "items": [
+        {
+          "$display": {
+            "kind": "tooltip",
+            "field": "value",
+            "numeric": "value"
+          }
+        },
+        {
+          "$display": {
+            "kind": "tooltip",
+            "field": "category"
+          }
+        }
+      ]
+    }
+  },
+  "number2": null,
+  "tableFormats": {},
+  "display": {
+    "fields": {
+      "category": {}
+    },
+    "columns": {
+      "category": "نوع السكان",
+      "value": "عدد الأفراد"
+    }
+  },
+  "functionPaths": []
+}

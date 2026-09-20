@@ -17,6 +17,7 @@ from vis_agent.language import language_of
 from vis_agent.store import DatasetNotFound, DatasetStore
 from vis_agent.profiler.measurements import compute_statistics
 from vis_agent.models import DataBrief
+from vis_agent.model_settings import text_specialist_settings
 from vis_agent.profiler.models import (
     PROFILE_VERSION,
     DatasetProfile,
@@ -46,8 +47,8 @@ class ProfilerInput(BaseModel):
         return self.model_dump_json(exclude={"review_attempts"})
 
 
-DEFAULT_PROFILER_MODEL = "openrouter:google/gemma-4-31b-it:nitro"
-"""Fastest model in the Phase 1 benchmark, routed to the highest-throughput host; see docs/phase-1-lessons.md."""
+DEFAULT_PROFILER_MODEL = "openrouter:z-ai/glm-5.3"
+"""Open-weight reasoning model shared by the text specialists."""
 
 
 def review_profile(ctx: RunContext[ProfilerInput], draft: SemanticProfile) -> SemanticProfile:
@@ -73,8 +74,7 @@ def create_profiler(model: str | Model) -> Agent[ProfilerInput, SemanticProfile]
         output_type=ToolOutput(review_profile, name="review_profile"),
         retries={"output": 2},
         instructions=PROFILER_INSTRUCTIONS,
-        # Interpretation, not reasoning: thinking only adds latency, and temperature 0 keeps runs repeatable.
-        model_settings={"thinking": False, "temperature": 0.0},
+        model_settings=text_specialist_settings(model),
     )
 
     return agent

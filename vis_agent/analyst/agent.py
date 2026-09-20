@@ -25,6 +25,7 @@ from vis_agent.card import card as build_card
 from vis_agent.deps import AppDeps
 from vis_agent.language import ARABIC, language_of  # noqa: F401  (ARABIC is re-exported for the designer)
 from vis_agent.models import DataBrief, DisplayLabels, QuestionAnswer
+from vis_agent.model_settings import text_specialist_settings
 from vis_agent.labels import LABEL_INSTRUCTIONS, project_display_labels
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, ProfilerInput, measure_dataset
 from vis_agent.profiler.models import DatasetProfile, ProfileCheck, SemanticProfile
@@ -34,7 +35,7 @@ from vis_agent.units import canonical_unit
 
 log = logging.getLogger("analyst")
 DEFAULT_ANALYST_MODEL = DEFAULT_PROFILER_MODEL
-"""The profiler's Gemma until the Phase 2 benchmark picks the analyst's default; see the Phase 2 design, section 12."""
+"""Share the benchmarked open-weight text-specialist seat with the profiler and designer."""
 ANALYST_INSTRUCTIONS = Path(__file__).with_name("rulebook.md").read_text(encoding="utf-8")
 """The analyst's rulebook. Edit the file, not this module."""
 LOCALIZED_INSTRUCTIONS = Path(__file__).with_name("rulebook-localized.md").read_text(encoding="utf-8")
@@ -278,8 +279,7 @@ def create_analyst(model: str | Model) -> Agent[AnalystDeps, Analysis | Clarific
                      ToolOutput(ask_clarification, name="ask_clarification")],
         retries={"output": 2},
         instructions=ANALYST_INSTRUCTIONS + "\n\n" + LABEL_INSTRUCTIONS,
-        # Thinking off and temperature 0 until the Phase 2 benchmark says otherwise.
-        model_settings={"thinking": False, "temperature": 0.0},
+        model_settings=text_specialist_settings(model),
     )
     agent.tool(run_query, retries=1, prepare=offer_run_query)
 

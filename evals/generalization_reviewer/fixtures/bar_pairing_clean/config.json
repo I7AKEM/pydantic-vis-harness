@@ -1,0 +1,197 @@
+{
+  "gptvis": {
+    "type": "bar",
+    "theme": "default",
+    "width": 960,
+    "height": 640,
+    "title": "Nozzle flow",
+    "axisXTitle": "Nozzle",
+    "axisYTitle": "Flow (L/min)",
+    "style": {
+      "palette": [
+        "#1783FF"
+      ]
+    },
+    "data": [
+      {
+        "category": "Nozzle A",
+        "value": 9
+      },
+      {
+        "category": "Nozzle B",
+        "value": 17
+      },
+      {
+        "category": "Nozzle C",
+        "value": 26
+      }
+    ]
+  },
+  "overrides": {
+    "labels": [
+      {
+        "text": "value"
+      }
+    ]
+  },
+  "number": {
+    "thousands": true,
+    "decimals": null,
+    "compact": false,
+    "unit": "L/min",
+    "digits": "western"
+  },
+  "g2": {
+    "devicePixelRatio": 3,
+    "type": "interval",
+    "theme": {
+      "type": "light",
+      "view": {
+        "viewFill": "#FFF",
+        "plotFill": "transparent",
+        "mainFill": "transparent",
+        "contentFill": "transparent"
+      },
+      "interval": {
+        "rect": {
+          "fillOpacity": 0.8
+        }
+      },
+      "line": {
+        "line": {
+          "lineWidth": 2
+        }
+      },
+      "area": {
+        "area": {
+          "fillOpacity": 0.6
+        }
+      },
+      "point": {
+        "point": {
+          "lineWidth": 1
+        }
+      }
+    },
+    "width": 960,
+    "height": 640,
+    "title": {
+      "title": "Nozzle flow"
+    },
+    "data": [
+      {
+        "category": "Nozzle A",
+        "value": 9
+      },
+      {
+        "category": "Nozzle B",
+        "value": 17
+      },
+      {
+        "category": "Nozzle C",
+        "value": 26
+      }
+    ],
+    "encode": {
+      "x": "category",
+      "y": "value",
+      "color": "category"
+    },
+    "transform": [],
+    "coordinate": {
+      "transform": [
+        {
+          "type": "transpose"
+        }
+      ]
+    },
+    "marginRight": 67,
+    "style": {
+      "radiusTopLeft": 4,
+      "radiusTopRight": 4,
+      "columnWidthRatio": 0.8
+    },
+    "axis": {
+      "x": {
+        "title": "Nozzle",
+        "labelFormatter": {
+          "$display": {
+            "kind": "value",
+            "field": "category"
+          }
+        }
+      },
+      "y": {
+        "title": "Flow (L/min)",
+        "labelFormatter": {
+          "$format": "value"
+        }
+      }
+    },
+    "legend": false,
+    "labels": [
+      {
+        "text": "value",
+        "style": {
+          "dx": 2
+        },
+        "textAlign": "start",
+        "transform": [
+          {
+            "type": "overlapHide"
+          }
+        ],
+        "fontSize": 10,
+        "formatter": {
+          "$format": "value"
+        }
+      }
+    ],
+    "scale": {
+      "y": {
+        "nice": true
+      },
+      "color": {
+        "range": [
+          "#1783FF"
+        ]
+      }
+    },
+    "tooltip": {
+      "title": {
+        "$display": {
+          "kind": "datum",
+          "field": "category"
+        }
+      },
+      "items": [
+        {
+          "$display": {
+            "kind": "tooltip",
+            "field": "category"
+          }
+        },
+        {
+          "$display": {
+            "kind": "tooltip",
+            "field": "value",
+            "numeric": "value"
+          }
+        }
+      ]
+    },
+    "marginBottom": 24
+  },
+  "number2": null,
+  "tableFormats": {},
+  "display": {
+    "fields": {
+      "category": {}
+    },
+    "columns": {
+      "category": "nozzle",
+      "value": "flow"
+    }
+  },
+  "functionPaths": []
+}

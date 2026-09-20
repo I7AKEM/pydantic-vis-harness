@@ -43,7 +43,7 @@ def test_supplied_labels_survive_design_publication_and_later_brief_changes(
     review = review_prompt(saved.report, saved.design, brief, (), (), 1)
     assert review.display_labels == approved
     assert review.code_meanings["region"]["East"] == "Eastern region"
-    assert review.rows == [["East", 10], ["West", 20]]
+    assert review.rows == [{"region": "East", "amount": 10}, {"region": "West", "amount": 20}]
 
     deps.store.update_brief(dataset_id, DataBrief(display_labels={"ar": DisplayLabels(
         value_labels={"region": {"East": "اسم جديد"}},

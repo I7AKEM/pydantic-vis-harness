@@ -1,0 +1,365 @@
+[
+  {
+    "rollout": 35,
+    "case_id": "corpus-vizcsv-98f1ef4953f7c74d",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Suitable horizontal comparison. All six region/count pairs are readable and match source: 2756084,2094479,341311,98999,72880,48596. Truthful descending order and Arabic labels; final image plus complete six-row textual table delivered. One design/render/review; no false alarm or repair. Contract pass; independent agent visual pass, not human gold. 13.56s,8 requests.",
+    "images": [
+      {
+        "render_id": "7e6caec453ad",
+        "sha256": "b322d5df11a65e24d7734728b7a501580ccb47d7faf340efb0c303199c150d44",
+        "phase": "initial_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 36,
+    "case_id": "corpus-vizcsv-98fe17bdec87024a",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Five cities with population bars and supplied percentage on separate labelled axes; all pairings preserved. Discrete categories use a smooth connecting percentage line, a presentation caveat rather than a demonstrated factual defect; the complete exact five-row table accompanies the image. One design/render/review, no material visible defect.17.12s,9 requests.",
+    "images": [
+      {
+        "render_id": "796ea3b1af2d",
+        "sha256": "4a3f91c4f2cf25ccc98b8de5a9577345a6f4a5a5a2a7f76d513a65a7380c64fc",
+        "phase": "initial_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 37,
+    "case_id": "corpus-vizcsv-39d623d403ef86e5",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Suitable complete 19-row table; all four columns and visible source pairings match, including three missing person types and one missing entry mode represented by dashes rather than zero. Original codes retained. Table is fully visible in this PNG; no scroll/clipping concern. Reviewer pass supported. Published artifact exists, but final reply contains neither image URL nor artifact link and only claims publication: delivery failure, not chart-design failure. Final wording says missing cells are blank; dash representation is a minor wording distinction.19.81s,8 requests; no repair.",
+    "images": [
+      {
+        "render_id": "5c4777bfcccf",
+        "sha256": "70e6952498932487d5754f4f51f35500342ef94631ff33797b7190f94251f3bf",
+        "phase": "initial_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 38,
+    "case_id": "corpus-vizcsv-ed2d9d4b2f49d899",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "uncertain",
+    "final_render_visual": "uncertain",
+    "reviewer_false_rejection": null,
+    "unnecessary_repair": null,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Suitable complete 8-row table with truthful count/ratio roles. Only visible precision concern:0.7661421428790528 appears 0.77; counts/zeros correct. Reviewer observed actual rounding, not invented clipping. Original brief forbids data recomputation but did not explicitly demand all decimal places; lead added no-rounding/literal wording, then designer promised it. Whether ordinary display rounding is a material defect is unresolved, so false-rejection and necessity remain uncertain. Internal metadata labelled jobs_per_capita_ratio as share; no extra percentage scale is visible. Attempted repair adds table format 0.0000000000000000 despite saved compromise that table ignores format; no second render, publication, or final reply before 120.00s timeout/9 requests. Final-render verdict refers to last available preview, not delivered output.",
+    "images": [
+      {
+        "render_id": "88832abc53f2",
+        "sha256": "cf18e42aa63ba4d22cf72d4444d515491fe276f9e7cb685e1df185ce752182d4",
+        "phase": "initial_only_unpublished",
+        "verdict": "uncertain"
+      }
+    ]
+  },
+  {
+    "rollout": 39,
+    "case_id": "corpus-vizcsv-ec9b6239518a7b5e",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Suitable negative horizontal bars extend left from zero, preserving−986,−991,−1014,−1069 and their districts. Four labels/source pairings readable and final image plus exact table delivered. Arabic district heading is generic المنطقة, but source district identifier is retained in title and category names unaltered; no material loss of identity found. Reviewer pass supported; no repair.16.75s,8 requests.",
+    "images": [
+      {
+        "render_id": "99f1a0d468c6",
+        "sha256": "797436eeaeadfaaa70c235b0a254d3ff64cbcce7b5e48f0dcd003f84410b137f",
+        "phase": "initial_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 40,
+    "case_id": "corpus-vizcsv-244e80ce1f6ea1e6",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": true,
+    "unnecessary_repair": null,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "All 85 city/type/count triples match both initial and final resolved render data exactly;17 cities and five series are visible. Initial PNG 3000×2100 and final PNG 4800×2700 have separate readable legend entries when audited at native resolution. The initial overlap/unreadable finding is not reproduced at that resolution; the actual provider-resized image and UI viewport were not observed, so necessity of resizing remains uncertain. Final review falsely declares supplied cities absent based on only 30 reference rows and misreads several labels; complete source and config prove all rendered cities are supplied. reviewer_false_rejection=true refers specifically to this verified final source-absence error, not a claim about all downsampled readability. Lead correctly rejects partial-reference finding but repeats initial overlap claim. Two design/render/review rounds; second design 39.82s/2 requests. Artifact published with correct PNG/HTML, but final reply omits image/artifact links or actual data table.82.73s/14 requests. Contract also fails numeric-claim and review gates; raw scores unchanged. Publication-without-final-link, not nonexistent output.",
+    "images": [
+      {
+        "render_id": "952fef4ced3e",
+        "sha256": "33670a30ac562b64e78ee9482147e328eb933d54c1f311bcbe9d9a6e1fc4d07d",
+        "phase": "initial",
+        "verdict": "pass"
+      },
+      {
+        "render_id": "49fa408a5869",
+        "sha256": "5d72ff49a7b59a2729b78edaff990b6992928988ed7482253533ba4b9c751e9a",
+        "phase": "repair_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 41,
+    "case_id": "corpus-vizcsv-e384bfa45ac5ab8e",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Suitable complete 8-row table with all four fields, distinct count/ratio roles, all source zeros, and correct regional identity. Numeric display rounds 34.356258596973866 to 34.36; ordinary presentation precision is not prohibited explicitly by this brief, but designer's claim that cells remain verbatim is overstrong. No extra percentage rescaling or cap at 1/100. Reviewer pass supported for visible readability; it is not proof of exact-decimal presentation. One design/render/review and publication completed, with persisted PNG/HTML, before 120.01s/7-request timeout. No final reply or link delivered. This failure is final-response latency/completion, not an infinite render loop.",
+    "images": [
+      {
+        "render_id": "07a9d6b827dd",
+        "sha256": "df523e6eae314ce5cbcf811c0d555963e47d1f174ebe6d09e5a0b2f55ee64df9",
+        "phase": "initial_and_final_published_without_reply",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 42,
+    "case_id": "corpus-vizcsv-44cfda42866aa5ae",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "no_image",
+    "final_render_visual": "no_image",
+    "reviewer_false_rejection": null,
+    "unnecessary_repair": false,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Suitable chosen three-card indicator binds all three source fields 75153,26812,35.68%; roles pass means saved spec only, no rendered fidelity assertion. First designer call timed out after 45.0036s. Lead retry with use_fallback=true returned a fresh model design in 8.444s; it set 900×300 with long bilingual labels. Rendering failed with explicit technical feedback: indicator needs at least 362px height. No PNG was retained, no visual reviewer ran, no publication or final reply. Whole case timed out 120.01s/5 recorded requests. Do not blame reviewer/imaginary visual loops; evidence supports designer timeout plus deterministic layout-height failure and uncompleted recovery.",
+    "images": []
+  },
+  {
+    "rollout": 43,
+    "case_id": "corpus-vizcsv-e6f74cc7f3324781",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Suitable complete 14-row table preserves city–district identity and worker counts; all 14 rows and three Arabic headers are fully visible in 1598×904 PNG. No scroll or clipping defect. Final image link and complete exact Markdown table delivered. One design/render/review, reviewer pass supported, no repair. Correct content/delivery despite 92.31s/8 requests (designer 25.86s); contract_pass=true but strict latency gate fails 60s SLA. Do not conflate slow single pass with a render loop.",
+    "images": [
+      {
+        "render_id": "cfe4743d34a6",
+        "sha256": "f67fcae96ebf621591de44b62b1553b0ba3eab7cb5777b38ef5da73e1ae9804a",
+        "phase": "initial_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 44,
+    "case_id": "corpus-vizcsv-2075320dff9f6ebd",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "no_image",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": null,
+    "unnecessary_repair": false,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Three separate indicator cards are suitable and retain 5 returners,370783 total, source-rounded 0.0% without recalculation or claiming zero returners. First 800×300 design failed rendering: needs at least 362px height. Lead's directed height-only repair to 800×420 is justified; the sole retained PNG 2400×1260 is complete, readable and faithful. first_render_visual=no_image means initial failed attempt; the retained image is the repaired preview. Two design/render attempts; designer durations 2.60s and 2.11s. No reviewer or publication before 120.01s/7-request timeout, no final reply. Failure is technical sizing plus incomplete postrender progression, not false reviewer rejection.",
+    "images": [
+      {
+        "render_id": "ab85d6cd190a",
+        "sha256": "44060a2d72a07422bdb298cbed0c66aeda8d7c205ffbdad0e4f812f59d09d048",
+        "phase": "repair_only_unpublished",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 45,
+    "case_id": "corpus-vizcsv-57c25fcba38f1bb0",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Suitable single indicator card:420 foreign births,866 total, and 48.5% are clearly labelled and fully readable in 1380×1044 PNG. No total/subset pie or recomputation. One design/render/review (designer 26.98s/2 requests), reviewer pass supported. Published PNG/HTML exists and final prose correctly provides all three exact numeric values, but contains no image/artifact link; frozen graphic-delivery contract fails. This does not mean factual prose is incorrect or artifact nonexistent.52.92s/9 requests; no repair.",
+    "images": [
+      {
+        "render_id": "e76108fd94dd",
+        "sha256": "a585c806e45127435f6242a39b9028e0f7dbfcfadc7f7748900d80e968adef38",
+        "phase": "initial_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 46,
+    "case_id": "corpus-vizcsv-a723f837bb1cd6a9",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": true,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Suitable complete 4-row table 1394×304 preserves all university categories, two counts, and supplied percentages 20.09,20.06,19.92,20.6% without stacking subset against total. Resolved render data exactly equals all source rows. All cells visible and readable. Reviewer returns revise/error while summary and detailed finding repeatedly state identical numbers and end 'all values match'; independent PNG/source inspection confirms contradiction and false rejection. Lead correctly publishes without a repair and delivers image plus accurate table; final explanation reflects finding conclusion, though structured review verdict remains revise. Raw contract fails review gate only, but independent content/graphic-delivery audit passes.48.14s/8 requests, one design/render/review.",
+    "images": [
+      {
+        "render_id": "0465e27a6139",
+        "sha256": "acae5c3050fce78d7bee291f941eb77bd65197f6358f204a22336baca8bb128c",
+        "phase": "initial_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 47,
+    "case_id": "corpus-vizcsv-1ea76a97e400d852",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Suitable complete 9-row table 1598×604. Raw CSV months are 1,2,3,4,5,9,10,11,12 (not contiguous 1–9); original order/year 2025/counts preserved exactly in config. Arabic month-name display mappings correctly match those calendar numbers. Image readable, no clipped rows or invented zero months. Final prose correctly states months 6–8 are absent; numeric answer gate nevertheless fails, so that flag is not evidence of an invented numeric data claim. Published PNG/HTML exists, but final reply omits image/artifact link and data values; end-to-end graphic-delivery failure.30.25s/8 requests, one design/render/review, no repair.",
+    "images": [
+      {
+        "render_id": "b17eca79e6b2",
+        "sha256": "f4d37e705d15108ea8194dbc5356e6f20eccf26dbba4f2ff85fe8f3d823e3cc0",
+        "phase": "initial_and_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 48,
+    "case_id": "corpus-vizcsv-20d73400a693d49f",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "fail",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": true,
+    "unnecessary_repair": true,
+    "final_delivery": true,
+    "task_correct": "uncertain",
+    "notes": "Two 2400×1350 PNGs: initial genuine defect labels population axis 0.0%–800.0%; first reviewer correctly flags it. Removing global percent format produces correct count-left/percent-right axes with exact eight source category/value pairs. Final source_roles_faithful refers to repaired spec; initial unit encoding failed. Native and resized-to 2048 review of final PNG shows eight distinct correctly ordered regions, no duplicated الجوف, so second reviewer rejection is false. Lead then calls capabilities and attempts a third design to switch to table; framework blocks it at repair limit. unnecessary_repair=true refers to this unnecessary attempted extra repair, not the justified first repair. Image plus exact eight-row table delivered. Final response transparently reports inspector's duplicate-label allegation but also characterizes it as an RTL defect not supported by saved image; task_correct is uncertain for this inherited unsupported quality caveat, not for numeric data or diagram fidelity.93.76s/15 requests; raw contract fails review/numeric/repetition and strict latency. No claim that a reviewer-resized image or UI viewport was inspected.",
+    "images": [
+      {
+        "render_id": "405bed738a35",
+        "sha256": "9d9a6f805e2e6a659651a1015b6d0d9320d026be6df044a5cec9fe5402d18ad0",
+        "phase": "initial",
+        "verdict": "fail"
+      },
+      {
+        "render_id": "9af84d41c184",
+        "sha256": "9ab63c9e47e34279198e55bf4c148d62e13739c3afd2ae7d3fd76effa1ca3a81",
+        "phase": "repair_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 49,
+    "case_id": "corpus-vizcsv-a25bc59748f9842d",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "fail",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": true,
+    "unnecessary_repair": false,
+    "final_delivery": false,
+    "task_correct": "fail",
+    "notes": "Both 1380×1044 indicators faithfully show 0.14%,11, and 7680. Initial graphic's English title/labels fail the explicit Arabic-label direction; final repair fixes localization and is useful. Lead first attempted that metadata-visible localization correction before review, but the harness blocked it until an inspector error. Reviewer then falsely demanded 0.14% be changed to 14.00%, contradicting the brief's already-percent units; lead correctly preserves 0.14 and repairs Arabic text. unnecessary_repair=false refers to the executed localization repair, not approval of review's percent-rescaling claim; extra rejected design call is workflow overhead. Published correct PNG/HTML exists; final accurate one-row table has no image/artifact link. Numeric gate also flags answer that explicitly rejects 14.00%, not an invented asserted data value.27.83s/15 requests. Graphic-delivery task failure does not invalidate truthful textual values.",
+    "images": [
+      {
+        "render_id": "7d7f3f5f36ca",
+        "sha256": "d5a6ed7474057041309d362fbdefc8f2aed774d65643eeda186cec64d96c69c5",
+        "phase": "initial",
+        "verdict": "fail"
+      },
+      {
+        "render_id": "90d770c07e2c",
+        "sha256": "22064f12c602fa89d3ecb8fa43ae4106b7d2ceed4989549ab2b9ab117f9104da",
+        "phase": "repair_final",
+        "verdict": "pass"
+      }
+    ]
+  },
+  {
+    "rollout": 50,
+    "case_id": "corpus-vizcsv-ffcc0df19d7c2f61",
+    "task_type": "chart",
+    "chart_suitable": "pass",
+    "source_roles_faithful": "pass",
+    "first_render_visual": "pass",
+    "final_render_visual": "pass",
+    "reviewer_false_rejection": false,
+    "unnecessary_repair": false,
+    "final_delivery": true,
+    "task_correct": "pass",
+    "notes": "Suitable horizontal bar 2400×1350 preserves all ten job-title/count pairs in source order. All labels/counts readable, truthful zero baseline, no invented unit or grouped occupations. Complete exact final table and image link delivered. One design/render/review with supported reviewer pass;12.49s/8 requests, no repair. Independent agent audit pass, not human gold.",
+    "images": [
+      {
+        "render_id": "919145358790",
+        "sha256": "fb4ffa618eb5bd5bd26dc1b80b306ff2f4dcf38daa4f3397d0cce88617aa2425",
+        "phase": "initial_and_final",
+        "verdict": "pass"
+      }
+    ]
+  }
+]

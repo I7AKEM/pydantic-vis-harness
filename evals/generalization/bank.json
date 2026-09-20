@@ -1,0 +1,3075 @@
+{
+  "version": "transfer24-v1",
+  "families": [
+    {
+      "id": "relationship_sequence",
+      "taxonomy": "Same observations: association versus temporal path",
+      "split": "blinded_challenge",
+      "authoring_source": "independent synthetic task construction"
+    },
+    {
+      "id": "composition_independent_rates",
+      "taxonomy": "Additive allocation versus non-additive per-group rates",
+      "split": "blinded_challenge",
+      "authoring_source": "independent synthetic task construction"
+    },
+    {
+      "id": "nested_allocation",
+      "taxonomy": "Within-parent composition versus aligned subgroup comparison",
+      "split": "blinded_challenge",
+      "authoring_source": "independent synthetic task construction"
+    },
+    {
+      "id": "repeated_measurement_views",
+      "taxonomy": "Repeated trajectories versus group-wise sample distributions",
+      "split": "blinded_challenge",
+      "authoring_source": "independent synthetic task construction"
+    },
+    {
+      "id": "mixed_unit_summary",
+      "taxonomy": "Multimetric overview versus complete exact record presentation",
+      "split": "blinded_challenge",
+      "authoring_source": "independent synthetic task construction"
+    },
+    {
+      "id": "opaque_metric_choice",
+      "taxonomy": "Goal-sensitive metric selection with opaque literal identities",
+      "split": "blinded_challenge",
+      "authoring_source": "independent synthetic task construction"
+    }
+  ],
+  "cases": [
+    {
+      "id": "g01-association-original",
+      "family": "relationship_sequence",
+      "goal": "association",
+      "variant": "original",
+      "split": "blinded_challenge",
+      "filename": "g01-association-original.csv",
+      "csv_text": "date,inlet_c,pressure_kpa\n2026-02-01,18,101\n2026-02-02,24,104\n2026-02-03,21,109\n2026-02-04,27,105\n2026-02-05,20,99\n2026-02-06,25,112\n",
+      "source_csv_sha256": "7db221dbb8e320466a2d457407a157fc58649ff6ef6f7e3a0cbfb3183157571a",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Show the association between inlet temperature (horizontal axis) and pressure (vertical axis). Each supplied observation must remain a separate point; do not connect points in time or claim causation. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "enriched_question": "Show the association between inlet temperature (horizontal axis) and pressure (vertical axis). Each supplied observation must remain a separate point; do not connect points in time or claim causation. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "intent": "relation",
+        "column_descriptions": {
+          "date": "Observation date; chronological order is meaningful",
+          "inlet_c": "Measured inlet temperature",
+          "pressure_kpa": "Measured pressure"
+        },
+        "units": {
+          "inlet_c": "°C",
+          "pressure_kpa": "kPa"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Show the association between inlet temperature (horizontal axis) and pressure (vertical axis). Each supplied observation must remain a separate point; do not connect points in time or claim causation. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+      "contract": {
+        "allowed_charts": [
+          "scatter"
+        ],
+        "required_visible_columns": [
+          "inlet_c",
+          "pressure_kpa"
+        ],
+        "required_bindings": {
+          "x": "inlet_c",
+          "y": "pressure_kpa"
+        },
+        "primary_measures": [
+          "inlet_c",
+          "pressure_kpa"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "inlet_c": "°C",
+          "pressure_kpa": "kPa"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "date",
+        "inlet_c",
+        "pressure_kpa"
+      ],
+      "source_rows": [
+        [
+          "2026-02-01",
+          18,
+          101
+        ],
+        [
+          "2026-02-02",
+          24,
+          104
+        ],
+        [
+          "2026-02-03",
+          21,
+          109
+        ],
+        [
+          "2026-02-04",
+          27,
+          105
+        ],
+        [
+          "2026-02-05",
+          20,
+          99
+        ],
+        [
+          "2026-02-06",
+          25,
+          112
+        ]
+      ],
+      "canonical_columns": {
+        "date": "date",
+        "inlet_c": "inlet_c",
+        "pressure_kpa": "pressure_kpa"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g01-association-transformed",
+      "family": "relationship_sequence",
+      "goal": "association",
+      "variant": "transformed",
+      "split": "blinded_challenge",
+      "filename": "g01-association-transformed.csv",
+      "csv_text": "field_1_3,field_1_2,field_1_1\n104,24,2026-02-02\n105,27,2026-02-04\n112,25,2026-02-06\n101,18,2026-02-01\n109,21,2026-02-03\n99,20,2026-02-05\n",
+      "source_csv_sha256": "3b99f0e3bdb287a0f36b8d6d1878675483131ab7686f73a13736acf074978020",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Show the association between inlet temperature (horizontal axis) and pressure (vertical axis). Each supplied observation must remain a separate point; do not connect points in time or claim causation. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "enriched_question": "Show the association between inlet temperature (horizontal axis) and pressure (vertical axis). Each supplied observation must remain a separate point; do not connect points in time or claim causation. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "intent": "relation",
+        "column_descriptions": {
+          "field_1_1": "Observation date; chronological order is meaningful",
+          "field_1_2": "Measured inlet temperature",
+          "field_1_3": "Measured pressure"
+        },
+        "units": {
+          "field_1_2": "°C",
+          "field_1_3": "kPa"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Show the association between inlet temperature (horizontal axis) and pressure (vertical axis). Each supplied observation must remain a separate point; do not connect points in time or claim causation. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+      "contract": {
+        "allowed_charts": [
+          "scatter"
+        ],
+        "required_visible_columns": [
+          "field_1_2",
+          "field_1_3"
+        ],
+        "required_bindings": {
+          "x": "field_1_2",
+          "y": "field_1_3"
+        },
+        "primary_measures": [
+          "field_1_2",
+          "field_1_3"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "field_1_2": "°C",
+          "field_1_3": "kPa"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "field_1_3",
+        "field_1_2",
+        "field_1_1"
+      ],
+      "source_rows": [
+        [
+          104,
+          24,
+          "2026-02-02"
+        ],
+        [
+          105,
+          27,
+          "2026-02-04"
+        ],
+        [
+          112,
+          25,
+          "2026-02-06"
+        ],
+        [
+          101,
+          18,
+          "2026-02-01"
+        ],
+        [
+          109,
+          21,
+          "2026-02-03"
+        ],
+        [
+          99,
+          20,
+          "2026-02-05"
+        ]
+      ],
+      "canonical_columns": {
+        "field_1_1": "date",
+        "field_1_2": "inlet_c",
+        "field_1_3": "pressure_kpa"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g01-trajectory-original",
+      "family": "relationship_sequence",
+      "goal": "trajectory",
+      "variant": "original",
+      "split": "blinded_challenge",
+      "filename": "g01-trajectory-original.csv",
+      "csv_text": "date,inlet_c,pressure_kpa\n2026-02-01,18,101\n2026-02-02,24,104\n2026-02-03,21,109\n2026-02-04,27,105\n2026-02-05,20,99\n2026-02-06,25,112\n",
+      "source_csv_sha256": "7db221dbb8e320466a2d457407a157fc58649ff6ef6f7e3a0cbfb3183157571a",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Show how pressure evolves through the observation dates in chronological order. Temperature is context, not a second axis. Use a graphical time series, not a table or a temperature-pressure scatterplot. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "enriched_question": "Show how pressure evolves through the observation dates in chronological order. Temperature is context, not a second axis. Use a graphical time series, not a table or a temperature-pressure scatterplot. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "intent": "trend",
+        "column_descriptions": {
+          "date": "Observation date; chronological order is meaningful",
+          "inlet_c": "Measured inlet temperature",
+          "pressure_kpa": "Measured pressure"
+        },
+        "units": {
+          "inlet_c": "°C",
+          "pressure_kpa": "kPa"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Show how pressure evolves through the observation dates in chronological order. Temperature is context, not a second axis. Use a graphical time series, not a table or a temperature-pressure scatterplot. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+      "contract": {
+        "allowed_charts": [
+          "line",
+          "area",
+          "column"
+        ],
+        "required_visible_columns": [
+          "date",
+          "pressure_kpa"
+        ],
+        "required_bindings": {},
+        "primary_measures": [
+          "pressure_kpa"
+        ],
+        "forbidden_measures": [
+          "inlet_c"
+        ],
+        "units": {
+          "inlet_c": "°C",
+          "pressure_kpa": "kPa"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "date",
+        "inlet_c",
+        "pressure_kpa"
+      ],
+      "source_rows": [
+        [
+          "2026-02-01",
+          18,
+          101
+        ],
+        [
+          "2026-02-02",
+          24,
+          104
+        ],
+        [
+          "2026-02-03",
+          21,
+          109
+        ],
+        [
+          "2026-02-04",
+          27,
+          105
+        ],
+        [
+          "2026-02-05",
+          20,
+          99
+        ],
+        [
+          "2026-02-06",
+          25,
+          112
+        ]
+      ],
+      "canonical_columns": {
+        "date": "date",
+        "inlet_c": "inlet_c",
+        "pressure_kpa": "pressure_kpa"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g01-trajectory-transformed",
+      "family": "relationship_sequence",
+      "goal": "trajectory",
+      "variant": "transformed",
+      "split": "blinded_challenge",
+      "filename": "g01-trajectory-transformed.csv",
+      "csv_text": "field_1_3,field_1_2,field_1_1\n104,24,2026-02-02\n105,27,2026-02-04\n112,25,2026-02-06\n101,18,2026-02-01\n109,21,2026-02-03\n99,20,2026-02-05\n",
+      "source_csv_sha256": "3b99f0e3bdb287a0f36b8d6d1878675483131ab7686f73a13736acf074978020",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Show how pressure evolves through the observation dates in chronological order. Temperature is context, not a second axis. Use a graphical time series, not a table or a temperature-pressure scatterplot. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "enriched_question": "Show how pressure evolves through the observation dates in chronological order. Temperature is context, not a second axis. Use a graphical time series, not a table or a temperature-pressure scatterplot. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "intent": "trend",
+        "column_descriptions": {
+          "field_1_1": "Observation date; chronological order is meaningful",
+          "field_1_2": "Measured inlet temperature",
+          "field_1_3": "Measured pressure"
+        },
+        "units": {
+          "field_1_2": "°C",
+          "field_1_3": "kPa"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Show how pressure evolves through the observation dates in chronological order. Temperature is context, not a second axis. Use a graphical time series, not a table or a temperature-pressure scatterplot. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+      "contract": {
+        "allowed_charts": [
+          "line",
+          "area",
+          "column"
+        ],
+        "required_visible_columns": [
+          "field_1_1",
+          "field_1_3"
+        ],
+        "required_bindings": {},
+        "primary_measures": [
+          "field_1_3"
+        ],
+        "forbidden_measures": [
+          "field_1_2"
+        ],
+        "units": {
+          "field_1_2": "°C",
+          "field_1_3": "kPa"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "field_1_3",
+        "field_1_2",
+        "field_1_1"
+      ],
+      "source_rows": [
+        [
+          104,
+          24,
+          "2026-02-02"
+        ],
+        [
+          105,
+          27,
+          "2026-02-04"
+        ],
+        [
+          112,
+          25,
+          "2026-02-06"
+        ],
+        [
+          101,
+          18,
+          "2026-02-01"
+        ],
+        [
+          109,
+          21,
+          "2026-02-03"
+        ],
+        [
+          99,
+          20,
+          "2026-02-05"
+        ]
+      ],
+      "canonical_columns": {
+        "field_1_1": "date",
+        "field_1_2": "inlet_c",
+        "field_1_3": "pressure_kpa"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g02-allocation-original",
+      "family": "composition_independent_rates",
+      "goal": "allocation",
+      "variant": "original",
+      "split": "blinded_challenge",
+      "filename": "g02-allocation-original.csv",
+      "csv_text": "channel,allocated_hours,failure_percent\nInspection,240,6.5\nPackaging,160,12.0\nDispatch,360,3.5\nRework,40,25.0\n",
+      "source_csv_sha256": "de0b9ca4357eee41851869ac93866c9f22aaf74fd22c667fe6e3699c90e0c325",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Visualize how the complete work-hour allocation is divided among activities. Encode the supplied hours directly; do not substitute the failure rates or calculate a new percentage column. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "enriched_question": "Visualize how the complete work-hour allocation is divided among activities. Encode the supplied hours directly; do not substitute the failure rates or calculate a new percentage column. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "intent": "composition",
+        "column_descriptions": {
+          "channel": "Separate process activity",
+          "allocated_hours": "Mutually exclusive allocated work hours; rows partition the full allocation",
+          "failure_percent": "Failures as a percent within each activity; denominators differ, so these percentages are not parts of a common whole"
+        },
+        "units": {
+          "allocated_hours": "hours",
+          "failure_percent": "%"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Visualize how the complete work-hour allocation is divided among activities. Encode the supplied hours directly; do not substitute the failure rates or calculate a new percentage column. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+      "contract": {
+        "allowed_charts": [
+          "pie",
+          "donut",
+          "treemap",
+          "bar",
+          "column"
+        ],
+        "required_visible_columns": [
+          "channel",
+          "allocated_hours"
+        ],
+        "required_bindings": {
+          "category": "channel",
+          "value": "allocated_hours"
+        },
+        "primary_measures": [
+          "allocated_hours"
+        ],
+        "forbidden_measures": [
+          "failure_percent"
+        ],
+        "units": {
+          "allocated_hours": "hours",
+          "failure_percent": "%"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "channel",
+        "allocated_hours",
+        "failure_percent"
+      ],
+      "source_rows": [
+        [
+          "Inspection",
+          240,
+          6.5
+        ],
+        [
+          "Packaging",
+          160,
+          12.0
+        ],
+        [
+          "Dispatch",
+          360,
+          3.5
+        ],
+        [
+          "Rework",
+          40,
+          25.0
+        ]
+      ],
+      "canonical_columns": {
+        "channel": "channel",
+        "allocated_hours": "allocated_hours",
+        "failure_percent": "failure_percent"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g02-allocation-transformed",
+      "family": "composition_independent_rates",
+      "goal": "allocation",
+      "variant": "transformed",
+      "split": "blinded_challenge",
+      "filename": "g02-allocation-transformed.csv",
+      "csv_text": "field_2_3,field_2_2,field_2_1\n12.0,160,Packaging\n25.0,40,Rework\n6.5,240,Inspection\n3.5,360,Dispatch\n",
+      "source_csv_sha256": "2111b52225f6dbd8b43fbd37eb545a022e19216779ed7bc9b243b616a003a79b",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Visualize how the complete work-hour allocation is divided among activities. Encode the supplied hours directly; do not substitute the failure rates or calculate a new percentage column. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "enriched_question": "Visualize how the complete work-hour allocation is divided among activities. Encode the supplied hours directly; do not substitute the failure rates or calculate a new percentage column. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "intent": "composition",
+        "column_descriptions": {
+          "field_2_1": "Separate process activity",
+          "field_2_2": "Mutually exclusive allocated work hours; rows partition the full allocation",
+          "field_2_3": "Failures as a percent within each activity; denominators differ, so these percentages are not parts of a common whole"
+        },
+        "units": {
+          "field_2_2": "hours",
+          "field_2_3": "%"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Visualize how the complete work-hour allocation is divided among activities. Encode the supplied hours directly; do not substitute the failure rates or calculate a new percentage column. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+      "contract": {
+        "allowed_charts": [
+          "pie",
+          "donut",
+          "treemap",
+          "bar",
+          "column"
+        ],
+        "required_visible_columns": [
+          "field_2_1",
+          "field_2_2"
+        ],
+        "required_bindings": {
+          "category": "field_2_1",
+          "value": "field_2_2"
+        },
+        "primary_measures": [
+          "field_2_2"
+        ],
+        "forbidden_measures": [
+          "field_2_3"
+        ],
+        "units": {
+          "field_2_2": "hours",
+          "field_2_3": "%"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "field_2_3",
+        "field_2_2",
+        "field_2_1"
+      ],
+      "source_rows": [
+        [
+          12.0,
+          160,
+          "Packaging"
+        ],
+        [
+          25.0,
+          40,
+          "Rework"
+        ],
+        [
+          6.5,
+          240,
+          "Inspection"
+        ],
+        [
+          3.5,
+          360,
+          "Dispatch"
+        ]
+      ],
+      "canonical_columns": {
+        "field_2_1": "channel",
+        "field_2_2": "allocated_hours",
+        "field_2_3": "failure_percent"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g02-failure_comparison-original",
+      "family": "composition_independent_rates",
+      "goal": "failure_comparison",
+      "variant": "original",
+      "split": "blinded_challenge",
+      "filename": "g02-failure_comparison-original.csv",
+      "csv_text": "channel,allocated_hours,failure_percent\nInspection,240,6.5\nPackaging,160,12.0\nDispatch,360,3.5\nRework,40,25.0\n",
+      "source_csv_sha256": "de0b9ca4357eee41851869ac93866c9f22aaf74fd22c667fe6e3699c90e0c325",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Compare the activity-specific failure percentages with an aligned baseline. These independent percentages are already expressed in percent units, not fractions and not shares of a common total. Show these rates, not allocated hours. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "enriched_question": "Compare the activity-specific failure percentages with an aligned baseline. These independent percentages are already expressed in percent units, not fractions and not shares of a common total. Show these rates, not allocated hours. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "intent": "compare",
+        "column_descriptions": {
+          "channel": "Separate process activity",
+          "allocated_hours": "Mutually exclusive allocated work hours; rows partition the full allocation",
+          "failure_percent": "Failures as a percent within each activity; denominators differ, so these percentages are not parts of a common whole"
+        },
+        "units": {
+          "allocated_hours": "hours",
+          "failure_percent": "%"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Compare the activity-specific failure percentages with an aligned baseline. These independent percentages are already expressed in percent units, not fractions and not shares of a common total. Show these rates, not allocated hours. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+      "contract": {
+        "allowed_charts": [
+          "bar",
+          "column"
+        ],
+        "required_visible_columns": [
+          "channel",
+          "failure_percent"
+        ],
+        "required_bindings": {
+          "category": "channel",
+          "value": "failure_percent"
+        },
+        "primary_measures": [
+          "failure_percent"
+        ],
+        "forbidden_measures": [
+          "allocated_hours"
+        ],
+        "units": {
+          "allocated_hours": "hours",
+          "failure_percent": "%"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "channel",
+        "allocated_hours",
+        "failure_percent"
+      ],
+      "source_rows": [
+        [
+          "Inspection",
+          240,
+          6.5
+        ],
+        [
+          "Packaging",
+          160,
+          12.0
+        ],
+        [
+          "Dispatch",
+          360,
+          3.5
+        ],
+        [
+          "Rework",
+          40,
+          25.0
+        ]
+      ],
+      "canonical_columns": {
+        "channel": "channel",
+        "allocated_hours": "allocated_hours",
+        "failure_percent": "failure_percent"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g02-failure_comparison-transformed",
+      "family": "composition_independent_rates",
+      "goal": "failure_comparison",
+      "variant": "transformed",
+      "split": "blinded_challenge",
+      "filename": "g02-failure_comparison-transformed.csv",
+      "csv_text": "field_2_3,field_2_2,field_2_1\n12.0,160,Packaging\n25.0,40,Rework\n6.5,240,Inspection\n3.5,360,Dispatch\n",
+      "source_csv_sha256": "2111b52225f6dbd8b43fbd37eb545a022e19216779ed7bc9b243b616a003a79b",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Compare the activity-specific failure percentages with an aligned baseline. These independent percentages are already expressed in percent units, not fractions and not shares of a common total. Show these rates, not allocated hours. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "enriched_question": "Compare the activity-specific failure percentages with an aligned baseline. These independent percentages are already expressed in percent units, not fractions and not shares of a common total. Show these rates, not allocated hours. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "intent": "compare",
+        "column_descriptions": {
+          "field_2_1": "Separate process activity",
+          "field_2_2": "Mutually exclusive allocated work hours; rows partition the full allocation",
+          "field_2_3": "Failures as a percent within each activity; denominators differ, so these percentages are not parts of a common whole"
+        },
+        "units": {
+          "field_2_2": "hours",
+          "field_2_3": "%"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Compare the activity-specific failure percentages with an aligned baseline. These independent percentages are already expressed in percent units, not fractions and not shares of a common total. Show these rates, not allocated hours. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+      "contract": {
+        "allowed_charts": [
+          "bar",
+          "column"
+        ],
+        "required_visible_columns": [
+          "field_2_1",
+          "field_2_3"
+        ],
+        "required_bindings": {
+          "category": "field_2_1",
+          "value": "field_2_3"
+        },
+        "primary_measures": [
+          "field_2_3"
+        ],
+        "forbidden_measures": [
+          "field_2_2"
+        ],
+        "units": {
+          "field_2_2": "hours",
+          "field_2_3": "%"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "field_2_3",
+        "field_2_2",
+        "field_2_1"
+      ],
+      "source_rows": [
+        [
+          12.0,
+          160,
+          "Packaging"
+        ],
+        [
+          25.0,
+          40,
+          "Rework"
+        ],
+        [
+          6.5,
+          240,
+          "Inspection"
+        ],
+        [
+          3.5,
+          360,
+          "Dispatch"
+        ]
+      ],
+      "canonical_columns": {
+        "field_2_1": "channel",
+        "field_2_2": "allocated_hours",
+        "field_2_3": "failure_percent"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g03-parent_composition-original",
+      "family": "nested_allocation",
+      "goal": "parent_composition",
+      "variant": "original",
+      "split": "blinded_challenge",
+      "filename": "g03-parent_composition-original.csv",
+      "csv_text": "assembly,module,power_w\nRig A,Compute,35\nRig A,Cooling,15\nRig A,Storage,10\nRig B,Compute,20\nRig B,Cooling,30\nRig B,Storage,5\nRig C,Compute,25\nRig C,Cooling,10\nRig C,Storage,20\n",
+      "source_csv_sha256": "d9a4352fe310a56fcb0da877dbdb0495cc0d2d2bb5f5839db210b33a04d677b4",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Show each rig as one total-length mark subdivided by its modules, preserving the module power readings. Use absolute watts, not normalized percentages; do not merge identically named modules across rigs. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "enriched_question": "Show each rig as one total-length mark subdivided by its modules, preserving the module power readings. Use absolute watts, not normalized percentages; do not merge identically named modules across rigs. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "intent": "composition",
+        "column_descriptions": {
+          "assembly": "Parent rig",
+          "module": "Repeated module category within every parent rig",
+          "power_w": "Module power draw; modules partition their parent rig's draw"
+        },
+        "units": {
+          "power_w": "W"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Show each rig as one total-length mark subdivided by its modules, preserving the module power readings. Use absolute watts, not normalized percentages; do not merge identically named modules across rigs. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+      "contract": {
+        "allowed_charts": [
+          "stacked_bar",
+          "stacked_column"
+        ],
+        "required_visible_columns": [
+          "assembly",
+          "module",
+          "power_w"
+        ],
+        "required_bindings": {
+          "category": "assembly",
+          "group": "module",
+          "value": "power_w"
+        },
+        "primary_measures": [
+          "power_w"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "power_w": "W"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "assembly",
+        "module",
+        "power_w"
+      ],
+      "source_rows": [
+        [
+          "Rig A",
+          "Compute",
+          35
+        ],
+        [
+          "Rig A",
+          "Cooling",
+          15
+        ],
+        [
+          "Rig A",
+          "Storage",
+          10
+        ],
+        [
+          "Rig B",
+          "Compute",
+          20
+        ],
+        [
+          "Rig B",
+          "Cooling",
+          30
+        ],
+        [
+          "Rig B",
+          "Storage",
+          5
+        ],
+        [
+          "Rig C",
+          "Compute",
+          25
+        ],
+        [
+          "Rig C",
+          "Cooling",
+          10
+        ],
+        [
+          "Rig C",
+          "Storage",
+          20
+        ]
+      ],
+      "canonical_columns": {
+        "assembly": "assembly",
+        "module": "module",
+        "power_w": "power_w"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g03-parent_composition-transformed",
+      "family": "nested_allocation",
+      "goal": "parent_composition",
+      "variant": "transformed",
+      "split": "blinded_challenge",
+      "filename": "g03-parent_composition-transformed.csv",
+      "csv_text": "field_3_3,field_3_2,field_3_1\n15,Cooling,Rig A\n20,Compute,Rig B\n5,Storage,Rig B\n10,Cooling,Rig C\n35,Compute,Rig A\n10,Storage,Rig A\n30,Cooling,Rig B\n25,Compute,Rig C\n20,Storage,Rig C\n",
+      "source_csv_sha256": "f36397aa630be8ad227bfe9ba6234627f75d882860cfda6c6b6f238b4e3c9ad9",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Show each rig as one total-length mark subdivided by its modules, preserving the module power readings. Use absolute watts, not normalized percentages; do not merge identically named modules across rigs. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "enriched_question": "Show each rig as one total-length mark subdivided by its modules, preserving the module power readings. Use absolute watts, not normalized percentages; do not merge identically named modules across rigs. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "intent": "composition",
+        "column_descriptions": {
+          "field_3_1": "Parent rig",
+          "field_3_2": "Repeated module category within every parent rig",
+          "field_3_3": "Module power draw; modules partition their parent rig's draw"
+        },
+        "units": {
+          "field_3_3": "W"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Show each rig as one total-length mark subdivided by its modules, preserving the module power readings. Use absolute watts, not normalized percentages; do not merge identically named modules across rigs. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+      "contract": {
+        "allowed_charts": [
+          "stacked_bar",
+          "stacked_column"
+        ],
+        "required_visible_columns": [
+          "field_3_1",
+          "field_3_2",
+          "field_3_3"
+        ],
+        "required_bindings": {
+          "category": "field_3_1",
+          "group": "field_3_2",
+          "value": "field_3_3"
+        },
+        "primary_measures": [
+          "field_3_3"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "field_3_3": "W"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "field_3_3",
+        "field_3_2",
+        "field_3_1"
+      ],
+      "source_rows": [
+        [
+          15,
+          "Cooling",
+          "Rig A"
+        ],
+        [
+          20,
+          "Compute",
+          "Rig B"
+        ],
+        [
+          5,
+          "Storage",
+          "Rig B"
+        ],
+        [
+          10,
+          "Cooling",
+          "Rig C"
+        ],
+        [
+          35,
+          "Compute",
+          "Rig A"
+        ],
+        [
+          10,
+          "Storage",
+          "Rig A"
+        ],
+        [
+          30,
+          "Cooling",
+          "Rig B"
+        ],
+        [
+          25,
+          "Compute",
+          "Rig C"
+        ],
+        [
+          20,
+          "Storage",
+          "Rig C"
+        ]
+      ],
+      "canonical_columns": {
+        "field_3_1": "assembly",
+        "field_3_2": "module",
+        "field_3_3": "power_w"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g03-module_comparison-original",
+      "family": "nested_allocation",
+      "goal": "module_comparison",
+      "variant": "original",
+      "split": "blinded_challenge",
+      "filename": "g03-module_comparison-original.csv",
+      "csv_text": "assembly,module,power_w\nRig A,Compute,35\nRig A,Cooling,15\nRig A,Storage,10\nRig B,Compute,20\nRig B,Cooling,30\nRig B,Storage,5\nRig C,Compute,25\nRig C,Cooling,10\nRig C,Storage,20\n",
+      "source_csv_sha256": "d9a4352fe310a56fcb0da877dbdb0495cc0d2d2bb5f5839db210b33a04d677b4",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Make module-to-module power comparisons across rigs easy: each module reading needs its own aligned-baseline mark, with rig identity distinguishable. Do not stack the readings or sum them. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "enriched_question": "Make module-to-module power comparisons across rigs easy: each module reading needs its own aligned-baseline mark, with rig identity distinguishable. Do not stack the readings or sum them. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "intent": "compare",
+        "column_descriptions": {
+          "assembly": "Parent rig",
+          "module": "Repeated module category within every parent rig",
+          "power_w": "Module power draw; modules partition their parent rig's draw"
+        },
+        "units": {
+          "power_w": "W"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Make module-to-module power comparisons across rigs easy: each module reading needs its own aligned-baseline mark, with rig identity distinguishable. Do not stack the readings or sum them. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+      "contract": {
+        "allowed_charts": [
+          "grouped_bar",
+          "grouped_column"
+        ],
+        "required_visible_columns": [
+          "assembly",
+          "module",
+          "power_w"
+        ],
+        "required_bindings": {
+          "value": "power_w"
+        },
+        "primary_measures": [
+          "power_w"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "power_w": "W"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "assembly",
+        "module",
+        "power_w"
+      ],
+      "source_rows": [
+        [
+          "Rig A",
+          "Compute",
+          35
+        ],
+        [
+          "Rig A",
+          "Cooling",
+          15
+        ],
+        [
+          "Rig A",
+          "Storage",
+          10
+        ],
+        [
+          "Rig B",
+          "Compute",
+          20
+        ],
+        [
+          "Rig B",
+          "Cooling",
+          30
+        ],
+        [
+          "Rig B",
+          "Storage",
+          5
+        ],
+        [
+          "Rig C",
+          "Compute",
+          25
+        ],
+        [
+          "Rig C",
+          "Cooling",
+          10
+        ],
+        [
+          "Rig C",
+          "Storage",
+          20
+        ]
+      ],
+      "canonical_columns": {
+        "assembly": "assembly",
+        "module": "module",
+        "power_w": "power_w"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g03-module_comparison-transformed",
+      "family": "nested_allocation",
+      "goal": "module_comparison",
+      "variant": "transformed",
+      "split": "blinded_challenge",
+      "filename": "g03-module_comparison-transformed.csv",
+      "csv_text": "field_3_3,field_3_2,field_3_1\n15,Cooling,Rig A\n20,Compute,Rig B\n5,Storage,Rig B\n10,Cooling,Rig C\n35,Compute,Rig A\n10,Storage,Rig A\n30,Cooling,Rig B\n25,Compute,Rig C\n20,Storage,Rig C\n",
+      "source_csv_sha256": "f36397aa630be8ad227bfe9ba6234627f75d882860cfda6c6b6f238b4e3c9ad9",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Make module-to-module power comparisons across rigs easy: each module reading needs its own aligned-baseline mark, with rig identity distinguishable. Do not stack the readings or sum them. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "enriched_question": "Make module-to-module power comparisons across rigs easy: each module reading needs its own aligned-baseline mark, with rig identity distinguishable. Do not stack the readings or sum them. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "intent": "compare",
+        "column_descriptions": {
+          "field_3_1": "Parent rig",
+          "field_3_2": "Repeated module category within every parent rig",
+          "field_3_3": "Module power draw; modules partition their parent rig's draw"
+        },
+        "units": {
+          "field_3_3": "W"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Make module-to-module power comparisons across rigs easy: each module reading needs its own aligned-baseline mark, with rig identity distinguishable. Do not stack the readings or sum them. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+      "contract": {
+        "allowed_charts": [
+          "grouped_bar",
+          "grouped_column"
+        ],
+        "required_visible_columns": [
+          "field_3_1",
+          "field_3_2",
+          "field_3_3"
+        ],
+        "required_bindings": {
+          "value": "field_3_3"
+        },
+        "primary_measures": [
+          "field_3_3"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "field_3_3": "W"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "field_3_3",
+        "field_3_2",
+        "field_3_1"
+      ],
+      "source_rows": [
+        [
+          15,
+          "Cooling",
+          "Rig A"
+        ],
+        [
+          20,
+          "Compute",
+          "Rig B"
+        ],
+        [
+          5,
+          "Storage",
+          "Rig B"
+        ],
+        [
+          10,
+          "Cooling",
+          "Rig C"
+        ],
+        [
+          35,
+          "Compute",
+          "Rig A"
+        ],
+        [
+          10,
+          "Storage",
+          "Rig A"
+        ],
+        [
+          30,
+          "Cooling",
+          "Rig B"
+        ],
+        [
+          25,
+          "Compute",
+          "Rig C"
+        ],
+        [
+          20,
+          "Storage",
+          "Rig C"
+        ]
+      ],
+      "canonical_columns": {
+        "field_3_1": "assembly",
+        "field_3_2": "module",
+        "field_3_3": "power_w"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g04-curing_paths-original",
+      "family": "repeated_measurement_views",
+      "goal": "curing_paths",
+      "variant": "original",
+      "split": "blinded_challenge",
+      "filename": "g04-curing_paths-original.csv",
+      "csv_text": "batch,elapsed_min,strength_mpa\nMix Cedar,0,5\nMix Cedar,10,9\nMix Cedar,20,15\nMix Cedar,30,16\nMix Cedar,40,25\nMix Birch,0,8\nMix Birch,10,11\nMix Birch,20,10\nMix Birch,30,19\nMix Birch,40,21\nMix Maple,0,3\nMix Maple,10,13\nMix Maple,20,18\nMix Maple,30,22\nMix Maple,40,24\n",
+      "source_csv_sha256": "6ddea5f88f53a5a2bbcf06cbe6e8dd0dc08378c0e7e159f3bb55e19cb6e4db01",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Compare each mixture's strength trajectory over elapsed curing time. Preserve batch identity and the ordering of time within each trajectory. No averaging or fitted prediction. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "enriched_question": "Compare each mixture's strength trajectory over elapsed curing time. Preserve batch identity and the ordering of time within each trajectory. No averaging or fitted prediction. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "intent": "trend",
+        "column_descriptions": {
+          "batch": "Mixture batch",
+          "elapsed_min": "Elapsed curing time in minutes; ordered measurement coordinate",
+          "strength_mpa": "Observed material strength; every row is a separate supplied observation"
+        },
+        "units": {
+          "elapsed_min": "min",
+          "strength_mpa": "MPa"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Compare each mixture's strength trajectory over elapsed curing time. Preserve batch identity and the ordering of time within each trajectory. No averaging or fitted prediction. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+      "contract": {
+        "allowed_charts": [
+          "multi_line",
+          "grouped_column"
+        ],
+        "required_visible_columns": [
+          "batch",
+          "elapsed_min",
+          "strength_mpa"
+        ],
+        "required_bindings": {
+          "group": "batch",
+          "value": "strength_mpa"
+        },
+        "primary_measures": [
+          "strength_mpa"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "elapsed_min": "min",
+          "strength_mpa": "MPa"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "batch",
+        "elapsed_min",
+        "strength_mpa"
+      ],
+      "source_rows": [
+        [
+          "Mix Cedar",
+          0,
+          5
+        ],
+        [
+          "Mix Cedar",
+          10,
+          9
+        ],
+        [
+          "Mix Cedar",
+          20,
+          15
+        ],
+        [
+          "Mix Cedar",
+          30,
+          16
+        ],
+        [
+          "Mix Cedar",
+          40,
+          25
+        ],
+        [
+          "Mix Birch",
+          0,
+          8
+        ],
+        [
+          "Mix Birch",
+          10,
+          11
+        ],
+        [
+          "Mix Birch",
+          20,
+          10
+        ],
+        [
+          "Mix Birch",
+          30,
+          19
+        ],
+        [
+          "Mix Birch",
+          40,
+          21
+        ],
+        [
+          "Mix Maple",
+          0,
+          3
+        ],
+        [
+          "Mix Maple",
+          10,
+          13
+        ],
+        [
+          "Mix Maple",
+          20,
+          18
+        ],
+        [
+          "Mix Maple",
+          30,
+          22
+        ],
+        [
+          "Mix Maple",
+          40,
+          24
+        ]
+      ],
+      "canonical_columns": {
+        "batch": "batch",
+        "elapsed_min": "elapsed_min",
+        "strength_mpa": "strength_mpa"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g04-curing_paths-transformed",
+      "family": "repeated_measurement_views",
+      "goal": "curing_paths",
+      "variant": "transformed",
+      "split": "blinded_challenge",
+      "filename": "g04-curing_paths-transformed.csv",
+      "csv_text": "field_4_3,field_4_2,field_4_1\n9,10,Mix Cedar\n16,30,Mix Cedar\n8,0,Mix Birch\n10,20,Mix Birch\n21,40,Mix Birch\n13,10,Mix Maple\n22,30,Mix Maple\n5,0,Mix Cedar\n15,20,Mix Cedar\n25,40,Mix Cedar\n11,10,Mix Birch\n19,30,Mix Birch\n3,0,Mix Maple\n18,20,Mix Maple\n24,40,Mix Maple\n",
+      "source_csv_sha256": "87413b763a04d11f695b096892a42eacdcf0118b3191f0f1d3ce537f619b2cb5",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Compare each mixture's strength trajectory over elapsed curing time. Preserve batch identity and the ordering of time within each trajectory. No averaging or fitted prediction. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "enriched_question": "Compare each mixture's strength trajectory over elapsed curing time. Preserve batch identity and the ordering of time within each trajectory. No averaging or fitted prediction. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "intent": "trend",
+        "column_descriptions": {
+          "field_4_1": "Mixture batch",
+          "field_4_2": "Elapsed curing time in minutes; ordered measurement coordinate",
+          "field_4_3": "Observed material strength; every row is a separate supplied observation"
+        },
+        "units": {
+          "field_4_2": "min",
+          "field_4_3": "MPa"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Compare each mixture's strength trajectory over elapsed curing time. Preserve batch identity and the ordering of time within each trajectory. No averaging or fitted prediction. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+      "contract": {
+        "allowed_charts": [
+          "multi_line",
+          "grouped_column"
+        ],
+        "required_visible_columns": [
+          "field_4_1",
+          "field_4_2",
+          "field_4_3"
+        ],
+        "required_bindings": {
+          "group": "field_4_1",
+          "value": "field_4_3"
+        },
+        "primary_measures": [
+          "field_4_3"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "field_4_2": "min",
+          "field_4_3": "MPa"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "field_4_3",
+        "field_4_2",
+        "field_4_1"
+      ],
+      "source_rows": [
+        [
+          9,
+          10,
+          "Mix Cedar"
+        ],
+        [
+          16,
+          30,
+          "Mix Cedar"
+        ],
+        [
+          8,
+          0,
+          "Mix Birch"
+        ],
+        [
+          10,
+          20,
+          "Mix Birch"
+        ],
+        [
+          21,
+          40,
+          "Mix Birch"
+        ],
+        [
+          13,
+          10,
+          "Mix Maple"
+        ],
+        [
+          22,
+          30,
+          "Mix Maple"
+        ],
+        [
+          5,
+          0,
+          "Mix Cedar"
+        ],
+        [
+          15,
+          20,
+          "Mix Cedar"
+        ],
+        [
+          25,
+          40,
+          "Mix Cedar"
+        ],
+        [
+          11,
+          10,
+          "Mix Birch"
+        ],
+        [
+          19,
+          30,
+          "Mix Birch"
+        ],
+        [
+          3,
+          0,
+          "Mix Maple"
+        ],
+        [
+          18,
+          20,
+          "Mix Maple"
+        ],
+        [
+          24,
+          40,
+          "Mix Maple"
+        ]
+      ],
+      "canonical_columns": {
+        "field_4_1": "batch",
+        "field_4_2": "elapsed_min",
+        "field_4_3": "strength_mpa"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g04-sample_spreads-original",
+      "family": "repeated_measurement_views",
+      "goal": "sample_spreads",
+      "variant": "original",
+      "split": "blinded_challenge",
+      "filename": "g04-sample_spreads-original.csv",
+      "csv_text": "batch,elapsed_min,strength_mpa\nMix Cedar,0,5\nMix Cedar,10,9\nMix Cedar,20,15\nMix Cedar,30,16\nMix Cedar,40,25\nMix Birch,0,8\nMix Birch,10,11\nMix Birch,20,10\nMix Birch,30,19\nMix Birch,40,21\nMix Maple,0,3\nMix Maple,10,13\nMix Maple,20,18\nMix Maple,30,22\nMix Maple,40,24\n",
+      "source_csv_sha256": "6ddea5f88f53a5a2bbcf06cbe6e8dd0dc08378c0e7e159f3bb55e19cb6e4db01",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Compare the distributions of the supplied strength observations within the three mixture batches, using the renderer's distribution display. Time ordering is irrelevant for this view. Do not average the source CSV or invent new measurements. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "enriched_question": "Compare the distributions of the supplied strength observations within the three mixture batches, using the renderer's distribution display. Time ordering is irrelevant for this view. Do not average the source CSV or invent new measurements. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "intent": "distribution",
+        "column_descriptions": {
+          "batch": "Mixture batch",
+          "elapsed_min": "Elapsed curing time in minutes; ordered measurement coordinate",
+          "strength_mpa": "Observed material strength; every row is a separate supplied observation"
+        },
+        "units": {
+          "elapsed_min": "min",
+          "strength_mpa": "MPa"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Compare the distributions of the supplied strength observations within the three mixture batches, using the renderer's distribution display. Time ordering is irrelevant for this view. Do not average the source CSV or invent new measurements. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+      "contract": {
+        "allowed_charts": [
+          "boxplot"
+        ],
+        "required_visible_columns": [
+          "batch",
+          "strength_mpa"
+        ],
+        "required_bindings": {
+          "category": "batch",
+          "value": "strength_mpa"
+        },
+        "primary_measures": [
+          "strength_mpa"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "elapsed_min": "min",
+          "strength_mpa": "MPa"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "batch",
+        "elapsed_min",
+        "strength_mpa"
+      ],
+      "source_rows": [
+        [
+          "Mix Cedar",
+          0,
+          5
+        ],
+        [
+          "Mix Cedar",
+          10,
+          9
+        ],
+        [
+          "Mix Cedar",
+          20,
+          15
+        ],
+        [
+          "Mix Cedar",
+          30,
+          16
+        ],
+        [
+          "Mix Cedar",
+          40,
+          25
+        ],
+        [
+          "Mix Birch",
+          0,
+          8
+        ],
+        [
+          "Mix Birch",
+          10,
+          11
+        ],
+        [
+          "Mix Birch",
+          20,
+          10
+        ],
+        [
+          "Mix Birch",
+          30,
+          19
+        ],
+        [
+          "Mix Birch",
+          40,
+          21
+        ],
+        [
+          "Mix Maple",
+          0,
+          3
+        ],
+        [
+          "Mix Maple",
+          10,
+          13
+        ],
+        [
+          "Mix Maple",
+          20,
+          18
+        ],
+        [
+          "Mix Maple",
+          30,
+          22
+        ],
+        [
+          "Mix Maple",
+          40,
+          24
+        ]
+      ],
+      "canonical_columns": {
+        "batch": "batch",
+        "elapsed_min": "elapsed_min",
+        "strength_mpa": "strength_mpa"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g04-sample_spreads-transformed",
+      "family": "repeated_measurement_views",
+      "goal": "sample_spreads",
+      "variant": "transformed",
+      "split": "blinded_challenge",
+      "filename": "g04-sample_spreads-transformed.csv",
+      "csv_text": "field_4_3,field_4_2,field_4_1\n9,10,Mix Cedar\n16,30,Mix Cedar\n8,0,Mix Birch\n10,20,Mix Birch\n21,40,Mix Birch\n13,10,Mix Maple\n22,30,Mix Maple\n5,0,Mix Cedar\n15,20,Mix Cedar\n25,40,Mix Cedar\n11,10,Mix Birch\n19,30,Mix Birch\n3,0,Mix Maple\n18,20,Mix Maple\n24,40,Mix Maple\n",
+      "source_csv_sha256": "87413b763a04d11f695b096892a42eacdcf0118b3191f0f1d3ce537f619b2cb5",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Compare the distributions of the supplied strength observations within the three mixture batches, using the renderer's distribution display. Time ordering is irrelevant for this view. Do not average the source CSV or invent new measurements. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "enriched_question": "Compare the distributions of the supplied strength observations within the three mixture batches, using the renderer's distribution display. Time ordering is irrelevant for this view. Do not average the source CSV or invent new measurements. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "intent": "distribution",
+        "column_descriptions": {
+          "field_4_1": "Mixture batch",
+          "field_4_2": "Elapsed curing time in minutes; ordered measurement coordinate",
+          "field_4_3": "Observed material strength; every row is a separate supplied observation"
+        },
+        "units": {
+          "field_4_2": "min",
+          "field_4_3": "MPa"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Compare the distributions of the supplied strength observations within the three mixture batches, using the renderer's distribution display. Time ordering is irrelevant for this view. Do not average the source CSV or invent new measurements. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+      "contract": {
+        "allowed_charts": [
+          "boxplot"
+        ],
+        "required_visible_columns": [
+          "field_4_1",
+          "field_4_3"
+        ],
+        "required_bindings": {
+          "category": "field_4_1",
+          "value": "field_4_3"
+        },
+        "primary_measures": [
+          "field_4_3"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "field_4_2": "min",
+          "field_4_3": "MPa"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "field_4_3",
+        "field_4_2",
+        "field_4_1"
+      ],
+      "source_rows": [
+        [
+          9,
+          10,
+          "Mix Cedar"
+        ],
+        [
+          16,
+          30,
+          "Mix Cedar"
+        ],
+        [
+          8,
+          0,
+          "Mix Birch"
+        ],
+        [
+          10,
+          20,
+          "Mix Birch"
+        ],
+        [
+          21,
+          40,
+          "Mix Birch"
+        ],
+        [
+          13,
+          10,
+          "Mix Maple"
+        ],
+        [
+          22,
+          30,
+          "Mix Maple"
+        ],
+        [
+          5,
+          0,
+          "Mix Cedar"
+        ],
+        [
+          15,
+          20,
+          "Mix Cedar"
+        ],
+        [
+          25,
+          40,
+          "Mix Cedar"
+        ],
+        [
+          11,
+          10,
+          "Mix Birch"
+        ],
+        [
+          19,
+          30,
+          "Mix Birch"
+        ],
+        [
+          3,
+          0,
+          "Mix Maple"
+        ],
+        [
+          18,
+          20,
+          "Mix Maple"
+        ],
+        [
+          24,
+          40,
+          "Mix Maple"
+        ]
+      ],
+      "canonical_columns": {
+        "field_4_1": "batch",
+        "field_4_2": "elapsed_min",
+        "field_4_3": "strength_mpa"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g05-overview-original",
+      "family": "mixed_unit_summary",
+      "goal": "overview",
+      "variant": "original",
+      "split": "blinded_challenge",
+      "filename": "g05-overview-original.csv",
+      "csv_text": "window,completed_jobs,p95_delay_ms,utilization_percent,energy_kwh\nEvening trial,840,185,73.5,12.6\n",
+      "source_csv_sha256": "43cd05d6e8e195a7371325d2ac3491a3d640f83d44ad93b666c2882d836a078f",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Create an at-a-glance overview of all four supplied trial metrics, retaining each metric's own unit and the trial label. They have different dimensions, so do not put them on a shared quantitative axis or invent a total. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "enriched_question": "Create an at-a-glance overview of all four supplied trial metrics, retaining each metric's own unit and the trial label. They have different dimensions, so do not put them on a shared quantitative axis or invent a total. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "intent": "summary",
+        "column_descriptions": {
+          "window": "Authoritative trial label",
+          "completed_jobs": "Number of completed jobs",
+          "p95_delay_ms": "Already computed 95th-percentile delay; do not recompute",
+          "utilization_percent": "Utilization already expressed as percent",
+          "energy_kwh": "Measured energy use"
+        },
+        "units": {
+          "completed_jobs": "jobs",
+          "p95_delay_ms": "ms",
+          "utilization_percent": "%",
+          "energy_kwh": "kWh"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Create an at-a-glance overview of all four supplied trial metrics, retaining each metric's own unit and the trial label. They have different dimensions, so do not put them on a shared quantitative axis or invent a total. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+      "contract": {
+        "allowed_charts": [
+          "indicator",
+          "table"
+        ],
+        "required_visible_columns": [
+          "window",
+          "completed_jobs",
+          "p95_delay_ms",
+          "utilization_percent",
+          "energy_kwh"
+        ],
+        "required_bindings": {},
+        "primary_measures": [
+          "completed_jobs",
+          "p95_delay_ms",
+          "utilization_percent",
+          "energy_kwh"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "completed_jobs": "jobs",
+          "p95_delay_ms": "ms",
+          "utilization_percent": "%",
+          "energy_kwh": "kWh"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "window",
+        "completed_jobs",
+        "p95_delay_ms",
+        "utilization_percent",
+        "energy_kwh"
+      ],
+      "source_rows": [
+        [
+          "Evening trial",
+          840,
+          185,
+          73.5,
+          12.6
+        ]
+      ],
+      "canonical_columns": {
+        "window": "window",
+        "completed_jobs": "completed_jobs",
+        "p95_delay_ms": "p95_delay_ms",
+        "utilization_percent": "utilization_percent",
+        "energy_kwh": "energy_kwh"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g05-overview-transformed",
+      "family": "mixed_unit_summary",
+      "goal": "overview",
+      "variant": "transformed",
+      "split": "blinded_challenge",
+      "filename": "g05-overview-transformed.csv",
+      "csv_text": "field_5_5,field_5_4,field_5_3,field_5_2,field_5_1\n12.6,73.5,185,840,Evening trial\n",
+      "source_csv_sha256": "5253a42cb19a4cec130e76197590f21062b0d1d914e76fbdcfc3f05d2cf809a0",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Create an at-a-glance overview of all four supplied trial metrics, retaining each metric's own unit and the trial label. They have different dimensions, so do not put them on a shared quantitative axis or invent a total. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "enriched_question": "Create an at-a-glance overview of all four supplied trial metrics, retaining each metric's own unit and the trial label. They have different dimensions, so do not put them on a shared quantitative axis or invent a total. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "intent": "summary",
+        "column_descriptions": {
+          "field_5_1": "Authoritative trial label",
+          "field_5_2": "Number of completed jobs",
+          "field_5_3": "Already computed 95th-percentile delay; do not recompute",
+          "field_5_4": "Utilization already expressed as percent",
+          "field_5_5": "Measured energy use"
+        },
+        "units": {
+          "field_5_2": "jobs",
+          "field_5_3": "ms",
+          "field_5_4": "%",
+          "field_5_5": "kWh"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Create an at-a-glance overview of all four supplied trial metrics, retaining each metric's own unit and the trial label. They have different dimensions, so do not put them on a shared quantitative axis or invent a total. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+      "contract": {
+        "allowed_charts": [
+          "indicator",
+          "table"
+        ],
+        "required_visible_columns": [
+          "field_5_1",
+          "field_5_2",
+          "field_5_3",
+          "field_5_4",
+          "field_5_5"
+        ],
+        "required_bindings": {},
+        "primary_measures": [
+          "field_5_2",
+          "field_5_3",
+          "field_5_4",
+          "field_5_5"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "field_5_2": "jobs",
+          "field_5_3": "ms",
+          "field_5_4": "%",
+          "field_5_5": "kWh"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "field_5_5",
+        "field_5_4",
+        "field_5_3",
+        "field_5_2",
+        "field_5_1"
+      ],
+      "source_rows": [
+        [
+          12.6,
+          73.5,
+          185,
+          840,
+          "Evening trial"
+        ]
+      ],
+      "canonical_columns": {
+        "field_5_1": "window",
+        "field_5_2": "completed_jobs",
+        "field_5_3": "p95_delay_ms",
+        "field_5_4": "utilization_percent",
+        "field_5_5": "energy_kwh"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g05-exact_record-original",
+      "family": "mixed_unit_summary",
+      "goal": "exact_record",
+      "variant": "original",
+      "split": "blinded_challenge",
+      "filename": "g05-exact_record-original.csv",
+      "csv_text": "window,completed_jobs,p95_delay_ms,utilization_percent,energy_kwh\nEvening trial,840,185,73.5,12.6\n",
+      "source_csv_sha256": "43cd05d6e8e195a7371325d2ac3491a3d640f83d44ad93b666c2882d836a078f",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Produce an exact audit record: show the complete supplied row with all column labels and units together, without abbreviation, unit conversion or re-computation. A clearly labelled table is appropriate; independent metric cards are also acceptable only if every field remains visible. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "enriched_question": "Produce an exact audit record: show the complete supplied row with all column labels and units together, without abbreviation, unit conversion or re-computation. A clearly labelled table is appropriate; independent metric cards are also acceptable only if every field remains visible. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "intent": "summary",
+        "column_descriptions": {
+          "window": "Authoritative trial label",
+          "completed_jobs": "Number of completed jobs",
+          "p95_delay_ms": "Already computed 95th-percentile delay; do not recompute",
+          "utilization_percent": "Utilization already expressed as percent",
+          "energy_kwh": "Measured energy use"
+        },
+        "units": {
+          "completed_jobs": "jobs",
+          "p95_delay_ms": "ms",
+          "utilization_percent": "%",
+          "energy_kwh": "kWh"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Produce an exact audit record: show the complete supplied row with all column labels and units together, without abbreviation, unit conversion or re-computation. A clearly labelled table is appropriate; independent metric cards are also acceptable only if every field remains visible. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+      "contract": {
+        "allowed_charts": [
+          "table",
+          "indicator"
+        ],
+        "required_visible_columns": [
+          "window",
+          "completed_jobs",
+          "p95_delay_ms",
+          "utilization_percent",
+          "energy_kwh"
+        ],
+        "required_bindings": {},
+        "primary_measures": [
+          "completed_jobs",
+          "p95_delay_ms",
+          "utilization_percent",
+          "energy_kwh"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "completed_jobs": "jobs",
+          "p95_delay_ms": "ms",
+          "utilization_percent": "%",
+          "energy_kwh": "kWh"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "window",
+        "completed_jobs",
+        "p95_delay_ms",
+        "utilization_percent",
+        "energy_kwh"
+      ],
+      "source_rows": [
+        [
+          "Evening trial",
+          840,
+          185,
+          73.5,
+          12.6
+        ]
+      ],
+      "canonical_columns": {
+        "window": "window",
+        "completed_jobs": "completed_jobs",
+        "p95_delay_ms": "p95_delay_ms",
+        "utilization_percent": "utilization_percent",
+        "energy_kwh": "energy_kwh"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g05-exact_record-transformed",
+      "family": "mixed_unit_summary",
+      "goal": "exact_record",
+      "variant": "transformed",
+      "split": "blinded_challenge",
+      "filename": "g05-exact_record-transformed.csv",
+      "csv_text": "field_5_5,field_5_4,field_5_3,field_5_2,field_5_1\n12.6,73.5,185,840,Evening trial\n",
+      "source_csv_sha256": "5253a42cb19a4cec130e76197590f21062b0d1d914e76fbdcfc3f05d2cf809a0",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Produce an exact audit record: show the complete supplied row with all column labels and units together, without abbreviation, unit conversion or re-computation. A clearly labelled table is appropriate; independent metric cards are also acceptable only if every field remains visible. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "enriched_question": "Produce an exact audit record: show the complete supplied row with all column labels and units together, without abbreviation, unit conversion or re-computation. A clearly labelled table is appropriate; independent metric cards are also acceptable only if every field remains visible. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "intent": "summary",
+        "column_descriptions": {
+          "field_5_1": "Authoritative trial label",
+          "field_5_2": "Number of completed jobs",
+          "field_5_3": "Already computed 95th-percentile delay; do not recompute",
+          "field_5_4": "Utilization already expressed as percent",
+          "field_5_5": "Measured energy use"
+        },
+        "units": {
+          "field_5_2": "jobs",
+          "field_5_3": "ms",
+          "field_5_4": "%",
+          "field_5_5": "kWh"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Produce an exact audit record: show the complete supplied row with all column labels and units together, without abbreviation, unit conversion or re-computation. A clearly labelled table is appropriate; independent metric cards are also acceptable only if every field remains visible. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+      "contract": {
+        "allowed_charts": [
+          "table",
+          "indicator"
+        ],
+        "required_visible_columns": [
+          "field_5_1",
+          "field_5_2",
+          "field_5_3",
+          "field_5_4",
+          "field_5_5"
+        ],
+        "required_bindings": {},
+        "primary_measures": [
+          "field_5_2",
+          "field_5_3",
+          "field_5_4",
+          "field_5_5"
+        ],
+        "forbidden_measures": [],
+        "units": {
+          "field_5_2": "jobs",
+          "field_5_3": "ms",
+          "field_5_4": "%",
+          "field_5_5": "kWh"
+        },
+        "literal_columns": [],
+        "sort": null,
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "field_5_5",
+        "field_5_4",
+        "field_5_3",
+        "field_5_2",
+        "field_5_1"
+      ],
+      "source_rows": [
+        [
+          12.6,
+          73.5,
+          185,
+          840,
+          "Evening trial"
+        ]
+      ],
+      "canonical_columns": {
+        "field_5_1": "window",
+        "field_5_2": "completed_jobs",
+        "field_5_3": "p95_delay_ms",
+        "field_5_4": "utilization_percent",
+        "field_5_5": "energy_kwh"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g06-demand_rank-original",
+      "family": "opaque_metric_choice",
+      "goal": "demand_rank",
+      "variant": "original",
+      "split": "blinded_challenge",
+      "filename": "g06-demand_rank-original.csv",
+      "csv_text": "unit_id,peak_kw,wh_per_transaction\n0017,4.2,2.8\n0402,2.5,4.0\n0091,3.8,1.9\n0700,1.7,3.4\n0026,5.1,2.1\n",
+      "source_csv_sha256": "842caea2559ec366a61bdfd0e521da7894ce51716989b9801266db68ffb84ec4",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Rank the equipment by peak demand, highest first, using a clear graphical comparison. Keep every opaque identifier exactly as supplied, including leading zeros. The per-transaction efficiency metric is not the quantity to rank. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "enriched_question": "Rank the equipment by peak demand, highest first, using a clear graphical comparison. Keep every opaque identifier exactly as supplied, including leading zeros. The per-transaction efficiency metric is not the quantity to rank. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "intent": "rank",
+        "column_descriptions": {
+          "unit_id": "Opaque literal equipment identifier; leading zeros are meaningful and no expansion or translated name exists",
+          "peak_kw": "Peak electrical demand",
+          "wh_per_transaction": "Energy consumed per completed transaction; lower is more efficient"
+        },
+        "units": {
+          "peak_kw": "kW",
+          "wh_per_transaction": "Wh/transaction"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Rank the equipment by peak demand, highest first, using a clear graphical comparison. Keep every opaque identifier exactly as supplied, including leading zeros. The per-transaction efficiency metric is not the quantity to rank. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+      "contract": {
+        "allowed_charts": [
+          "bar",
+          "column"
+        ],
+        "required_visible_columns": [
+          "unit_id",
+          "peak_kw"
+        ],
+        "required_bindings": {
+          "category": "unit_id",
+          "value": "peak_kw"
+        },
+        "primary_measures": [
+          "peak_kw"
+        ],
+        "forbidden_measures": [
+          "wh_per_transaction"
+        ],
+        "units": {
+          "peak_kw": "kW",
+          "wh_per_transaction": "Wh/transaction"
+        },
+        "literal_columns": [
+          "unit_id"
+        ],
+        "sort": "value desc",
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "unit_id",
+        "peak_kw",
+        "wh_per_transaction"
+      ],
+      "source_rows": [
+        [
+          "0017",
+          4.2,
+          2.8
+        ],
+        [
+          "0402",
+          2.5,
+          4.0
+        ],
+        [
+          "0091",
+          3.8,
+          1.9
+        ],
+        [
+          "0700",
+          1.7,
+          3.4
+        ],
+        [
+          "0026",
+          5.1,
+          2.1
+        ]
+      ],
+      "canonical_columns": {
+        "unit_id": "unit_id",
+        "peak_kw": "peak_kw",
+        "wh_per_transaction": "wh_per_transaction"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g06-demand_rank-transformed",
+      "family": "opaque_metric_choice",
+      "goal": "demand_rank",
+      "variant": "transformed",
+      "split": "blinded_challenge",
+      "filename": "g06-demand_rank-transformed.csv",
+      "csv_text": "field_6_3,field_6_2,field_6_1\n4.0,2.5,0402\n3.4,1.7,0700\n2.8,4.2,0017\n1.9,3.8,0091\n2.1,5.1,0026\n",
+      "source_csv_sha256": "674c3bfd9984f18b2e5f06c7a4ea6ef2a337acec3d1be9272c9c953cc7165df8",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Rank the equipment by peak demand, highest first, using a clear graphical comparison. Keep every opaque identifier exactly as supplied, including leading zeros. The per-transaction efficiency metric is not the quantity to rank. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "enriched_question": "Rank the equipment by peak demand, highest first, using a clear graphical comparison. Keep every opaque identifier exactly as supplied, including leading zeros. The per-transaction efficiency metric is not the quantity to rank. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "intent": "rank",
+        "column_descriptions": {
+          "field_6_1": "Opaque literal equipment identifier; leading zeros are meaningful and no expansion or translated name exists",
+          "field_6_2": "Peak electrical demand",
+          "field_6_3": "Energy consumed per completed transaction; lower is more efficient"
+        },
+        "units": {
+          "field_6_2": "kW",
+          "field_6_3": "Wh/transaction"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Rank the equipment by peak demand, highest first, using a clear graphical comparison. Keep every opaque identifier exactly as supplied, including leading zeros. The per-transaction efficiency metric is not the quantity to rank. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+      "contract": {
+        "allowed_charts": [
+          "bar",
+          "column"
+        ],
+        "required_visible_columns": [
+          "field_6_1",
+          "field_6_2"
+        ],
+        "required_bindings": {
+          "category": "field_6_1",
+          "value": "field_6_2"
+        },
+        "primary_measures": [
+          "field_6_2"
+        ],
+        "forbidden_measures": [
+          "field_6_3"
+        ],
+        "units": {
+          "field_6_2": "kW",
+          "field_6_3": "Wh/transaction"
+        },
+        "literal_columns": [
+          "field_6_1"
+        ],
+        "sort": "value desc",
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "field_6_3",
+        "field_6_2",
+        "field_6_1"
+      ],
+      "source_rows": [
+        [
+          4.0,
+          2.5,
+          "0402"
+        ],
+        [
+          3.4,
+          1.7,
+          "0700"
+        ],
+        [
+          2.8,
+          4.2,
+          "0017"
+        ],
+        [
+          1.9,
+          3.8,
+          "0091"
+        ],
+        [
+          2.1,
+          5.1,
+          "0026"
+        ]
+      ],
+      "canonical_columns": {
+        "field_6_1": "unit_id",
+        "field_6_2": "peak_kw",
+        "field_6_3": "wh_per_transaction"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g06-efficiency_rank-original",
+      "family": "opaque_metric_choice",
+      "goal": "efficiency_rank",
+      "variant": "original",
+      "split": "blinded_challenge",
+      "filename": "g06-efficiency_rank-original.csv",
+      "csv_text": "unit_id,peak_kw,wh_per_transaction\n0017,4.2,2.8\n0402,2.5,4.0\n0091,3.8,1.9\n0700,1.7,3.4\n0026,5.1,2.1\n",
+      "source_csv_sha256": "842caea2559ec366a61bdfd0e521da7894ce51716989b9801266db68ffb84ec4",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Rank the equipment by energy efficiency: lowest energy per transaction first. Show the supplied Wh/transaction measurement, not its reciprocal and not peak demand. Keep every opaque identifier literally, including leading zeros. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "enriched_question": "Rank the equipment by energy efficiency: lowest energy per transaction first. Show the supplied Wh/transaction measurement, not its reciprocal and not peak demand. Keep every opaque identifier literally, including leading zeros. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+        "intent": "rank",
+        "column_descriptions": {
+          "unit_id": "Opaque literal equipment identifier; leading zeros are meaningful and no expansion or translated name exists",
+          "peak_kw": "Peak electrical demand",
+          "wh_per_transaction": "Energy consumed per completed transaction; lower is more efficient"
+        },
+        "units": {
+          "peak_kw": "kW",
+          "wh_per_transaction": "Wh/transaction"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Rank the equipment by energy efficiency: lowest energy per transaction first. Show the supplied Wh/transaction measurement, not its reciprocal and not peak demand. Keep every opaque identifier literally, including leading zeros. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact.",
+      "contract": {
+        "allowed_charts": [
+          "bar",
+          "column"
+        ],
+        "required_visible_columns": [
+          "unit_id",
+          "wh_per_transaction"
+        ],
+        "required_bindings": {
+          "category": "unit_id",
+          "value": "wh_per_transaction"
+        },
+        "primary_measures": [
+          "wh_per_transaction"
+        ],
+        "forbidden_measures": [
+          "peak_kw"
+        ],
+        "units": {
+          "peak_kw": "kW",
+          "wh_per_transaction": "Wh/transaction"
+        },
+        "literal_columns": [
+          "unit_id"
+        ],
+        "sort": "value asc",
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "unit_id",
+        "peak_kw",
+        "wh_per_transaction"
+      ],
+      "source_rows": [
+        [
+          "0017",
+          4.2,
+          2.8
+        ],
+        [
+          "0402",
+          2.5,
+          4.0
+        ],
+        [
+          "0091",
+          3.8,
+          1.9
+        ],
+        [
+          "0700",
+          1.7,
+          3.4
+        ],
+        [
+          "0026",
+          5.1,
+          2.1
+        ]
+      ],
+      "canonical_columns": {
+        "unit_id": "unit_id",
+        "peak_kw": "peak_kw",
+        "wh_per_transaction": "wh_per_transaction"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    },
+    {
+      "id": "g06-efficiency_rank-transformed",
+      "family": "opaque_metric_choice",
+      "goal": "efficiency_rank",
+      "variant": "transformed",
+      "split": "blinded_challenge",
+      "filename": "g06-efficiency_rank-transformed.csv",
+      "csv_text": "field_6_3,field_6_2,field_6_1\n4.0,2.5,0402\n3.4,1.7,0700\n2.8,4.2,0017\n1.9,3.8,0091\n2.1,5.1,0026\n",
+      "source_csv_sha256": "674c3bfd9984f18b2e5f06c7a4ea6ef2a337acec3d1be9272c9c953cc7165df8",
+      "brief": {
+        "source": "independently authored synthetic challenge data",
+        "producer_agent": "data-agent",
+        "raw_question": "Rank the equipment by energy efficiency: lowest energy per transaction first. Show the supplied Wh/transaction measurement, not its reciprocal and not peak demand. Keep every opaque identifier literally, including leading zeros. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "enriched_question": "Rank the equipment by energy efficiency: lowest energy per transaction first. Show the supplied Wh/transaction measurement, not its reciprocal and not peak demand. Keep every opaque identifier literally, including leading zeros. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+        "intent": "rank",
+        "column_descriptions": {
+          "field_6_1": "Opaque literal equipment identifier; leading zeros are meaningful and no expansion or translated name exists",
+          "field_6_2": "Peak electrical demand",
+          "field_6_3": "Energy consumed per completed transaction; lower is more efficient"
+        },
+        "units": {
+          "field_6_2": "kW",
+          "field_6_3": "Wh/transaction"
+        },
+        "caveats": [
+          "Measurements and units are authoritative. No inference of missing observations, category meanings, or unrequested transformations."
+        ]
+      },
+      "request": "Rank the equipment by energy efficiency: lowest energy per transaction first. Show the supplied Wh/transaction measurement, not its reciprocal and not peak demand. Keep every opaque identifier literally, including leading zeros. Use English labels. The attached CSV is authoritative and already prepared. Present it without source research, new calculations, sampling, or aggregation. Return a usable rendered artifact. Column identifiers are arbitrary; use their supplied definitions rather than guessing from names.",
+      "contract": {
+        "allowed_charts": [
+          "bar",
+          "column"
+        ],
+        "required_visible_columns": [
+          "field_6_1",
+          "field_6_3"
+        ],
+        "required_bindings": {
+          "category": "field_6_1",
+          "value": "field_6_3"
+        },
+        "primary_measures": [
+          "field_6_3"
+        ],
+        "forbidden_measures": [
+          "field_6_2"
+        ],
+        "units": {
+          "field_6_2": "kW",
+          "field_6_3": "Wh/transaction"
+        },
+        "literal_columns": [
+          "field_6_1"
+        ],
+        "sort": "value asc",
+        "no_source_rewrite": true,
+        "visual_rubric": [
+          "Every encoded observation retains its source value and identity.",
+          "Displayed units and scale match the bound measure; no invented mappings or claims.",
+          "Required labels/marks are interpretable at the published display size.",
+          "The stated goal is met; reasonable stylistic alternatives are not defects."
+        ],
+        "human_gold": false
+      },
+      "source_columns": [
+        "field_6_3",
+        "field_6_2",
+        "field_6_1"
+      ],
+      "source_rows": [
+        [
+          4.0,
+          2.5,
+          "0402"
+        ],
+        [
+          3.4,
+          1.7,
+          "0700"
+        ],
+        [
+          2.8,
+          4.2,
+          "0017"
+        ],
+        [
+          1.9,
+          3.8,
+          "0091"
+        ],
+        [
+          2.1,
+          5.1,
+          "0026"
+        ]
+      ],
+      "canonical_columns": {
+        "field_6_1": "unit_id",
+        "field_6_2": "peak_kw",
+        "field_6_3": "wh_per_transaction"
+      },
+      "provenance": {
+        "synthetic": true,
+        "derived_from_old50": false,
+        "tuning_allowed": false
+      }
+    }
+  ],
+  "pairs": [
+    {
+      "id": "g01-association-meaning-preserving",
+      "kind": "meaning_preserving",
+      "family": "relationship_sequence",
+      "members": [
+        "g01-association-original",
+        "g01-association-transformed"
+      ],
+      "transformations": [
+        "column identifiers renamed with explicit semantic definitions",
+        "column order permuted",
+        "row order permuted"
+      ],
+      "assertion": "Equivalent canonical source observations and goal-appropriate visible bindings; neither identical chart type nor pixels required."
+    },
+    {
+      "id": "g01-trajectory-meaning-preserving",
+      "kind": "meaning_preserving",
+      "family": "relationship_sequence",
+      "members": [
+        "g01-trajectory-original",
+        "g01-trajectory-transformed"
+      ],
+      "transformations": [
+        "column identifiers renamed with explicit semantic definitions",
+        "column order permuted",
+        "row order permuted"
+      ],
+      "assertion": "Equivalent canonical source observations and goal-appropriate visible bindings; neither identical chart type nor pixels required."
+    },
+    {
+      "id": "g01-goal-contrast",
+      "kind": "goal_contrast",
+      "family": "relationship_sequence",
+      "members": [
+        "g01-association-original",
+        "g01-trajectory-original"
+      ],
+      "assertion": "Same source, different intent contract; a different chart type is required only when the intent demands it."
+    },
+    {
+      "id": "g02-allocation-meaning-preserving",
+      "kind": "meaning_preserving",
+      "family": "composition_independent_rates",
+      "members": [
+        "g02-allocation-original",
+        "g02-allocation-transformed"
+      ],
+      "transformations": [
+        "column identifiers renamed with explicit semantic definitions",
+        "column order permuted",
+        "row order permuted"
+      ],
+      "assertion": "Equivalent canonical source observations and goal-appropriate visible bindings; neither identical chart type nor pixels required."
+    },
+    {
+      "id": "g02-failure_comparison-meaning-preserving",
+      "kind": "meaning_preserving",
+      "family": "composition_independent_rates",
+      "members": [
+        "g02-failure_comparison-original",
+        "g02-failure_comparison-transformed"
+      ],
+      "transformations": [
+        "column identifiers renamed with explicit semantic definitions",
+        "column order permuted",
+        "row order permuted"
+      ],
+      "assertion": "Equivalent canonical source observations and goal-appropriate visible bindings; neither identical chart type nor pixels required."
+    },
+    {
+      "id": "g02-goal-contrast",
+      "kind": "goal_contrast",
+      "family": "composition_independent_rates",
+      "members": [
+        "g02-allocation-original",
+        "g02-failure_comparison-original"
+      ],
+      "assertion": "Same source, different intent contract; a different chart type is required only when the intent demands it."
+    },
+    {
+      "id": "g03-parent_composition-meaning-preserving",
+      "kind": "meaning_preserving",
+      "family": "nested_allocation",
+      "members": [
+        "g03-parent_composition-original",
+        "g03-parent_composition-transformed"
+      ],
+      "transformations": [
+        "column identifiers renamed with explicit semantic definitions",
+        "column order permuted",
+        "row order permuted"
+      ],
+      "assertion": "Equivalent canonical source observations and goal-appropriate visible bindings; neither identical chart type nor pixels required."
+    },
+    {
+      "id": "g03-module_comparison-meaning-preserving",
+      "kind": "meaning_preserving",
+      "family": "nested_allocation",
+      "members": [
+        "g03-module_comparison-original",
+        "g03-module_comparison-transformed"
+      ],
+      "transformations": [
+        "column identifiers renamed with explicit semantic definitions",
+        "column order permuted",
+        "row order permuted"
+      ],
+      "assertion": "Equivalent canonical source observations and goal-appropriate visible bindings; neither identical chart type nor pixels required."
+    },
+    {
+      "id": "g03-goal-contrast",
+      "kind": "goal_contrast",
+      "family": "nested_allocation",
+      "members": [
+        "g03-parent_composition-original",
+        "g03-module_comparison-original"
+      ],
+      "assertion": "Same source, different intent contract; a different chart type is required only when the intent demands it."
+    },
+    {
+      "id": "g04-curing_paths-meaning-preserving",
+      "kind": "meaning_preserving",
+      "family": "repeated_measurement_views",
+      "members": [
+        "g04-curing_paths-original",
+        "g04-curing_paths-transformed"
+      ],
+      "transformations": [
+        "column identifiers renamed with explicit semantic definitions",
+        "column order permuted",
+        "row order permuted"
+      ],
+      "assertion": "Equivalent canonical source observations and goal-appropriate visible bindings; neither identical chart type nor pixels required."
+    },
+    {
+      "id": "g04-sample_spreads-meaning-preserving",
+      "kind": "meaning_preserving",
+      "family": "repeated_measurement_views",
+      "members": [
+        "g04-sample_spreads-original",
+        "g04-sample_spreads-transformed"
+      ],
+      "transformations": [
+        "column identifiers renamed with explicit semantic definitions",
+        "column order permuted",
+        "row order permuted"
+      ],
+      "assertion": "Equivalent canonical source observations and goal-appropriate visible bindings; neither identical chart type nor pixels required."
+    },
+    {
+      "id": "g04-goal-contrast",
+      "kind": "goal_contrast",
+      "family": "repeated_measurement_views",
+      "members": [
+        "g04-curing_paths-original",
+        "g04-sample_spreads-original"
+      ],
+      "assertion": "Same source, different intent contract; a different chart type is required only when the intent demands it."
+    },
+    {
+      "id": "g05-overview-meaning-preserving",
+      "kind": "meaning_preserving",
+      "family": "mixed_unit_summary",
+      "members": [
+        "g05-overview-original",
+        "g05-overview-transformed"
+      ],
+      "transformations": [
+        "column identifiers renamed with explicit semantic definitions",
+        "column order permuted",
+        "row order permuted"
+      ],
+      "assertion": "Equivalent canonical source observations and goal-appropriate visible bindings; neither identical chart type nor pixels required."
+    },
+    {
+      "id": "g05-exact_record-meaning-preserving",
+      "kind": "meaning_preserving",
+      "family": "mixed_unit_summary",
+      "members": [
+        "g05-exact_record-original",
+        "g05-exact_record-transformed"
+      ],
+      "transformations": [
+        "column identifiers renamed with explicit semantic definitions",
+        "column order permuted",
+        "row order permuted"
+      ],
+      "assertion": "Equivalent canonical source observations and goal-appropriate visible bindings; neither identical chart type nor pixels required."
+    },
+    {
+      "id": "g05-goal-contrast",
+      "kind": "goal_contrast",
+      "family": "mixed_unit_summary",
+      "members": [
+        "g05-overview-original",
+        "g05-exact_record-original"
+      ],
+      "assertion": "Same source, different intent contract; a different chart type is required only when the intent demands it."
+    },
+    {
+      "id": "g06-demand_rank-meaning-preserving",
+      "kind": "meaning_preserving",
+      "family": "opaque_metric_choice",
+      "members": [
+        "g06-demand_rank-original",
+        "g06-demand_rank-transformed"
+      ],
+      "transformations": [
+        "column identifiers renamed with explicit semantic definitions",
+        "column order permuted",
+        "row order permuted"
+      ],
+      "assertion": "Equivalent canonical source observations and goal-appropriate visible bindings; neither identical chart type nor pixels required."
+    },
+    {
+      "id": "g06-efficiency_rank-meaning-preserving",
+      "kind": "meaning_preserving",
+      "family": "opaque_metric_choice",
+      "members": [
+        "g06-efficiency_rank-original",
+        "g06-efficiency_rank-transformed"
+      ],
+      "transformations": [
+        "column identifiers renamed with explicit semantic definitions",
+        "column order permuted",
+        "row order permuted"
+      ],
+      "assertion": "Equivalent canonical source observations and goal-appropriate visible bindings; neither identical chart type nor pixels required."
+    },
+    {
+      "id": "g06-goal-contrast",
+      "kind": "goal_contrast",
+      "family": "opaque_metric_choice",
+      "members": [
+        "g06-demand_rank-original",
+        "g06-efficiency_rank-original"
+      ],
+      "assertion": "Same source, different intent contract; a different chart type is required only when the intent demands it."
+    }
+  ],
+  "provenance": {
+    "author": "independent evaluation subagent",
+    "human_gold": false,
+    "old50_cases_or_production_prompts_read_for_authoring": false,
+    "family_split_policy": "All six authored families are evaluation-only; none may be used for candidate tuning.",
+    "disjointness_limit": "Assets and task authoring are independent. Abstract capability overlap with prior corpora is not excluded; this is not proof of population generalization.",
+    "hidden_until_runtime_freeze": true
+  }
+}

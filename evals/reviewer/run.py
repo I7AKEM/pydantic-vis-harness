@@ -11,6 +11,7 @@ import argparse
 import asyncio
 import json
 import os
+import statistics
 from collections import Counter
 from pathlib import Path
 
@@ -55,11 +56,19 @@ async def evaluate(cases: list[dict], human: dict, reviewer, out: Path = LABELLE
     confusion: Counter = Counter()
     rules: Counter = Counter()
     disagreements = []
+    outcomes = []
     agreed = 0
     for case, reviewed in results:
         expected = human[case["name"]]["verdict"]
         got = reviewed.review.verdict if reviewed.review else "unreviewed"
         confusion[f"{expected}/{got}"] += 1
+        outcomes.append({"name": case["name"], "human": expected, "reviewer": got,
+                         "summary": reviewed.review.summary if reviewed.review else None,
+                         "findings": [f.model_dump() for f in reviewed.review.findings] if reviewed.review else [],
+                         "evidence": [f.model_dump() for f in reviewed.review.evidence] if reviewed.review else [],
+                         "uncertainties": reviewed.review.uncertainties if reviewed.review else [],
+                         "image_id": reviewed.review.image_id if reviewed.review else None,
+                         "warnings": reviewed.warnings, "requests": reviewed.requests, "seconds": reviewed.seconds})
         if reviewed.review:
             rules.update(finding.rule for finding in reviewed.review.findings)
         if EXPECTED[expected] == got:
@@ -69,8 +78,21 @@ async def evaluate(cases: list[dict], human: dict, reviewer, out: Path = LABELLE
                                   "summary": reviewed.review.summary if reviewed.review else "; ".join(reviewed.warnings),
                                   "findings": [f.model_dump() for f in reviewed.review.findings] if reviewed.review else []})
     compared = len(results)
+    clean = sum(human[c["name"]]["verdict"] == "pass" for c, _ in results)
+    defective = compared - clean
+    times = sorted(r.seconds for _, r in results)
     return {"compared": compared, "agreement": agreed / compared if compared else None, "confusion": dict(confusion),
             "rules": dict(rules), "disagreements": disagreements,
+            "clean_cases": clean, "defective_cases": defective,
+            "clean_acceptance": confusion["pass/pass"] / clean if clean else None,
+            "clean_false_rejection": confusion["pass/revise"] / clean if clean else None,
+            "defect_rejection_rate": confusion["fail/revise"] / defective if defective else None,
+            "defect_rejection_note": "Verdict agreement only; matching the actual defect needs evidence adjudication.",
+            "uncertain": sum(r.review is not None and r.review.verdict == "uncertain" for _, r in results),
+            "unreviewed": sum(r.review is None for _, r in results), "outcomes": outcomes,
+            "median_seconds": statistics.median(times) if times else None,
+            "p95_seconds": times[max(0, (95 * len(times) + 99) // 100 - 1)] if times else None,
+            "request_count_scope": "Framework-reported requests; provider calls cancelled before accounting may be absent.",
             "seconds": sum(r.seconds for _, r in results), "requests": sum(r.requests for _, r in results)}
 
 

@@ -1,0 +1,2331 @@
+{
+  "protocol": "Frozen single-configuration development baseline; 48 chart tasks and 2 technical boundaries; no blind holdout, no automatic adoption.",
+  "evidence_kind": "Real model/tool/renderer runs plus independent local agent audits; not human-adjudicated gold.",
+  "run_directory": "evals/lead/results-maturity50-glm-gemma-20260917-v1",
+  "configuration": {
+    "application_code_sha256": "6dd8a41fcd6172e8e8fc0a5cc8a66b50c921c29156889ff3c609689a2e7833b9",
+    "evaluation_code_sha256": "411b63112ce4dc93580ef119aa21af5b3d73cd2e72d0139f77f15d267055443a",
+    "lead_instructions_sha256": "699bfbc64a2d82b4f36092d617ef569371ce81d6535c1d8f4b8f2a5ddee81ba1",
+    "optimization_sha256": "e644ecbe86e61279992d763a2aaf8465d958a73f7397681b2af123ccaf6cc331",
+    "models": {
+      "lead": "openrouter:z-ai/glm-5.3",
+      "profiler": "openrouter:z-ai/glm-5.3",
+      "analyst": "openrouter:z-ai/glm-5.3",
+      "designer": "openrouter:z-ai/glm-5.3",
+      "designer_fallback": "openrouter:z-ai/glm-5.3",
+      "reviewer": "openrouter:google/gemma-4-31b-it:nitro"
+    }
+  },
+  "raw": {
+    "attempted": 50,
+    "contract_pass": 34,
+    "strict_pass": 29,
+    "within_60": 37,
+    "timeouts": [
+      "corpus-vizcsv-ed2d9d4b2f49d899",
+      "corpus-vizcsv-e384bfa45ac5ab8e",
+      "corpus-vizcsv-44cfda42866aa5ae",
+      "corpus-vizcsv-2075320dff9f6ebd"
+    ],
+    "seconds": {
+      "sum": 2015.893038168666,
+      "mean": 40.31786076337332,
+      "median": 20.263454354484566,
+      "p95": 120.00469772277283,
+      "max": 120.00604962510988
+    },
+    "framework_recorded_requests": 465
+  },
+  "independent": {
+    "cases": 50,
+    "unique_ids": 50,
+    "chart_cases": 48,
+    "boundary_cases": 2,
+    "images": 56,
+    "chart_suitable": {
+      "pass": 48,
+      "not_applicable": 2
+    },
+    "source_roles_faithful": {
+      "pass": 47,
+      "fail": 2,
+      "not_applicable": 1
+    },
+    "first_render_visual": {
+      "pass": 41,
+      "no_image": 5,
+      "fail": 3,
+      "uncertain": 1
+    },
+    "final_render_visual": {
+      "pass": 46,
+      "no_image": 3,
+      "uncertain": 1
+    },
+    "reviewer_false_rejection": {
+      "false": 34,
+      "true": 11,
+      "null": 5
+    },
+    "unnecessary_repair": {
+      "false": 41,
+      "true": 7,
+      "null": 2
+    },
+    "final_delivery": {
+      "true": 34,
+      "false": 16
+    },
+    "task_correct": {
+      "pass": 32,
+      "fail": 16,
+      "uncertain": 2
+    }
+  },
+  "publication": {
+    "artifacts": 46,
+    "png_artifacts": 44,
+    "nonempty_final_replies": 46,
+    "final_response_png_links": 34
+  },
+  "telemetry": {
+    "exported_spans": 1059,
+    "matched_lead_runs": 50,
+    "attempted_model_call_spans": 470,
+    "framework_recorded_requests": 465,
+    "attempt_count_note": "Includes client-side cancelled model calls; does not count unobserved downstream retry internals.",
+    "timing_percentile_method": "Linear interpolation at (n-1)*p.",
+    "span_stats": [
+      {
+        "name": "invoke_agent vis-lead",
+        "calls": 50,
+        "seconds": 2015.688655,
+        "mean": 40.3137731,
+        "median": 20.2614295,
+        "p95": 119.98027400000001,
+        "max": 119.999925
+      },
+      {
+        "name": "invoke_agent vis-lead / chat z-ai/glm-5.3",
+        "calls": 338,
+        "seconds": 1381.4684989999998,
+        "mean": 4.087184908284023,
+        "median": 1.5295195,
+        "p95": 17.558805749999983,
+        "max": 97.289494
+      },
+      {
+        "name": "execute_tool design_visualization",
+        "calls": 71,
+        "seconds": 519.8513640000001,
+        "mean": 7.3218501971831005,
+        "median": 3.166784,
+        "p95": 28.759529999999998,
+        "max": 45.032993
+      },
+      {
+        "name": "invoke_agent designer",
+        "calls": 65,
+        "seconds": 517.357526,
+        "mean": 7.959346553846154,
+        "median": 3.504764,
+        "p95": 28.8443542,
+        "max": 44.99944
+      },
+      {
+        "name": "invoke_agent designer / chat z-ai/glm-5.3",
+        "calls": 77,
+        "seconds": 516.831354,
+        "mean": 6.712095506493507,
+        "median": 3.12475,
+        "p95": 22.37172600000001,
+        "max": 44.998025
+      },
+      {
+        "name": "execute_tool review_visualization",
+        "calls": 55,
+        "seconds": 73.125038,
+        "mean": 1.3295461454545454,
+        "median": 1.063152,
+        "p95": 2.5016631999999985,
+        "max": 4.79384
+      },
+      {
+        "name": "invoke_agent reviewer",
+        "calls": 55,
+        "seconds": 71.39510299999999,
+        "mean": 1.2980927818181818,
+        "median": 1.022455,
+        "p95": 2.4668834999999985,
+        "max": 4.76042
+      },
+      {
+        "name": "invoke_agent reviewer / chat google/gemma-4-31b-it:nitro",
+        "calls": 55,
+        "seconds": 71.05855799999999,
+        "mean": 1.2919737818181816,
+        "median": 1.015294,
+        "p95": 2.4594128999999985,
+        "max": 4.754327
+      },
+      {
+        "name": "execute_tool render_visualization",
+        "calls": 60,
+        "seconds": 31.318050999999993,
+        "mean": 0.5219675166666665,
+        "median": 0.4675935,
+        "p95": 0.8103063500000001,
+        "max": 2.035479
+      },
+      {
+        "name": "execute_tool draw",
+        "calls": 50,
+        "seconds": 2.906513000000001,
+        "mean": 0.05813026000000002,
+        "median": 0.05262,
+        "p95": 0.07315025,
+        "max": 0.162703
+      },
+      {
+        "name": "execute_tool publish_visualization",
+        "calls": 46,
+        "seconds": 1.9641060000000001,
+        "mean": 0.04269795652173913,
+        "median": 0.038798,
+        "p95": 0.054537999999999996,
+        "max": 0.056459
+      },
+      {
+        "name": "execute_tool deliver_design",
+        "calls": 71,
+        "seconds": 0.110587,
+        "mean": 0.0015575633802816901,
+        "median": 0.001342,
+        "p95": 0.0026135,
+        "max": 0.006118
+      },
+      {
+        "name": "execute_tool deliver_review",
+        "calls": 55,
+        "seconds": 0.040676,
+        "mean": 0.0007395636363636363,
+        "median": 0.000707,
+        "p95": 0.0011353,
+        "max": 0.001529
+      },
+      {
+        "name": "execute_tool chart_capabilities",
+        "calls": 9,
+        "seconds": 0.020618,
+        "mean": 0.002290888888888889,
+        "median": 0.002085,
+        "p95": 0.002943,
+        "max": 0.002973
+      },
+      {
+        "name": "execute_tool revise",
+        "calls": 2,
+        "seconds": 0.009451999999999999,
+        "mean": 0.004725999999999999,
+        "median": 0.004725999999999999,
+        "p95": 0.0067986999999999995,
+        "max": 0.007029
+      }
+    ],
+    "model_request_seconds": 1969.3584110000013
+  },
+  "audit_definitions": {
+    "chart_suitable": "A suitable proposed chart family for the brief, not proof of optimality or successful rendering.",
+    "first_render_visual": "First render attempt, including a no-image technical failure.",
+    "final_render_visual": "Last retained PNG, not proof it was published or linked in final reply.",
+    "final_delivery": "Final-response PNG link; false is expected for the 2 no-chart boundary tasks.",
+    "task_correct": "Agent judgment of intent, semantics, factual final claims and useful delivery. A complete faithful Markdown table can satisfy a table-permitted task without meeting the separate PNG-link contract.",
+    "reviewer_false_rejection": "At least one false or overstrict error-level finding within the case; not per-call accuracy.",
+    "unnecessary_repair": "Includes a blocked extra repair attempt; null means not established."
+  },
+  "limitations": [
+    "This development bank is reused, not held out.",
+    "The broad supplemental briefs often allow a table and do not establish the optimal chart family.",
+    "Raw numeric and reviewer-pass gates have known false failures; raw scores were not rewritten.",
+    "Native PNG inspection does not establish provider-resized image perception or UI viewport readability.",
+    "Uncertainty and no-image outcomes are retained rather than counted as correct.",
+    "Runtime optimization remains blocked; independent audit prose is not yet a validated executable quality metric."
+  ],
+  "cases": [
+    {
+      "rollout": 1,
+      "case_id": "corpus-vizcsv-46dad75ae7fa7b62",
+      "raw": {
+        "case_id": "corpus-vizcsv-46dad75ae7fa7b62",
+        "contract_pass": true,
+        "strict_pass": false,
+        "seconds": 81.4911736670183,
+        "requests": 8,
+        "diagnostics": [
+          "latency_ok: failed",
+          "End-to-end latency 81.49s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 1,
+        "case_id": "corpus-vizcsv-46dad75ae7fa7b62",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Prepared rounded 0% KPI and supporting 2/370783 are correct and delivered; no recomputation or repair.",
+        "images": [
+          {
+            "render_id": "03ab5f2439d7",
+            "sha256": "a2785e6256091e255930257cf9326673b9bc5532bd2c9ebc0e151677bb70a206",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acdd340e9085bd437a9bc10286ce",
+      "lead_run_id": "01a0acdd-340d-76c1-8bad-b9f2cd0a28a2",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 2,
+      "case_id": "corpus-vizcsv-6eff7ae46ebb4edf",
+      "raw": {
+        "case_id": "corpus-vizcsv-6eff7ae46ebb4edf",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 57.26830954197794,
+        "requests": 13,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 2,
+        "case_id": "corpus-vizcsv-6eff7ae46ebb4edf",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": true,
+        "unnecessary_repair": true,
+        "final_delivery": true,
+        "task_correct": "fail",
+        "notes": "First donut already maps blue وافد 375161 and green مواطن 373877 consistently with its legend. Reviewer alleges the opposite. Adding sort none changes valid color order, not broken binding. Final chart is correct but final prose falsely claims an initial mapping error was fixed.",
+        "images": [
+          {
+            "render_id": "896f2b397fb0",
+            "sha256": "920fcb0e72ec0c00ef12a6abd333c1735c9b0d9a322b46e3db514ac195541d2f",
+            "phase": "first",
+            "verdict": "pass"
+          },
+          {
+            "render_id": "5c362cddb06d",
+            "sha256": "0958c3dc393d77caa35c68672e09c9250d9f848957d3bf9ae8655d0108e93910",
+            "phase": "repair_1",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acde72b471add21ec77801e14455",
+      "lead_run_id": "01a0acde-72b3-77ad-98a8-5e063ca5f53f",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 3,
+      "case_id": "corpus-vizcsv-70ea08202f57d58f",
+      "raw": {
+        "case_id": "corpus-vizcsv-70ea08202f57d58f",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 14.514475959003903,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 3,
+        "case_id": "corpus-vizcsv-70ea08202f57d58f",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "KPI 100 preserves percentage_saudi. Minor note: no percent glyph although lead requested one; Arabic title explicitly states percentage. No material value/unit ambiguity or repair.",
+        "images": [
+          {
+            "render_id": "9dba621096b9",
+            "sha256": "75e919109bd8d928b3505c4971dddc2830edc2ae294afc0a7ab0b28b2fc97a4a",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acdf52bee914f02431175f7db516",
+      "lead_run_id": "01a0acdf-52be-7204-84c5-5952234adad0",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 4,
+      "case_id": "corpus-vizcsv-97280400c00748a7",
+      "raw": {
+        "case_id": "corpus-vizcsv-97280400c00748a7",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 14.450285917031579,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 4,
+        "case_id": "corpus-vizcsv-97280400c00748a7",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Count-only male_count=0 KPI, correct Arabic labels; no invented denominator or ratio.",
+        "images": [
+          {
+            "render_id": "b6029d3384a7",
+            "sha256": "45e2d44a1aa934680a89faa7bc34a4c04e0c6d1cda900b3ad31ddfc9d3c7f932",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acdf8bb2c59e4b3fa67edc384e2f",
+      "lead_run_id": "01a0acdf-8bb1-72cc-b5a7-eae19c69fea6",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 5,
+      "case_id": "corpus-vizcsv-3b62e4047e2cb455",
+      "raw": {
+        "case_id": "corpus-vizcsv-3b62e4047e2cb455",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 22.079034292022698,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 5,
+        "case_id": "corpus-vizcsv-3b62e4047e2cb455",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Source 26.11% correctly displayed without scale change or recomputation; no repair.",
+        "images": [
+          {
+            "render_id": "376243703be8",
+            "sha256": "93a56a998c863f87c4338324afd2d367ae8825eb475d62f0f578ec60e41a45aa",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acdfc469f6f92e9a804e38ef703f",
+      "lead_run_id": "01a0acdf-c469-7565-868d-fc7520d5aaad",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 6,
+      "case_id": "corpus-vizcsv-2177430e3e44a9a3",
+      "raw": {
+        "case_id": "corpus-vizcsv-2177430e3e44a9a3",
+        "contract_pass": true,
+        "strict_pass": false,
+        "seconds": 60.17105179198552,
+        "requests": 15,
+        "diagnostics": [
+          "latency_ok: failed",
+          "End-to-end latency 60.17s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 6,
+        "case_id": "corpus-vizcsv-2177430e3e44a9a3",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": true,
+        "unnecessary_repair": true,
+        "final_delivery": true,
+        "task_correct": "uncertain",
+        "notes": "First grouped bars retain all 16 correct marks and F/M codes. Overlap hiding omits some optional numeric labels; reviewer observes this but wrongly treats all labels as required. Enlargement improves readability but was not necessary for valid comparison. Final chart/source table correct; final 'clipped' description is not established (task narrative uncertain). Ungrounded F=female/M=male internal tool metadata is noted separately; visible chart and final reply preserve codes. Invalid revise used request ID as artifact ID.",
+        "images": [
+          {
+            "render_id": "74073bb2e845",
+            "sha256": "2b1b8fca7f542ab2a8434540e99117533f60c981e5cc0459491b0c289c897ff8",
+            "phase": "first",
+            "verdict": "pass"
+          },
+          {
+            "render_id": "cb8a71d37c5e",
+            "sha256": "c6a9918f2ba5822106128041e9c9122b9ad54d5bceb3cdebd32aef0d8bc7aba4",
+            "phase": "repair_1",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace01b035bfbf007a502efc0c918",
+      "lead_run_id": "01a0ace0-1b02-70d3-a2f4-5645d2f7b57b",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 7,
+      "case_id": "corpus-vizcsv-ba0187c944a3f829",
+      "raw": {
+        "case_id": "corpus-vizcsv-ba0187c944a3f829",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 103.66009095800109,
+        "requests": 15,
+        "diagnostics": [
+          "chart_ok: failed",
+          "delivery_ok: failed",
+          "latency_ok: failed",
+          "render_evidence_ok: failed",
+          "repetition_ok: failed",
+          "review_ok: failed",
+          "visible_columns_ok: failed",
+          "Missing delivered image URL in the final reply.",
+          "Missing matching persisted PNG evidence.",
+          "Missing acceptable review evidence for the delivered artifact.",
+          "End-to-end latency 103.66s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 7,
+        "case_id": "corpus-vizcsv-ba0187c944a3f829",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": true,
+        "unnecessary_repair": true,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Both PNGs are byte-identical complete 17-row tables with correct region/city headers and values. Reviewer falsely alleges swaps twice; designer falsely says removing direction rtl fixed reversal. No cropping or inaccessible viewport. Repair limit then causes lead to discard the valid PNG. Final has no image and shows eight grouped region rows while describing 17 rows. final_render_visual means last retained PNG, not delivered artifact.",
+        "images": [
+          {
+            "render_id": "f771154dc743",
+            "sha256": "126d032d3c9e4e7169cb3b00452453cb9d9c624d4837ef95e6c016143dda439a",
+            "phase": "first",
+            "verdict": "pass"
+          },
+          {
+            "render_id": "02794f0a3598",
+            "sha256": "126d032d3c9e4e7169cb3b00452453cb9d9c624d4837ef95e6c016143dda439a",
+            "phase": "repair_1",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace1067260468b46d54e33d11f37",
+      "lead_run_id": "01a0ace1-0671-759b-9d43-98568e405455",
+      "published_artifact_count": 1,
+      "published_png_count": 0
+    },
+    {
+      "rollout": 8,
+      "case_id": "corpus-vizcsv-e07c573241abdb02",
+      "raw": {
+        "case_id": "corpus-vizcsv-e07c573241abdb02",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 20.718169374973513,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 8,
+        "case_id": "corpus-vizcsv-e07c573241abdb02",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Correct population_count=0 KPI. Runtime report only includes the required count and recorded model messages contain no raw geometry. No spatial inference or repair.",
+        "images": [
+          {
+            "render_id": "270893013e26",
+            "sha256": "248e3b3891fff2cd2b00530c62cb6cfe821483c2bdbe154c5b50fd181a4b6a8e",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace29bb4585ec16b46ed18afd29a",
+      "lead_run_id": "01a0ace2-9bb3-71c3-a717-509dc81b677e",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 9,
+      "case_id": "corpus-vizcsv-9e75e9ae40758227",
+      "raw": {
+        "case_id": "corpus-vizcsv-9e75e9ae40758227",
+        "contract_pass": true,
+        "strict_pass": false,
+        "seconds": 103.9746732080821,
+        "requests": 16,
+        "diagnostics": [
+          "latency_ok: failed",
+          "End-to-end latency 103.97s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 9,
+        "case_id": "corpus-vizcsv-9e75e9ae40758227",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": true,
+        "unnecessary_repair": true,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "First RTL grouped columns correctly align all ten values, youngest right to oldest left. Reviewer incorrectly alleges shifted labels while acknowledging correct pairs in its finding. Designer changes to horizontal bars and claims to fix nonexistent drift. Final chart and final reply correct. Invalid revise used request ID as artifact ID.",
+        "images": [
+          {
+            "render_id": "7fba0f771160",
+            "sha256": "c4c36f001d22c3ace04768bd32adcb4fc6e044e0848b5791b0db47921a343223",
+            "phase": "first",
+            "verdict": "pass"
+          },
+          {
+            "render_id": "faaf85b11c6d",
+            "sha256": "863e42f96acd2460898598c0472fc00b423b1cf0f4d3c7b9fc2df2b61ac609a8",
+            "phase": "repair_1",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace2eceea2a33efd804462365008",
+      "lead_run_id": "01a0ace2-eced-73a2-a84c-7a50309ea301",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 10,
+      "case_id": "corpus-vizcsv-85830f71807a6905",
+      "raw": {
+        "case_id": "corpus-vizcsv-85830f71807a6905",
+        "contract_pass": true,
+        "strict_pass": false,
+        "seconds": 78.52546479098964,
+        "requests": 8,
+        "diagnostics": [
+          "latency_ok: failed",
+          "End-to-end latency 78.53s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 10,
+        "case_id": "corpus-vizcsv-85830f71807a6905",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Suitable single-text-cell city table, Najran complete and delivered; no invented quantitative data or repair.",
+        "images": [
+          {
+            "render_id": "226e2bea1923",
+            "sha256": "be2955c91ea27852bf1acf68c880d4e0d400444a8cd28e6e44e723a1c3268ac4",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace4835fc063d856bea0d5cc4468",
+      "lead_run_id": "01a0ace4-835e-755e-9df4-1d574c0a792f",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 11,
+      "case_id": "corpus-vizcsv-39471b0e4a5d3fc5",
+      "raw": {
+        "case_id": "corpus-vizcsv-39471b0e4a5d3fc5",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 9.760542833944783,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 11,
+        "case_id": "corpus-vizcsv-39471b0e4a5d3fc5",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Two prepared 3.76 averages shown as equal zero-based bars; source totals retained correctly in final table, no recomputation.",
+        "images": [
+          {
+            "render_id": "ec295bd7a682",
+            "sha256": "3a2d3d2590a37a177c802d689aa799140bec61ac3a30aef272017fe4b18b726d",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace5b672fe004394205505de1a79",
+      "lead_run_id": "01a0ace5-b671-7619-87f7-a92e82b9bebf",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 12,
+      "case_id": "corpus-vizcsv-f6687502449585a5",
+      "raw": {
+        "case_id": "corpus-vizcsv-f6687502449585a5",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 12.114565416937694,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 12,
+        "case_id": "corpus-vizcsv-f6687502449585a5",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Explicitly permitted table correctly presents all ten rows and three columns with unlike units. Reviewer only warns about percent-symbol placement in RTL header; lead appropriately publishes without repair.",
+        "images": [
+          {
+            "render_id": "c27a26bf94f0",
+            "sha256": "b4d45782e5af76cd93d2cb5ccd3fa97677c343952b01103a1fb07c2128c3c494",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace5dcdc25211abec2a1b8d84fa2",
+      "lead_run_id": "01a0ace5-dcdb-768d-8029-50b096fe4c55",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 13,
+      "case_id": "corpus-vizcsv-45980b90faceca07",
+      "raw": {
+        "case_id": "corpus-vizcsv-45980b90faceca07",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 13.11500095797237,
+        "requests": 9,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 13,
+        "case_id": "corpus-vizcsv-45980b90faceca07",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Two independent percentage KPIs correctly retain different denominators and all six source values; not a false part-to-whole donut. Complete Arabic/RTL display.",
+        "images": [
+          {
+            "render_id": "0d89f3dad84e",
+            "sha256": "5bdddfb804c8652c88dbd6dd1c2f16e53b275cc75705e5196fa274d682892b9f",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace60c7b34902f6b8f7081f10e54",
+      "lead_run_id": "01a0ace6-0c7a-7058-8051-520d6b320785",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 14,
+      "case_id": "corpus-vizcsv-2571f37808cda8e2",
+      "raw": {
+        "case_id": "corpus-vizcsv-2571f37808cda8e2",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 10.262498832889833,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 14,
+        "case_id": "corpus-vizcsv-2571f37808cda8e2",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "F/M codes retained without supplied code meanings. Correct zero-based comparison; source precision retained while labels use two decimals. Correct source counts in final reply.",
+        "images": [
+          {
+            "render_id": "fb1475aca628",
+            "sha256": "2a9d170af4e564d60bd8c22eed01ad18b00397882f17fba87ee7f90b625adf41",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace64000e34ca03733f2244a3f3f",
+      "lead_run_id": "01a0ace6-3fff-700e-b8be-730b1252e267",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 15,
+      "case_id": "corpus-vizcsv-c76808cc7a78dac8",
+      "raw": {
+        "case_id": "corpus-vizcsv-c76808cc7a78dac8",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 12.036351541988552,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 15,
+        "case_id": "corpus-vizcsv-c76808cc7a78dac8",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Appropriate grouped columns retain all ten cities and twenty supplied population/employed values even where employed exceeds population. No clamping, aggregation, invented employment rate, or repair.",
+        "images": [
+          {
+            "render_id": "21769dc34c2a",
+            "sha256": "ff6a0534e1197de4cbd6dc9a1ac6bc2b11f97f0ec2999d71ed15756c6b9327ff",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace6685f200eec658eec0ffb6378",
+      "lead_run_id": "01a0ace6-685e-77d9-9006-b1d1a8314f29",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 16,
+      "case_id": "corpus-vizcsv-ae315d3da67a2d11",
+      "raw": {
+        "case_id": "corpus-vizcsv-ae315d3da67a2d11",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 10.162645334028639,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 16,
+        "case_id": "corpus-vizcsv-ae315d3da67a2d11",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Suitable coordinate scatter with correct longitude/latitude axes and readable app legend, no routes or map invention. All 1000 source coordinate/app tuples equal both saved GPT-Vis and G2 records in exact order; complete five-column source report retained. Dense coincident points cannot be individually counted visually.",
+        "images": [
+          {
+            "render_id": "5d2b483790a0",
+            "sha256": "40a0c382b14ec5fee948b394e4f27ebc50cb158d98a1379b98f62d9ebcc35157",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace697c96cf3a541a189c308d29d",
+      "lead_run_id": "01a0ace6-97c8-7074-b69c-c36052a93fc4",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 17,
+      "case_id": "corpus-vizcsv-2bc0cfa90c65f142",
+      "raw": {
+        "case_id": "corpus-vizcsv-2bc0cfa90c65f142",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 7.851013167062774,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 17,
+        "case_id": "corpus-vizcsv-2bc0cfa90c65f142",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Appropriate descending horizontal bars correctly show all five city/count pairs 6,5,4,4,4 on a zero-based axis; complete city/value labels and final table.",
+        "images": [
+          {
+            "render_id": "5fe5558ea227",
+            "sha256": "c3abfe15c00045ceaa04d655189539db755ca7b2ad6068f564df391c4b3192bd",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace6bfd75e2a91da6ab7fcffac42",
+      "lead_run_id": "01a0ace6-bfd6-76c0-b240-0b83ccbc847e",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 18,
+      "case_id": "corpus-vizcsv-61793ff199102633",
+      "raw": {
+        "case_id": "corpus-vizcsv-61793ff199102633",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 10.019601540989242,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 18,
+        "case_id": "corpus-vizcsv-61793ff199102633",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Both prepared rates 13.19 and 7.17 remain per 100, correctly paired with education groups; readable RTL columns and truthful final reply. Repeated long unit ticks are verbose but not a defect. One render, no repair; 10.02s.",
+        "images": [
+          {
+            "render_id": "4626575442cc",
+            "sha256": "11278d5aa4f747823c73e86b3c75c840a35f629c06b77af9c1d32d32966022a5",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace6dec9c9c1b81f2ee8b338433a",
+      "lead_run_id": "01a0ace6-dec9-7090-a154-39236b0e47b7",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 19,
+      "case_id": "corpus-vizcsv-3dda20f66cddb9da",
+      "raw": {
+        "case_id": "corpus-vizcsv-3dda20f66cddb9da",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 8.308163749985397,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 19,
+        "case_id": "corpus-vizcsv-3dda20f66cddb9da",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Requested population-count indicator clearly shows 671, with no invented geography/time claim. One render, no repair; 8.31s.",
+        "images": [
+          {
+            "render_id": "57e6bcd49f22",
+            "sha256": "cafa38f4bc885fdea8d7fd1a70a410ff6bd6714d773b56e697077d68a44cc089",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace706360e40e115b42593a38a83",
+      "lead_run_id": "01a0ace7-0635-7094-b775-1a89566f5a76",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 20,
+      "case_id": "corpus-vizcsv-8b3fd04765e40d3a",
+      "raw": {
+        "case_id": "corpus-vizcsv-8b3fd04765e40d3a",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 8.276008332963102,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 20,
+        "case_id": "corpus-vizcsv-8b3fd04765e40d3a",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Requested total_count title and zero are explicit/readable; no invented port or transport story. One render, no repair; 8.28s.",
+        "images": [
+          {
+            "render_id": "cb60b25f3f70",
+            "sha256": "cb3900d753a21458999a4e83f35807239fd532a80f06b16bb186c20768f69f12",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace726fc3a41283b43697affb7fd",
+      "lead_run_id": "01a0ace7-26fb-7111-9360-5765f03c5a28",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 21,
+      "case_id": "corpus-vizcsv-00754e9ed454a58b",
+      "raw": {
+        "case_id": "corpus-vizcsv-00754e9ed454a58b",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 12.87129600008484,
+        "requests": 11,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 21,
+        "case_id": "corpus-vizcsv-00754e9ed454a58b",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "no_image",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Initial accepted indicator spec height 220 failed rendering with minimum 280 diagnostic. Lead changed only height to 320; sole retained PNG is the successful retry. Shows 13.93% headline and exact 13.926325247079964% support line. Source exact, units correct, all readable. Technical retry was necessary after failure but preflight could avoid the extra calls; not a futile visual repair. 12.87s.",
+        "images": [
+          {
+            "render_id": "cd68e85a8328",
+            "sha256": "fdbfe3bc312d8bf868bd5211cc3ea47bfc8e8fa8a6b078c88f6dbcaac5fc15b4",
+            "phase": "repair_after_failed_render",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace74794734c84d0e960a7e016c4",
+      "lead_run_id": "01a0ace7-4793-7170-9098-d33a8f1aaf4e",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 22,
+      "case_id": "corpus-vizcsv-010c162b92ef3206",
+      "raw": {
+        "case_id": "corpus-vizcsv-010c162b92ef3206",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 27.185912000015378,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 22,
+        "case_id": "corpus-vizcsv-010c162b92ef3206",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Line preserves all 11 chronological year/count pairs, including 2025=461. Values/labels readable and final prose explicitly avoids interpreting the drop. Internal saved designer explanation calls 2025 partial without source support; that claim does not appear in PNG or final reply, so recorded as artifact-semantic caveat rather than final-task failure. 27.19s.",
+        "images": [
+          {
+            "render_id": "16aab8b2e45a",
+            "sha256": "33969b2c6cb54f62a6b95844d3d5f2cff307249bc7f59823f4979b183c3f6e13",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace77a34eb4eff3454a4b63e52bc",
+      "lead_run_id": "01a0ace7-7a33-72d0-8c0b-6c1b6347c9dc",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 23,
+      "case_id": "corpus-vizcsv-03384a96e9fe5870",
+      "raw": {
+        "case_id": "corpus-vizcsv-03384a96e9fe5870",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 51.150906041963026,
+        "requests": 10,
+        "diagnostics": [
+          "answer_fidelity_ok: failed",
+          "delivery_ok: failed",
+          "review_ok: failed",
+          "Missing delivered image URL in the final reply.",
+          "Missing acceptable review evidence for the delivered artifact."
+        ]
+      },
+      "audit": {
+        "rollout": 23,
+        "case_id": "corpus-vizcsv-03384a96e9fe5870",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": true,
+        "unnecessary_repair": true,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Complete readable 51-row airport/destination/count table; renderer data exactly matches all source rows and original order. Inspector falsely claims extra Tunisia/Albania/Chad rows: Tunisia=708 exists at source row 31, just outside reviewer first-30 partial context; Albania/Chad are absent from source, context and image. No-op redesign retained identical PNG. Published artifact exists, but final reply has no image or artifact link and does not deliver the table. 51.15s total; the false finding induces unnecessary work, but available stage metadata does not isolate its share of total latency. Raw numeric gate also fails; no raw score changed.",
+        "images": [
+          {
+            "render_id": "1c21d0f8cc62",
+            "sha256": "6467747f6df85b1238d44751a8c52946400efa5a6a8e88ace0ec5b7049d860fa",
+            "phase": "first_and_final_noop_repair",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace7e4b46700517ca17b5ae40308",
+      "lead_run_id": "01a0ace7-e4b3-74b0-93e8-cf8c4b23de80",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 24,
+      "case_id": "corpus-vizcsv-09050180d3961b03",
+      "raw": {
+        "case_id": "corpus-vizcsv-09050180d3961b03",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 40.11913133400958,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 24,
+        "case_id": "corpus-vizcsv-09050180d3961b03",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Appropriate one-row mixed-field table. Missing percentage appears as a dash, not zero; both count zeros and exact snapshot date 2026-02-01 are legible. Final reply explicitly preserves missingness and delivers image plus source row. One render; 40.12s.",
+        "images": [
+          {
+            "render_id": "ac5fa6d4140a",
+            "sha256": "231887cda3a4561840f9c43d335e443cf1d4bf782a1c1a20591887679763345b",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace8accfaef1f355db6f83b03437",
+      "lead_run_id": "01a0ace8-accf-7779-8ba2-40b885c71df7",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 25,
+      "case_id": "corpus-vizcsv-1706fb33ef7fd300",
+      "raw": {
+        "case_id": "corpus-vizcsv-1706fb33ef7fd300",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 33.8710623329971,
+        "requests": 14,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 25,
+        "case_id": "corpus-vizcsv-1706fb33ef7fd300",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "fail",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "First dual_axes image omits all of 2016, including its valid count 211, because growth is null; renderer explicitly reports dropped_rows=1. Correct reviewer rejection triggers a necessary table fallback. Final complete 10-row table preserves years, missing first growth and every negative growth value; saved source remains exact. Table years are cosmetically comma-formatted, not changed identities. 33.87s, 14 requests.",
+        "images": [
+          {
+            "render_id": "b9786ebdac44",
+            "sha256": "366741597f5dc195f10979339495d82ebe1ffb837e5c834d6167654115e40ca2",
+            "phase": "first",
+            "verdict": "fail"
+          },
+          {
+            "render_id": "e48b21c97346",
+            "sha256": "afddfb5b10cf7834a0824c47441490312390cdd7c3e6613f562cc0379b1c7c3f",
+            "phase": "repair",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace949e030b58d93aa4277150160",
+      "lead_run_id": "01a0ace9-49df-70bb-9426-9a0497d0e74d",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 26,
+      "case_id": "corpus-vizcsv-07d3a923817c343d",
+      "raw": {
+        "case_id": "corpus-vizcsv-07d3a923817c343d",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 79.17778962501325,
+        "requests": 18,
+        "diagnostics": [
+          "delivery_ok: failed",
+          "latency_ok: failed",
+          "repetition_ok: failed",
+          "review_ok: failed",
+          "Missing delivered image URL in the final reply.",
+          "Missing acceptable review evidence for the delivered artifact.",
+          "End-to-end latency 79.18s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 26,
+        "case_id": "corpus-vizcsv-07d3a923817c343d",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "fail",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": true,
+        "unnecessary_repair": true,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Both images preserve all five source category/value pairs on distinct scales; X labels are complete, not bottom-clipped as Gemma twice claims. First PNG has a minor left-title/legend-marker intersection, not the reported X-label defect. Unnecessary resize produces a 9600x5400 PNG with very small text when fitted to normal width; labels are complete at larger inspection resolution, but no UI readability test performed. Five design tool calls yield only two actual designs; two calls lack repair direction and the last exceeds the one-repair cap. 18 requests, 79.18s; designers consume 28.53s+14.64s, so delay is not solely reviewer latency. Final source table is complete but lead invents years as average_age's unit despite explicit no-unit-invention brief; this causes semantic task failure independently of missing final PNG link. Artifact is persisted; no infinite loop.",
+        "images": [
+          {
+            "render_id": "b0d3929f78a9",
+            "sha256": "cca03838e8ea95408ba8b14d627de02c8b0fe48ddcc7a7f314a4595c6792ae51",
+            "phase": "first",
+            "verdict": "pass"
+          },
+          {
+            "render_id": "520bf8daaec3",
+            "sha256": "cab076fa283403e28f58d14ec1132dabb29be8bade84d80a22846c46dac92b0d",
+            "phase": "repair",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0ace9ce8a589954abd7ea2b9918c3",
+      "lead_run_id": "01a0ace9-ce89-73ca-9ef3-f1b2d34587e3",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 27,
+      "case_id": "corpus-vizcsv-099ca8ed3f245957",
+      "raw": {
+        "case_id": "corpus-vizcsv-099ca8ed3f245957",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 18.18842608295381,
+        "requests": 10,
+        "diagnostics": [
+          "delivery_ok: failed",
+          "review_ok: failed",
+          "Missing delivered image URL in the final reply.",
+          "Missing acceptable review evidence for the delivered artifact."
+        ]
+      },
+      "audit": {
+        "rollout": 27,
+        "case_id": "corpus-vizcsv-099ca8ed3f245957",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": true,
+        "unnecessary_repair": false,
+        "final_delivery": false,
+        "task_correct": "pass",
+        "notes": "First design improperly translated Alien/Saudi despite literal-preservation direction; lead removes valueLabels before rendering. That semantic correction is necessary, not an unnecessary visual repair. Sole PNG accurately pairs Alien=2815 and Saudi=2750, with readable Arabic headings. Reviewer falsely rejects category order/English literals and confuses columnLabels with category translations; lead appropriately declines that change. Published PNG/HTML exist, final PNG link is missing, but the complete faithful two-row Markdown table fulfills the allowed presentation semantics. Automated delivery/review gates still fail unchanged. 18.19s, 10 requests.",
+        "images": [
+          {
+            "render_id": "87ab19b4888c",
+            "sha256": "faccf0fd28174e396ad8471a08bc05798a8510b9c2a2e919fcb797b44f3a7e7e",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0aceb041df46860740bc9137a8d39",
+      "lead_run_id": "01a0aceb-041c-7425-a00f-dda8a356b7cc",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 28,
+      "case_id": "corpus-vizcsv-ac951afc1e53d382",
+      "raw": {
+        "case_id": "corpus-vizcsv-ac951afc1e53d382",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 11.02198087493889,
+        "requests": 8,
+        "diagnostics": [
+          "delivery_ok: failed",
+          "Missing delivered image URL in the final reply."
+        ]
+      },
+      "audit": {
+        "rollout": 28,
+        "case_id": "corpus-vizcsv-ac951afc1e53d382",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": false,
+        "task_correct": "pass",
+        "notes": "Appropriate complete eight-row text table; no invented measure or counts. Correct PNG/HTML persisted and reviewer passes. Final reply supplies all eight exact region strings in a complete Markdown table but omits PNG link. Therefore final_delivery=false under the explicit image-link definition while substantive text-table task presentation passes. Automated strict result remains fail solely for missing image link. 11.02s, 8 requests.",
+        "images": [
+          {
+            "render_id": "b74a816e6ad4",
+            "sha256": "f844feedfed5a8a894b2c9d8474a2592ccf7a5dbb2f07c1d0ce08cd4a2a218ce",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0aceb4b78e2b8e22bb923c91e476d",
+      "lead_run_id": "01a0aceb-4b78-7550-96cf-1460b34a3b2e",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 29,
+      "case_id": "corpus-vizcsv-061a265236a642ce",
+      "raw": {
+        "case_id": "corpus-vizcsv-061a265236a642ce",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 3.4833211249206215,
+        "requests": 2,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 29,
+        "case_id": "corpus-vizcsv-061a265236a642ce",
+        "task_type": "boundary",
+        "chart_suitable": "not_applicable",
+        "source_roles_faithful": "not_applicable",
+        "first_render_visual": "no_image",
+        "final_render_visual": "no_image",
+        "reviewer_false_rejection": null,
+        "unnecessary_repair": false,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Correct single draw stop: 22208 rows exceed direct source cap 10000; no partial chart, aggregation, retry or specialist calls. Automated strict-pass measures technical boundary success, not chart success. However final recommendation says owner must split the file or supply a pre-summarized table, contrary to explicit instruction not to request new data. This is an implicit new-data demand without an ask_user tool, not a false statement about row count. No PNG is expected; final_delivery=false is not the failure reason. 3.48s, 2 requests.",
+        "images": []
+      },
+      "trace_id": "01a0aceb76d30bf6cd1ffb85b20c37ad",
+      "lead_run_id": "01a0aceb-76d3-712e-beb0-8c57e6ca6371",
+      "published_artifact_count": 0,
+      "published_png_count": 0
+    },
+    {
+      "rollout": 30,
+      "case_id": "corpus-vizcsv-1240bc417714a3e6",
+      "raw": {
+        "case_id": "corpus-vizcsv-1240bc417714a3e6",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 15.302492832997814,
+        "requests": 9,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 30,
+        "case_id": "corpus-vizcsv-1240bc417714a3e6",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "fail",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "fail",
+        "notes": "Complete readable 16-row mixed-unit table is the correct representation; all five columns, counts, repeated totals and prepared percentages remain intact. But designer adds unapproved M->ذكور and F->إناث valueLabels; source/brief supply literal codes with no codebook and explicitly forbid invented meanings. Image and final prose assert that decoding. The image follows its spec, so the scoped visual reviewer can legitimately pass; overall automated strict-pass misses the upstream semantic violation. This belongs to lead/designer intent fidelity, not a request to expand visual-review scope. 15.30s, 9 requests.",
+        "images": [
+          {
+            "render_id": "fd3f8ea685bd",
+            "sha256": "93003dd2186d7675169e1d09063f5662f1003337f6fee2522d4683bfee0f5257",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0aceb84b52dbbe27969627110befc",
+      "lead_run_id": "01a0aceb-84b4-7128-b540-bb817c589062",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 31,
+      "case_id": "corpus-vizcsv-7a6c7f323afafbe3",
+      "raw": {
+        "case_id": "corpus-vizcsv-7a6c7f323afafbe3",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 13.31722520897165,
+        "requests": 6,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 31,
+        "case_id": "corpus-vizcsv-7a6c7f323afafbe3",
+        "task_type": "boundary",
+        "chart_suitable": "not_applicable",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "no_image",
+        "final_render_visual": "no_image",
+        "reviewer_false_rejection": null,
+        "unnecessary_repair": false,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Correctly avoids quantitative chart and preserves all 1000 app_name values, duplicates and order in saved artifact; exact source-column equality verified without exposing geometry. Table render hits 30038px vs 2400px technical bound and publishes no-chart fallback once. Final unsupported claim says all 1000 rows are available by scrolling published card. Actual returned LeadArtifact has 50 rows; card is static Markdown with 20/1000 rows, no linked full table. Full rows exist in saved artifact/API, but final reply supplies neither artifact link nor table link, and no UI was tested. Failure is unsupported full-scroll delivery claim, not harmless viewport clipping or missing PNG. 13.32s, 6 requests.",
+        "images": []
+      },
+      "trace_id": "01a0acebc172fffd00b897d9ca6e9fa1",
+      "lead_run_id": "01a0aceb-c171-7404-b817-3628369e30a5",
+      "published_artifact_count": 1,
+      "published_png_count": 0
+    },
+    {
+      "rollout": 32,
+      "case_id": "corpus-vizcsv-18c8e508976a1ff7",
+      "raw": {
+        "case_id": "corpus-vizcsv-18c8e508976a1ff7",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 8.154924832982942,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 32,
+        "case_id": "corpus-vizcsv-18c8e508976a1ff7",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Single-value indicator clearly shows 2768 with supplied male_population meaning. Exact source, readable heading/context, no invented time or geography. Final image and complete one-value table delivered. 8.15s, 8 requests.",
+        "images": [
+          {
+            "render_id": "a071cd38d495",
+            "sha256": "cfabd7b25cae127bf72dbd4289fec3b14ed48405b6dd990475f77b1969c27b8c",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acebf5bdfa53dcd1da912ed04011",
+      "lead_run_id": "01a0aceb-f5bc-7386-bbee-f157572562d1",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 33,
+      "case_id": "corpus-vizcsv-245c6996f0f23a81",
+      "raw": {
+        "case_id": "corpus-vizcsv-245c6996f0f23a81",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 14.097036457969807,
+        "requests": 10,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 33,
+        "case_id": "corpus-vizcsv-245c6996f0f23a81",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Readable correct M=2768/F=2797 columns retain undefined source codes. Lead created draw question in English and first design inherited English language despite Arabic user brief; a necessary pre-render redesign restores Arabic headings. Sole retained PNG and final reply preserve codes without decoding. No post-image repair. 14.10s, 10 requests.",
+        "images": [
+          {
+            "render_id": "1a32d2a640df",
+            "sha256": "028012345716f08352e51f43c110ce9ceae7e6195f85a13143a5bc05286f0a23",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acec15de70944f464c4751031551",
+      "lead_run_id": "01a0acec-15dd-75f9-a0eb-4fa180e21022",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 34,
+      "case_id": "corpus-vizcsv-442a491c20867c73",
+      "raw": {
+        "case_id": "corpus-vizcsv-442a491c20867c73",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 41.50051691697445,
+        "requests": 9,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 34,
+        "case_id": "corpus-vizcsv-442a491c20867c73",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "All seven age/count pairs are readable, including 65+=620. Source descending-count order is preserved right-to-left, not chronological age order; this is permissible categorical value sorting. Internal designer explanation incorrectly calls it ascending age, but final reply only claims source order and is correct. Reviewer pass carries inaccurate cosmetic warning: bilingual Arabic+technical Y title matches explicit spec, not a missing Arabic title. No unnecessary repair from warning. 41.50s, 9 requests.",
+        "images": [
+          {
+            "render_id": "7bafd96703a7",
+            "sha256": "3065bdc7764f15e4ef686fb6e608ec8205eedffce6a6ec455bd1e4ba17b876a8",
+            "phase": "first_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acec4d40e037f144f4318529c818",
+      "lead_run_id": "01a0acec-4d40-73d5-864e-fecc5ebec642",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 35,
+      "case_id": "corpus-vizcsv-98f1ef4953f7c74d",
+      "raw": {
+        "case_id": "corpus-vizcsv-98f1ef4953f7c74d",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 13.561840915936045,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 35,
+        "case_id": "corpus-vizcsv-98f1ef4953f7c74d",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Suitable horizontal comparison. All six region/count pairs are readable and match source: 2756084,2094479,341311,98999,72880,48596. Truthful descending order and Arabic labels; final image plus complete six-row textual table delivered. One design/render/review; no false alarm or repair. Contract pass; independent agent visual pass, not human gold. 13.56s,8 requests.",
+        "images": [
+          {
+            "render_id": "7e6caec453ad",
+            "sha256": "b322d5df11a65e24d7734728b7a501580ccb47d7faf340efb0c303199c150d44",
+            "phase": "initial_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acecefa3a1789530442195a3536d",
+      "lead_run_id": "01a0acec-efa2-7700-a1e6-5c09c2de1125",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 36,
+      "case_id": "corpus-vizcsv-98fe17bdec87024a",
+      "raw": {
+        "case_id": "corpus-vizcsv-98fe17bdec87024a",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 17.12309195799753,
+        "requests": 9,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 36,
+        "case_id": "corpus-vizcsv-98fe17bdec87024a",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Five cities with population bars and supplied percentage on separate labelled axes; all pairings preserved. Discrete categories use a smooth connecting percentage line, a presentation caveat rather than a demonstrated factual defect; the complete exact five-row table accompanies the image. One design/render/review, no material visible defect.17.12s,9 requests.",
+        "images": [
+          {
+            "render_id": "796ea3b1af2d",
+            "sha256": "4a3f91c4f2cf25ccc98b8de5a9577345a6f4a5a5a2a7f76d513a65a7380c64fc",
+            "phase": "initial_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0aced24ea547ed90c3fefac392ec3",
+      "lead_run_id": "01a0aced-24ea-7661-ba1a-56433f4ea0b9",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 37,
+      "case_id": "corpus-vizcsv-39d623d403ef86e5",
+      "raw": {
+        "case_id": "corpus-vizcsv-39d623d403ef86e5",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 19.808739333995618,
+        "requests": 8,
+        "diagnostics": [
+          "delivery_ok: failed",
+          "Missing delivered image URL in the final reply."
+        ]
+      },
+      "audit": {
+        "rollout": 37,
+        "case_id": "corpus-vizcsv-39d623d403ef86e5",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Suitable complete19-row table; all four columns and visible source pairings match, including three missing person types and one missing entry mode represented by dashes rather than zero. Original codes retained. Table is fully visible in this PNG; no scroll/clipping concern. Reviewer pass supported. Published artifact exists, but final reply contains neither image URL nor artifact link and only claims publication: delivery failure, not chart-design failure. Final wording says missing cells are blank; dash representation is a minor wording distinction.19.81s,8 requests; no repair.",
+        "images": [
+          {
+            "render_id": "5c4777bfcccf",
+            "sha256": "70e6952498932487d5754f4f51f35500342ef94631ff33797b7190f94251f3bf",
+            "phase": "initial_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0aced68177825f0dde04a58f1ae70",
+      "lead_run_id": "01a0aced-6816-7180-a8af-5958ad92b4d0",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 38,
+      "case_id": "corpus-vizcsv-ed2d9d4b2f49d899",
+      "raw": {
+        "case_id": "corpus-vizcsv-ed2d9d4b2f49d899",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 120.00329254101962,
+        "requests": 9,
+        "diagnostics": [
+          "error: TimeoutError: evaluation turn exceeded 120s wall-clock deadline",
+          "answer_fidelity_ok: failed",
+          "delivery_ok: failed",
+          "flow_ok: failed",
+          "latency_ok: failed",
+          "outcome_ok: failed",
+          "render_evidence_ok: failed",
+          "review_ok: failed",
+          "source_fidelity_ok: failed",
+          "visible_columns_ok: failed",
+          "Missing substantive final reply.",
+          "Missing delivered image URL in the final reply.",
+          "Missing persisted full-table source signature.",
+          "Missing matching persisted PNG evidence.",
+          "Missing acceptable review evidence for the delivered artifact.",
+          "End-to-end latency 120.00s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 38,
+        "case_id": "corpus-vizcsv-ed2d9d4b2f49d899",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "uncertain",
+        "final_render_visual": "uncertain",
+        "reviewer_false_rejection": null,
+        "unnecessary_repair": null,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Suitable complete8-row table with truthful count/ratio roles. Only visible precision concern:0.7661421428790528 appears0.77; counts/zeros correct. Reviewer observed actual rounding, not invented clipping. Original brief forbids data recomputation but did not explicitly demand all decimal places; lead added no-rounding/literal wording, then designer promised it. Whether ordinary display rounding is a material defect is unresolved, so false-rejection and necessity remain uncertain. Internal metadata labelled jobs_per_capita_ratio as share; no extra percentage scale is visible. Attempted repair adds table format0.0000000000000000 despite saved compromise that table ignores format; no second render, publication, or final reply before120.00s timeout/9 requests. Final-render verdict refers to last available preview, not delivered output.",
+        "images": [
+          {
+            "render_id": "88832abc53f2",
+            "sha256": "cf18e42aa63ba4d22cf72d4444d515491fe276f9e7cb685e1df185ce752182d4",
+            "phase": "initial_only_unpublished",
+            "verdict": "uncertain"
+          }
+        ]
+      },
+      "trace_id": "01a0acedb5c5fe3945f64e0dad39c5ea",
+      "lead_run_id": "01a0aced-b5c4-7107-963a-c20c4dcb300f",
+      "published_artifact_count": 0,
+      "published_png_count": 0
+    },
+    {
+      "rollout": 39,
+      "case_id": "corpus-vizcsv-ec9b6239518a7b5e",
+      "raw": {
+        "case_id": "corpus-vizcsv-ec9b6239518a7b5e",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 16.74884162505623,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 39,
+        "case_id": "corpus-vizcsv-ec9b6239518a7b5e",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Suitable negative horizontal bars extend left from zero, preserving−986,−991,−1014,−1069 and their districts. Four labels/source pairings readable and final image plus exact table delivered. Arabic district heading is generic المنطقة, but source district identifier is retained in title and category names unaltered; no material loss of identity found. Reviewer pass supported; no repair.16.75s,8 requests.",
+        "images": [
+          {
+            "render_id": "99f1a0d468c6",
+            "sha256": "797436eeaeadfaaa70c235b0a254d3ff64cbcce7b5e48f0dcd003f84410b137f",
+            "phase": "initial_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acef8aa28fe8a4409b1571102172",
+      "lead_run_id": "01a0acef-8aa1-7610-9ae0-9d83e5d22613",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 40,
+      "case_id": "corpus-vizcsv-244e80ce1f6ea1e6",
+      "raw": {
+        "case_id": "corpus-vizcsv-244e80ce1f6ea1e6",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 82.72880154196173,
+        "requests": 14,
+        "diagnostics": [
+          "answer_fidelity_ok: failed",
+          "delivery_ok: failed",
+          "latency_ok: failed",
+          "review_ok: failed",
+          "Missing delivered image URL in the final reply.",
+          "Missing acceptable review evidence for the delivered artifact.",
+          "End-to-end latency 82.73s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 40,
+        "case_id": "corpus-vizcsv-244e80ce1f6ea1e6",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": true,
+        "unnecessary_repair": null,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "All85 city/type/count triples match both initial and final resolved render data exactly;17cities and five series are visible. Initial PNG3000×2100 and final PNG4800×2700 have separate readable legend entries when audited at native resolution. The initial overlap/unreadable finding is not reproduced at that resolution; the actual provider-resized image and UI viewport were not observed, so necessity of resizing remains uncertain. Final review falsely declares supplied cities absent based on only30 reference rows and misreads several labels; complete source and config prove all rendered cities are supplied. reviewer_false_rejection=true refers specifically to this verified final source-absence error, not a claim about all downsampled readability. Lead correctly rejects partial-reference finding but repeats initial overlap claim. Two design/render/review rounds; second design39.82s/2requests. Artifact published with correct PNG/HTML, but final reply omits image/artifact links or actual data table.82.73s/14requests. Contract also fails numeric-claim and review gates; raw scores unchanged. Publication-without-final-link, not nonexistent output.",
+        "images": [
+          {
+            "render_id": "952fef4ced3e",
+            "sha256": "33670a30ac562b64e78ee9482147e328eb933d54c1f311bcbe9d9a6e1fc4d07d",
+            "phase": "initial",
+            "verdict": "pass"
+          },
+          {
+            "render_id": "49fa408a5869",
+            "sha256": "5d72ff49a7b59a2729b78edaff990b6992928988ed7482253533ba4b9c751e9a",
+            "phase": "repair_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acefcc6cbda0bbd9f528a928763e",
+      "lead_run_id": "01a0acef-cc6b-7248-ba1f-4515ad72cada",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 41,
+      "case_id": "corpus-vizcsv-e384bfa45ac5ab8e",
+      "raw": {
+        "case_id": "corpus-vizcsv-e384bfa45ac5ab8e",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 120.00584741693456,
+        "requests": 7,
+        "diagnostics": [
+          "error: TimeoutError: evaluation turn exceeded 120s wall-clock deadline",
+          "answer_fidelity_ok: failed",
+          "delivery_ok: failed",
+          "latency_ok: failed",
+          "outcome_ok: failed",
+          "Missing substantive final reply.",
+          "Missing delivered image URL in the final reply.",
+          "End-to-end latency 120.01s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 41,
+        "case_id": "corpus-vizcsv-e384bfa45ac5ab8e",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Suitable complete8-row table with all four fields, distinct count/ratio roles, all source zeros, and correct regional identity. Numeric display rounds34.356258596973866 to34.36; ordinary presentation precision is not prohibited explicitly by this brief, but designer's claim that cells remain verbatim is overstrong. No extra percentage rescaling or cap at1/100. Reviewer pass supported for visible readability; it is not proof of exact-decimal presentation. One design/render/review and publication completed, with persisted PNG/HTML, before120.01s/7-request timeout. No final reply or link delivered. This failure is final-response latency/completion, not an infinite render loop.",
+        "images": [
+          {
+            "render_id": "07a9d6b827dd",
+            "sha256": "df523e6eae314ce5cbcf811c0d555963e47d1f174ebe6d09e5a0b2f55ee64df9",
+            "phase": "initial_and_final_published_without_reply",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acf10fe010a792ba9775eaa2a33a",
+      "lead_run_id": "01a0acf1-0fdf-7637-b817-0dc52ea32bc1",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 42,
+      "case_id": "corpus-vizcsv-44cfda42866aa5ae",
+      "raw": {
+        "case_id": "corpus-vizcsv-44cfda42866aa5ae",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 120.00585520802997,
+        "requests": 5,
+        "diagnostics": [
+          "error: TimeoutError: evaluation turn exceeded 120s wall-clock deadline",
+          "answer_fidelity_ok: failed",
+          "delivery_ok: failed",
+          "flow_ok: failed",
+          "latency_ok: failed",
+          "outcome_ok: failed",
+          "render_evidence_ok: failed",
+          "review_ok: failed",
+          "source_fidelity_ok: failed",
+          "visible_columns_ok: failed",
+          "Missing substantive final reply.",
+          "Missing delivered image URL in the final reply.",
+          "Missing persisted full-table source signature.",
+          "Missing matching persisted PNG evidence.",
+          "Missing acceptable review evidence for the delivered artifact.",
+          "End-to-end latency 120.01s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 42,
+        "case_id": "corpus-vizcsv-44cfda42866aa5ae",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "no_image",
+        "final_render_visual": "no_image",
+        "reviewer_false_rejection": null,
+        "unnecessary_repair": false,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Suitable chosen three-card indicator binds all three source fields75153,26812,35.68%; roles pass means saved spec only, no rendered fidelity assertion. First designer call timed out after45.0036s. Lead retry with use_fallback=true returned a fresh model design in8.444s; it set900×300 with long bilingual labels. Rendering failed with explicit technical feedback: indicator needs at least362px height. No PNG was retained, no visual reviewer ran, no publication or final reply. Whole case timed out120.01s/5recorded requests. Do not blame reviewer/imaginary visual loops; evidence supports designer timeout plus deterministic layout-height failure and uncompleted recovery.",
+        "images": []
+      },
+      "trace_id": "01a0acf2e4f0c12399278917fe12fbfb",
+      "lead_run_id": "01a0acf2-e4f0-77c6-ad8f-247045b9545d",
+      "published_artifact_count": 0,
+      "published_png_count": 0
+    },
+    {
+      "rollout": 43,
+      "case_id": "corpus-vizcsv-e6f74cc7f3324781",
+      "raw": {
+        "case_id": "corpus-vizcsv-e6f74cc7f3324781",
+        "contract_pass": true,
+        "strict_pass": false,
+        "seconds": 92.31222191709094,
+        "requests": 8,
+        "diagnostics": [
+          "latency_ok: failed",
+          "End-to-end latency 92.31s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 43,
+        "case_id": "corpus-vizcsv-e6f74cc7f3324781",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Suitable complete14-row table preserves city–district identity and worker counts; all14 rows and three Arabic headers are fully visible in1598×904 PNG. No scroll or clipping defect. Final image link and complete exact Markdown table delivered. One design/render/review, reviewerpass supported, no repair. Correct content/delivery despite92.31s/8requests (designer25.86s); contract_pass=true but strict latency gate fails60s SLA. Do not conflate slow single pass with a render loop.",
+        "images": [
+          {
+            "render_id": "cfe4743d34a6",
+            "sha256": "f67fcae96ebf621591de44b62b1553b0ba3eab7cb5777b38ef5da73e1ae9804a",
+            "phase": "initial_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acf4ba0e2adaba155c7cc27e12b8",
+      "lead_run_id": "01a0acf4-ba0d-76d1-bd73-9f7b23995a9f",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 44,
+      "case_id": "corpus-vizcsv-2075320dff9f6ebd",
+      "raw": {
+        "case_id": "corpus-vizcsv-2075320dff9f6ebd",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 120.00604962510988,
+        "requests": 7,
+        "diagnostics": [
+          "error: TimeoutError: evaluation turn exceeded 120s wall-clock deadline",
+          "answer_fidelity_ok: failed",
+          "delivery_ok: failed",
+          "flow_ok: failed",
+          "latency_ok: failed",
+          "outcome_ok: failed",
+          "render_evidence_ok: failed",
+          "review_ok: failed",
+          "source_fidelity_ok: failed",
+          "visible_columns_ok: failed",
+          "Missing substantive final reply.",
+          "Missing delivered image URL in the final reply.",
+          "Missing persisted full-table source signature.",
+          "Missing matching persisted PNG evidence.",
+          "Missing acceptable review evidence for the delivered artifact.",
+          "End-to-end latency 120.01s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 44,
+        "case_id": "corpus-vizcsv-2075320dff9f6ebd",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "no_image",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": null,
+        "unnecessary_repair": false,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Three separate indicator cards are suitable and retain5 returners,370783 total,source-rounded0.0% without recalculation or claiming zero returners. First800×300 design failed rendering: needs at least362px height. Lead's directed height-only repair to800×420 is justified; the sole retained PNG2400×1260 is complete, readable and faithful. first_render_visual=no_image means initial failed attempt; the retained image is the repaired preview. Two design/render attempts; designer durations2.60s and2.11s. No reviewer or publication before120.01s/7-request timeout, no final reply. Failure is technical sizing plus incomplete postrender progression, not false reviewer rejection.",
+        "images": [
+          {
+            "render_id": "ab85d6cd190a",
+            "sha256": "44060a2d72a07422bdb298cbed0c66aeda8d7c205ffbdad0e4f812f59d09d048",
+            "phase": "repair_only_unpublished",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acf622ec7f9bb8683ec1303f94f8",
+      "lead_run_id": "01a0acf6-22eb-7115-bb0d-0471c620089d",
+      "published_artifact_count": 0,
+      "published_png_count": 0
+    },
+    {
+      "rollout": 45,
+      "case_id": "corpus-vizcsv-57c25fcba38f1bb0",
+      "raw": {
+        "case_id": "corpus-vizcsv-57c25fcba38f1bb0",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 52.91950995894149,
+        "requests": 9,
+        "diagnostics": [
+          "delivery_ok: failed",
+          "Missing delivered image URL in the final reply."
+        ]
+      },
+      "audit": {
+        "rollout": 45,
+        "case_id": "corpus-vizcsv-57c25fcba38f1bb0",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Suitable single indicator card:420 foreign births,866 total,and48.5% are clearly labelled and fully readable in1380×1044 PNG. No total/subset pie or recomputation. One design/render/review (designer26.98s/2requests), reviewerpass supported. Published PNG/HTML exists and final prose correctly provides all three exact numeric values, but contains no image/artifact link; frozen graphic-delivery contract fails. This does not mean factual prose is incorrect or artifact nonexistent.52.92s/9requests; no repair.",
+        "images": [
+          {
+            "render_id": "e76108fd94dd",
+            "sha256": "a585c806e45127435f6242a39b9028e0f7dbfcfadc7f7748900d80e968adef38",
+            "phase": "initial_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acf7f7fdfe0dc55f86e11ded0ff3",
+      "lead_run_id": "01a0acf7-f7fc-72f6-a299-008d50ccea02",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 46,
+      "case_id": "corpus-vizcsv-a723f837bb1cd6a9",
+      "raw": {
+        "case_id": "corpus-vizcsv-a723f837bb1cd6a9",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 48.13604408293031,
+        "requests": 8,
+        "diagnostics": [
+          "review_ok: failed",
+          "Missing acceptable review evidence for the delivered artifact."
+        ]
+      },
+      "audit": {
+        "rollout": 46,
+        "case_id": "corpus-vizcsv-a723f837bb1cd6a9",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": true,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Suitable complete4-row table1394×304 preserves all university categories, two counts,and supplied percentages20.09,20.06,19.92,20.6% without stacking subset against total. Resolved render data exactly equals all source rows. All cells visible and readable. Reviewer returns revise/error while summary and detailed finding repeatedly state identical numbers and end 'all values match'; independent PNG/source inspection confirms contradiction and false rejection. Lead correctly publishes without a repair and delivers image plus accurate table; final explanation reflects finding conclusion, though structured review verdict remains revise. Raw contract fails review gate only, but independent content/graphic-delivery audit passes.48.14s/8requests, one design/render/review.",
+        "images": [
+          {
+            "render_id": "0465e27a6139",
+            "sha256": "acae5c3050fce78d7bee291f941eb77bd65197f6358f204a22336baca8bb128c",
+            "phase": "initial_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acf8c6fe0cd14e27c840f2f1bdac",
+      "lead_run_id": "01a0acf8-c6fd-71f1-a5f4-0731b2f2f4e3",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 47,
+      "case_id": "corpus-vizcsv-1ea76a97e400d852",
+      "raw": {
+        "case_id": "corpus-vizcsv-1ea76a97e400d852",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 30.250077041098848,
+        "requests": 8,
+        "diagnostics": [
+          "answer_fidelity_ok: failed",
+          "delivery_ok: failed",
+          "Missing delivered image URL in the final reply."
+        ]
+      },
+      "audit": {
+        "rollout": 47,
+        "case_id": "corpus-vizcsv-1ea76a97e400d852",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Suitable complete9-row table1598×604. Raw CSV months are1,2,3,4,5,9,10,11,12 (not contiguous1–9); original order/year2025/counts preserved exactly in config. Arabic month-name display mappings correctly match those calendar numbers. Image readable, no clipped rows or invented zero months. Final prose correctly states months6–8 are absent; numeric answer gate nevertheless fails, so that flag is not evidence of an invented numeric data claim. Published PNG/HTML exists, but final reply omits image/artifact link and data values; end-to-end graphic-delivery failure.30.25s/8requests, one design/render/review, no repair.",
+        "images": [
+          {
+            "render_id": "b17eca79e6b2",
+            "sha256": "f4d37e705d15108ea8194dbc5356e6f20eccf26dbba4f2ff85fe8f3d823e3cc0",
+            "phase": "initial_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acf9834e3064e28438cb61ff35d8",
+      "lead_run_id": "01a0acf9-834d-70a3-8b71-1c4021a3dc5f",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 48,
+      "case_id": "corpus-vizcsv-20d73400a693d49f",
+      "raw": {
+        "case_id": "corpus-vizcsv-20d73400a693d49f",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 93.76165016693994,
+        "requests": 15,
+        "diagnostics": [
+          "answer_fidelity_ok: failed",
+          "latency_ok: failed",
+          "repetition_ok: failed",
+          "review_ok: failed",
+          "Missing acceptable review evidence for the delivered artifact.",
+          "End-to-end latency 93.76s exceeds 60s."
+        ]
+      },
+      "audit": {
+        "rollout": 48,
+        "case_id": "corpus-vizcsv-20d73400a693d49f",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "fail",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": true,
+        "unnecessary_repair": true,
+        "final_delivery": true,
+        "task_correct": "uncertain",
+        "notes": "Two2400×1350 PNGs: initial genuine defect labels population axis0.0%–800.0%; first reviewer correctly flags it. Removing global percent format produces correct count-left/percent-right axes with exact eight source category/value pairs. Final source_roles_faithful refers to repaired spec; initial unit encoding failed. Native and resized-to2048 review of final PNG shows eight distinct correctly ordered regions, no duplicated الجوف, so second reviewer rejection is false. Lead then calls capabilities and attempts a third design to switch to table; framework blocks it at repair limit. unnecessary_repair=true refers to this unnecessary attempted extra repair, not the justified first repair. Image plus exact eight-row table delivered. Final response transparently reports inspector's duplicate-label allegation but also characterizes it as an RTL defect not supported by saved image; task_correct is uncertain for this inherited unsupported quality caveat, not for numeric data or diagram fidelity.93.76s/15requests; raw contract fails review/numeric/repetition and strict latency. No claim that a reviewer-resized image or UI viewport was inspected.",
+        "images": [
+          {
+            "render_id": "405bed738a35",
+            "sha256": "9d9a6f805e2e6a659651a1015b6d0d9320d026be6df044a5cec9fe5402d18ad0",
+            "phase": "initial",
+            "verdict": "fail"
+          },
+          {
+            "render_id": "9af84d41c184",
+            "sha256": "9ab63c9e47e34279198e55bf4c148d62e13739c3afd2ae7d3fd76effa1ca3a81",
+            "phase": "repair_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acf9f9c20cb4fd4f271751ea9978",
+      "lead_run_id": "01a0acf9-f9c2-70ef-b8c7-7e49278a566f",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 49,
+      "case_id": "corpus-vizcsv-a25bc59748f9842d",
+      "raw": {
+        "case_id": "corpus-vizcsv-a25bc59748f9842d",
+        "contract_pass": false,
+        "strict_pass": false,
+        "seconds": 27.83247266698163,
+        "requests": 15,
+        "diagnostics": [
+          "answer_fidelity_ok: failed",
+          "delivery_ok: failed",
+          "repetition_ok: failed",
+          "Missing delivered image URL in the final reply."
+        ]
+      },
+      "audit": {
+        "rollout": 49,
+        "case_id": "corpus-vizcsv-a25bc59748f9842d",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "fail",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": true,
+        "unnecessary_repair": false,
+        "final_delivery": false,
+        "task_correct": "fail",
+        "notes": "Both1380×1044 indicators faithfully show0.14%,11,and7680. Initial graphic's English title/labels fail the explicit Arabic-label direction; final repair fixes localization and is useful. Lead first attempted that metadata-visible localization correction before review, but the harness blocked it until an inspector error. Reviewer then falsely demanded0.14% be changed to14.00%, contradicting the brief's already-percent units; lead correctly preserves0.14 and repairs Arabic text. unnecessary_repair=false refers to the executed localization repair, not approval of review's percent-rescaling claim; extra rejected design call is workflow overhead. Published correct PNG/HTML exists; final accurate one-row table has no image/artifact link. Numeric gate also flags answer that explicitly rejects14.00%, not an invented asserted data value.27.83s/15requests. Graphic-delivery task failure does not invalidate truthful textual values.",
+        "images": [
+          {
+            "render_id": "7d7f3f5f36ca",
+            "sha256": "d5a6ed7474057041309d362fbdefc8f2aed774d65643eeda186cec64d96c69c5",
+            "phase": "initial",
+            "verdict": "fail"
+          },
+          {
+            "render_id": "90d770c07e2c",
+            "sha256": "22064f12c602fa89d3ecb8fa43ae4106b7d2ceed4989549ab2b9ab117f9104da",
+            "phase": "repair_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acfb684d022d14c2be19485ceabe",
+      "lead_run_id": "01a0acfb-684c-7027-981a-735843a738f6",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    },
+    {
+      "rollout": 50,
+      "case_id": "corpus-vizcsv-ffcc0df19d7c2f61",
+      "raw": {
+        "case_id": "corpus-vizcsv-ffcc0df19d7c2f61",
+        "contract_pass": true,
+        "strict_pass": true,
+        "seconds": 12.487559291999787,
+        "requests": 8,
+        "diagnostics": []
+      },
+      "audit": {
+        "rollout": 50,
+        "case_id": "corpus-vizcsv-ffcc0df19d7c2f61",
+        "task_type": "chart",
+        "chart_suitable": "pass",
+        "source_roles_faithful": "pass",
+        "first_render_visual": "pass",
+        "final_render_visual": "pass",
+        "reviewer_false_rejection": false,
+        "unnecessary_repair": false,
+        "final_delivery": true,
+        "task_correct": "pass",
+        "notes": "Suitable horizontal bar2400×1350 preserves all ten job-title/count pairs in source order. All labels/counts readable, truthful zero baseline, no invented unit or grouped occupations. Complete exact final table and image link delivered. One design/render/review with supported reviewerpass;12.49s/8requests, no repair. Independent agent audit pass, not human gold.",
+        "images": [
+          {
+            "render_id": "919145358790",
+            "sha256": "fb4ffa618eb5bd5bd26dc1b80b306ff2f4dcf38daa4f3397d0cce88617aa2425",
+            "phase": "initial_and_final",
+            "verdict": "pass"
+          }
+        ]
+      },
+      "trace_id": "01a0acfbd54f3e5578114005d9449710",
+      "lead_run_id": "01a0acfb-d54e-75bb-8163-5e458ffef444",
+      "published_artifact_count": 1,
+      "published_png_count": 1
+    }
+  ]
+}

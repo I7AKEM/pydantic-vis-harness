@@ -66,7 +66,11 @@ def analyst_drive(messages, info):
 
 
 def designer_drive(messages, info):
-    return call("deliver_design", spec=CHART_SPEC, explanation="Bars compare the supplied regional sales.")
+    prompt = prompt_of(messages)
+    spec = CHART_SPEC
+    if (prompt.get("previous") or {}).get("spec"):
+        spec += "palette\n  - #0F6CBD\n"
+    return call("deliver_design", spec=spec, explanation="Bars compare the supplied regional sales.")
 
 
 def reviewer_pass(messages, info):
@@ -76,7 +80,9 @@ def reviewer_pass(messages, info):
 def reviewer_finding(rule="R-5", level="error", owner="designer", message="The title is hard to read."):
     def drive(messages, info):
         return call("deliver_review", summary="Improve the title.", findings=[
-            {"rule": rule, "level": level, "owner": owner, "message": message},
+            {"rule": rule, "level": level, "owner": owner, "location": "Title or label region",
+             "observed": message, "expected": "Meaning-bearing text is legible and correctly paired.",
+             "reference": {"kind": "image"}},
         ])
     return drive
 
@@ -103,6 +109,10 @@ def lead_drive(deps):
         if context.get("artifact_id") or returned[-1].tool_name == "publish_visualization":
             return finish()
         if (context.get("render") or {}).get("png_url"):
+            if not context.get("review"):
+                return call("review_visualization", request_id=request_id)
+            return call("publish_visualization", request_id=request_id)
+        if returned[-1].tool_name == "review_visualization":
             return call("publish_visualization", request_id=request_id)
         if (context.get("design") or {}).get("design"):
             return call("render_visualization", request_id=request_id)

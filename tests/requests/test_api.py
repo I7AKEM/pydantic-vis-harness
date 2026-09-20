@@ -153,6 +153,8 @@ def test_a_program_question_that_draws_is_recorded_as_the_programs(app, deps, ag
         if returns[-1].tool_name == "design_visualization":
             return ModelResponse(parts=[ToolCallPart(tool_name="render_visualization", args={"request_id": request_id})])
         if returns[-1].tool_name == "render_visualization":
+            return ModelResponse(parts=[ToolCallPart(tool_name="review_visualization", args={"request_id": request_id})])
+        if returns[-1].tool_name == "review_visualization":
             return ModelResponse(parts=[ToolCallPart(tool_name="publish_visualization", args={"request_id": request_id})])
         return ModelResponse(parts=[TextPart(content=context["card"])])
 

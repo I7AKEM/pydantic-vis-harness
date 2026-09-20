@@ -27,6 +27,12 @@ TRENDS = {"line", "multi_line", "area", "stacked_area"}
 MEASURES = {"value", "value2", "x", "y"}
 WITHOUT_AXES = {"pie", "donut", "treemap", "radar", "word_cloud", "table", "indicator"}
 SINGLE_SERIES = {"column", "bar", "line", "area", "scatter", "histogram", "boxplot"}
+# Pinned S2 TableSheet: 30px header/rows, 2px header border and 6px
+# scrollbar reservation. Its SSR autoFit crops blank space; it cannot expand
+# the viewport to include hidden rows. Static PNGs must not need scrolling.
+TABLE_ROW_HEIGHT = 30
+TABLE_HEADER_AND_FRAME_HEIGHT = 38
+MAX_TABLE_HEIGHT = 2400
 ISO_DATE_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?", re.ASCII)
 GREGORIAN_ISO = re.compile(
     r"(?:1[6-9]|2\d)\d{2}(?:-\d{2}(?:-\d{2})?)?(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?", re.ASCII,
@@ -257,6 +263,21 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
                   "background": spec.background_color, "accent": spec.palette[0] if spec.palette else None}
         return Resolved(config, {}, number, [], 1, 0, 0, width, height)
     if spec.type == "table":
+        required_height = TABLE_HEADER_AND_FRAME_HEIGHT + TABLE_ROW_HEIGHT * len(result.rows)
+        if required_height > MAX_TABLE_HEIGHT:
+            raise ResolveError(
+                f"The complete {len(result.rows)}-row table needs {required_height}px height, exceeding the "
+                f"{MAX_TABLE_HEIGHT}px static-table limit. No rows were sampled or omitted. "
+                "Deliver the complete source table without a PNG, or explicitly request a smaller table."
+            )
+        if spec.height is None:
+            height = max(height, required_height)
+        elif height < required_height or height > MAX_TABLE_HEIGHT:
+            raise ResolveError(
+                f"height {height} cannot faithfully render the complete {len(result.rows)}-row static table. "
+                f"Omit height for automatic sizing, or use height {required_height}–{MAX_TABLE_HEIGHT}; "
+                "a PNG cannot scroll to hidden rows."
+            )
         table_columns = [by_name[name] for name in result.columns]
         headers = [spec.column_labels.get(column.name, column.meaning.strip() or column.name)
                    for column in table_columns]
@@ -293,7 +314,9 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
             labels.update(_shorten_time(records, role))
         if role not in MEASURES:
             labels.update(spec.value_labels.get(column.name, {}))
-        if role == "group" and folded_labels:
+        if folded_labels and column.name == folded.series:
+            # A single-row comparison can also bind the generated series column
+            # as category. Its source column labels must localize both surfaces.
             labels.update(folded_labels)
         if role not in MEASURES:
             display["fields"][entry.fields[role]] = labels
@@ -412,6 +435,8 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     elif spec.labels == "on":
         if spec.type in BARS | COLUMNS | {"pie", "donut", "scatter", "histogram", "boxplot", "treemap", "word_cloud"}:
             field = "y" if spec.type == "scatter" else "value"
+            # An enable fallback, not a replacement for the package's placement
+            # and collision handling. The adapter retains existing label options.
             overrides["labels"] = [{"text": field}]
         else:
             compromises.append(Compromise(

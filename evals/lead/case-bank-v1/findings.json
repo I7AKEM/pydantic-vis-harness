@@ -1,0 +1,215 @@
+[
+  {
+    "id": "labels-on-replaces-library-defaults",
+    "owner": "renderer_adapter",
+    "observation": "An explicit labels-on override replaced the package labels array. A same-data/same-size replay omitting only this option restored readable outside donut labels.",
+    "acceptance": [
+      "Enabling labels must retain applicable library layout/overlap defaults.",
+      "Meaning-bearing donut labels are readable; CSV values and units are unchanged."
+    ],
+    "evidence": [
+      "evals/lead/labels-on-probe/README.md",
+      "evals/lead/labels-on-probe/labels-omitted/chart.png",
+      "evals/lead/results-parallel20-production-v3-visual-audit.md"
+    ],
+    "optimization_use": "Fix/test deterministic harness behavior before prompt optimization.",
+    "case_names": [
+      "corpus-vizcsv-6eff7ae46ebb4edf"
+    ],
+    "status": "agent_audited",
+    "human_adjudication": false,
+    "fix_status": "not_changed_by_case_bank"
+  },
+  {
+    "id": "repair-blocked-by-finding-owner",
+    "owner": "harness_flow",
+    "observation": "Renderer-owned findings blocked supported designer presentation repairs. Repeated attempts, publication and revision exhausted the shared model budget in retained cases.",
+    "acceptance": [
+      "A supported presentation repair is not blocked solely because the finding owner is renderer.",
+      "Control returns to the lead with actionable diagnostics; unchanged repair cycles cannot masquerade as progress.",
+      "Framework resource limits remain enforced and the final outcome is explicit."
+    ],
+    "evidence": [
+      "evals/lead/results-parallel20-glm-production-v3-audit.md"
+    ],
+    "optimization_use": "Harness regression first; do not teach the model to circumvent the repair gate.",
+    "case_names": [
+      "corpus-vizcsv-6eff7ae46ebb4edf",
+      "corpus-vizcsv-c76808cc7a78dac8",
+      "corpus-vizcsv-61793ff199102633"
+    ],
+    "status": "agent_audited",
+    "human_adjudication": false,
+    "fix_status": "not_changed_by_case_bank"
+  },
+  {
+    "id": "correct-table-rejected",
+    "owner": "reviewer",
+    "observation": "Both arms rendered all 17 region/city rows with correct headers. False header-swap or RTL-order findings discarded valid PNGs.",
+    "acceptance": [
+      "Reject only an evidenced header/value mismatch, not correct RTL presentation.",
+      "Check accessible content separately from the visible viewport; scrollbar cropping alone is not a defect.",
+      "This specific static PNG must contain all 17 rows under the correct headers."
+    ],
+    "evidence": [
+      "evals/lead/results-parallel20-production-v3-visual-audit.md",
+      "evals/lead/results-parallel20-glm-production-v3-audit.md",
+      "evals/lead/results-parallel20-claude-production-v3-audit.md"
+    ],
+    "optimization_use": "Candidate reviewer calibration after adjudication; raw revise verdict is not a gold label.",
+    "case_names": [
+      "corpus-vizcsv-ba0187c944a3f829"
+    ],
+    "status": "agent_audited",
+    "human_adjudication": false,
+    "fix_status": "not_changed_by_case_bank"
+  },
+  {
+    "id": "self-retracted-error-findings",
+    "owner": "reviewer",
+    "observation": "Some findings remained structured errors while their prose retracted the alleged mismatch or explicitly said the values were correct.",
+    "acceptance": [
+      "Verdict, severity and evidence must agree; a retracted claim is not an actionable error.",
+      "Check the actual image/data pairing before deciding pass or revise.",
+      "The lead must not claim a review passed when its saved state is revise."
+    ],
+    "evidence": [
+      "evals/lead/results-parallel20-glm-production-v3-audit.md",
+      "evals/lead/results-parallel20-claude-production-v3-audit.md",
+      "evals/lead/results-parallel20-production-v3-visual-audit.md"
+    ],
+    "optimization_use": "Review-output consistency and evidence calibration, not blind verdict imitation.",
+    "case_names": [
+      "corpus-vizcsv-6eff7ae46ebb4edf",
+      "corpus-vizcsv-9e75e9ae40758227",
+      "corpus-vizcsv-45980b90faceca07"
+    ],
+    "status": "agent_audited",
+    "human_adjudication": false,
+    "fix_status": "not_changed_by_case_bank"
+  },
+  {
+    "id": "rtl-order-false-positive",
+    "owner": "reviewer",
+    "observation": "Correct RTL bars show 6,5,4,4,4. Two GLM PNGs are byte-identical; an alleged ascending-order issue drove redundant work.",
+    "acceptance": [
+      "Interpret order using the declared direction and value/category bindings.",
+      "Do not request an identical redraw for a nonexistent ordering defect."
+    ],
+    "evidence": [
+      "evals/lead/results-parallel20-production-v3-visual-audit.md",
+      "evals/lead/results-parallel20-glm-production-v3-audit.md"
+    ],
+    "optimization_use": "Candidate negative example for unsupported visual findings.",
+    "case_names": [
+      "corpus-vizcsv-2bc0cfa90c65f142"
+    ],
+    "status": "agent_audited",
+    "human_adjudication": false,
+    "fix_status": "not_changed_by_case_bank"
+  },
+  {
+    "id": "unsupported-code-meaning",
+    "owner": "lead_semantics",
+    "observation": "The GLM chart retained F/M, but the final prose decoded them without a codebook despite the handoff. Numeric checks alone did not catch this.",
+    "acceptance": [
+      "Keep F/M literal unless code_meanings explicitly defines them.",
+      "Check final prose for unsupported semantic claims as well as numeric fidelity."
+    ],
+    "evidence": [
+      "evals/lead/results-parallel20-production-v3-visual-audit.md"
+    ],
+    "optimization_use": "Lead semantic-fidelity regression; not a renderer defect.",
+    "case_names": [
+      "corpus-vizcsv-2177430e3e44a9a3"
+    ],
+    "status": "agent_audited",
+    "human_adjudication": false,
+    "fix_status": "not_changed_by_case_bank"
+  },
+  {
+    "id": "digits-in-column-name-not-invented-measure",
+    "owner": "evaluator",
+    "observation": "The literal column name count_under_30 triggered an invented-number rejection although counts and percentages in this retained reply were correct.",
+    "acceptance": [
+      "Treat literal column identifiers as context, not newly asserted data values.",
+      "Continue rejecting actual invented numeric claims.",
+      "Keep historical raw scores unchanged and write any correction as a separate rescore."
+    ],
+    "evidence": [
+      "evals/lead/results-parallel20-glm-production-v3-audit.md",
+      "evals/lead/results-parallel20-production-v3-visual-audit.md"
+    ],
+    "optimization_use": "Fix the metric before using it as a DSPy reward.",
+    "case_names": [
+      "corpus-vizcsv-2571f37808cda8e2"
+    ],
+    "status": "agent_audited",
+    "human_adjudication": false,
+    "fix_status": "not_changed_by_case_bank"
+  },
+  {
+    "id": "short-bar-label-overlap",
+    "owner": "chart_presentation",
+    "observation": "The GLM PNG has genuine short population-bar labels colliding with city labels; the Claude PNG on the same source is readable.",
+    "acceptance": [
+      "Category text and visible value labels do not collide.",
+      "A supported labels-off presentation is acceptable if values remain accessible and series/units remain identifiable.",
+      "Preserve the complete source; never fabricate or aggregate the count/rate fields."
+    ],
+    "evidence": [
+      "evals/lead/results-parallel20-production-v3-visual-audit.md"
+    ],
+    "optimization_use": "Chart presentation regression, with source correctness scored separately.",
+    "case_names": [
+      "corpus-vizcsv-c76808cc7a78dac8"
+    ],
+    "status": "agent_audited",
+    "human_adjudication": false,
+    "fix_status": "not_changed_by_case_bank"
+  },
+  {
+    "id": "lead-latency-after-correct-render",
+    "owner": "lead_or_provider",
+    "observation": "Correct Claude-arm charts exceeded the 60-second SLA. Stage evidence attributes substantial waiting to the shared GLM lead/provider, including a 92.81-second tool-return-to-final gap after publication in one case.",
+    "acceptance": [
+      "Measure end-to-end delivered reply latency, not rendering time alone.",
+      "Do not label shared-lead waiting as a Claude designer failure.",
+      "Compare repeated matched runtime runs before attributing a latency improvement to a prompt."
+    ],
+    "evidence": [
+      "evals/lead/results-parallel20-claude-production-v3-audit.md",
+      "evals/lead/results-parallel20-production-v3-visual-audit.md"
+    ],
+    "optimization_use": "Full-runtime metric and latency diagnostics, not first-action proxy scoring.",
+    "case_names": [
+      "corpus-vizcsv-39471b0e4a5d3fc5",
+      "corpus-vizcsv-ae315d3da67a2d11",
+      "corpus-vizcsv-2bc0cfa90c65f142"
+    ],
+    "status": "agent_audited",
+    "human_adjudication": false,
+    "fix_status": "not_changed_by_case_bank"
+  },
+  {
+    "id": "lead-timeout-before-designer",
+    "owner": "lead_or_provider",
+    "observation": "The Claude-arm male-count-zero case timed out in the GLM lead before any designer call, with no rendered image.",
+    "acceptance": [
+      "A no-image timeout cannot pass visual quality or count as a completed chart.",
+      "Attribute a failure to the stage actually called; preserve its attempted outcome in the denominator.",
+      "Keep the bounded watchdog and do not retry indefinitely."
+    ],
+    "evidence": [
+      "evals/lead/results-parallel20-claude-production-v3-audit.md",
+      "evals/lead/results-parallel20-production-v3-visual-audit.md"
+    ],
+    "optimization_use": "Runtime failure/timeout regression; not a Claude chart-design label.",
+    "case_names": [
+      "corpus-vizcsv-97280400c00748a7"
+    ],
+    "status": "agent_audited",
+    "human_adjudication": false,
+    "fix_status": "not_changed_by_case_bank"
+  }
+]

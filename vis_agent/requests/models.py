@@ -89,6 +89,10 @@ class Request(BaseModel):
     requests_used: int = 0
     analyst_attempts: int = 0
     analyst_failure: str | None = None
+    design_attempts: int = 0
+    render_attempts: int = 0
+    visual_repair_attempts: int = 0
+    visual_repair_directions: list[str] = Field(default_factory=list)
     revision: AnalysisRevision | None = None
     rounds: list[Round] = Field(default_factory=list)
     review_feedback: ReviewRound | None = None

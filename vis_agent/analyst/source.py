@@ -17,6 +17,10 @@ SOURCE_ROW_CAP = 10_000
 TIME_NAME = re.compile(r"(^|[_\s])(year|month|date|period|hijri|سنة|السنة|عام|العام|شهر|الشهر|تاريخ|التاريخ|هجري)($|[_\s])", re.I)
 
 
+class SourceUnavailable(ValueError):
+    """A deterministic source/renderer boundary; repeating a model call cannot fix it."""
+
+
 @dataclass
 class SourceTable:
     source: UploadedDataset
@@ -103,12 +107,16 @@ def load_csv_report(
     prepared = prepare_csv_source(store, dataset_id, brief)
     brief = brief or prepared.source.brief
     if prepared.row_count > SOURCE_ROW_CAP:
-        raise ValueError(
+        raise SourceUnavailable(
             f"The supplied CSV has {prepared.row_count} rows; the direct renderer supports at most {SOURCE_ROW_CAP}. "
             "No rows were sampled or aggregated. A smaller selection requires an explicit request."
         )
     if not prepared.columns:
-        raise ValueError("The CSV has no columns that can be sent to the visualization team.")
+        raise SourceUnavailable(
+            "The CSV has no safe renderable columns: all columns contain geometry or oversized values. "
+            "This renderer cannot draw raw WKT/geometry. Values were kept local; no rows were sampled. "
+            "Do not retry design, profiling, or analysis for this renderer limitation."
+        )
     metadata = prepared.columns
     overrides = {column.name: column for column in columns or []}
     if len(overrides) != len(columns or []):

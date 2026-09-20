@@ -1,0 +1,53 @@
+{
+  "gptvis": {
+    "type": "spreadsheet",
+    "data": [
+      {
+        "sample": "Amber",
+        "reading": 0.42
+      },
+      {
+        "sample": "Dune",
+        "reading": 0.58
+      },
+      {
+        "sample": "Ember",
+        "reading": 0.74
+      }
+    ],
+    "columns": [
+      "sample",
+      "reading"
+    ],
+    "width": 960,
+    "height": 640
+  },
+  "overrides": {},
+  "number": {
+    "thousands": true,
+    "decimals": null,
+    "compact": false,
+    "unit": null,
+    "digits": "western"
+  },
+  "g2": null,
+  "number2": null,
+  "tableFormats": {
+    "reading": {
+      "thousands": true,
+      "decimals": null,
+      "compact": false,
+      "unit": "mS",
+      "digits": "western"
+    }
+  },
+  "display": {
+    "fields": {},
+    "columns": {
+      "sample": "Alloy sample",
+      "reading": "Conductance (mS)"
+    },
+    "timeFields": []
+  },
+  "functionPaths": []
+}

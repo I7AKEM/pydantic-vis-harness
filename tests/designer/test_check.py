@@ -45,6 +45,21 @@ def test_runtime_color_check_rejects_non_hex_before_rendering():
     assert not checked.ok and [violation.rule for violation in checked.violations] == ["color_hex"]
 
 
+def test_runtime_rejects_inner_radius_percentage_before_resolution_without_policy_checks():
+    from vis_agent.designer.check import check_render_spec
+
+    text = COLUMN.replace("vis column", "vis donut") + "innerRadius 60\n"
+    checked = check_render_spec(text, *cities())
+    assert not checked.ok and checked.canonical is None
+    assert [(violation.rule, violation.line) for violation in checked.violations] == [("syntax", 7)]
+    assert "innerRadius must be a finite ratio" in checked.violations[0].message
+    assert "0.6" in checked.violations[0].message
+    assert checked.violations[0].fix
+
+    valid = check_render_spec(text.replace("innerRadius 60", "innerRadius 0.6"), *cities())
+    assert valid.ok and parse(valid.canonical).inner_radius == 0.6
+
+
 def test_syntax_error_stops_before_semantic_checks():
     text = COLUMN.replace("category city", "category missing") + "unsupported x\ninnerRadius 0.5\n"
     check = check_spec(text, *cities())
@@ -67,6 +82,18 @@ def test_missing_type_is_a_syntax_error_on_line_one():
     check = check_spec("title x\n", *cities())
     assert [(v.rule, v.line) for v in check.violations] == [("syntax", 1)]
     assert not check.ok and check.canonical is None
+
+
+def test_fold_missing_category_diagnostic_does_not_suggest_another_fold():
+    from vis_agent.designer.check import check_render_spec
+
+    columns = [column("female_pct", "share", unit="%"), column("male_pct", "share", unit="%")]
+    result = table(columns, [[19.94, 20.02]])
+    checked = check_render_spec("vis grouped_bar\nfold\n  - female_pct\n  - male_pct\n", columns, result)
+    missing = next(item for item in checked.violations if "Required role 'category'" in item.message)
+    assert "fold automatically binds only group and value" in missing.fix
+    assert "indicator cards or a table" in missing.fix
+    assert "or use fold" not in missing.fix
 
 
 def test_all_parse_issues_keep_their_line_numbers():
@@ -321,6 +348,7 @@ def test_percent_change_measure_with_percent_unit_has_no_false_share_warning():
 ])
 def test_c18_sort_requires_bound_role(chart, bindings, builder, sort):
     from . import conftest
+    from vis_agent.designer.check import check_render_spec
     from vis_agent.designer.resolve import ResolveError, resolve
 
     data = getattr(conftest, builder)()
@@ -332,6 +360,9 @@ def test_c18_sort_requires_bound_role(chart, bindings, builder, sort):
     assert check_spec(text, *data).ok
     assert resolve(parse(text), *data).drawn_rows > 0
     assert check_spec(COLUMN + f"sort {sort}\n", *cities()).ok
+    runtime = check_render_spec(text + f"sort {sort}\n", *data)
+    assert runtime.ok and f"sort {sort}" not in runtime.canonical
+    assert any(item.key == "sort" for item in runtime.compromises)
 
 
 @pytest.mark.parametrize("limit,ok", [(0, False), (-2, False), (1, True)])

@@ -8,6 +8,23 @@ from pydantic import BaseModel
 from vis_agent.designer.models import ChartType, Compromise
 
 
+MAX_RENDER_ERROR_CHARS = 800
+
+
+def concise_render_error(value: object, *, limit: int = MAX_RENDER_ERROR_CHARS) -> str:
+    """Bound Node diagnostics so minified bundles do not enter the agent context."""
+    text = str(value).replace("\x00", "").strip()
+    if not text:
+        return "renderer failed without an error message"
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    exception_prefixes = ("Error", "TypeError", "RangeError", "ReferenceError", "SyntaxError")
+    diagnostic = next((line for line in lines if line.startswith(exception_prefixes)), lines[0])
+    if len(diagnostic) > limit:
+        diagnostic = diagnostic[: limit - 1].rstrip() + "…"
+    omitted = len(text) - len(diagnostic)
+    return diagnostic + (f" [renderer detail omitted: {omitted} chars]" if omitted > 0 else "")
+
+
 class Capability(BaseModel):
     honoured: set[str]
     degraded: dict[str, str]
@@ -36,6 +53,9 @@ class RendererUnavailable(Exception):
 
 class RenderFailed(Exception):
     """The renderer could not produce the requested output."""
+
+    def __init__(self, message: object):
+        super().__init__(concise_render_error(message))
 
 
 RENDERERS: dict[str, Callable[[ChartType], Capability]] = {}

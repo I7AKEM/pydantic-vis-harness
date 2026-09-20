@@ -26,7 +26,7 @@ from vis_agent.reviewer.agent import DEFAULT_REVIEWER_MODEL, create_reviewer
 from vis_agent.store import DatasetStore
 
 CHAT_UI_SDK_VERSION = 7  # what the bundled chat UI speaks: pydantic_ai.ui._web.api.BUNDLED_UI_SDK_VERSION
-DEFAULT_LEAD_MODEL = "openrouter:z-ai/glm-5.3-flash"
+DEFAULT_LEAD_MODEL = "openrouter:z-ai/glm-5.3"
 
 
 @dataclass
@@ -46,7 +46,7 @@ class Team:
         return model if isinstance(model, str) else model.model_id
 
 
-def openrouter_team(store: DatasetStore, requests: RequestStore) -> Team:
+def openrouter_team(store: DatasetStore, requests: RequestStore, *, lead_instructions: str | None = None) -> Team:
     """A thinking lead manages fast specialists; each model can be overridden independently."""
     model_name = os.getenv("PYDANTIC_AI_MODEL") or DEFAULT_LEAD_MODEL
     model = OpenRouterModel(model_name.removeprefix("openrouter:"))
@@ -70,11 +70,12 @@ def openrouter_team(store: DatasetStore, requests: RequestStore) -> Team:
     lead = create_lead(
         model,
         advisor_model=os.getenv("PYDANTIC_AI_ADVISOR_MODEL") or None,
+        **({"instructions": lead_instructions} if lead_instructions is not None else {}),
         model_settings=OpenRouterModelSettings(
             openrouter_reasoning=TypeAdapter(OpenRouterReasoning).validate_python(
                 {"effort": os.getenv("PYDANTIC_AI_LEAD_REASONING_EFFORT") or "low"}
             ),
-            openrouter_provider={"sort": "latency", "require_parameters": True},
+            openrouter_provider={"require_parameters": True},
         ),
     )
     deps.lead = lead
@@ -89,7 +90,7 @@ def litellm_model(name: str | None = None) -> OpenAIChatModel:
     )
 
 
-def litellm_team(store: DatasetStore, requests: RequestStore) -> Team:
+def litellm_team(store: DatasetStore, requests: RequestStore, *, lead_instructions: str | None = None) -> Team:
     """Use configured proxy models. The lead may explicitly choose the alternate designer or reviewer."""
     model = litellm_model()
     reviewer_model = os.getenv("LITELLM_REVIEWER_MODEL") or "Qwen/Qwen3.8-27B"
@@ -102,18 +103,19 @@ def litellm_team(store: DatasetStore, requests: RequestStore) -> Team:
         designer_fallback=create_designer(model),
         reviewer=create_reviewer(litellm_model(reviewer_model)),
     )
-    lead = create_lead(model)
+    lead = create_lead(model, **({"instructions": lead_instructions} if lead_instructions is not None else {}))
     deps.lead = lead
     return Team("LiteLLM", lead, deps)
 
 
-def teams_from_env(store: DatasetStore, requests: RequestStore) -> list[Team]:
+def teams_from_env(store: DatasetStore, requests: RequestStore, *, lead_instructions: str | None = None) -> list[Team]:
     """OpenRouter leads by default when configured; the first team also serves the agent channel."""
     teams: list[Team] = []
+    options = {"lead_instructions": lead_instructions} if lead_instructions is not None else {}
     if os.getenv("OPENROUTER_API_KEY"):
-        teams.append(openrouter_team(store, requests))
+        teams.append(openrouter_team(store, requests, **options))
     if os.getenv("LITELLM_BASE_URL"):
-        teams.append(litellm_team(store, requests))
+        teams.append(litellm_team(store, requests, **options))
     if not teams:
         raise RuntimeError(
             "No provider is configured: set LITELLM_BASE_URL with LOCAL_LLM and LITELLM_TOKEN, or OPENROUTER_API_KEY."

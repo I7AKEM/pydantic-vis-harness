@@ -1,0 +1,246 @@
+{
+  "id": "indicator_value_clean",
+  "family": "indicator_value",
+  "proposed_label": "pass",
+  "construction": "Faithful rendering of the reference.",
+  "reference": {
+    "report": {
+      "dataset_id": "synthetic_energy_batch",
+      "question": "Show the energy consumed by Batch Z, exactly as supplied in kWh.",
+      "language": "English",
+      "brief_fingerprint": null,
+      "analysis": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          {
+            "name": "batch",
+            "meaning": "Batch",
+            "kind": "category",
+            "unit": null,
+            "source": "batch",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "energy",
+            "meaning": "Energy consumed",
+            "kind": "measure",
+            "unit": "kWh",
+            "source": "energy",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          }
+        ],
+        "summary": "Supplied synthetic measurements.",
+        "assumptions": []
+      },
+      "clarification": null,
+      "result": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          "batch",
+          "energy"
+        ],
+        "types": [
+          "VARCHAR",
+          "DOUBLE"
+        ],
+        "rows": [
+          [
+            "Batch Z",
+            88
+          ]
+        ],
+        "row_count": 1,
+        "checks": [],
+        "seconds": 0.0
+      },
+      "checks": [],
+      "warnings": [],
+      "model": null,
+      "seconds": 0.0,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "design": {
+      "spec": "vis indicator\ntitle Energy consumed\ndescription Supplied batch energy\nwidth 960\nheight 480\ncards\n  - value energy\n    context batch\n",
+      "chart": "indicator",
+      "intent": null,
+      "explanation": "Direct presentation of the supplied values.",
+      "considered": [
+        "indicator"
+      ],
+      "compromises": []
+    },
+    "brief": {
+      "source": null,
+      "query": null,
+      "pulled_at": null,
+      "raw_question": "Show the energy consumed by Batch Z, exactly as supplied in kWh.",
+      "enriched_question": null,
+      "intent": null,
+      "suggested_chart_type": null,
+      "column_descriptions": {},
+      "units": {},
+      "code_meanings": {},
+      "display_labels": {},
+      "caveats": [
+        "Synthetic prepared values; preserve their exact meanings and units."
+      ],
+      "brand_colors": [],
+      "producer_agent": null
+    }
+  },
+  "render_input": {
+    "report": {
+      "dataset_id": "synthetic_energy_batch",
+      "question": "Show the energy consumed by Batch Z, exactly as supplied in kWh.",
+      "language": "English",
+      "brief_fingerprint": null,
+      "analysis": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          {
+            "name": "batch",
+            "meaning": "Batch",
+            "kind": "category",
+            "unit": null,
+            "source": "batch",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "energy",
+            "meaning": "Energy consumed",
+            "kind": "measure",
+            "unit": "kWh",
+            "source": "energy",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          }
+        ],
+        "summary": "Supplied synthetic measurements.",
+        "assumptions": []
+      },
+      "clarification": null,
+      "result": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          "batch",
+          "energy"
+        ],
+        "types": [
+          "VARCHAR",
+          "DOUBLE"
+        ],
+        "rows": [
+          [
+            "Batch Z",
+            88
+          ]
+        ],
+        "row_count": 1,
+        "checks": [],
+        "seconds": 0.0
+      },
+      "checks": [],
+      "warnings": [],
+      "model": null,
+      "seconds": 0.0,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "spec": "vis indicator\ntitle Energy consumed\ndescription Supplied batch energy\nwidth 960\nheight 480\ncards\n  - value energy\n    context batch\n"
+  },
+  "render": {
+    "png": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/indicator_value_clean/chart.png",
+    "html": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/indicator_value_clean/chart.html",
+    "config": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/indicator_value_clean/config.json",
+    "width": 2880,
+    "height": 1440,
+    "seconds": 0.123787834,
+    "non_background_share": 0.393804012345679,
+    "compromises": [],
+    "drawn_rows": 1,
+    "folded_rows": 0,
+    "dropped_rows": 0,
+    "texts": [
+      "Energy consumed",
+      "Batch",
+      "Batch Z",
+      "88",
+      "kWh",
+      "Supplied batch energy"
+    ],
+    "text_bounds": [
+      {
+        "x": 116.1533203125,
+        "y": 132.6123046875,
+        "width": 363.6181640625,
+        "height": 42.3427734375,
+        "text": "Energy consumed",
+        "paintedText": "Energy consumed",
+        "role": "label",
+        "card": 0,
+        "column": "energy"
+      },
+      {
+        "x": 117.345703125,
+        "y": 211.08984375,
+        "width": 92.35546875,
+        "height": 26.54296875,
+        "text": "Batch",
+        "paintedText": "Batch",
+        "role": "label",
+        "card": 0,
+        "column": "batch"
+      },
+      {
+        "x": 116.9033203125,
+        "y": 263.171484375,
+        "width": 146.8564453125,
+        "height": 30.966796875,
+        "text": "Batch Z",
+        "paintedText": "Batch Z",
+        "role": "context",
+        "card": 0,
+        "column": "batch"
+      },
+      {
+        "x": 116.677734375,
+        "y": 370.56035156249993,
+        "width": 138.673828125,
+        "height": 91.9775390625,
+        "text": "88",
+        "paintedText": "‭88‬",
+        "role": "value",
+        "card": 0,
+        "column": "energy"
+      },
+      {
+        "x": 277.775390625,
+        "y": 421.33476562499993,
+        "width": 107.841796875,
+        "height": 38.865234375,
+        "text": "kWh",
+        "paintedText": "kWh",
+        "role": "unit",
+        "card": 0,
+        "column": "energy"
+      },
+      {
+        "x": 118.3125,
+        "y": 549.774609375,
+        "width": 359.525390625,
+        "height": 34.48828125,
+        "text": "Supplied batch energy",
+        "paintedText": "Supplied batch energy",
+        "role": "description",
+        "card": 0,
+        "column": null
+      }
+    ]
+  }
+}

@@ -15,7 +15,8 @@ design/render/review/deliver dispatcher and its automatic repair loops have been
 
 - The lead owns chart intent, delegation, repairs, fallback selection, and completion.
 - The designer owns visual representation and can deliver in one response.
-- The reviewer inspects the image only when requested and returns findings to the lead.
+- The scoped visual inspector receives the image after every successful render and returns only visible-defect
+  findings to the lead. The lead never receives image bytes.
 - The analyst computes only a task explicitly delegated by the lead.
 - Code owns source reads, executable schemas, read-only SQL safety, persistence, rendering, and budgets.
 
@@ -48,10 +49,11 @@ was never exported. That display does not mean the exited process is still doing
 
 ## Latency and quality
 
-Avoid semantic profiling, another analysis, mandatory chart ranking/check tool turns, and mandatory
-visual review for a prepared chart. The default OpenRouter lead is GLM 5.3 with low reasoning effort;
-OpenRouter receives latency routing and parameter support requirements. The designer remains a separate
-configurable model. Model changes must be measured on complete requests, not inferred from token speed.
+Avoid semantic profiling, another analysis, and mandatory chart ranking/check tool turns. A single scoped
+visual inspection follows a successful render. The default OpenRouter lead is GLM 5.3 with low reasoning effort;
+GLM 5.3 handles profiling and analysis, tested DeepSeek V4 Pro handles chart design, and Gemma 4 31B IT handles image inspection
+with thinking disabled.
+Model changes must be measured on complete requests, not inferred from token speed.
 
 Acceptance checks cover preservation of prepared totals/percentages, Arabic/Hijri labels, lead-selected
 review, lead-selected repair, source immutability, stale-preview invalidation, idempotent publish, saved

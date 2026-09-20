@@ -1,0 +1,136 @@
+{
+  "gptvis": {
+    "type": "indicator",
+    "cards": [
+      {
+        "value": {
+          "column": "energy",
+          "label": "Energy consumed",
+          "unit": "kWh",
+          "state": "available",
+          "display": "88 kWh",
+          "exact": null,
+          "number": "88",
+          "unitLabel": "kWh",
+          "exactNumber": null
+        },
+        "context": [
+          {
+            "column": "batch",
+            "label": "Batch",
+            "text": "Batch Z"
+          }
+        ],
+        "support": []
+      }
+    ],
+    "width": 960,
+    "height": 480,
+    "theme": "default",
+    "language": "en",
+    "direction": "ltr",
+    "title": "Energy consumed",
+    "subtitle": null,
+    "description": "Supplied batch energy",
+    "background": null,
+    "accent": null
+  },
+  "overrides": {},
+  "number": {
+    "thousands": true,
+    "decimals": null,
+    "compact": false,
+    "unit": null,
+    "digits": "western"
+  },
+  "g2": null,
+  "number2": null,
+  "tableFormats": {},
+  "display": {},
+  "functionPaths": [],
+  "texts": [
+    "Energy consumed",
+    "Batch",
+    "Batch Z",
+    "88",
+    "kWh",
+    "Supplied batch energy"
+  ],
+  "textBounds": [
+    {
+      "x": 116.1533203125,
+      "y": 132.6123046875,
+      "width": 363.6181640625,
+      "height": 42.3427734375,
+      "text": "Energy consumed",
+      "paintedText": "Energy consumed",
+      "role": "label",
+      "card": 0,
+      "column": "energy"
+    },
+    {
+      "x": 117.345703125,
+      "y": 211.08984375,
+      "width": 92.35546875,
+      "height": 26.54296875,
+      "text": "Batch",
+      "paintedText": "Batch",
+      "role": "label",
+      "card": 0,
+      "column": "batch"
+    },
+    {
+      "x": 116.9033203125,
+      "y": 263.171484375,
+      "width": 146.8564453125,
+      "height": 30.966796875,
+      "text": "Batch Z",
+      "paintedText": "Batch Z",
+      "role": "context",
+      "card": 0,
+      "column": "batch"
+    },
+    {
+      "x": 116.677734375,
+      "y": 370.56035156249993,
+      "width": 138.673828125,
+      "height": 91.9775390625,
+      "text": "88",
+      "paintedText": "‭88‬",
+      "role": "value",
+      "card": 0,
+      "column": "energy"
+    },
+    {
+      "x": 277.775390625,
+      "y": 421.33476562499993,
+      "width": 107.841796875,
+      "height": 38.865234375,
+      "text": "kWh",
+      "paintedText": "kWh",
+      "role": "unit",
+      "card": 0,
+      "column": "energy"
+    },
+    {
+      "x": 118.3125,
+      "y": 549.774609375,
+      "width": 359.525390625,
+      "height": 34.48828125,
+      "text": "Supplied batch energy",
+      "paintedText": "Supplied batch energy",
+      "role": "description",
+      "card": 0,
+      "column": null
+    }
+  ],
+  "cardBounds": [
+    {
+      "card": 0,
+      "x": 60,
+      "y": 60,
+      "width": 2760,
+      "height": 590.6999999999999
+    }
+  ]
+}

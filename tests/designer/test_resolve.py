@@ -233,6 +233,20 @@ def test_grouped_column_fold_sorts_categories_by_combined_total():
     assert spec.fold == ["revenue", "cost"]
 
 
+def test_folded_measure_labels_apply_when_series_is_also_the_category():
+    columns = [column("female_pct", "share", unit="%"), column("male_pct", "share", unit="%")]
+    result = table(columns, [[19.94, 20.02]])
+    spec = Spec(type="grouped_column", language="ar", bind={"category": "السلسلة"},
+                fold=["female_pct", "male_pct"],
+                column_labels={"female_pct": "نسبة النساء", "male_pct": "نسبة الذكور"})
+    resolved = resolve(spec, columns, result)
+    labels = {"female_pct": "نسبة النساء", "male_pct": "نسبة الذكور"}
+    assert resolved.display["fields"]["category"] == labels
+    assert resolved.display["fields"]["group"] == labels
+    assert sorted(record["value"] for record in resolved.config["data"]) == [19.94, 20.02]
+    assert result.rows == [[19.94, 20.02]]
+
+
 @pytest.mark.parametrize("bin_number,labels,count", [
     (None, ["1–6.9", "6.9–12.8", "12.8–18.7", "18.7–24.6", "24.6–30.5",
             "30.5–36.4", "36.4–42.3", "42.3–48.2", "48.2–54.1", "54.1–60"], 6),
@@ -362,6 +376,36 @@ def test_table_preserves_all_columns_cells_and_order(builder):
                                "data": [dict(zip(result.columns, row)) for row in result.rows],
                                "width": 800, "height": 450}
     assert (resolved.drawn_rows, resolved.folded_rows, resolved.dropped_rows) == (len(result.rows), 0, 0)
+
+
+@pytest.mark.parametrize("rows,expected_height", [(2, 450), (14, 458), (17, 548), (78, 2378)])
+def test_static_table_default_height_fits_every_row(rows, expected_height):
+    columns, result = cities(rows)
+    before = result.model_copy(deep=True)
+    resolved = resolve(Spec(type="table"), columns, result)
+    assert resolved.height == resolved.config["height"] == expected_height
+    assert resolved.drawn_rows == len(resolved.config["data"]) == rows
+    assert resolved.dropped_rows == 0 and result == before
+
+
+@pytest.mark.parametrize("height", [450, 547, 2401])
+def test_static_table_rejects_explicit_clipping_or_oversized_height(height):
+    with pytest.raises(ResolveError, match="Omit height.*548–2400.*cannot scroll"):
+        resolve(Spec(type="table", height=height), *cities(17))
+
+
+def test_static_table_preserves_large_enough_explicit_height():
+    resolved = resolve(Spec(type="table", height=700), *cities(17))
+    assert resolved.height == resolved.config["height"] == 700
+
+
+@pytest.mark.parametrize("rows", [79, 1000])
+def test_static_table_reports_full_table_resource_limit_without_sampling(rows):
+    columns, result = cities(rows)
+    before = result.model_copy(deep=True)
+    with pytest.raises(ResolveError, match=f"complete {rows}-row table.*2400px.*No rows were sampled"):
+        resolve(Spec(type="table"), columns, result)
+    assert result == before
 
 
 @pytest.mark.parametrize("cell", ["12", "text", True, False])
@@ -647,6 +691,18 @@ def test_number_format_percent_and_digits_travel_with_compromise():
     assert resolved.number == NumberFormat(thousands=False, decimals=1, unit="%", digits="arabic")
     assert any(c.key == "format" for c in resolved.compromises)
     assert resolved.config["data"][0]["value"] == 50
+
+
+def test_percent_format_preserves_an_already_percentage_measure_scale():
+    columns, result = cities(2)
+    columns[1].unit = "%"
+    result.rows = [["Poor", 1.66], ["Rich", 1.68]]
+    resolved = resolve(city_spec(format="0.00%"), columns, result)
+    assert {row["category"]: row["value"] for row in resolved.config["data"]} == {
+        "Poor": 1.66, "Rich": 1.68,
+    }
+    assert resolved.number.decimals == 2 and resolved.number.unit == "%"
+    assert not any(compromise.key == "format" for compromise in resolved.compromises)
 
 
 def test_share_percent_format_has_no_non_share_compromise():
@@ -942,6 +998,21 @@ def test_labels_on_reports_unsupported_mark_structure(chart, builder, bindings):
     resolved = resolve(Spec(type=chart, bind=bindings, labels="on"), *builder())
     assert any(c.key == "labels" for c in resolved.compromises)
     assert "labels" not in resolved.overrides
+
+
+@pytest.mark.parametrize("chart,builder,bindings,field", [
+    ("pie", cities, {"category": "city", "value": "violations"}, "value"),
+    ("donut", cities, {"category": "city", "value": "violations"}, "value"),
+    ("bar", cities, {"category": "city", "value": "violations"}, "value"),
+    ("scatter", scatter_points, {"x": "age", "y": "amount"}, "y"),
+])
+def test_label_toggle_supplies_only_a_fallback_for_the_adapter(chart, builder, bindings, field):
+    spec = Spec(type=chart, bind=bindings, labels="on")
+    resolved = resolve(spec, *builder())
+    # Placement/collision defaults belong to the pinned package, not the resolver.
+    assert resolved.overrides["labels"] == [{"text": field}]
+    assert "labels" not in resolved.config
+    assert resolve(spec.model_copy(update={"labels": "off"}), *builder()).overrides["labels"] == []
 
 
 @pytest.mark.parametrize("chart, role", [("line", "time"), ("column", "category")])

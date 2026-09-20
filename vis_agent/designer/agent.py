@@ -21,7 +21,7 @@ from vis_agent.analyst.models import (
 )
 from vis_agent.labels import LABEL_INSTRUCTIONS, apply_display_labels, project_display_labels
 from vis_agent.models import DataBrief, DisplayLabels, Intent, QuestionAnswer
-from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL
+from vis_agent.model_settings import text_specialist_settings
 from vis_agent.render import gptvis
 from vis_agent.render.base import RENDERERS, Rendered
 
@@ -34,13 +34,13 @@ from .shape import describe
 from .syntax import KEYS, STYLE_KEYS, parse, to_text
 
 log = logging.getLogger("designer")
-DEFAULT_DESIGNER_MODEL = DEFAULT_PROFILER_MODEL
-# The lead can explicitly choose this alternate designer after inspecting a failure.
-DEFAULT_FALLBACK_DESIGNER_MODEL = "openrouter:anthropic/claude-sonnet-4.6"
+DEFAULT_DESIGNER_MODEL = "openrouter:deepseek/deepseek-v4-pro"
+# Keep fallback behavior deterministic unless an operator explicitly configures another model.
+DEFAULT_FALLBACK_DESIGNER_MODEL = DEFAULT_DESIGNER_MODEL
 DESIGNER_RULEBOOK = Path(__file__).with_name("rulebook.md").read_text(encoding="utf-8")
 REVISE_INSTRUCTIONS = Path(__file__).with_name("rulebook-revise.md").read_text(encoding="utf-8")
 REVIEW_INSTRUCTIONS = Path(__file__).with_name("rulebook-review.md").read_text(encoding="utf-8")
-DESIGN_TIMEOUT_SECONDS = 90
+DESIGN_TIMEOUT_SECONDS = 45
 MAX_CHECK_CALLS = 3
 MAX_REQUESTS = 8
 PREVIEW_ROWS = 12
@@ -70,6 +70,8 @@ class DesignerPrompt(BaseModel):
     """What the model reads; SQL and the dataset stay in code."""
 
     question: str
+    raw_question: str | None = None
+    enriched_question: str | None = None
     language: str
     intent: Intent | None = None
     suggested_chart_type: str | None = None
@@ -132,6 +134,8 @@ def build_prompt(
     meanings, labels = project_display_labels(brief, report.analysis.columns, report.language)
     return DesignerPrompt(
         question=report.question, language=report.language,
+        raw_question=brief.raw_question if brief else None,
+        enriched_question=brief.enriched_question if brief else None,
         intent=brief.intent if brief else None,
         suggested_chart_type=brief.suggested_chart_type if brief else None,
         brand_colors=brief.brand_colors if brief else [], caveats=brief.caveats if brief else [],
@@ -146,26 +150,39 @@ def build_prompt(
 
 
 def prompt_json(prompt: DesignerPrompt) -> str:
-    """The prompt as the model sees it. Empty answers and an absent previous analysis are left out, so ordinary runs are unchanged."""
-    exclude = {name for name in ("clarifications", "previous", "revision", "review") if not getattr(prompt, name)}
+    """Keep supplied intent verbatim; omit absent context and exact duplicate questions."""
+    exclude = {name for name in ("raw_question", "enriched_question", "clarifications", "previous", "revision", "review")
+               if not getattr(prompt, name)}
+    if prompt.raw_question == prompt.question:
+        exclude.add("raw_question")
+    if prompt.enriched_question in (prompt.question, prompt.raw_question):
+        exclude.add("enriched_question")
     return prompt.model_dump_json(exclude=exclude or None)
 
 
 def grammar() -> str:
     lines = ["First line: vis <type>; choose a type from the catalogue."]
     for key, (_, kind) in [*KEYS.items(), *STYLE_KEYS.items()]:
-        if kind.startswith("enum:"):
+        if key == "sort":
+            description = ('one of ' + ", ".join(get_args(models.SortOrder))
+                           + '; grouped value sorting orders categories by the sum of their series, '
+                           'not by one selected series; none preserves source order')
+        elif kind.startswith("enum:"):
             description = "one of " + ", ".join(get_args(getattr(models, kind.removeprefix("enum:"))))
         elif key == "bind":
             description = ('section; two-space-indented lines "<role> <column name>"; roles '
                            + ", ".join(models.ROLES))
         elif key == "fold":
             description = ('section; lines "- <column name>"; two or more measure columns of one unit, drawn as one '
-                           'series each on a chart with a group role; leave group and value unbound, the code binds them')
+                           'series each on a chart with a group role; leave group and value unbound, the code binds them; '
+                           'category/time is not automatically bound')
         elif key == "cards":
             description = ('indicator only; one to six records starting with two-space-indented "- value <column name>"; '
-                           'four-space lines "context <column name>", "support <column name>" (repeatable), '
-                           'or "format <number pattern>"; ordinary bind must be empty')
+                           'value and repeatable support take measure/share columns; repeatable context takes only '
+                           'category/ordinal/time/geography/identifier columns; four-space lines '
+                           '"context <column name>", "support <column name>", or "format <number pattern>"; '
+                           'format controls precision/grouping and should omit the unit inherited from metadata; '
+                           'ordinary bind must be empty')
         elif key == "columnLabels":
             description = ('all chart types; optional section with two-space lines '
                            '\'- ["exact column name", "display label"]\'; JSON string pairs; '
@@ -181,16 +198,23 @@ def grammar() -> str:
         elif key == "axisYTitle":
             description = "text; the vertical axis title"
         elif kind == "section:list":
-            description = 'section; lines "- <hex>"' if key == "palette" else 'section; lines "- <value>"'
+            description = ('section; lines "- <hex>" using bare values such as #1783FF, without quotes; '
+                           'indicator accepts one shared accent color, not one color per card'
+                           if key == "palette" else 'section; lines "- <value>"')
         else:
             description = {"int": "integer", "bool": "true or false",
-                           "format": "pattern like 0,0.00 SAR, 0.0%, 0k"}.get(kind, kind)
+                           "format": "pattern like 0,0.00, 0.0%, or 0k; % is a suffix and never rescales"}.get(kind, kind)
         lines.append(f"{key}: {description}")
     lines.extend(["", "Example:", "vis table", "title Result", "description The answer to the question",
                   "", "Indicator label translation example:", "vis indicator", "title إجمالي الزوار",
                   "description إجمالي الزوار خلال الفترة", "language ar", "cards", "  - value visitor_count",
                   "columnLabels", '  - ["visitor_count", "إجمالي الزوار"]',
-                  "", "Category display label example:", "valueLabels", '  - ["gender", "M", "ذكور"]'])
+                  "", "Indicator role example (all bindings are source column names):", "cards",
+                  "  - value female_pct", "    support female_count", "    support total_females",
+                  "    context period", "  - value male_pct", "    support male_count",
+                  "    support total_males", "    context period",
+                  "", "Category display label syntax (use only established meanings):", "valueLabels",
+                  '  - ["source column", "original category", "approved or established display wording"]'])
     return "\n".join(lines)
 
 
@@ -237,11 +261,17 @@ def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -
     """Deliver your chart immediately. Code checks renderer bindings; the lead judges the design."""
     deps = ctx.deps
     report = deps.report
-    check = run_check(_with_display_labels(spec, deps), report.analysis.columns, report.result,
+    labelled = _with_display_labels(spec, deps)
+    check = run_check(labelled, report.analysis.columns, report.result,
                       deps.renderer, intent=deps.intent)
     failures = []
-    if check.ok:
-        parsed = parse(check.canonical)
+    try:
+        parsed = parse(check.canonical if check.ok else labelled)
+    except models.SpecError:
+        parsed = None
+    # Report all executable defects together. Otherwise an unsupported optional
+    # key hides missing required bindings until the only repair turn is spent.
+    if parsed is not None:
         used = set(report.result.columns) if parsed.type == "table" else set(parsed.bind.values()) | set(parsed.fold)
         for card in parsed.cards:
             used.update([card.value, *card.context, *card.support])
@@ -277,7 +307,7 @@ def create_designer(model: str | Model) -> Agent[DesignerDeps, Design]:
         output_type=ToolOutput(deliver_design, name="deliver_design"),
         retries={"output": 2},
         instructions=instructions(),
-        model_settings={"thinking": False, "temperature": 0.0},
+        model_settings=text_specialist_settings(model),
     )
     agent.tool(check_spec, retries=1, prepare=offer_check_spec)
     agent.tool_plain(chart_capabilities)
@@ -286,7 +316,7 @@ def create_designer(model: str | Model) -> Agent[DesignerDeps, Design]:
     def revise_rules(ctx: RunContext[DesignerDeps]) -> str | None:
         prompt = ctx.deps.prompt
         parts = []
-        if prompt.clarifications or prompt.previous is not None or prompt.revision is not None:
+        if (prompt.previous is not None and prompt.previous.spec is not None) or prompt.revision is not None:
             parts.append(REVISE_INSTRUCTIONS)
         if prompt.review is not None:
             parts.append(REVIEW_INSTRUCTIONS)

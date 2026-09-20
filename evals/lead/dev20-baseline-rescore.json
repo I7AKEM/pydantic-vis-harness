@@ -1,0 +1,580 @@
+[
+  {
+    "source_result": "evals/lead/results-deepseek-current-harness-dev20.json",
+    "interpretation": "Conformance to stricter visual-delivery acceptance, not original-question accuracy. Correct table/text answers to plain numeric questions can fail the new chart gate. The source CSV is assumed unchanged where old results lack a source hash. Automated inspector approval is not independent manual image verification.",
+    "cases": 20,
+    "passed": 10,
+    "rendered_passed": 6,
+    "missing_usage": 2,
+    "failure_counts": {
+      "answer_fidelity_ok": 6,
+      "review_ok": 6,
+      "repetition_ok": 5,
+      "tool_ok": 2,
+      "outcome_ok": 5,
+      "delivery_ok": 3,
+      "source_fidelity_ok": 3,
+      "chart_ok": 3,
+      "flow_ok": 3,
+      "render_evidence_ok": 3,
+      "visible_columns_ok": 3,
+      "latency_ok": 4,
+      "runtime_error": 2,
+      "reply_ok": 1
+    },
+    "case_checks": [
+      {
+        "name": "corpus-vizcsv-46dad75ae7fa7b62",
+        "disposition": "chart",
+        "seconds": 54.93876041704789,
+        "requests": 9,
+        "png_url": "/renders/bdfd392e9ba9/chart.png",
+        "chart": "indicator",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-6eff7ae46ebb4edf",
+        "disposition": "chart",
+        "seconds": 54.49646358308382,
+        "requests": 17,
+        "png_url": "/renders/918988a26072/chart.png",
+        "chart": "donut",
+        "passed": false,
+        "failed_gates": [
+          "answer_fidelity_ok",
+          "review_ok",
+          "repetition_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-70ea08202f57d58f",
+        "disposition": "chart",
+        "seconds": 52.40620387508534,
+        "requests": 8,
+        "png_url": "/renders/a49365f2641e/chart.png",
+        "chart": "indicator",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-97280400c00748a7",
+        "disposition": "source_insufficient",
+        "seconds": 8.527067291084677,
+        "requests": 5,
+        "png_url": null,
+        "chart": null,
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-3b62e4047e2cb455",
+        "disposition": "chart",
+        "seconds": 37.0901859580772,
+        "requests": 4,
+        "png_url": null,
+        "chart": null,
+        "passed": false,
+        "failed_gates": [
+          "tool_ok",
+          "outcome_ok",
+          "delivery_ok",
+          "answer_fidelity_ok",
+          "source_fidelity_ok",
+          "chart_ok",
+          "flow_ok",
+          "review_ok",
+          "render_evidence_ok",
+          "visible_columns_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-2177430e3e44a9a3",
+        "disposition": "chart",
+        "seconds": 23.473438957938924,
+        "requests": 8,
+        "png_url": "/renders/5284a47435a8/chart.png",
+        "chart": "grouped_bar",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-ba0187c944a3f829",
+        "disposition": "table",
+        "seconds": 7.928033749922179,
+        "requests": 6,
+        "png_url": null,
+        "chart": null,
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-e07c573241abdb02",
+        "disposition": "text",
+        "seconds": 7.916635791072622,
+        "requests": 4,
+        "png_url": null,
+        "chart": null,
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-9e75e9ae40758227",
+        "disposition": "chart",
+        "seconds": 15.037653416045941,
+        "requests": 8,
+        "png_url": "/renders/8dd97d27173a/chart.png",
+        "chart": "grouped_bar",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-85830f71807a6905",
+        "disposition": "text",
+        "seconds": 1.6754224579781294,
+        "requests": 2,
+        "png_url": null,
+        "chart": null,
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-39471b0e4a5d3fc5",
+        "disposition": "chart",
+        "seconds": 41.64711604104377,
+        "requests": 16,
+        "png_url": "/renders/985f4ea7ea97/chart.png",
+        "chart": "column",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-f6687502449585a5",
+        "disposition": "chart",
+        "seconds": 77.2665926660411,
+        "requests": 12,
+        "png_url": "/renders/4697d76317df/chart.png",
+        "chart": "table",
+        "passed": false,
+        "failed_gates": [
+          "latency_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-45980b90faceca07",
+        "disposition": "chart",
+        "seconds": 111.34732466703281,
+        "requests": null,
+        "png_url": null,
+        "chart": null,
+        "passed": false,
+        "failed_gates": [
+          "outcome_ok",
+          "delivery_ok",
+          "answer_fidelity_ok",
+          "source_fidelity_ok",
+          "chart_ok",
+          "flow_ok",
+          "review_ok",
+          "render_evidence_ok",
+          "visible_columns_ok",
+          "repetition_ok",
+          "latency_ok",
+          "runtime_error"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-2571f37808cda8e2",
+        "disposition": "chart",
+        "seconds": 34.57562312495429,
+        "requests": 8,
+        "png_url": "/renders/0ad0151c23fb/chart.png",
+        "chart": "column",
+        "passed": false,
+        "failed_gates": [
+          "answer_fidelity_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-c76808cc7a78dac8",
+        "disposition": "chart",
+        "seconds": 62.46701649995521,
+        "requests": 16,
+        "png_url": "/renders/4ede9191452a/chart.png",
+        "chart": "grouped_column",
+        "passed": false,
+        "failed_gates": [
+          "answer_fidelity_ok",
+          "review_ok",
+          "repetition_ok",
+          "latency_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-ae315d3da67a2d11",
+        "disposition": "unsupported",
+        "seconds": 36.1591457920149,
+        "requests": 14,
+        "png_url": "/renders/d3ac0c7ded9a/chart.png",
+        "chart": "scatter",
+        "passed": false,
+        "failed_gates": [
+          "outcome_ok",
+          "repetition_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-2bc0cfa90c65f142",
+        "disposition": "chart",
+        "seconds": 40.33258645795286,
+        "requests": 8,
+        "png_url": "/renders/64de158d45a8/chart.png",
+        "chart": "bar",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-61793ff199102633",
+        "disposition": "chart",
+        "seconds": 30.405733124935068,
+        "requests": 10,
+        "png_url": "/renders/1587ca76d66c/chart.png",
+        "chart": "column",
+        "passed": false,
+        "failed_gates": [
+          "review_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-839d109a0db9ce25",
+        "disposition": "unsupported",
+        "seconds": 67.20143466594163,
+        "requests": null,
+        "png_url": null,
+        "chart": null,
+        "passed": false,
+        "failed_gates": [
+          "outcome_ok",
+          "repetition_ok",
+          "reply_ok",
+          "latency_ok",
+          "runtime_error"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-3dda20f66cddb9da",
+        "disposition": "chart",
+        "seconds": 2.7686767920386046,
+        "requests": 4,
+        "png_url": null,
+        "chart": null,
+        "passed": false,
+        "failed_gates": [
+          "tool_ok",
+          "outcome_ok",
+          "delivery_ok",
+          "answer_fidelity_ok",
+          "source_fidelity_ok",
+          "chart_ok",
+          "flow_ok",
+          "review_ok",
+          "render_evidence_ok",
+          "visible_columns_ok"
+        ]
+      }
+    ]
+  },
+  {
+    "source_result": "evals/lead/results-claude-sonnet45-harness-dev20.json",
+    "interpretation": "Conformance to stricter visual-delivery acceptance, not original-question accuracy. Correct table/text answers to plain numeric questions can fail the new chart gate. The source CSV is assumed unchanged where old results lack a source hash. Automated inspector approval is not independent manual image verification.",
+    "cases": 20,
+    "passed": 9,
+    "rendered_passed": 7,
+    "missing_usage": 3,
+    "failure_counts": {
+      "answer_fidelity_ok": 6,
+      "outcome_ok": 8,
+      "delivery_ok": 4,
+      "source_fidelity_ok": 4,
+      "chart_ok": 5,
+      "flow_ok": 4,
+      "review_ok": 4,
+      "render_evidence_ok": 4,
+      "visible_columns_ok": 5,
+      "repetition_ok": 3,
+      "latency_ok": 3,
+      "reply_ok": 2,
+      "runtime_error": 3,
+      "tool_ok": 1
+    },
+    "case_checks": [
+      {
+        "name": "corpus-vizcsv-46dad75ae7fa7b62",
+        "disposition": "chart",
+        "seconds": 24.381868958007544,
+        "requests": 9,
+        "png_url": "/renders/4e30f23739e5/chart.png",
+        "chart": "indicator",
+        "passed": false,
+        "failed_gates": [
+          "answer_fidelity_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-6eff7ae46ebb4edf",
+        "disposition": "chart",
+        "seconds": 26.50337970792316,
+        "requests": 13,
+        "png_url": "/renders/6adbe47359f2/chart.png",
+        "chart": "donut",
+        "passed": false,
+        "failed_gates": [
+          "answer_fidelity_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-70ea08202f57d58f",
+        "disposition": "chart",
+        "seconds": 17.79768424993381,
+        "requests": 8,
+        "png_url": "/renders/2e1aa85ef11d/chart.png",
+        "chart": "indicator",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-97280400c00748a7",
+        "disposition": "source_insufficient",
+        "seconds": 7.277911750017665,
+        "requests": 5,
+        "png_url": null,
+        "chart": null,
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-3b62e4047e2cb455",
+        "disposition": "chart",
+        "seconds": 17.081183124915697,
+        "requests": 8,
+        "png_url": "/renders/5f545f890b54/chart.png",
+        "chart": "indicator",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-2177430e3e44a9a3",
+        "disposition": "chart",
+        "seconds": 102.81349037506152,
+        "requests": 16,
+        "png_url": null,
+        "chart": null,
+        "passed": false,
+        "failed_gates": [
+          "outcome_ok",
+          "delivery_ok",
+          "answer_fidelity_ok",
+          "source_fidelity_ok",
+          "chart_ok",
+          "flow_ok",
+          "review_ok",
+          "render_evidence_ok",
+          "visible_columns_ok",
+          "repetition_ok",
+          "latency_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-ba0187c944a3f829",
+        "disposition": "table",
+        "seconds": 20.169190792017616,
+        "requests": 6,
+        "png_url": null,
+        "chart": null,
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-e07c573241abdb02",
+        "disposition": "text",
+        "seconds": 7.832720833015628,
+        "requests": 4,
+        "png_url": null,
+        "chart": null,
+        "passed": false,
+        "failed_gates": [
+          "outcome_ok",
+          "reply_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-9e75e9ae40758227",
+        "disposition": "chart",
+        "seconds": 19.371209374978207,
+        "requests": 8,
+        "png_url": "/renders/f532a5edb48c/chart.png",
+        "chart": "grouped_bar",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-85830f71807a6905",
+        "disposition": "text",
+        "seconds": 27.99901475000661,
+        "requests": 9,
+        "png_url": "/renders/142871342d79/chart.png",
+        "chart": "table",
+        "passed": false,
+        "failed_gates": [
+          "outcome_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-39471b0e4a5d3fc5",
+        "disposition": "chart",
+        "seconds": 25.832567083998583,
+        "requests": 9,
+        "png_url": "/renders/f06cd30b3d64/chart.png",
+        "chart": "column",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-f6687502449585a5",
+        "disposition": "chart",
+        "seconds": 56.35845866706222,
+        "requests": 8,
+        "png_url": "/renders/ca165f82b0d5/chart.png",
+        "chart": "bar",
+        "passed": false,
+        "failed_gates": [
+          "chart_ok",
+          "visible_columns_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-45980b90faceca07",
+        "disposition": "chart",
+        "seconds": 10.87529666593764,
+        "requests": null,
+        "png_url": null,
+        "chart": null,
+        "passed": false,
+        "failed_gates": [
+          "outcome_ok",
+          "delivery_ok",
+          "answer_fidelity_ok",
+          "source_fidelity_ok",
+          "chart_ok",
+          "flow_ok",
+          "review_ok",
+          "render_evidence_ok",
+          "visible_columns_ok",
+          "runtime_error"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-2571f37808cda8e2",
+        "disposition": "chart",
+        "seconds": 44.54247300000861,
+        "requests": 8,
+        "png_url": "/renders/1c4fb5eba41e/chart.png",
+        "chart": "column",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-c76808cc7a78dac8",
+        "disposition": "chart",
+        "seconds": 74.16792429203633,
+        "requests": null,
+        "png_url": null,
+        "chart": null,
+        "passed": false,
+        "failed_gates": [
+          "outcome_ok",
+          "delivery_ok",
+          "answer_fidelity_ok",
+          "source_fidelity_ok",
+          "chart_ok",
+          "flow_ok",
+          "review_ok",
+          "render_evidence_ok",
+          "visible_columns_ok",
+          "repetition_ok",
+          "latency_ok",
+          "runtime_error"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-ae315d3da67a2d11",
+        "disposition": "unsupported",
+        "seconds": 61.47013775003143,
+        "requests": 11,
+        "png_url": "/renders/98d8cce87c0c/chart.png",
+        "chart": "scatter",
+        "passed": false,
+        "failed_gates": [
+          "outcome_ok",
+          "latency_ok"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-2bc0cfa90c65f142",
+        "disposition": "chart",
+        "seconds": 36.24972154200077,
+        "requests": 8,
+        "png_url": "/renders/7418bf2cdf6a/chart.png",
+        "chart": "bar",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-61793ff199102633",
+        "disposition": "chart",
+        "seconds": 20.865352417109534,
+        "requests": 8,
+        "png_url": "/renders/762bc62b6a4a/chart.png",
+        "chart": "bar",
+        "passed": true,
+        "failed_gates": []
+      },
+      {
+        "name": "corpus-vizcsv-839d109a0db9ce25",
+        "disposition": "unsupported",
+        "seconds": 9.640841583022848,
+        "requests": null,
+        "png_url": null,
+        "chart": null,
+        "passed": false,
+        "failed_gates": [
+          "outcome_ok",
+          "repetition_ok",
+          "reply_ok",
+          "runtime_error"
+        ]
+      },
+      {
+        "name": "corpus-vizcsv-3dda20f66cddb9da",
+        "disposition": "chart",
+        "seconds": 8.071006375015713,
+        "requests": 4,
+        "png_url": null,
+        "chart": null,
+        "passed": false,
+        "failed_gates": [
+          "tool_ok",
+          "outcome_ok",
+          "delivery_ok",
+          "answer_fidelity_ok",
+          "source_fidelity_ok",
+          "chart_ok",
+          "flow_ok",
+          "review_ok",
+          "render_evidence_ok",
+          "visible_columns_ok"
+        ]
+      }
+    ]
+  }
+]

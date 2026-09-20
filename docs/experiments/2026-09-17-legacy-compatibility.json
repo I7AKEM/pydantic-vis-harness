@@ -1,0 +1,14 @@
+{
+  "check": "Deserialize retained old50 requests and artifacts using the candidate Pydantic models",
+  "runtime_sha256": "7ff116ba5c5a222c69f3e7d9806f1356d5e1658524b4de10aa7edebe9150929d",
+  "input_pattern": "evals/lead/results-maturity50-glm-gemma-20260917-v1/rollout-*/*/case.json",
+  "offline_only": true,
+  "provider_calls": 0,
+  "counts": {"cases": 50, "requests_validated": 50, "artifacts_validated": 46},
+  "failures": [],
+  "limitations": [
+    "This validates saved-data compatibility only, not a new execution of the old50 cases.",
+    "It does not establish chart correctness, visual-review accuracy, latency, or generalization.",
+    "No legacy CSV contents, PNGs, or reference rows were sent to an external model."
+  ]
+}

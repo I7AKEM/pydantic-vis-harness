@@ -1,0 +1,227 @@
+{
+  "gptvis": {
+    "type": "bar",
+    "group": true,
+    "theme": "default",
+    "width": 960,
+    "height": 640,
+    "title": "Coating strength",
+    "axisXTitle": "Trial",
+    "axisYTitle": "Strength (MPa)",
+    "data": [
+      {
+        "category": "Trial 1",
+        "value": 5,
+        "group": "Aster"
+      },
+      {
+        "category": "Trial 1",
+        "value": 16,
+        "group": "Beryl"
+      },
+      {
+        "category": "Trial 2",
+        "value": 8,
+        "group": "Aster"
+      },
+      {
+        "category": "Trial 2",
+        "value": 22,
+        "group": "Beryl"
+      }
+    ]
+  },
+  "overrides": {
+    "labels": [
+      {
+        "text": "value"
+      }
+    ],
+    "legend": true
+  },
+  "number": {
+    "thousands": true,
+    "decimals": null,
+    "compact": false,
+    "unit": "MPa",
+    "digits": "western"
+  },
+  "g2": {
+    "devicePixelRatio": 3,
+    "type": "interval",
+    "theme": {
+      "type": "light",
+      "view": {
+        "viewFill": "#FFF",
+        "plotFill": "transparent",
+        "mainFill": "transparent",
+        "contentFill": "transparent"
+      },
+      "interval": {
+        "rect": {
+          "fillOpacity": 0.8
+        }
+      },
+      "line": {
+        "line": {
+          "lineWidth": 2
+        }
+      },
+      "area": {
+        "area": {
+          "fillOpacity": 0.6
+        }
+      },
+      "point": {
+        "point": {
+          "lineWidth": 1
+        }
+      }
+    },
+    "width": 960,
+    "height": 640,
+    "title": {
+      "title": "Coating strength"
+    },
+    "data": [
+      {
+        "category": "Trial 1",
+        "value": 5,
+        "group": "Aster"
+      },
+      {
+        "category": "Trial 1",
+        "value": 16,
+        "group": "Beryl"
+      },
+      {
+        "category": "Trial 2",
+        "value": 8,
+        "group": "Aster"
+      },
+      {
+        "category": "Trial 2",
+        "value": 22,
+        "group": "Beryl"
+      }
+    ],
+    "encode": {
+      "x": "category",
+      "y": "value",
+      "color": "group"
+    },
+    "transform": [
+      {
+        "type": "dodgeX"
+      }
+    ],
+    "coordinate": {
+      "transform": [
+        {
+          "type": "transpose"
+        }
+      ]
+    },
+    "marginRight": 62,
+    "style": {
+      "radiusTopLeft": 4,
+      "radiusTopRight": 4,
+      "columnWidthRatio": 0.8
+    },
+    "axis": {
+      "x": {
+        "title": "Trial",
+        "labelFormatter": {
+          "$display": {
+            "kind": "value",
+            "field": "category"
+          }
+        }
+      },
+      "y": {
+        "title": "Strength (MPa)",
+        "labelFormatter": {
+          "$format": "value"
+        }
+      }
+    },
+    "legend": {
+      "color": {
+        "title": "coating",
+        "labelFormatter": {
+          "$display": {
+            "kind": "value",
+            "field": "group"
+          }
+        }
+      }
+    },
+    "labels": [
+      {
+        "text": "value",
+        "style": {
+          "dx": 2
+        },
+        "textAlign": "start",
+        "transform": [
+          {
+            "type": "overlapHide"
+          }
+        ],
+        "fontSize": 10,
+        "formatter": {
+          "$format": "value"
+        }
+      }
+    ],
+    "scale": {
+      "y": {
+        "nice": true
+      }
+    },
+    "tooltip": {
+      "title": {
+        "$display": {
+          "kind": "datum",
+          "field": "category"
+        }
+      },
+      "items": [
+        {
+          "$display": {
+            "kind": "tooltip",
+            "field": "category"
+          }
+        },
+        {
+          "$display": {
+            "kind": "tooltip",
+            "field": "value",
+            "numeric": "value"
+          }
+        },
+        {
+          "$display": {
+            "kind": "tooltip",
+            "field": "group"
+          }
+        }
+      ]
+    },
+    "marginBottom": 24
+  },
+  "number2": null,
+  "tableFormats": {},
+  "display": {
+    "fields": {
+      "category": {},
+      "group": {}
+    },
+    "columns": {
+      "category": "trial",
+      "value": "strength",
+      "group": "coating"
+    }
+  },
+  "functionPaths": []
+}

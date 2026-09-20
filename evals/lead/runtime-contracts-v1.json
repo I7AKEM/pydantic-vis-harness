@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "purpose": "Explicit audited semantic checks for new runtime evaluations; never rewrite frozen baseline inputs or results.",
+  "optimization_readiness": {
+    "selection_and_semantic_contracts_audited": false,
+    "visual_quality_metric_validated": false
+  },
+  "cases": {
+    "corpus-vizcsv-2177430e3e44a9a3": {
+      "semantic_fidelity": {
+        "unknown_codes": {"gender": ["F", "M"]},
+        "forbidden_expansions": {
+          "gender": {
+            "F": ["female", "females", "women", "إناث", "الإناث", "للإناث", "الاناث", "للاناث"],
+            "M": ["male", "males", "men", "ذكور", "الذكور", "للذكور"]
+          }
+        }
+      }
+    }
+  }
+}

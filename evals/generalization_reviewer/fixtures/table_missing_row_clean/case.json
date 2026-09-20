@@ -1,0 +1,196 @@
+{
+  "id": "table_missing_row_clean",
+  "family": "table_missing_row",
+  "proposed_label": "pass",
+  "construction": "Faithful rendering of the reference.",
+  "reference": {
+    "report": {
+      "dataset_id": "synthetic_alloy_samples",
+      "question": "Show all four supplied alloy sample readings as an exact table.",
+      "language": "English",
+      "brief_fingerprint": null,
+      "analysis": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          {
+            "name": "sample",
+            "meaning": "Alloy sample",
+            "kind": "category",
+            "unit": null,
+            "source": "sample",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "reading",
+            "meaning": "Conductance",
+            "kind": "measure",
+            "unit": "mS",
+            "source": "reading",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          }
+        ],
+        "summary": "Supplied synthetic measurements.",
+        "assumptions": []
+      },
+      "clarification": null,
+      "result": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          "sample",
+          "reading"
+        ],
+        "types": [
+          "VARCHAR",
+          "DOUBLE"
+        ],
+        "rows": [
+          [
+            "Amber",
+            0.42
+          ],
+          [
+            "Cobalt",
+            0.86
+          ],
+          [
+            "Dune",
+            0.58
+          ],
+          [
+            "Ember",
+            0.74
+          ]
+        ],
+        "row_count": 4,
+        "checks": [],
+        "seconds": 0.0
+      },
+      "checks": [],
+      "warnings": [],
+      "model": null,
+      "seconds": 0.0,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "design": {
+      "spec": "vis table\ntitle Alloy sample readings\ndescription All four supplied samples\nwidth 960\nheight 640\ncolumnLabels\n  - [\"sample\", \"Alloy sample\"]\n  - [\"reading\", \"Conductance (mS)\"]\n",
+      "chart": "table",
+      "intent": null,
+      "explanation": "Direct presentation of the supplied values.",
+      "considered": [
+        "table"
+      ],
+      "compromises": []
+    },
+    "brief": {
+      "source": null,
+      "query": null,
+      "pulled_at": null,
+      "raw_question": "Show all four supplied alloy sample readings as an exact table.",
+      "enriched_question": null,
+      "intent": null,
+      "suggested_chart_type": null,
+      "column_descriptions": {},
+      "units": {},
+      "code_meanings": {},
+      "display_labels": {},
+      "caveats": [
+        "Synthetic prepared values; preserve their exact meanings and units."
+      ],
+      "brand_colors": [],
+      "producer_agent": null
+    }
+  },
+  "render_input": {
+    "report": {
+      "dataset_id": "synthetic_alloy_samples",
+      "question": "Show all four supplied alloy sample readings as an exact table.",
+      "language": "English",
+      "brief_fingerprint": null,
+      "analysis": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          {
+            "name": "sample",
+            "meaning": "Alloy sample",
+            "kind": "category",
+            "unit": null,
+            "source": "sample",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          },
+          {
+            "name": "reading",
+            "meaning": "Conductance",
+            "kind": "measure",
+            "unit": "mS",
+            "source": "reading",
+            "aggregate": "none",
+            "denominator": null,
+            "partition_by": null
+          }
+        ],
+        "summary": "Supplied synthetic measurements.",
+        "assumptions": []
+      },
+      "clarification": null,
+      "result": {
+        "sql": "SELECT supplied_columns FROM synthetic_fixture",
+        "columns": [
+          "sample",
+          "reading"
+        ],
+        "types": [
+          "VARCHAR",
+          "DOUBLE"
+        ],
+        "rows": [
+          [
+            "Amber",
+            0.42
+          ],
+          [
+            "Cobalt",
+            0.86
+          ],
+          [
+            "Dune",
+            0.58
+          ],
+          [
+            "Ember",
+            0.74
+          ]
+        ],
+        "row_count": 4,
+        "checks": [],
+        "seconds": 0.0
+      },
+      "checks": [],
+      "warnings": [],
+      "model": null,
+      "seconds": 0.0,
+      "created_at": "2026-09-17T00:00:00Z"
+    },
+    "spec": "vis table\ntitle Alloy sample readings\ndescription All four supplied samples\nwidth 960\nheight 640\ncolumnLabels\n  - [\"sample\", \"Alloy sample\"]\n  - [\"reading\", \"Conductance (mS)\"]\n"
+  },
+  "render": {
+    "png": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/table_missing_row_clean/chart.png",
+    "html": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/table_missing_row_clean/chart.html",
+    "config": "/Users/muhammad/Documents/NACI/pydantic-vis-harness/evals/generalization_reviewer/fixtures/table_missing_row_clean/config.json",
+    "width": 1918,
+    "height": 304,
+    "seconds": 0.16763033300000002,
+    "non_background_share": 0.999561403508772,
+    "compromises": [],
+    "drawn_rows": 4,
+    "folded_rows": 0,
+    "dropped_rows": 0,
+    "texts": null,
+    "text_bounds": null
+  }
+}
