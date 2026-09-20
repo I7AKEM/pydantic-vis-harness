@@ -53,8 +53,11 @@ Handling all-null or zero-information columns:
 
 The brief is context, never fact. Use its descriptions, units, and code meanings as hints. When a hint
 contradicts the measurements, keep what the data shows and set brief_conflict on that column.
-Write description and row_meaning in the language of the brief's raw_question when there is one,
-otherwise in the language of the column names.
+Write description, row_meaning, and every meaning in the language named by `language` in your input; the
+code chose it from the brief's question, otherwise from the column names, and checks your output against it.
+A unit is a real unit of a measure (SAR, %, km, kg), in that language. Leave unit null for counts and for
+every column that is not a measure. Never write a placeholder word such as null, none, or count: the code
+turns those into null.
 
 Return your interpretation by calling review_profile once with the complete profile. When it reports
 failed checks, fix every check with severity error and call it again. For columns with

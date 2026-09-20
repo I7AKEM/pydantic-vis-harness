@@ -1,0 +1,56 @@
+{
+  "dataset_id": "ds_04c28b78748e435cb9686e3fd288d68c",
+  "question": "كم تبلغ نسبة النساء السعوديات من اجمالي الموردين السعوديين الذين قاموا بتوريد منتجات تزيد قيمتها عن مليون ريال سعودي في العام الماضي(2025)؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    CAST(female_saudi_suppliers AS FLOAT) * 100.0 / NULLIF(total_saudi_suppliers, 0) AS \"نسبة النساء السعوديات\"\nFROM \"ds_04c28b78748e435cb9686e3fd288d68c\"",
+    "columns": [
+      {
+        "name": "نسبة النساء السعوديات",
+        "meaning": "نسبة الموردات السعوديات من إجمالي الموردين السعوديين",
+        "kind": "share",
+        "unit": null,
+        "source": null,
+        "aggregate": "share",
+        "denominator": "total_saudi_suppliers"
+      }
+    ],
+    "summary": "لا تتوفر بيانات رقمية محددة لحساب النسبة المطلوبة نظراً لأن القيم المسجلة في الجدول هي صفر أو غير متوفرة. بناءً على ذلك، لا يمكن تحديد نسبة النساء السعوديات من إجمالي الموردين السعوديين.",
+    "assumptions": [
+      "تم حساب النسبة بقسمة عدد الموردات السعوديات على إجمالي الموردين السعوديين.",
+      "تم افتراض أن البيانات الموجودة في الجدول تمثل الفترة والقيمة المذكورة في السؤال (عام 2025 وقيمة تزيد عن مليون ريال) لعدم وجود أعمدة تصفية أخرى."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    CAST(female_saudi_suppliers AS FLOAT) * 100.0 / NULLIF(total_saudi_suppliers, 0) AS \"نسبة النساء السعوديات\"\nFROM \"ds_04c28b78748e435cb9686e3fd288d68c\"",
+    "columns": [
+      "نسبة النساء السعوديات"
+    ],
+    "types": [
+      "FLOAT"
+    ],
+    "rows": [
+      [
+        null
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.057490667000820395
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.069461125000089,
+  "created_at": "2026-09-13T21:33:47.861697Z"
+}

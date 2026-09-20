@@ -1,0 +1,84 @@
+{
+  "dataset_id": "ds_e6b67f19c4f7451480e2d4bd484183bf",
+  "question": "Which store received the most orders?",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT store_name, count(*) as \"Order Count\" FROM \"ds_e6b67f19c4f7451480e2d4bd484183bf\" GROUP BY store_name ORDER BY \"Order Count\" DESC LIMIT 1",
+    "columns": [
+      {
+        "name": "store_name",
+        "meaning": "Name of the store",
+        "kind": "category",
+        "unit": null,
+        "source": "store_name",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "Order Count",
+        "meaning": "Number of orders received",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "count",
+        "denominator": null
+      }
+    ],
+    "summary": "The store that received the most orders is Al Baik, with a total of 4 orders.",
+    "assumptions": [
+      "The most orders are determined by the count of records per store."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT store_name, count(*) as \"Order Count\" FROM \"ds_e6b67f19c4f7451480e2d4bd484183bf\" GROUP BY store_name ORDER BY \"Order Count\" DESC LIMIT 1",
+    "columns": [
+      "store_name",
+      "Order Count"
+    ],
+    "types": [
+      "VARCHAR",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        "Al Baik",
+        4
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "Order Count",
+        "check": "total_explained",
+        "severity": "warning",
+        "passed": false,
+        "message": "Order Count: the result sums to 4; the column's total is 100. The query dropped rows without a filter the question named."
+      }
+    ],
+    "seconds": 0.01892733300337568
+  },
+  "checks": [
+    {
+      "column": "Order Count",
+      "check": "total_explained",
+      "severity": "warning",
+      "passed": false,
+      "message": "Order Count: the result sums to 4; the column's total is 100. The query dropped rows without a filter the question named."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "Order Count: the result sums to 4; the column's total is 100. The query dropped rows without a filter the question named."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 1.8051175000000512,
+  "created_at": "2026-09-13T19:08:43.159561Z"
+}

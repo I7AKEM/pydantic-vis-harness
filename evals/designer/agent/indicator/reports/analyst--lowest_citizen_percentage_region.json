@@ -1,0 +1,67 @@
+{
+  "dataset_id": "ds_25ac79ea0bf843b1984de198414d6e50",
+  "question": "Which region has the lowest citizen percentage?",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT region, citizen_percentage FROM \"ds_25ac79ea0bf843b1984de198414d6e50\" ORDER BY citizen_percentage ASC LIMIT 1",
+    "columns": [
+      {
+        "name": "region",
+        "meaning": "Region Name",
+        "kind": "category",
+        "unit": null,
+        "source": "region",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "citizen_percentage",
+        "meaning": "Citizen Percentage",
+        "kind": "measure",
+        "unit": null,
+        "source": "citizen_percentage",
+        "aggregate": "none",
+        "denominator": "total population of the region"
+      }
+    ],
+    "summary": "The region with the lowest citizen percentage is Makkah Region (منطقة مكة المكرمة) at 48.16%.",
+    "assumptions": [
+      "The citizen_percentage column is treated as the measure for comparison."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT region, citizen_percentage FROM \"ds_25ac79ea0bf843b1984de198414d6e50\" ORDER BY citizen_percentage ASC LIMIT 1",
+    "columns": [
+      "region",
+      "citizen_percentage"
+    ],
+    "types": [
+      "VARCHAR",
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        "منطقة مكة المكرمة",
+        48.15905743740795
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.022522125000250526
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 4.59563266600162,
+  "created_at": "2026-09-13T18:53:23.902362Z"
+}

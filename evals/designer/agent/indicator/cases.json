@@ -1,0 +1,869 @@
+[
+  {
+    "name": "dev_admission_total",
+    "report": "reports/dev_admission_total.json",
+    "brief": {
+      "raw_question": "Show the total admissions as a KPI.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show the total admissions as a KPI.",
+    "split": "dev",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "admissions",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 231
+        }
+      ]
+    },
+    "metadata": {
+      "family": "admissions",
+      "pair": "admissions",
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "dev_admission_by_city",
+    "report": "reports/dev_admission_by_city.json",
+    "brief": {
+      "raw_question": "Compare total admissions by city.",
+      "intent": "compare"
+    },
+    "expect": "design",
+    "charts": [
+      "table",
+      "bar",
+      "column",
+      "line"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Compare total admissions by city.",
+    "split": "dev",
+    "indicator": {
+      "mode": "forbidden",
+      "cards": []
+    },
+    "metadata": {
+      "family": "admissions",
+      "pair": "admissions",
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "dev_count_primary",
+    "report": "reports/dev_count_primary.json",
+    "brief": {
+      "raw_question": "Make the accepted claim count the headline KPI, with the percentage as support.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Make the accepted claim count the headline KPI, with the percentage as support.",
+    "split": "dev",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "accepted",
+          "context": [],
+          "support": [
+            "share"
+          ],
+          "unit": null,
+          "state": "value",
+          "exact_value": 12
+        }
+      ]
+    },
+    "metadata": {
+      "family": "claims",
+      "pair": "claims",
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "dev_share_primary",
+    "report": "reports/dev_share_primary.json",
+    "brief": {
+      "raw_question": "Make the accepted claim percentage the headline KPI, with count as support.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Make the accepted claim percentage the headline KPI, with count as support.",
+    "split": "dev",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "share",
+          "context": [],
+          "support": [
+            "accepted"
+          ],
+          "unit": "%",
+          "state": "value",
+          "exact_value": 24
+        }
+      ]
+    },
+    "metadata": {
+      "family": "claims",
+      "pair": "claims",
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "dev_share_permuted",
+    "report": "reports/dev_share_permuted.json",
+    "brief": {
+      "raw_question": "Make the accepted claim percentage the headline KPI, with count as support.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Make the accepted claim percentage the headline KPI, with count as support.",
+    "split": "dev",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "share",
+          "context": [],
+          "support": [
+            "accepted"
+          ],
+          "unit": "%",
+          "state": "value",
+          "exact_value": 24
+        }
+      ]
+    },
+    "metadata": {
+      "family": "claims",
+      "pair": "claims",
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "dev_share_denominator",
+    "report": "reports/dev_share_denominator.json",
+    "brief": {
+      "raw_question": "Show accepted claim percentage; include accepted and eligible counts.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show accepted claim percentage; include accepted and eligible counts.",
+    "split": "dev",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "share",
+          "context": [],
+          "support": [
+            "accepted",
+            "eligible"
+          ],
+          "unit": "%",
+          "state": "value",
+          "exact_value": 24
+        }
+      ]
+    },
+    "metadata": {
+      "family": "claims",
+      "pair": "claims",
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "dev_zero",
+    "report": "reports/dev_zero.json",
+    "brief": {
+      "raw_question": "Show total refunds as a KPI.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show total refunds as a KPI.",
+    "split": "dev",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "refunds",
+          "context": [],
+          "support": [],
+          "unit": "SAR",
+          "state": "value",
+          "exact_value": 0
+        }
+      ]
+    },
+    "metadata": {
+      "family": "dev_zero",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "dev_unavailable",
+    "report": "reports/dev_unavailable.json",
+    "brief": {
+      "raw_question": "Show the turbine availability percentage.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show the turbine availability percentage.",
+    "split": "dev",
+    "indicator": {
+      "mode": "unavailable",
+      "cards": [
+        {
+          "value": "availability",
+          "context": [],
+          "support": [],
+          "unit": "%",
+          "state": "unavailable",
+          "exact_value": null
+        }
+      ]
+    },
+    "metadata": {
+      "family": "dev_unavailable",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "dev_mixed_units",
+    "report": "reports/dev_mixed_units.json",
+    "brief": {
+      "raw_question": "Show two KPIs: energy consumed and average temperature.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show two KPIs: energy consumed and average temperature.",
+    "split": "dev",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "energy",
+          "context": [],
+          "support": [],
+          "unit": "kWh",
+          "state": "value",
+          "exact_value": 718
+        },
+        {
+          "value": "temperature",
+          "context": [],
+          "support": [],
+          "unit": "°C",
+          "state": "value",
+          "exact_value": 21.5
+        }
+      ]
+    },
+    "metadata": {
+      "family": "dev_mixed_units",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "dev_entity",
+    "report": "reports/dev_entity.json",
+    "brief": {
+      "raw_question": "Which clinic has the highest satisfaction score?",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator",
+      "table"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Which clinic has the highest satisfaction score?",
+    "split": "dev",
+    "indicator": {
+      "mode": "allowed",
+      "cards": [
+        {
+          "value": "score",
+          "context": [
+            "clinic"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 97
+        }
+      ]
+    },
+    "metadata": {
+      "family": "dev_entity",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "dev_hijri",
+    "report": "reports/dev_hijri.json",
+    "brief": {
+      "raw_question": "اعرض إجمالي الزكاة كمؤشر مع الفترة الهجرية.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "اعرض إجمالي الزكاة كمؤشر مع الفترة الهجرية.",
+    "split": "dev",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "الزكاة",
+          "context": [
+            "الفترة"
+          ],
+          "support": [],
+          "unit": "SAR",
+          "state": "value",
+          "exact_value": 1275
+        }
+      ]
+    },
+    "metadata": {
+      "family": "dev_hijri",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "dev_change",
+    "report": "reports/dev_change.json",
+    "brief": {
+      "raw_question": "Show percentage change as the KPI.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show percentage change as the KPI.",
+    "split": "dev",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "change",
+          "context": [],
+          "support": [],
+          "unit": "%",
+          "state": "value",
+          "exact_value": -148.75
+        }
+      ]
+    },
+    "metadata": {
+      "family": "dev_change",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "heldout_inventory",
+    "report": "reports/heldout_inventory.json",
+    "brief": {
+      "raw_question": "Show remaining warehouse stock as a KPI.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show remaining warehouse stock as a KPI.",
+    "split": "heldout",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "stock",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 65
+        }
+      ]
+    },
+    "metadata": {
+      "family": "inventory",
+      "pair": "inventory",
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "heldout_inventory_trend",
+    "report": "reports/heldout_inventory_trend.json",
+    "brief": {
+      "raw_question": "Show the warehouse stock trend by month.",
+      "intent": "trend"
+    },
+    "expect": "design",
+    "charts": [
+      "line",
+      "column",
+      "table"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show the warehouse stock trend by month.",
+    "split": "heldout",
+    "indicator": {
+      "mode": "forbidden",
+      "cards": []
+    },
+    "metadata": {
+      "family": "inventory",
+      "pair": "inventory",
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "heldout_gigantic_integer",
+    "report": "reports/heldout_gigantic_integer.json",
+    "brief": {
+      "raw_question": "Show the exact processed event count as a KPI.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show the exact processed event count as a KPI.",
+    "split": "heldout",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "events",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 9007199254740993
+        }
+      ]
+    },
+    "metadata": {
+      "family": "heldout_gigantic_integer",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "heldout_trace_percentage",
+    "report": "reports/heldout_trace_percentage.json",
+    "brief": {
+      "raw_question": "Show trace impurity percentage as the headline, with sampled and affected counts.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show trace impurity percentage as the headline, with sampled and affected counts.",
+    "split": "heldout",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "impurity",
+          "context": [],
+          "support": [
+            "affected",
+            "sampled"
+          ],
+          "unit": "%",
+          "state": "value",
+          "exact_value": 0.0005393990555122537
+        }
+      ]
+    },
+    "metadata": {
+      "family": "heldout_trace_percentage",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "heldout_growth_above100",
+    "report": "reports/heldout_growth_above100.json",
+    "brief": {
+      "raw_question": "Show growth since launch as a percentage-change KPI.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show growth since launch as a percentage-change KPI.",
+    "split": "heldout",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "growth",
+          "context": [],
+          "support": [],
+          "unit": "%",
+          "state": "value",
+          "exact_value": 245.4
+        }
+      ]
+    },
+    "metadata": {
+      "family": "heldout_growth_above100",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "heldout_multi_missing",
+    "report": "reports/heldout_multi_missing.json",
+    "brief": {
+      "raw_question": "Show two KPIs: completed jobs and mean queue time.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show two KPIs: completed jobs and mean queue time.",
+    "split": "heldout",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "jobs",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 45
+        },
+        {
+          "value": "queue_time",
+          "context": [],
+          "support": [],
+          "unit": "ms",
+          "state": "unavailable",
+          "exact_value": null
+        }
+      ]
+    },
+    "metadata": {
+      "family": "heldout_multi_missing",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "heldout_six_totals",
+    "report": "reports/heldout_six_totals.json",
+    "brief": {
+      "raw_question": "Show all six operation totals as separate KPI cards.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show all six operation totals as separate KPI cards.",
+    "split": "heldout",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "operation_1",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 1
+        },
+        {
+          "value": "operation_2",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 2
+        },
+        {
+          "value": "operation_3",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 3
+        },
+        {
+          "value": "operation_4",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 4
+        },
+        {
+          "value": "operation_5",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 5
+        },
+        {
+          "value": "operation_6",
+          "context": [],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 6
+        }
+      ]
+    },
+    "metadata": {
+      "family": "heldout_six_totals",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "heldout_seven_totals",
+    "report": "reports/heldout_seven_totals.json",
+    "brief": {
+      "raw_question": "Summarize all seven operation totals without omitting any.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "table"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Summarize all seven operation totals without omitting any.",
+    "split": "heldout",
+    "indicator": {
+      "mode": "forbidden",
+      "cards": []
+    },
+    "metadata": {
+      "family": "heldout_seven_totals",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "heldout_age_breakdown",
+    "report": "reports/heldout_age_breakdown.json",
+    "brief": {
+      "raw_question": "Show the age breakdown and total population.",
+      "intent": "composition"
+    },
+    "expect": "design",
+    "charts": [
+      "table"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show the age breakdown and total population.",
+    "split": "heldout",
+    "indicator": {
+      "mode": "forbidden",
+      "cards": []
+    },
+    "metadata": {
+      "family": "heldout_age_breakdown",
+      "pair": null,
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "heldout_missing_years",
+    "report": "reports/heldout_missing_years.json",
+    "brief": {
+      "raw_question": "Show an error-rate KPI for each year 2023 through 2025.",
+      "intent": "summary"
+    },
+    "expect": "clarification",
+    "charts": [],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show an error-rate KPI for each year 2023 through 2025.",
+    "split": "heldout",
+    "indicator": {
+      "mode": "incomplete",
+      "cards": []
+    },
+    "metadata": {
+      "family": "yearly_errors",
+      "pair": "yearly_errors",
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "heldout_available_years",
+    "report": "reports/heldout_available_years.json",
+    "brief": {
+      "raw_question": "Show the error rate for each year 2023 through 2025.",
+      "intent": "trend"
+    },
+    "expect": "design",
+    "charts": [
+      "line",
+      "column",
+      "table"
+    ],
+    "language": "en",
+    "bind": {},
+    "emphasis": null,
+    "why": "Show the error rate for each year 2023 through 2025.",
+    "split": "heldout",
+    "indicator": {
+      "mode": "forbidden",
+      "cards": []
+    },
+    "metadata": {
+      "family": "yearly_errors",
+      "pair": "yearly_errors",
+      "independent_gold": true
+    }
+  },
+  {
+    "name": "heldout_arabic_scope",
+    "report": "reports/heldout_arabic_scope.json",
+    "brief": {
+      "raw_question": "اعرض عدد معاملات الترخيص كمؤشر مع المدينة والفترة.",
+      "intent": "summary"
+    },
+    "expect": "design",
+    "charts": [
+      "indicator"
+    ],
+    "language": "ar",
+    "bind": {},
+    "emphasis": null,
+    "why": "اعرض عدد معاملات الترخيص كمؤشر مع المدينة والفترة.",
+    "split": "heldout",
+    "indicator": {
+      "mode": "required",
+      "cards": [
+        {
+          "value": "المعاملات",
+          "context": [
+            "المدينة",
+            "الفترة"
+          ],
+          "support": [],
+          "unit": null,
+          "state": "value",
+          "exact_value": 854
+        }
+      ]
+    },
+    "metadata": {
+      "family": "heldout_arabic_scope",
+      "pair": null,
+      "independent_gold": true
+    }
+  }
+]

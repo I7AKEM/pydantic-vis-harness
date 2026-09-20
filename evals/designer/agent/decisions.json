@@ -697,6 +697,30 @@
    "charts": [],
    "bind": {},
    "why": "Intent: compare. copy of deaths_by_gender with rows emptied Empty result expects clarification before any model request."
+  },
+  "jeddah_monthly_injuries_and_deaths": {
+   "intent": "trend",
+   "controller_charts": [
+    "multi_line",
+    "grouped_column"
+   ],
+   "within_three_points": {
+    "multi_line": 5,
+    "stacked_area": 5,
+    "line": 4,
+    "area": 4
+   },
+   "charts": [
+    "multi_line",
+    "grouped_column",
+    "stacked_area",
+    "line",
+    "area"
+   ],
+   "bind": {
+    "time": "الشهر"
+   },
+   "why": "The incident of 2026-09-09 (request rq_f5c12d15eb2a4bddbfd2783cba9e90d1): twelve months, injuries and deaths in persons side by side; the fold draws them as two series. Added with the fold; not one of the thirty captured reports."
   }
  }
 }

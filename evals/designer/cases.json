@@ -197,6 +197,13 @@
     "name": "one_number",
     "columns": [{"name": "average_violations", "meaning": "Average violations per violator", "kind": "measure", "aggregate": "avg"}],
     "rows": [[4.089]],
+    "intent": "summary", "suggested": null, "expected": ["indicator"],
+    "why": "A requested headline measurement is eligible for an indicator with summary intent."
+  },
+  {
+    "name": "one_number_non_summary",
+    "columns": [{"name": "average_violations", "meaning": "Average violations per violator", "kind": "measure", "aggregate": "avg"}],
+    "rows": [[4.089]],
     "intent": "compare", "suggested": null, "expected": ["table"],
     "why": "Analyst average_violations_per_violator, the one-number fallback. S13 rewards a directly readable table; the table must never receive S1."
   },
@@ -483,5 +490,31 @@
       "column"
     ],
     "why": "Complete under_15_share_by_region analyst report, all eight rows and original metadata. Regional shares sum to about 258.4, not a whole; H14 excludes pie, donut, and treemap even when the population measure is bound. Long region labels favour bar."
+  },
+  {
+    "name": "jeddah_monthly_injuries_and_deaths",
+    "columns": [
+      {"name": "الشهر", "meaning": "الشهر", "kind": "time"},
+      {"name": "إجمالي المصابين", "meaning": "إجمالي عدد المصابين", "kind": "measure", "unit": "شخص", "aggregate": "sum"},
+      {"name": "إجمالي الوفيات", "meaning": "إجمالي عدد الوفيات", "kind": "measure", "unit": "شخص", "aggregate": "sum"}
+    ],
+    "rows": [["2025-01-01", 15, 2], ["2025-02-01", 17, 3], ["2025-03-01", 19, 4], ["2025-04-01", 21, 1], ["2025-05-01", 23, 2], ["2025-06-01", 16, 3], ["2025-07-01", 18, 4], ["2025-08-01", 20, 1], ["2025-09-01", 22, 2], ["2025-10-01", 15, 3], ["2025-11-01", 17, 4], ["2025-12-01", 19, 1]],
+    "intent": "trend",
+    "suggested": null,
+    "expected": ["multi_line"],
+    "why": "The request that started this plan: two measures of one unit per month, wide. The fold draws them as two lines."
+  },
+  {
+    "name": "revenue_and_cost_by_city",
+    "columns": [
+      {"name": "city", "meaning": "City", "kind": "category"},
+      {"name": "revenue", "meaning": "Revenue", "kind": "measure", "unit": "SAR", "aggregate": "sum"},
+      {"name": "cost", "meaning": "Cost", "kind": "measure", "unit": "SAR", "aggregate": "sum"}
+    ],
+    "rows": [["Riyadh", 120, 80], ["Jeddah", 100, 75], ["Dammam", 90, 55], ["Mecca", 70, 50], ["Medina", 60, 45]],
+    "intent": "compare",
+    "suggested": null,
+    "expected": ["grouped_column", "grouped_bar"],
+    "why": "Two measures of one unit per city, wide. The fold draws revenue and cost as side-by-side series."
   }
 ]

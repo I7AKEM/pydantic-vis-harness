@@ -5,7 +5,8 @@ from vis_agent.designer.rules import Context, HARD_RULES, SOFT_RULES, check_rule
 from vis_agent.designer.shape import describe
 
 from .conftest import (cities, column, gender_code_and_label, gender_share, grouped, monthly,
-                       own_share_by_region, raw_amounts, scatter_points, single_number, table, two_units)
+                       own_share_by_region, raw_amounts, scatter_points, single_number, table,
+                       two_same_unit_measures, two_units)
 
 
 def candidate(data, name, **context):
@@ -134,6 +135,9 @@ def test_h10_units():
     rejected((columns, result), "dual_axes", "H10")
     columns[1].unit = columns[2].unit = None
     rejected((columns, result), "dual_axes", "H10")
+    failure = direct("H10", "dual_axes", two_same_unit_measures())
+    assert "fold" in failure.fix
+    assert "grouped column" not in failure.fix
 
 
 def test_h11_many():
@@ -287,8 +291,11 @@ def test_s12_fallback():
 def test_s13_one_number():
     assert candidate(single_number(), "table").score == 2
     for entry in CATALOGUE.entries:
-        assert direct("S13", entry.name, single_number()).score == (2 if entry.name == "table" else -3)
+        expected = 2 if entry.name == "table" else -3 if entry.name == "indicator" else 0
+        assert direct("S13", entry.name, single_number()).score == expected
+        assert direct("S13", entry.name, single_number(), intent="summary").score == (3 if entry.name == "indicator" else 0)
     assert direct("S13", "column", cities()) is None
+    assert direct("S13", "column", single_number(), intent="trend") is None
 
 
 def test_s14_few_parts():
@@ -441,3 +448,12 @@ def test_checks_collect_all_errors_with_fixes():
                          labels="on", data=cities(60), axis_y_min=10, zero=True)
     assert {"C6", "C9", "C10", "C11", "C13", "C15", "C16"} <= {v.rule for v in violations}
     assert all(v.message and v.fix for v in violations)
+
+
+def test_h10_lets_a_count_and_an_average_share_two_axes_when_no_unit_is_written():
+    columns, result = two_units()
+    columns[1].unit = columns[2].unit = None
+    columns[1].aggregate, columns[2].aggregate = "sum", "avg"
+    candidate((columns, result), "dual_axes")
+    columns[2].aggregate = "sum"
+    rejected((columns, result), "dual_axes", "H10")

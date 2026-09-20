@@ -68,7 +68,7 @@ request is waiting on, or the failure. Models decide only inside the analyze and
 | understand | Detects the language; for a revision, loads the parent artifact and copies its dataset and raw question | language, dataset, parent | never |
 | profile | `profile_dataset`, which already returns a complete saved profile without a model call | profile status, created_at, brief fingerprint | a complete profile exists (inside `profile_dataset`) |
 | analyze | The analyst, through `analyze_dataset`, with the request's clarifications and, for a revision with `redo_analysis`, the parent's SQL and columns and the change | the AnalysisReport | a revision without `redo_analysis`: the parent's report is copied as the step output |
-| design | The designer, through `design_chart`, with the clarifications and, for a revision, the parent's spec and the change | the DesignReport | the result is a single number (one row, one measure): saved as skipped with the reason |
+| design | The designer, through `design_chart`, with the clarifications and, for a revision, the parent's spec and the change | the DesignReport; the designer may ask the analyst once for a revised table, and the step then runs again on it (see AGENTS.md) | the result is a single number (one row, one measure): saved as skipped with the reason |
 | render | `render_design` into `data/renders/<render_id>` | the Rendered files, the render ID and URLs | design was skipped or the renderer is unavailable (saved as skipped with the reason; the artifact then holds the table) |
 | review | Nothing in this phase | `{"status": "not_reviewed", "reason": "Phase 5 adds the reviewer"}` | never |
 | deliver | Writes the artifact and marks the request done | the artifact ID | never |

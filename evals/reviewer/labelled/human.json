@@ -1,0 +1,536 @@
+{
+  "analyst--average_actual_fine_by_registry": {
+    "verdict": "pass",
+    "note": "All seven registry labels and rounded averages match the rows, with descending bars on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--average_fine_by_violation_type": {
+    "verdict": "pass",
+    "note": "The five readable violation labels pair with the correct averages from 100 to 1,200 on a zero-based scale.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--cities_with_more_females": {
+    "verdict": "pass",
+    "note": "The table correctly lists all nine qualifying cities with their exact female and male counts.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--citizens_by_trip_year": {
+    "verdict": "pass",
+    "note": "The chronological columns correctly show 2,431 citizens in 2021 and 629 in 2022 on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--deaths_by_gender": {
+    "verdict": "pass",
+    "note": "The zero-based columns correctly pair M with 53,218 deaths and F with 51,791 deaths.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--deaths_by_year": {
+    "verdict": "pass",
+    "note": "The readable Arabic line chart plots all nine annual death totals correctly in chronological order.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--discounted_share_by_person_type": {
+    "verdict": "pass",
+    "note": "The Arabic chart correctly compares 50.1% for Saudi and 48.2% for Alien using the original category values and a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--doctorates_by_city": {
+    "verdict": "pass",
+    "note": "The Arabic columns correctly label Riyadh with 31 doctorate holders and Jeddah with 40.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--doctorates_by_wealth_riyadh": {
+    "verdict": "pass",
+    "note": "The four wealth levels remain in their natural order and show the correct doctorate counts of 3, 1, 4, and 3.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--entries_by_port_top5": {
+    "verdict": "pass",
+    "note": "All five Arabic port names and entry totals are readable and correctly ranked from 243 to 8 on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--female_share_by_region": {
+    "verdict": "pass",
+    "note": "The regional female percentages match the rows after rounding and are correctly sorted on a zero-based percentage axis.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--fines_by_district": {
+    "verdict": "pass",
+    "note": "All ten district labels pair with the correct fine totals in descending order on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--flights_per_airport": {
+    "verdict": "pass",
+    "note": "The Arabic bars correctly show 53 flights from King Khalid airport and 43 from King Abdulaziz airport.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--jeddah_by_wealth_level": {
+    "verdict": "pass",
+    "note": "The Arabic chart preserves the wealth hierarchy from right to left and pairs all five original categories with the correct counts.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--largest_cities_by_population": {
+    "verdict": "pass",
+    "note": "The Arabic chart correctly ranks the five cities from right to left with population totals of 701, 573, 540, 450, and 390.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--married_share_by_gender": {
+    "verdict": "pass",
+    "note": "The chart correctly displays the within-gender married-death shares as 58.7% for M and 19.9% for F.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--masters_by_city": {
+    "verdict": "pass",
+    "note": "The two city columns correctly show 59 master's degree holders in Jeddah and 33 in Riyadh.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--monthly_violations_2025": {
+    "verdict": "pass",
+    "note": "All twelve monthly violation totals match their readable 2025 dates and appear in chronological order.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--non_saudi_deaths_by_age": {
+    "verdict": "pass",
+    "note": "The four ascending age groups correctly display the non-Saudi death totals of 13,470, 2,858, 8,434, and 921.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--order_value_by_customer_city": {
+    "verdict": "fail",
+    "note": "The axis labels reverse the fields, naming the numeric horizontal axis customer city and the city-name vertical axis total order value.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--orders_by_app": {
+    "verdict": "pass",
+    "note": "All ten app counts and their right-to-left ranking match the rows, with only minor crowding of the smallest labels near zero.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--orders_by_status": {
+    "verdict": "pass",
+    "note": "The five status counts match the rows and zero-based bars, with only minor crowding of the smallest value labels.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--paid_violations_by_year_since_2018": {
+    "verdict": "pass",
+    "note": "The line correctly pairs every year from 2018 through 2026 with its paid-violation total, including the 39,698 peak in 2022.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--people_by_wealth_level": {
+    "verdict": "pass",
+    "note": "The zero-based columns preserve the wealth hierarchy and correctly show all five population counts.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--person_type_share": {
+    "verdict": "fail",
+    "note": "The question and title ask for shares, but the picture displays only counts of 1,021 and 979 instead of the available 51.05% and 48.95% shares.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--rich_households_by_city": {
+    "verdict": "fail",
+    "note": "The axis labels reverse the fields, naming the numeric horizontal axis city and the city-name vertical axis number of households.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--saudi_deaths_by_age": {
+    "verdict": "pass",
+    "note": "The Arabic chart correctly pairs all five death totals with age groups ordered from youngest to oldest right to left.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--top_cities_by_average_price": {
+    "verdict": "pass",
+    "note": "The three ranked city columns correctly show average prices of 810.53, 718.94, and 674.57 on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--top_destinations_from_riyadh": {
+    "verdict": "pass",
+    "note": "The five Arabic destination labels and flight counts match the rows and are correctly ranked from 738 to 714.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--top_female_nationalities": {
+    "verdict": "pass",
+    "note": "The Arabic columns correctly rank Jordanian, Turkish, and Bahraini female counts as 74, 69, and 66.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--top_makes_by_average_fine": {
+    "verdict": "pass",
+    "note": "All five vehicle makes are correctly ranked and labelled with their rounded average original fines.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--top_nationalities_arabic_columns": {
+    "verdict": "pass",
+    "note": "The Arabic chart correctly ranks Saudi, Chinese, and Kuwaiti counts as 2,750, 142, and 132 on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--top_nationalities_by_deaths": {
+    "verdict": "pass",
+    "note": "The three nationality totals match the rows, with the two small labels crowded near zero but still readable.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--top_store_by_orders": {
+    "verdict": "pass",
+    "note": "The readable one-row table correctly identifies Al Baik as the leading store with 4 orders.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--total_population_by_region": {
+    "verdict": "pass",
+    "note": "All eight Arabic region labels match their population totals and descending zero-based bars.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--under_15_share_by_region": {
+    "verdict": "pass",
+    "note": "The under-15 shares match the rows after rounding and are correctly ranked from 33.7% to 30.3%.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--unpaid_share_overall": {
+    "verdict": "pass",
+    "note": "The Arabic table correctly shows 94,356 unpaid violations, 951,777 total violations, and the rounded share 9.91, with the percentage clarified in the accompanying explanation.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--violation_type_share": {
+    "verdict": "pass",
+    "note": "All five readable Arabic violation descriptions pair with the correct percentages, including the equal 19.7% bars.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--violations_by_registry": {
+    "verdict": "pass",
+    "note": "The Arabic bars correctly rank all seven registry offices with matching violation counts from 168 to 128.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "analyst--weighted_household_size_by_region": {
+    "verdict": "pass",
+    "note": "The regional bars correctly show weighted household sizes very close to one, with coarse label rounding leaving the tiny differences to the accompanying table and summary.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "hand--citizens": {
+    "verdict": "pass",
+    "note": "The Arabic chart correctly shows equal 50.0% wealthy shares for both genders on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "hand--sales": {
+    "verdict": "pass",
+    "note": "The four regions are correctly ranked with matching sales totals and an explicit USD axis.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-010c162b92ef3206": {
+    "verdict": "pass",
+    "note": "The Arabic comparison correctly pairs 2015 with 8,087 new jobs and 2025 with 461 on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-170fa6c241a5b3e8": {
+    "verdict": "fail",
+    "note": "The picture omits the national-average series or reference needed for the requested comparison, showing only regional household sizes.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-1e2bacf0dff5563b": {
+    "verdict": "pass",
+    "note": "The Arabic chart correctly compares all five within-wealth postgraduate percentages with readable labels and a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-39471b0e4a5d3fc5": {
+    "verdict": "pass",
+    "note": "The Arabic columns correctly show the same 3.76 violations per person for drivers and non-drivers.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-4ed9d72a0a3ae246": {
+    "verdict": "pass",
+    "note": "The chart correctly shows Riyadh-region counts of 343 females and 328 males, with only the source unit person left in English.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-51d8ee210d07e31f": {
+    "verdict": "pass",
+    "note": "The ranked bars correctly show the nine distinct nationalities covering both top-five and bottom-five lists, with Syria's shared 106-person entry represented once.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-51f1beafa3531994": {
+    "verdict": "fail",
+    "note": "The requested geographic map is replaced by crowded district bars without city context, so the picture cannot locate the wealth distribution geographically.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-5b598d47ed1741aa": {
+    "verdict": "fail",
+    "note": "Male and female rows overlap without gender labels, while raw counts replace the requested demographic comparison with the national distribution.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-5bced735b4170137": {
+    "verdict": "fail",
+    "note": "The title claims the ten largest resident nationalities, but the supplied assumption selects nationalities by their highest port-use percentages instead of population.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-5cd71a369b0b665b": {
+    "verdict": "fail",
+    "note": "The picture shows only regional household sizes and omits the requested national-average reference or comparison series.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-5fbab3a001f0b4ba": {
+    "verdict": "pass",
+    "note": "The Arabic bars correctly rank the five supplied ratios, and the accompanying summary explicitly explains that time data are unavailable.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-601a174b0df48bb9": {
+    "verdict": "fail",
+    "note": "The table replaces the requested map and clips the age-group headings and rightmost column, preventing identification of all the requested demographic information.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-6157cbb868c22e86": {
+    "verdict": "fail",
+    "note": "The chart's resident-nationality comparison uses a top ten selected by total entries, which does not establish the ten largest current resident populations requested.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-615ec665196de860": {
+    "verdict": "pass",
+    "note": "The Arabic chart correctly compares equal household-size averages of 1 for Saudis and foreign residents.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-620e192d0fd6f826": {
+    "verdict": "fail",
+    "note": "Every value label and vertical-axis tick is rendered as 0 despite positive unequal values, making the scale and magnitudes unreadable.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-649f7c35cff701c0": {
+    "verdict": "pass",
+    "note": "The Arabic chart correctly shows the rounded postgraduate percentages in wealth order without exaggerating their small differences.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-6caf2233e0af163b": {
+    "verdict": "pass",
+    "note": "The readable Arabic table correctly pairs all eight regions with both gender percentages, covering the requested comparison.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-82e758150c50d02f": {
+    "verdict": "pass",
+    "note": "The Arabic chart correctly shows 0.0%, 60.9%, and three 100.0% values in age order, with only minor crowding at the zero-value label.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-87ebf6be710a836a": {
+    "verdict": "fail",
+    "note": "The picture shows nationality counts only and omits the requested shares of the non-Saudi population despite those percentages being available in the rows.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-8be738ba6fdc3e77": {
+    "verdict": "pass",
+    "note": "The Arabic columns correctly rank Al-Jawf, Northern Borders, and Najran with population counts of 739, 727, and 701.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-8f706ab9f208d7db": {
+    "verdict": "pass",
+    "note": "The readable Arabic table correctly identifies Al-Bujairi with 873 workers.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-924231a95b136a78": {
+    "verdict": "fail",
+    "note": "Sorting by count places ages 26–30 before 20–25 and disrupts the requested age progression, making the apparent age pattern misleading.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-931e817b28c5673a": {
+    "verdict": "pass",
+    "note": "The Arabic chart correctly shows cumulative shares of 20.1% and 40.1%, while the accompanying summary states that the two levels do not reach 70%.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-98fe17bdec87024a": {
+    "verdict": "pass",
+    "note": "The five city percentages match the supplied rows after rounding and are correctly ranked on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-9f9e67d10f479c16": {
+    "verdict": "fail",
+    "note": "The title claims income specifically in large population areas, but the supplied assumption substitutes all available data because no area classification exists.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-a144ceac14afb165": {
+    "verdict": "fail",
+    "note": "Values such as 109.3 cannot represent the requested share of married men with multiple wives among all married men, so the chart presents an invalid subset ratio.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-a2239f66467ed557": {
+    "verdict": "pass",
+    "note": "All eight Arabic region labels pair with the correct rounded male percentages in descending order.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-a37ff36a7557e756": {
+    "verdict": "pass",
+    "note": "The Arabic bars correctly rank all eight sponsor regions with matching active domestic-worker counts from 118 to 88.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-a546008463a38f39": {
+    "verdict": "pass",
+    "note": "All twenty government-entity labels are readable and correctly ranked by average wage on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-a6e88d9dbec260c8": {
+    "verdict": "pass",
+    "note": "The Arabic chart correctly shows the same household-size average of 1 for all eight supplied regions.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-a7761ce7247590cc": {
+    "verdict": "pass",
+    "note": "The readable Arabic table correctly identifies Diriyah and its rounded youth-density value of 10.33.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-a84dff81b391a197": {
+    "verdict": "pass",
+    "note": "The Arabic columns correctly compare Jeddah's 60.5% with Riyadh's 39.5%, and the accompanying summary discloses that Medina data are absent.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-a987ac48cb20a44c": {
+    "verdict": "pass",
+    "note": "The readable Arabic table correctly shows 448 entries and 709 exits for Northern Borders under the stated interpretation of the question.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-aab5c6c5e728c1c1": {
+    "verdict": "pass",
+    "note": "The requested Arabic table lists all seven regions with household averages correctly rounded to 1, although the finer differences are lost.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-ae79cdc7d8e77066": {
+    "verdict": "fail",
+    "note": "The table displays the requested return share as 0 even though 2 of 370,783 students returned, hiding the nonzero 0.000539% result.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-b5d188da970cad0d": {
+    "verdict": "pass",
+    "note": "The grouped bars correctly pair each region with its female and male percentages using a consistent F/M legend and zero-based scale.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-be23dbebb3cfc9e9": {
+    "verdict": "fail",
+    "note": "Monthly observations collapse onto four year positions, producing vertical zigzags with no month labels and preventing the requested monthly growth reading.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-bfa0bf80d3dacee0": {
+    "verdict": "fail",
+    "note": "The monthly growth line places all observations from each year at one x-position, so months overlap and their sequence cannot be read.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-bfec427bf3135ffe": {
+    "verdict": "fail",
+    "note": "The static PNG shows only the first fourteen rows of a scrolling table, leaving most of the requested 63 locations outside the picture.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-c6da0a0187a238a8": {
+    "verdict": "pass",
+    "note": "The Arabic bars correctly compare 8,979 and 8,771 violations for the two education groups under the supplied period and age-scope assumption.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-cd58595da4454e63": {
+    "verdict": "pass",
+    "note": "Both original payment-status labels pair with the correct totals of 472,462,100 and 52,119,350 on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-de1abfed1b99352d": {
+    "verdict": "pass",
+    "note": "The seven non-null app totals are correctly ranked and labelled, with small values crowded near zero but still readable.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-eb1acb39daecba9d": {
+    "verdict": "pass",
+    "note": "The Arabic bars correctly rank all ten eligible establishments with readable labels and matching average wages, with only rotated axis ticks.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-eea1fdbaad35f5ea": {
+    "verdict": "pass",
+    "note": "The Arabic bars correctly rank all eight regions with matching population shares from 13.25% to 12.03% on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-f1d253c3a410c898": {
+    "verdict": "fail",
+    "note": "The picture replaces the explicitly requested geographic map with regional bars, so it does not show the average ages geographically.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-f21f1eea05e01308": {
+    "verdict": "pass",
+    "note": "The Arabic columns correctly compare 3.76 violations for drivers with 3.75 for non-drivers on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  },
+  "vizcsv-f76b174d7303bd6f": {
+    "verdict": "pass",
+    "note": "The Arabic bars correctly rank all eight regions with matching percentages of married men with multiple wives on a zero baseline.",
+    "by": "codex-astra",
+    "date": "2026-09-15"
+  }
+}

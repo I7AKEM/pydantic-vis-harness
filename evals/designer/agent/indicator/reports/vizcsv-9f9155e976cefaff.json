@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_f0275e8e62eb4cf08229916b6604554f",
+  "question": "كم عدد الأشخاص الذين لديهم خروج نهائي مجدول في عام 2024 ولكنهم لا يزالون يعيشون في الرياض؟ رد كالتالي: \"العدد (الرقم)\"",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \"العدد\" FROM \"ds_f0275e8e62eb4cf08229916b6604554f\"",
+    "columns": [
+      {
+        "name": "العدد",
+        "meaning": "عدد الأشخاص الذين لديهم خروج نهائي مجدول في عام 2024 ويعيشون في الرياض",
+        "kind": "measure",
+        "unit": null,
+        "source": "العدد",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "العدد (226)",
+    "assumptions": [
+      "تم اعتبار الجدول المقدم كبيانات مصفاة مسبقاً بناءً على الشروط المذكورة في السؤال (خروج نهائي مجدول في 2024 والسكن في الرياض)"
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \"العدد\" FROM \"ds_f0275e8e62eb4cf08229916b6604554f\"",
+    "columns": [
+      "العدد"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        226
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.0430753749969881
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.053984209000191,
+  "created_at": "2026-09-13T21:53:02.324500Z"
+}

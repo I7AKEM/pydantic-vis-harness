@@ -13,6 +13,7 @@ from pydantic_ai.models import Model
 from pydantic_ai.usage import RunUsage
 
 from vis_agent.deps import AppDeps
+from vis_agent.language import language_of
 from vis_agent.store import DatasetNotFound, DatasetStore
 from vis_agent.profiler.measurements import compute_statistics
 from vis_agent.models import DataBrief
@@ -37,6 +38,8 @@ PROFILER_INSTRUCTIONS = Path(__file__).with_name("rulebook.md").read_text(encodi
 class ProfilerInput(BaseModel):
     statistics: DeterministicProfile
     brief: DataBrief | None = None
+    language: str = "English"
+    """The language of descriptions and meanings: the brief's question, else the column names; chosen by code."""
     review_attempts: int = 0  # counts send-backs within one run; never part of the prompt
 
     def prompt_json(self) -> str:
@@ -55,7 +58,7 @@ def review_profile(ctx: RunContext[ProfilerInput], draft: SemanticProfile) -> Se
     actual = [column.name for column in draft.columns]
     if set(actual) != expected or len(actual) != len(expected):
         raise ModelRetry("Return exactly one semantic entry per input column, using its exact name.")
-    errors = failed_checks(run_checks(ctx.deps.statistics, draft, ctx.deps.brief), "error")
+    errors = failed_checks(run_checks(ctx.deps.statistics, draft, ctx.deps.brief, ctx.deps.language), "error")
     if errors and ctx.deps.review_attempts == 0:
         ctx.deps.review_attempts += 1
         raise ModelRetry("Fix these checks before returning: " + " ".join(c.message for c in errors))
@@ -114,6 +117,26 @@ async def _run_with_one_retry(profiler, prompt: ProfilerInput, usage: RunUsage |
             prompt.review_attempts = 0
 
 
+async def measure_dataset(
+    store: DatasetStore, dataset_id: str, brief: DataBrief | None = None, *, table_name: str | None = None,
+) -> DatasetProfile:
+    """Provide local column facts to an explicitly requested analysis, without a model.
+
+    Semantic profiling is a separate expert consultation. A visualization or an
+    analyst's read-only query never needs to wait for it.
+    """
+    source = await asyncio.to_thread(store.import_csv, dataset_id)
+    if brief is not None:
+        source = await asyncio.to_thread(store.update_brief, dataset_id, brief)
+    fingerprint = source.brief.fingerprint() if source.brief else None
+    cached = await asyncio.to_thread(store.get_profile, dataset_id)
+    if table_name is None and cached and cached.schema_version == PROFILE_VERSION:
+        return cached.model_copy(update={"source": source, "brief_fingerprint": fingerprint})
+    statistics = await asyncio.to_thread(compute_statistics, store, source, table_name=table_name)
+    return DatasetProfile(source=source, status="partial", deterministic=statistics,
+                          brief_fingerprint=fingerprint, created_at=datetime.now(timezone.utc))
+
+
 async def _profile_dataset(
     store: DatasetStore,
     profiler: Agent[ProfilerInput, SemanticProfile],
@@ -140,12 +163,14 @@ async def _profile_dataset(
     semantic_model = None
     review: list[ProfileCheck] = []
     warnings: list[str] = []
-    prompt = ProfilerInput(statistics=statistics, brief=brief)
+    language = language_of(brief.raw_question if brief else None,
+                           " ".join(column.original_name for column in statistics.columns))
+    prompt = ProfilerInput(statistics=statistics, brief=brief, language=language)
     try:
         result = await _run_with_one_retry(profiler, prompt, usage, dataset_id)
         semantic = result.output
         semantic_model = result.response.model_name
-        review = run_checks(statistics, semantic, brief)
+        review = run_checks(statistics, semantic, brief, language)
         warnings.extend(check.message for check in failed_checks(review))
     except (ModelAPIError, UnexpectedModelBehavior, TimeoutError) as exc:
         log.warning("Semantic profiling failed for %s: %s", dataset_id, exc, exc_info=exc)

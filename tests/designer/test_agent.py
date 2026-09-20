@@ -11,10 +11,10 @@ from pydantic_ai.models.test import TestModel
 from pydantic_ai.usage import RunUsage
 
 from vis_agent.analyst.checks import summary_numbers_exist
-from vis_agent.analyst.models import Analysis, AnalysisReport
+from vis_agent.analyst.models import Analysis, AnalysisReport, AnalysisRevision, RevisionRound
 from vis_agent.designer import models, syntax
 from vis_agent.designer.agent import (
-    DESIGNER_RULEBOOK, EMPTY_RESULT, MAX_REQUESTS, build_prompt,
+    DESIGNER_RULEBOOK, MAX_REQUESTS, build_prompt,
     create_designer, design_chart, grammar, instructions, render_design, render_id,
 )
 from vis_agent.designer.check import check_spec as run_check
@@ -22,7 +22,7 @@ from vis_agent.designer.recommend import recommend_charts as rank_charts
 from vis_agent.models import DataBrief
 from vis_agent.render import gptvis
 
-from .conftest import cities, gender_share, monthly, table
+from .conftest import cities, gender_share, monthly, table, two_units
 
 DONUT = "vis donut\ntitle Gender share\ndescription Share by gender\nbind\n  category label\n  value share\nsort value desc\n"
 ARABIC_DONUT = DONUT.replace("Gender share", "الحصة حسب الجنس").replace(
@@ -137,303 +137,17 @@ def test_grammar_and_instructions():
     assert instructions().startswith(DESIGNER_RULEBOOK.splitlines()[0])
     assert "\n\nGrammar:\n" + text in instructions()
     assert "donut:" in instructions() and "table:" in instructions()
+    assert '"- value <column name>"' in text
+    assert "ordinary bind must be empty" in text
 
 
-@pytest.mark.parametrize("starting_requests", [None, 7])
-def test_happy_path(starting_requests):
-    source = report(*gender_share(), question="ما الحصة حسب الجنس؟", language="Arabic")
-    considered = []
-
-    def drive(messages, info):
-        returns = [p for m in messages for p in m.parts if isinstance(p, ToolReturnPart)]
-        if not returns:
-            return tool_call("recommend_charts", intent="share")
-        returned = last_return(messages).model_response_object()
-        if len(returns) == 1:
-            assert len(returned["candidates"]) <= 5
-            assert returned["candidates"][0]["name"] == "donut" and returned["intent"] == "share"
-            considered.extend(c["name"] for c in returned["candidates"])
-            return tool_call("check_spec", spec=ARABIC_DONUT)
-        assert returned["ok"] and returned["canonical"] == syntax.to_text(syntax.parse(ARABIC_DONUT))
-        return tool_call("deliver_design", spec=returned["canonical"],
-                         explanation="يوضح الرسم الحصة حسب الجنس. يقارن الرسم الحلقي أجزاء الكل.")
-
-    usage = RunUsage(requests=starting_requests) if starting_requests is not None else None
-    result = run(source, FunctionModel(drive), usage=usage, brief=DataBrief(suggested_chart_type="donut"))
-    assert result.design.spec == result.check.canonical
-    assert result.design.chart == "donut" and result.design.intent == "share"
-    assert result.design.considered == considered
-    assert any("legend stays" in c.message for c in result.design.compromises)
-    assert result.check.ok and result.requests == 3 and result.check_calls == 1
-    assert result.model.startswith("function") and result.clarification is None
-    assert result.warnings == []
-    if usage is not None:
-        assert usage.requests == starting_requests + 3
-
-
-def test_repair_after_violation():
-    def drive(messages, info):
-        returns = [p for m in messages for p in m.parts if isinstance(p, ToolReturnPart)]
-        if not returns:
-            return tool_call("check_spec", spec=DONUT + "emphasis\n  - Femlae\n")
-        returned = last_return(messages).model_response_object()
-        if len(returns) == 1:
-            assert any(v["rule"] == "C9" for v in returned["violations"])
-            return tool_call("check_spec", spec=DONUT + "emphasis\n  - Female\n")
-        assert returned["ok"]
-        return tool_call("deliver_design", spec=returned["canonical"], explanation=EXPLANATION)
-
-    result = run(report(*gender_share()), FunctionModel(drive))
-    assert result.design is not None and result.check.ok
-    assert result.check_calls == 2 and result.warnings == []
-
-
-def test_shortlist_preserves_phase_three_ranking():
-    source = report(*gender_share())
-    expected = rank_charts(source.analysis.columns, source.result, intent="share")
-
-    def drive(messages, info):
-        returns = [p for m in messages for p in m.parts if isinstance(p, ToolReturnPart)]
-        if not returns:
-            return tool_call("recommend_charts", intent="share")
-        returned = last_return(messages).model_response_object()
-        assert returned["candidates"] == [candidate.model_dump() for candidate in expected.candidates[:5]]
-        assert returned["rejected"] == [rejection.model_dump() for rejection in expected.rejected]
-        return tool_call("deliver_design", spec=DONUT, explanation=EXPLANATION)
-
-    result = run(source, FunctionModel(drive))
-    assert result.design.considered == [c.name for c in expected.candidates[:5]]
-    assert result.design.considered[0] == "pie"
-
-
-@pytest.mark.parametrize("repair", [True, False])
-def test_delivery_rechecks_once(repair):
-    attempts = []
-
-    def drive(messages, info):
-        attempts.append(1)
-        if len(attempts) == 1:
-            return tool_call("deliver_design", spec=DONUT.replace("value share", "value missing"), explanation=EXPLANATION)
-        assert "C2" in retries(messages)[-1].content
-        return tool_call("deliver_design", spec=DONUT if repair else DONUT.replace("value share", "value missing"),
-                         explanation=EXPLANATION)
-
-    result = run(report(*gender_share()), FunctionModel(drive))
-    assert len(attempts) == 2 and result.check_calls == 0
-    if repair:
-        assert result.design is not None and result.check.ok and result.warnings == []
-        assert result.design.intent is None and result.design.considered == []
-    else:
-        assert result.design is None and result.check is None
-        assert len(result.warnings) == 1 and "C2" in result.warnings[0]
-
-
-@pytest.mark.parametrize("language,question,first_title,correct_title", [
-    ("Arabic", "ما الحصة حسب الجنس؟", "Gender share", "الحصة حسب الجنس"),
-    ("English", "Share by gender?", "الحصة حسب الجنس", "Gender share"),
-])
-def test_language_is_set_and_title_script_checked(language, question, first_title, correct_title):
-    source = report(*gender_share(), question=question, language=language)
-
-    def drive(messages, info):
-        if not retries(messages):
-            return tool_call("deliver_design", spec=DONUT.replace("Gender share", first_title), explanation=EXPLANATION)
-        assert f"Write the title in {language}." in retries(messages)[-1].content
-        return tool_call("deliver_design", spec=DONUT.replace("Gender share", correct_title), explanation=EXPLANATION)
-
-    result = run(source, FunctionModel(drive))
-    assert result.design is not None and result.warnings == []
-    assert syntax.parse(result.design.spec).language == {"Arabic": "ar", "English": "en"}[language]
-    if language == "Arabic":
-        assert "language ar" in result.design.spec
-    assert result.check == run_check(result.design.spec, source.analysis.columns, source.result)
-
-
-def test_explanation_numbers_must_exist():
-    columns, data = gender_share()
-    data.rows[0][3], data.rows[1][3] = 61.6, 38.4
-    source = report(columns, data)
-    bad = "The share is 99%. A donut shows the parts."
-    good = "The share is 61.6%. A donut shows the parts."
-
-    def drive(messages, info):
-        if not retries(messages):
-            return tool_call("deliver_design", spec=DONUT, explanation=bad)
-        assert retries(messages)[-1].content == summary_numbers_exist(bad, data).message
-        return tool_call("deliver_design", spec=DONUT, explanation=good)
-
-    result = run(source, FunctionModel(drive))
-    assert result.design.explanation == good and result.requests == 2 and result.warnings == []
-    question_source = report(columns, data, question="Share by gender for people over 25?")
-    result = run(question_source, TestModel(call_tools=[], custom_output_args={
-        "spec": DONUT, "explanation": "Shares for people over 25. A donut shows the parts.",
-    }))
-    assert result.design is not None and result.requests == 1 and result.warnings == []
-
-
-def test_summary_is_not_evidence_for_explanation_numbers():
-    source = report(*gender_share(), summary="A mistaken 99% claim.")
-    result = run(source, TestModel(call_tools=[], custom_output_args={
-        "spec": DONUT, "explanation": "The share is 99%. A donut shows the parts.",
-    }))
-    assert result.design is None and len(result.warnings) == 1
-    assert "99" in result.warnings[0] and result.requests == 2
-
-
-def test_delivery_combines_failures():
-    def drive(messages, info):
-        if not retries(messages):
-            return tool_call("deliver_design", spec=DONUT, explanation="The share is 99%.")
-        message = retries(messages)[-1].content
-        assert "Write the title in Arabic." in message and "99" in message
-        return tool_call("deliver_design", spec=ARABIC_DONUT,
-                         explanation="يوضح الرسم الحصة حسب الجنس. يقارن الرسم الحلقي أجزاء الكل.")
-
-    result = run(report(*gender_share(), language="Arabic"), FunctionModel(drive))
-    assert result.design is not None and result.requests == 2 and result.warnings == []
-
-
-def test_clarification_path():
-    def drive(messages, info):
-        return tool_call("ask_clarification", question="Which colors can I use?", reason="The colors lack contrast.")
-
-    result = run(report(*gender_share()), FunctionModel(drive))
-    assert result.clarification.question == "Which colors can I use?" and result.design is None
-    assert result.check is None and result.requests == 1
-
-
-@pytest.mark.parametrize("language", ["English", "Arabic"])
-@pytest.mark.parametrize("row_count", [0, 5])
-def test_empty_result_short_circuits(language, row_count):
-    columns, _ = gender_share()
-    data = table(columns, [])
-    data.row_count = row_count
-
-    def drive(messages, info):
-        pytest.fail("Empty results must never call the model")
-
-    result = run(report(columns, data, language=language), FunctionModel(drive))
-    assert result.clarification.question == EMPTY_RESULT[language]
-    assert result.clarification.reason == "The result is empty."
-    assert result.requests == 0 and result.check_calls == 0 and result.model is None
-
-
-def test_a_model_that_repeats_recommend_charts_is_stopped_at_the_fourth_request():
-    offered = []
-
-    def drive(messages, info):
-        offered.append([t.name for t in info.function_tools])
-        return tool_call("recommend_charts", intent="share")
-
-    result = run(report(*gender_share()), FunctionModel(drive))
-    assert result.design is None and result.requests == 4
-    assert "exceeded max retries" in result.warnings[0]
-    assert "recommend_charts" in offered[1] and "recommend_charts" not in offered[2]
-
-
-def test_a_second_identical_call_is_accepted_and_then_the_tool_is_withdrawn():
-    offered = []
-
-    def drive(messages, info):
-        offered.append([t.name for t in info.function_tools])
-        if len(offered) <= 2:
-            return tool_call("recommend_charts", intent="share")
-        assert "recommend_charts" not in offered[-1]
-        if len(offered) == 3:
-            assert last_return(messages).model_response_object()["intent"] == "share"
-            return tool_call("check_spec", spec=DONUT)
-        return tool_call("deliver_design", spec=DONUT, explanation=EXPLANATION)
-
-    result = run(report(*gender_share()), FunctionModel(drive))
-    assert result.design is not None and result.requests == 4 and result.warnings == []
-
-
-def test_recommend_charts_is_withdrawn_after_two_intents():
-    offered = []
-
-    def drive(messages, info):
-        offered.append([t.name for t in info.function_tools])
-        if len(offered) == 1:
-            return tool_call("recommend_charts", intent="share")
-        if len(offered) == 2:
-            assert "recommend_charts" in offered[-1]
-            return tool_call("recommend_charts", intent="compare")
-        assert "recommend_charts" not in offered[-1] and "check_spec" in offered[-1]
-        if len(offered) == 3:
-            return tool_call("check_spec", spec=DONUT)
-        return tool_call("deliver_design", spec=DONUT, explanation=EXPLANATION)
-
-    result = run(report(*gender_share()), FunctionModel(drive))
-    assert result.design is not None and result.design.intent == "compare"
-    assert result.requests == 4 and result.warnings == []
-
-
-def test_two_recommendations_in_one_response_past_the_budget_get_one_retry():
-    calls = []
-
-    def drive(messages, info):
-        calls.append(1)
-        if len(calls) == 1:
-            return tool_call("recommend_charts", intent="share")
-        if len(calls) == 2:
-            return ModelResponse(parts=[ToolCallPart(tool_name="recommend_charts", args={"intent": "compare"}),
-                                        ToolCallPart(tool_name="recommend_charts", args={"intent": "trend"})])
-        if len(calls) == 3:
-            retry = [p for p in messages[-1].parts if isinstance(p, RetryPromptPart)]
-            assert retry and "recommendation calls" in retry[0].model_response()
-            return tool_call("check_spec", spec=DONUT)
-        return tool_call("deliver_design", spec=DONUT, explanation=EXPLANATION)
-
-    result = run(report(*gender_share()), FunctionModel(drive))
-    assert result.design is not None and result.design.intent == "compare" and result.warnings == []
-
-
-def test_check_spec_is_withdrawn_after_three_calls():
-    calls = []
-
-    def drive(messages, info):
-        calls.append(1)
-        if len(calls) == 1:
-            return tool_call("recommend_charts", intent="share")
-        if len(calls) <= 4:
-            return tool_call("check_spec", spec=DONUT)
-        assert "check_spec" not in [t.name for t in info.function_tools]
-        return tool_call("deliver_design", spec=DONUT, explanation=EXPLANATION)
-
-    result = run(report(*gender_share()), FunctionModel(drive))
-    assert result.design is not None
-    assert result.check_calls == 3
-    assert result.requests == 5
-    assert result.warnings == []
-
-
-@pytest.mark.parametrize("starting_requests", [None, 7])
-def test_request_cap(starting_requests, monkeypatch):
-    monkeypatch.setattr("vis_agent.designer.agent.MAX_CHECK_CALLS", 100)
-
-    def drive(messages, info):
-        return tool_call("check_spec", spec=DONUT)
-
-    usage = RunUsage(requests=starting_requests) if starting_requests is not None else None
-    result = run(report(*gender_share()), FunctionModel(drive), usage=usage)
-    assert result.design is None and len(result.warnings) == 1
-    assert "request_limit" in result.warnings[0] and result.requests == MAX_REQUESTS
-    if usage is not None:
-        assert usage.requests == starting_requests + MAX_REQUESTS
-
-
-def test_suggested_chart_reaches_the_rules():
-    def drive(messages, info):
-        returns = [p for m in messages for p in m.parts if isinstance(p, ToolReturnPart)]
-        if not returns:
-            return tool_call("recommend_charts", intent="trend")
-        first = last_return(messages).model_response_object()["candidates"][0]
-        assert first["name"] == "line" and any(s["rule"] == "S2" for s in first["breakdown"])
-        return tool_call("deliver_design", spec="vis line\ntitle Monthly visits\ndescription Visits over time\n"
-                         "bind\n  time month\n  value visits\nsort none\n", explanation="Visits change over time. A line shows the trend.")
-
-    result = run(report(*monthly(12)), FunctionModel(drive), brief=DataBrief(suggested_chart_type="line"))
-    assert result.design.chart == "line" and result.warnings == []
+def test_prompt_retains_partition_claim_and_materialized_result_limit():
+    columns, result = gender_share()
+    columns[-1].partition_by = []
+    source = report(columns, result)
+    assert build_prompt(source, None).columns[-1].partition_by == []
+    result.row_count = 10
+    assert build_prompt(source, None).preview_is_partial is True
 
 
 def test_timeout_is_a_warning(monkeypatch):
@@ -456,24 +170,6 @@ def test_incomplete_report_is_rejected(missing):
         run(source, TestModel())
 
 
-def test_a_spent_check_budget_with_no_pass_ends_in_a_clarification():
-    one_colour = DONUT + "palette\n  - #007bff\n"  # two slices, one colour: C6 fails every time
-    calls = []
-
-    def drive(messages, info):
-        calls.append(1)
-        if len(calls) <= 3:
-            return tool_call("check_spec", spec=one_colour)
-        assert "check_spec" not in [t.name for t in info.function_tools]
-        return tool_call("deliver_design", spec=one_colour, explanation=EXPLANATION)
-
-    result = run(report(*gender_share()), FunctionModel(drive))
-    assert result.design is None and result.clarification is not None
-    assert result.clarification.question.startswith("I could not find a chart that passes")
-    assert "C6" in result.clarification.question and "C6" in result.clarification.reason
-    assert result.check_calls == 3 and result.warnings == []
-
-
 def test_previous_design_and_answers_reach_the_designer_prompt():
     from vis_agent.designer.agent import build_prompt, prompt_json
     from vis_agent.designer.models import PreviousDesign
@@ -486,6 +182,9 @@ def test_previous_design_and_answers_reach_the_designer_prompt():
     prompt = build_prompt(source, None, clarifications=[QuestionAnswer(question="Donut or pie?", answer="Donut")],
                           previous=PreviousDesign(spec="vis donut\ntitle Share\n", change="Make it blue"))
     assert prompt.previous.change == "Make it blue" and prompt.clarifications[0].answer == "Donut"
+    legacy = build_prompt(source, None, previous=PreviousDesign(spec=None, change="Make it a blue indicator"))
+    assert legacy.question == source.question
+    assert '"previous":{"spec":null,"change":"Make it a blue indicator"}' in prompt_json(legacy)
 
 
 def test_designer_revise_rules_reach_the_model_only_with_previous_work():
@@ -498,28 +197,202 @@ def test_designer_revise_rules_reach_the_model_only_with_previous_work():
 
     def drive(messages, info):
         seen["instructions"] = messages[0].instructions or ""
-        return ModelResponse(parts=[ToolCallPart(tool_name="ask_clarification",
-                                                 args={"question": "Which?", "reason": "Checking."})])
+        return tool_call("deliver_design", spec=DONUT, explanation=EXPLANATION)
 
-    for previous, expected in (None, False), (PreviousDesign(spec="vis donut\n", change="Blue"), True):
+    for previous, expected in ((None, False), (PreviousDesign(spec="vis donut\n", change="Blue"), True),
+                               (PreviousDesign(spec=None, change="Make it an indicator"), True)):
         prompt = build_prompt(source, None, previous=previous)
         deps = DesignerDeps(report=source, prompt=prompt, suggested=None)
         with designer.override(model=FunctionModel(drive)):
             asyncio.run(designer.run(prompt_json(prompt), deps=deps))
-        assert ("Answers and revisions" in seen["instructions"]) is expected
+        assert ("A requested revision" in seen["instructions"]) is expected
 
 
-def test_numbers_the_caller_wrote_are_wording_not_claims():
-    from tests.designer.conftest import gender_share
-    from vis_agent.designer.agent import DesignerDeps, build_prompt, wording_context
-    from vis_agent.designer.models import PreviousDesign
-    from vis_agent.models import QuestionAnswer
+def test_the_revision_round_reaches_the_prompt_and_loads_the_revise_rules():
+    from vis_agent.designer.agent import DesignerDeps, prompt_json
 
     source = report(*gender_share())
-    plain = DesignerDeps(report=source, prompt=build_prompt(source, None), suggested=None)
-    assert "2026" not in wording_context(plain)
-    revised = DesignerDeps(report=source, suggested=None, prompt=build_prompt(
-        source, None, clarifications=[QuestionAnswer(question="Which threshold?", answer="income above 60000")],
-        previous=PreviousDesign(spec="vis donut\n", change="Change the title to: sales of cities in 2026")))
-    context = wording_context(revised)
-    assert "2026" in context and "60000" in context and source.question in context
+    revision = RevisionRound(
+        request=AnalysisRevision(problem="No series", requested_change="Add a series", preserve="The total"),
+        reply="Added the series column.",
+    )
+    plain = build_prompt(source, None)
+    assert '"revision"' not in prompt_json(plain)
+    prompt = build_prompt(source, None, revision=revision)
+    assert revision.reply in prompt_json(prompt)
+    seen = {}
+
+    def drive(messages, info):
+        seen["instructions"] = messages[0].instructions or ""
+        return tool_call("deliver_design", spec=DONUT, explanation=EXPLANATION)
+
+    designer = create_designer("test")
+    deps = DesignerDeps(report=source, prompt=prompt, suggested=None)
+    with designer.override(model=FunctionModel(drive)):
+        asyncio.run(designer.run(prompt_json(prompt), deps=deps))
+    assert "A requested revision" in seen["instructions"]
+
+
+@pytest.mark.parametrize('repair', [True, False])
+def test_delivery_repairs_invalid_bindings_once_then_stops(repair):
+    calls = []
+
+    def drive(messages, info):
+        calls.append(1)
+        spec = DONUT if repair and len(calls) == 2 else DONUT.replace('value share', 'value invented')
+        return tool_call('deliver_design', spec=spec, explanation=EXPLANATION)
+
+    designed = run(report(*gender_share()), FunctionModel(drive))
+    assert len(calls) == 2
+    assert (designed.design is not None) is repair
+    if not repair:
+        assert designed.clarification is None
+        assert 'invented' in designed.warnings[0]
+
+
+def test_required_columns_are_enforced_inside_one_designer_run():
+    from tests.designer.conftest import column
+
+    columns = [column("city", "category"), column("wealth", "category"), column("count", "measure")]
+    source = report(columns, table(columns, [["Riyadh", "Rich", 3], ["Riyadh", "Poor", 2]]))
+    calls = []
+
+    def drive(messages, info):
+        calls.append(1)
+        if len(calls) == 1:
+            spec = "vis bar\ntitle Counts\ndescription Counts by city\nbind\n  category city\n  value count\n"
+        else:
+            spec = ("vis grouped_bar\ntitle Counts\ndescription Counts by city and wealth\nbind\n"
+                    "  category city\n  value count\n  group wealth\n")
+        return tool_call("deliver_design", spec=spec, explanation="Counts by city and wealth.")
+
+    designed = run(source, FunctionModel(drive), required_columns=["wealth"])
+    assert len(calls) == 2
+    assert designed.design is not None and "group wealth" in designed.design.spec
+
+
+def test_optional_check_tool_is_withdrawn_when_budget_is_spent():
+    calls = []
+
+    def drive(messages, info):
+        calls.append(1)
+        if len(calls) <= 3:
+            names = [tool.name for tool in info.function_tools]
+            assert 'check_spec' in names
+            assert 'chart_capabilities' in names
+            return tool_call('check_spec', spec=DONUT)
+        names = [tool.name for tool in info.function_tools]
+        assert 'check_spec' not in names
+        assert 'chart_capabilities' in names
+        return tool_call('deliver_design', spec=DONUT, explanation=EXPLANATION)
+
+    designed = run(report(*gender_share()), FunctionModel(drive))
+    assert designed.design is not None
+    assert designed.check_calls == 3
+    assert len(calls) == 4
+
+
+def test_model_ignoring_withdrawn_check_tool_ends_within_request_budget():
+    calls = []
+
+    def drive(messages, info):
+        calls.append(1)
+        return tool_call('check_spec', spec=DONUT)
+
+    designed = run(report(*gender_share()), FunctionModel(drive))
+    assert len(calls) <= MAX_REQUESTS
+    assert designed.design is None
+    assert designed.clarification is None
+    assert designed.warnings
+
+
+def test_check_budget_failure_retains_execution_diagnostics():
+    invalid = DONUT.replace('value share', 'value invented')
+    calls = []
+
+    def drive(messages, info):
+        calls.append(1)
+        if len(calls) <= 3:
+            return tool_call('check_spec', spec=invalid)
+        return tool_call('deliver_design', spec=invalid, explanation=EXPLANATION)
+
+    designed = run(report(*gender_share()), FunctionModel(drive))
+    assert designed.design is None
+    assert designed.check_calls == 3
+    assert 'invented' in designed.warnings[0]
+    assert designed.clarification is None
+
+
+def test_prompt_projects_source_meanings_and_requested_language_labels_to_result_aliases():
+    from vis_agent.models import DisplayLabels
+    from .conftest import column
+
+    columns = [column("sex_code", "category", source="gender"),
+               column("marital", "category", source="marital_status"),
+               column("gender_total", "measure", source="gender", aggregate="count")]
+    source = report(columns, table(columns, [["M", "M", 12]]), language="Arabic")
+    brief = DataBrief(
+        code_meanings={"gender": {"M": "Male"}, "marital_status": {"M": "Married"}},
+        display_labels={
+            "ar": DisplayLabels(column_labels={"gender": "الجنس", "marital_status": "الحالة الاجتماعية"},
+                                value_labels={"gender": {"M": "ذكور"}, "marital_status": {"M": "متزوج"}}),
+            "en": DisplayLabels(column_labels={"gender": "Gender"}, value_labels={"gender": {"M": "Male"}}),
+        },
+    )
+    prompt = build_prompt(source, brief)
+    assert prompt.code_meanings == {"sex_code": {"M": "Male"}, "marital": {"M": "Married"}}
+    assert prompt.display_labels.column_labels == {"sex_code": "الجنس", "marital": "الحالة الاجتماعية"}
+    assert prompt.display_labels.value_labels == {"sex_code": {"M": "ذكور"}, "marital": {"M": "متزوج"}}
+    assert "gender_total" not in prompt.display_labels.column_labels
+    assert source.result.rows == [["M", "M", 12]]
+
+
+@pytest.mark.parametrize("use_check", [False, True])
+def test_source_approved_labels_are_saved_verbatim_without_an_extra_model_call(use_check):
+    from vis_agent.models import DisplayLabels
+    from .conftest import column
+
+    columns = [column("gender", "category", source="gender"), column("n", "measure")]
+    source = report(columns, table(columns, [["M", 12], ["F", 17]]), language="Arabic")
+    brief = DataBrief(code_meanings={"gender": {"M": "Male", "F": "Female"}},
+                      display_labels={"ar": DisplayLabels(column_labels={"gender": "الجنس"},
+                                                          value_labels={"gender": {"M": "ذكور"}})})
+    proposed = ('vis bar\ntitle العدد حسب الجنس\ndescription الأعداد الواردة حسب الجنس\nlanguage ar\n'
+                'bind\n  category gender\n  value n\ncolumnLabels\n  - ["gender", "عنوان مختلف"]\n'
+                'valueLabels\n  - ["gender", "M", "ترجمة مختلفة"]\n  - ["gender", "F", "إناث"]\n')
+    calls, checked = [], []
+
+    def drive(messages, info):
+        calls.append(1)
+        if use_check and len(calls) == 1:
+            return tool_call("check_spec", spec=proposed)
+        if use_check:
+            checked.append(last_return(messages).model_response_object()["canonical"])
+        return tool_call("deliver_design", spec=proposed, explanation="مقارنة الأعداد حسب الجنس.")
+
+    designed = run(source, FunctionModel(drive), brief=brief)
+    assert designed.design is not None, designed.warnings
+    saved = syntax.parse(designed.design.spec)
+    assert saved.column_labels == {"gender": "الجنس"}
+    assert saved.value_labels == {"gender": {"M": "ذكور", "F": "إناث"}}
+    assert len(calls) == (2 if use_check else 1)
+    assert not checked or checked == [designed.design.spec]
+    assert source.result.rows == [["M", 12], ["F", 17]]
+
+
+def test_display_mapping_merge_preserves_the_syntax_retry_path():
+    from vis_agent.models import DisplayLabels
+
+    calls = []
+    brief = DataBrief(display_labels={"en": DisplayLabels(column_labels={"city": "City name"})})
+    spec = "vis bar\ntitle Cities\ndescription Counts by city\nbind\n  category city\n  value violations\n"
+
+    def drive(messages, info):
+        calls.append(1)
+        return tool_call("deliver_design", spec="vis invented\n" if len(calls) == 1 else spec,
+                         explanation="Bars compare the city counts.")
+
+    designed = run(report(*cities()), FunctionModel(drive), brief=brief)
+    assert designed.design is not None
+    assert len(calls) == 2
+    assert syntax.parse(designed.design.spec).column_labels["city"] == "City name"

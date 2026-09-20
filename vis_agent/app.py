@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 from pydantic_ai import Agent
 
 from vis_agent.deps import AppDeps
-from vis_agent.profiler.agent import profile_dataset
 from vis_agent.providers import add_chat_route, teams_from_env
 from vis_agent.renders import add_render_routes
 from vis_agent.requests.api import add_request_routes
@@ -32,14 +31,7 @@ store = DatasetStore(
 )
 requests = RequestStore(store)
 teams = teams_from_env(store, requests)
-default = teams[0]  # profiles uploads and serves the agent channel
-
-
-async def auto_profile(dataset_id: str) -> None:
-    try:
-        await profile_dataset(store, default.deps.profiler, dataset_id)
-    except Exception:
-        logging.getLogger("uploads").exception("Automatic profiling failed for %s", dataset_id)
+default = teams[0]  # serves the agent channel
 
 
 # A model-less agent owns the page and the dropdown, which lists the teams by name; add_chat_route runs the team named.
@@ -49,6 +41,6 @@ app = menu.to_web(
     html_source=Path(__file__).with_name("static") / "chat.html",
 )
 add_chat_route(app, teams)
-add_upload_routes(app, store, auto_profile=auto_profile)
+add_upload_routes(app, store)
 add_render_routes(app, store)
 add_request_routes(app, default.deps, default.lead)

@@ -34,6 +34,7 @@ from vis_agent.designer.syntax import parse
 from vis_agent.models import DataBrief, Intent
 
 from .run import reference_charts
+from .indicator.scoring import IndicatorExpectation, metric_fidelity, presentation_fit
 
 CASES_PATH = Path(__file__).parent / "scale" / "cases.json"
 
@@ -78,6 +79,10 @@ def load(cases_path: Path, split: str) -> list[dspy.Example]:
     for case in json.loads(cases_path.read_text(encoding="utf-8")):
         if case.get("split") != split:
             continue
+        if cases_path.parent.name == "indicator" or case.get("indicator") is not None:
+            if case.get("indicator") is None or case.get("charts") is None:
+                raise ValueError("Focused indicator optimization requires independent metric and chart golds")
+            IndicatorExpectation.model_validate(case["indicator"])
         path = (cases_path.parent / case["report"]).resolve()
         report = AnalysisReport.model_validate_json(path.read_text(encoding="utf-8"))
         if report.analysis is None or report.result is None:
@@ -87,6 +92,7 @@ def load(cases_path: Path, split: str) -> list[dspy.Example]:
             name=case["name"], prompt=prompt_json(build_prompt(report, brief)),
             report=str(path), language=case["language"], intent=brief.intent if brief else None,
             task=(case.get("metadata") or {}).get("task"),
+            indicator=case.get("indicator"), charts=case.get("charts"),
         ).with_inputs("prompt"))
     return examples
 
@@ -119,7 +125,10 @@ def score_and_feedback(gold, pred) -> tuple[float, str]:
 
     # Neither the spec grammar nor DesignOut declares intent. Use the gold
     # brief's intent for this single-shot proxy; the runtime uses design.intent.
-    accepted = reference_charts(report, gold.intent)
+    indicator_gold = gold.get("indicator") if hasattr(gold, "get") else getattr(gold, "indicator", None)
+    if indicator_gold is not None:
+        indicator_gold = IndicatorExpectation.model_validate(indicator_gold)
+    accepted = gold.charts if indicator_gold is not None else reference_charts(report, gold.intent)
     chart_accepted = spec.type in accepted
     if not chart_accepted:
         choices = ", ".join(accepted) or "(none; the result cannot support a chart)"
@@ -136,7 +145,12 @@ def score_and_feedback(gold, pred) -> tuple[float, str]:
         language = "Arabic" if gold.language == "ar" else "English"
         lines.append(f"LanguageRight: Write the title in {language} and set language {gold.language}.")
 
-    binding_right = True  # Scale cases have no expected bindings or emphasis.
+    binding_right = True  # Legacy scale cases have no expected bindings or emphasis.
+    if indicator_gold is not None:
+        binding_right = metric_fidelity(indicator_gold, spec, report)
+        chart_accepted = chart_accepted and presentation_fit(indicator_gold, spec.type)
+        if not binding_right:
+            lines.append("MetricFidelity: Preserve the independently expected primary, scope, support, units, and value states.")
     score = sum((passed, chart_accepted, language_right, binding_right)) / 4
     return score, "\n".join(lines) if lines else "All checks passed."
 

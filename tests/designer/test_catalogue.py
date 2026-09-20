@@ -11,7 +11,7 @@ def test_every_chart_type_has_one_entry_in_order():
 def test_entries_are_complete():
     for entry in CATALOGUE.entries:
         assert entry.purposes, entry.name
-        if entry.name == "table":
+        if entry.name in ("table", "indicator"):
             assert entry.roles == {}, entry.name
             assert entry.fields == {}, entry.name
         else:
@@ -51,7 +51,19 @@ def test_keys_per_entry():
     assert "binNumber" in CATALOGUE.get("histogram").keys
 
 
+def test_fold_keys_and_time_categories_are_explicit():
+    fold_charts = {"grouped_column", "stacked_column", "grouped_bar", "stacked_bar", "multi_line", "stacked_area"}
+    assert {entry.name for entry in CATALOGUE.entries if "fold" in entry.keys} == fold_charts
+    assert "time" in CATALOGUE.get("grouped_column").roles["category"].kinds
+    assert "time" in CATALOGUE.get("stacked_column").roles["category"].kinds
+    assert "time" not in CATALOGUE.get("grouped_bar").roles["category"].kinds
+
+
 def test_prompt_text_lists_every_entry():
     text = CATALOGUE.describe()
     for entry in CATALOGUE.entries:
         assert entry.name in text
+    assert "cards: one to six records" in text
+    assert "chart-specific config=" in text
+    assert "innerRadius" in text
+    assert CATALOGUE.find("KPI").name == "indicator"

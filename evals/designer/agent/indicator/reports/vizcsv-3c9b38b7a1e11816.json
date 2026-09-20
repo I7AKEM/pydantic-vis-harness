@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_1f1125f34da541a5b66ddf51c0210312",
+  "question": "إجمالي الرواتب المصروفة في نظام العمل لعام 2023",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT total_salaries_2023 FROM \"ds_1f1125f34da541a5b66ddf51c0210312\"",
+    "columns": [
+      {
+        "name": "total_salaries_2023",
+        "meaning": "إجمالي الرواتب لعام 2023",
+        "kind": "measure",
+        "unit": null,
+        "source": "total_salaries_2023",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "بلغ إجمالي الرواتب المصروفة في نظام العمل لعام 2023 حوالي 6,771,564,196.40.",
+    "assumptions": [
+      "تم استخدام القيمة المباشرة لعمود إجمالي الرواتب لعام 2023 كما وردت في البيانات."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT total_salaries_2023 FROM \"ds_1f1125f34da541a5b66ddf51c0210312\"",
+    "columns": [
+      "total_salaries_2023"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        6771564196.400009
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.054626791999908164
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 5.68057491700165,
+  "created_at": "2026-09-13T21:27:40.422590Z"
+}

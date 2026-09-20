@@ -5,6 +5,7 @@ import asyncio
 import json
 import os
 import re
+import shutil
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
@@ -27,6 +28,7 @@ from vis_agent.models import DataBrief, Intent
 from vis_agent.render.base import Rendered as RenderResult, RendererUnavailable, RenderFailed
 
 from .corpus_tools.select import TASK_TO_INTENT
+from .indicator.scoring import IndicatorExpectation, metric_fidelity, presentation_fit, rendered_fidelity
 
 CASES_PATH = Path(__file__).with_name("cases.json")
 RUBRIC = {"type": "The chart type fits the intent and the shape of the result.",
@@ -35,6 +37,7 @@ RUBRIC = {"type": "The chart type fits the intent and the shape of the result.",
           "units": "Units and number formats are right.",
           "honest": "Nothing misleads: zero baseline, sort, readable labels, emphasis on what was asked.",
           "explanation": "The explanation is honest and in the caller's language."}
+INDICATOR_RUBRIC = "For indicators check primary metrics, scope, supporting values, NULL state, faithful scale, and unclipped text; axes are not applicable."
 
 # Lists retain repeats; output identity connects each evaluation to its own render.
 outputs: dict[str, list[DesignReport]] = {}
@@ -42,7 +45,15 @@ renders: dict[str, dict[int, Path]] = {}
 render_results: dict[str, dict[int, RenderResult | str]] = {}
 
 
-def _clarified(ctx) -> bool:
+def _appropriate_deferral(ctx) -> bool:
+    """Only an independently incomplete result may be sent back for analysis repair."""
+    if ctx.expected_output["expect"] == "no_chart":
+        return ctx.output.design is None and ctx.output.clarification is None and bool(ctx.output.warnings)
+    gold = ctx.expected_output.get("indicator")
+    if gold and gold["mode"] == "incomplete":
+        return presentation_fit(IndicatorExpectation.model_validate(gold),
+                                ctx.output.design.chart if ctx.output.design else None,
+                                ctx.output.clarification is not None, getattr(ctx.output, "revision", None))
     return ctx.expected_output["expect"] == "clarification" and ctx.output.clarification is not None
 
 
@@ -58,7 +69,7 @@ def _spec(ctx):
 @dataclass
 class Delivered(Evaluator[dict, DesignReport, dict]):
     def evaluate(self, ctx: EvaluatorContext[dict, DesignReport, dict]) -> float:
-        return float(_clarified(ctx) or (
+        return float(_appropriate_deferral(ctx) or (
             ctx.expected_output["expect"] == "design" and ctx.output.design is not None
         ))
 
@@ -69,13 +80,14 @@ class Passed(Evaluator[dict, DesignReport, dict]):
         if ctx.output.design is None:
             return 1.0
         report = AnalysisReport.model_validate_json(Path(ctx.inputs["report"]).read_text(encoding="utf-8"))
-        return float(check_spec(ctx.output.design.spec, report.analysis.columns, report.result).ok)
+        return float(check_spec(ctx.output.design.spec, report.analysis.columns, report.result,
+                                intent=ctx.output.design.intent).ok)
 
 
 @dataclass
 class ChartAccepted(Evaluator[dict, DesignReport, dict]):
     def evaluate(self, ctx: EvaluatorContext[dict, DesignReport, dict]) -> float:
-        if _clarified(ctx):
+        if _appropriate_deferral(ctx):
             return 1.0
         if ctx.output.design is None:
             return 0.0
@@ -116,7 +128,7 @@ class LanguageRight(Evaluator[dict, DesignReport, dict]):
     def evaluate(self, ctx: EvaluatorContext[dict, DesignReport, dict]) -> float:
         spec = _spec(ctx)
         if spec is None:
-            return float(_clarified(ctx))
+            return float(_appropriate_deferral(ctx))
         language = ctx.expected_output["language"]
         title = spec.title or ""
         script_right = bool(ARABIC.search(title)) if language == "ar" else (
@@ -130,7 +142,7 @@ class BindingRight(Evaluator[dict, DesignReport, dict]):
     def evaluate(self, ctx: EvaluatorContext[dict, DesignReport, dict]) -> float:
         spec = _spec(ctx)
         if spec is None:
-            return float(_clarified(ctx))
+            return float(_appropriate_deferral(ctx))
         expected = ctx.expected_output
         return float(all(spec.bind.get(role) == column for role, column in expected["bind"].items()) and (
             expected["emphasis"] is None or expected["emphasis"] in spec.emphasis
@@ -144,12 +156,39 @@ class Metrics(Evaluator[dict, DesignReport, dict]):
 
 
 @dataclass
+class PresentationFit(Evaluator[dict, DesignReport, dict]):
+    def evaluate(self, ctx) -> float:
+        gold = IndicatorExpectation.model_validate(ctx.expected_output["indicator"])
+        return float(presentation_fit(gold, ctx.output.design.chart if ctx.output.design else None,
+                                      ctx.output.clarification is not None, getattr(ctx.output, "revision", None)))
+
+
+@dataclass
+class MetricFidelity(Evaluator[dict, DesignReport, dict]):
+    def evaluate(self, ctx) -> float:
+        gold = IndicatorExpectation.model_validate(ctx.expected_output["indicator"])
+        if gold.mode == "incomplete":
+            return float(_appropriate_deferral(ctx))
+        report = AnalysisReport.model_validate_json(Path(ctx.inputs["report"]).read_text(encoding="utf-8"))
+        return float(metric_fidelity(gold, _spec(ctx), report))
+
+
+@dataclass
 class Rendered(Evaluator[dict, DesignReport, dict]):
     def evaluate(self, ctx: EvaluatorContext[dict, DesignReport, dict]) -> float:
-        if _clarified(ctx):
+        if _appropriate_deferral(ctx):
             return 1.0
         result = render_results.get(ctx.inputs["name"], {}).get(id(ctx.output))
         chart = ctx.output.design.chart if ctx.output.design is not None else None
+        if chart == "indicator":
+            gold = ctx.expected_output.get("indicator")
+            if not isinstance(result, RenderResult):
+                return 0.0
+            if gold is None:
+                # Legacy suites retain a rendering smoke score, not an invented semantic gold.
+                return float(result.png.is_file() and bool(result.texts) and bool(result.text_bounds))
+            source = AnalysisReport.model_validate_json(Path(ctx.inputs["report"]).read_text(encoding="utf-8"))
+            return float(rendered_fidelity(IndicatorExpectation.model_validate(gold), result, source))
         # Thin strokes cover under two percent of a line chart; measured 1.8 to 1.9 percent on real cases.
         blank = 0.01 if chart in {"line", "area", "scatter"} else 0.02
         return float(isinstance(result, RenderResult) and result.png.is_file() and (
@@ -168,6 +207,11 @@ def load_cases(cases_path=CASES_PATH, split: str | None = None) -> list[Case]:
     for case in json.loads(cases_path.read_text(encoding="utf-8")):
         if split is not None and case.get("split") != split:
             continue
+        focused = cases_path.parent.name == "indicator" or case.get("indicator") is not None
+        if focused:
+            if case.get("charts") is None or case.get("indicator") is None:
+                raise ValueError(f"{case['name']}: focused indicator cases require independent charts and metric golds")
+            IndicatorExpectation.model_validate(case["indicator"])
         path = (cases_path.parent / case["report"]).resolve()
         report = AnalysisReport.model_validate_json(path.read_text(encoding="utf-8"))
         if report.analysis is None or report.result is None:
@@ -178,7 +222,8 @@ def load_cases(cases_path=CASES_PATH, split: str | None = None) -> list[Case]:
             name=case["name"],
             inputs={"name": case["name"], "report": str(path), "brief": case["brief"],
                     "question": report.question, "result_description": build_prompt(report, brief).model_dump()},
-            expected_output={key: case[key] for key in ("expect", "charts", "language", "bind", "emphasis")},
+            expected_output={**{key: case[key] for key in ("expect", "charts", "language", "bind", "emphasis")},
+                             **({"indicator": case["indicator"]} if focused else {})},
             metadata={"why": case["why"], **(case.get("metadata") or {}),
                       **{key: case[key] for key in ("split", "seeded", "task") if key in case}},
         ))
@@ -188,11 +233,16 @@ def load_cases(cases_path=CASES_PATH, split: str | None = None) -> list[Case]:
 def build_dataset(cases_path=CASES_PATH, judge: str | None = None, split: str | None = None) -> Dataset:
     cases = load_cases(cases_path, split)
     evaluators = [Delivered(), Passed(), ChartAccepted(), LanguageRight(), BindingRight(), Metrics()]
+    if any("indicator" in case.expected_output for case in cases):
+        if not all("indicator" in case.expected_output for case in cases):
+            raise ValueError("Do not mix focused indicator golds and legacy rules-agreement cases")
+        evaluators.extend([PresentationFit(), MetricFidelity()])
     if any(case.expected_output["charts"] is None or "split" in case.metadata for case in cases):
         evaluators.append(IntentPlausible())
     if judge:
         evaluators.append(LLMJudge(
-            rubric="\n".join(RUBRIC.values()) + "\nJudge the design against the question and the result description.",
+            rubric="\n".join(RUBRIC.values()) + "\nJudge the design against the question and the result description."
+                   + ("\n" + INDICATOR_RUBRIC if any("indicator" in c.expected_output for c in cases) else ""),
             model=judge, include_input=True,
         ))
     return Dataset(name="designer-agent", cases=cases, evaluators=evaluators)
@@ -248,6 +298,7 @@ data-split="{text('split')}" data-seeded="{seeded}">
 <pre class="spec">{text('spec')}</pre><p dir="auto">{text('explanation')}</p>
 <p>Compromises: {escape(json.dumps(entry.get('compromises', []), ensure_ascii=False))}</p>
 <p>Automatic scores: {escape(json.dumps(entry.get('scores', {}), ensure_ascii=False))}</p>
+<p>Independent expected metrics: {escape(json.dumps(entry.get('expected_indicator'), ensure_ascii=False))}</p>
 <p>{text('error')}</p><fieldset><legend>Mark each failed criterion</legend>{checks}</fieldset>
 <label><input type="radio" name="verdict-{index}" value="pass"> Pass</label>
 <label><input type="radio" name="verdict-{index}" value="fail"> Fail</label>
@@ -352,7 +403,9 @@ def _review_entries(report, model: str, directory: Path) -> list[dict]:
             "name": case.name, "question": output.question, "language": case.expected_output["language"],
             "chart": design.chart if design else None, "spec": design.spec if design else "",
             "explanation": design.explanation if design else (
-                output.clarification.question if output.clarification else "\n".join(output.warnings)),
+                output.clarification.question if output.clarification else (
+                    "\n".join((output.revision.problem, output.revision.requested_change, output.revision.preserve))
+                    if output.revision else "\n".join(output.warnings))),
             "image": str((folder / "chart.png").relative_to(directory)) if isinstance(result, RenderResult) else None,
             "compromises": [item.model_dump() for item in (
                 result.compromises if isinstance(result, RenderResult) else design.compromises if design else [])],
@@ -360,6 +413,13 @@ def _review_entries(report, model: str, directory: Path) -> list[dict]:
             "model": model, "error": result if isinstance(result, str) else None,
             "split": (case.metadata or {}).get("split"),
             "seeded": (case.metadata or {}).get("seeded", False),
+            "expected_indicator": case.expected_output.get("indicator"),
+            "observed_outcome": "clarification" if output.clarification else (
+                "analysis_revision" if output.revision else design.chart if design else "failed"),
+            "analysis_revision": output.revision.model_dump(mode="json") if output.revision else None,
+            "family": (case.metadata or {}).get("family"),
+            "pair": (case.metadata or {}).get("pair"),
+            "source_report": case.inputs["report"],
         })
     return entries
 
@@ -377,6 +437,38 @@ def judge_agreement(report, judgments: dict, model: str) -> dict:
     return {"compared": len(matches), "agreement": sum(matches) / len(matches) if matches else None}
 
 
+def paired_summary(entries: list[dict]) -> list[dict]:
+    """Score counterfactual relationships, keeping repeated runs within their source family."""
+    groups = {}
+    for entry in entries:
+        if entry.get("pair"):
+            groups.setdefault(entry["pair"], []).append(entry)
+    results = []
+    for family, members in groups.items():
+        ok = all(entry["scores"].get("PresentationFit") == 1 and entry["scores"].get("MetricFidelity") == 1
+                 for entry in members)
+        bindings = []
+        for entry in members:
+            gold = entry["expected_indicator"]
+            wanted = {c["value"] for c in gold["cards"]}
+            try:
+                parsed = parse(entry["spec"]) if entry.get("spec") else None
+                actual = {c.value for c in parsed.cards} if parsed and parsed.type == "indicator" else set()
+            except SpecError:
+                actual = set()
+                ok = False
+            bindings.append((wanted, actual, gold["mode"]))
+        for left_index, (wanted, actual, mode) in enumerate(bindings):
+            for other_wanted, other_actual, other_mode in bindings[left_index + 1:]:
+                if mode in {"required", "unavailable"} and other_mode in {"required", "unavailable"}:
+                    # A permutation keeps primary identity; a count/share question changes it.
+                    ok = ok and ((wanted == other_wanted) == (actual == other_actual))
+                if {mode, other_mode} == {"required", "forbidden"}:
+                    ok = ok and bool(actual) != bool(other_actual)
+        results.append({"family": family, "observations": len(members), "passed": ok})
+    return results
+
+
 def _print_case_counts(cases: list[Case]) -> None:
     with duckdb.connect() as connection:
         total, seeded, unseeded = connection.execute("""
@@ -390,7 +482,7 @@ def _print_case_counts(cases: list[Case]) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cases", type=Path, default=CASES_PATH)
-    parser.add_argument("--split", choices=("train", "dev", "heldout"))
+    parser.add_argument("--split", choices=("train", "dev", "heldout", "discovery", "confirmation"))
     parser.add_argument("--model")
     parser.add_argument("--max-concurrency", type=int, default=4)
     parser.add_argument("--repeat", type=int, default=1)
@@ -398,6 +490,7 @@ def main() -> None:
     parser.add_argument("--judge", metavar="MODEL")
     parser.add_argument("--judgments", action="store_true")
     parser.add_argument("--mismatches", action="store_true")
+    parser.add_argument("--out", type=Path, help="Save portable scores, specs, reports, and run provenance.")
     args = parser.parse_args()
     judgments_path = args.cases.with_name("judgments.json")
     judgments = json.loads(judgments_path.read_text(encoding="utf-8"))["judgments"] if judgments_path.exists() else {}
@@ -431,6 +524,22 @@ def main() -> None:
         dataset.add_evaluator(Rendered())
     report = asyncio.run(dataset.evaluate(make_task(designer, directory if args.render else None),
                                          max_concurrency=args.max_concurrency, repeat=args.repeat))
+    if args.out:
+        from evals.evidence import provenance
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        entries = _review_entries(report, model, directory)
+        if args.render:
+            portable = args.out.parent / (args.out.stem + "-assets")
+            shutil.copytree(directory, portable, dirs_exist_ok=True)
+            for entry in entries:
+                if entry["image"]:
+                    entry["image"] = str(Path(portable.name) / entry["image"])
+        args.out.write_text(json.dumps({"provenance": provenance(args.cases, {"designer": model}, args.repeat),
+                                       "cases": entries, "paired_scores": paired_summary(entries),
+                                       "inputs": {case.name: json.loads(Path(case.inputs["report"]).read_text())
+                                                  for case in dataset.cases},
+                                       "outputs": {name: [o.model_dump(mode="json") for o in runs]
+                                                   for name, runs in outputs.items()}}, ensure_ascii=False, indent=2), encoding="utf-8")
     report.print(include_input=False, include_output=False)
     print(f"model: {model}")
     if unanswered:

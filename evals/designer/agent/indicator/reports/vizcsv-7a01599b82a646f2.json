@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_2b7def37466c455b8d8e5a606c125621",
+  "question": "ما هو معدل العبور المتكرر (عدد الرحلات لكل فرد) عبر الحدود في المملكة خلال السنوات الثلاث الماضية؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT average_trips_per_individual FROM \"ds_2b7def37466c455b8d8e5a606c125621\"",
+    "columns": [
+      {
+        "name": "average_trips_per_individual",
+        "meaning": "متوسط عدد الرحلات لكل فرد",
+        "kind": "measure",
+        "unit": null,
+        "source": "average_trips_per_individual",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "يبلغ معدل العبور المتكرر (عدد الرحلات لكل فرد) عبر الحدود في المملكة 1.75 رحلة تقريباً.",
+    "assumptions": [
+      "تم استخدام القيمة المتاحة في الجدول كتمثيل للفترة المطلوبة نظراً لعدم وجود أعمدة زمنية للتصفية."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT average_trips_per_individual FROM \"ds_2b7def37466c455b8d8e5a606c125621\"",
+    "columns": [
+      "average_trips_per_individual"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        1.7494711008372814
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.059302500005287584
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.8537486249988433,
+  "created_at": "2026-09-13T21:44:14.282534Z"
+}

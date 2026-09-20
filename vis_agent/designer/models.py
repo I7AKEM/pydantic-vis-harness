@@ -5,13 +5,14 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from vis_agent.analyst.models import Clarification
+from vis_agent.analyst.models import AnalysisRevision, Clarification
+from vis_agent.findings import Finding
 from vis_agent.models import Intent
 
 ChartType = Literal[
     "column", "bar", "grouped_column", "stacked_column", "grouped_bar", "stacked_bar",
     "line", "multi_line", "area", "stacked_area", "pie", "donut", "scatter", "histogram",
-    "boxplot", "treemap", "radar", "dual_axes", "word_cloud", "table",
+    "boxplot", "treemap", "radar", "dual_axes", "word_cloud", "table", "indicator",
 ]
 SortOrder = Literal["value desc", "value asc", "category asc", "category desc", "none"]
 Theme = Literal["default", "dark", "academy"]
@@ -36,6 +37,17 @@ class NumberFormat(BaseModel):
     digits: Digits = "western"
 
 
+class IndicatorCard(BaseModel):
+    """Column bindings for one headline measurement; values remain in the result."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    value: str = Field(min_length=1)
+    context: list[str] = Field(default_factory=list)
+    support: list[str] = Field(default_factory=list)
+    format: str | None = None
+
+
 class Spec(BaseModel):
     """A parsed chart spec. Field names are the spec keys in snake case."""
 
@@ -54,6 +66,10 @@ class Spec(BaseModel):
     inner_radius: float | None = None
     bin_number: int | None = None
     bind: dict[str, str] = Field(default_factory=dict)
+    fold: list[str] = Field(default_factory=list)
+    cards: list[IndicatorCard] = Field(default_factory=list)
+    column_labels: dict[str, str] = Field(default_factory=dict)
+    value_labels: dict[str, dict[str, str]] = Field(default_factory=dict)
     sort: SortOrder | None = None
     limit: int | None = None
     other: str | None = None
@@ -94,12 +110,20 @@ class Compromise(BaseModel):
 
 
 class PreviousDesign(BaseModel):
-    """The design being revised: the spec that was delivered, and what must differ."""
+    """The prior spec (if one existed) and the caller's requested change."""
 
     model_config = ConfigDict(extra="forbid")
 
-    spec: str
+    spec: str | None
     change: str
+
+
+class ReviewRound(BaseModel):
+    """What the designer works from on a review round: the spec it delivered and what the reviewer found."""
+
+    spec: str
+    summary: str
+    findings: list[Finding]
 
 
 class RuleScore(BaseModel):
@@ -112,6 +136,8 @@ class Candidate(BaseModel):
     name: str
     score: int
     binding: dict[str, str]
+    fold: list[str] = Field(default_factory=list)
+    cards: list[IndicatorCard] = Field(default_factory=list)
     breakdown: list[RuleScore]
 
 
@@ -157,6 +183,7 @@ class DesignReport(BaseModel):
     language: str
     design: Design | None = None
     clarification: Clarification | None = None
+    revision: AnalysisRevision | None = None
     check: SpecCheck | None = None
     warnings: list[str] = Field(default_factory=list)
     model: str | None = None

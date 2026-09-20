@@ -7,20 +7,42 @@ from vis_agent.designer.models import Compromise
 from vis_agent.designer.syntax import KEYS, STYLE_KEYS, parse, to_text
 from vis_agent.render.base import Capability, RENDERERS, Rendered, capability_for
 
-from .conftest import cities, gender_code_and_label, gender_share, monthly, own_share_by_region
+from .conftest import (cities, column, gender_code_and_label, gender_share, monthly, own_share_by_region, table,
+                       two_same_unit_measures, two_same_unit_measures_by_city, two_units)
 
 
 COLUMN = "vis column\ntitle Cities\ndescription Counts by city\nbind\n  category city\n  value violations\n"
 LINE = "vis line\ntitle Visits\ndescription Monthly visits\nbind\n  time month\n  value visits\n"
+MULTI_FOLD = ("vis multi_line\ntitle Injuries and deaths\ndescription Monthly injuries and deaths\nbind\n"
+              "  time month\nfold\n  - injuries\n  - deaths\n")
 
 
-def test_passing_arabic_donut_is_canonical_with_legend_compromise():
+def test_passing_arabic_donut_is_canonical_without_direction_compromise():
     text = "vis donut\ntitle النسبة\ndescription النسبة حسب الجنس\nlanguage ar\nbind\n  category label\n  value share\n"
     check = check_spec(text, *gender_share())
     assert check.ok
     assert check.violations == []
     assert check.canonical == to_text(parse(text))
-    assert any("legend" in c.message for c in check.compromises)
+    assert check.compromises == []
+
+
+def test_runtime_color_check_normalizes_hex_and_repairs_contrast_without_a_model_retry():
+    from vis_agent.designer.check import check_render_spec
+
+    checked = check_render_spec(COLUMN + "palette\n  - FFD700\n", *cities())
+    assert checked.ok
+    repaired = parse(checked.canonical).palette[0]
+    assert repaired.startswith("#") and repaired != "#FFD700"
+    assert checked.compromises == [Compromise(
+        key="palette", message=f"Adjusted #FFD700 to {repaired} to meet the 3:1 contrast requirement."
+    )]
+
+
+def test_runtime_color_check_rejects_non_hex_before_rendering():
+    from vis_agent.designer.check import check_render_spec
+
+    checked = check_render_spec(COLUMN + "palette\n  - gold\n", *cities())
+    assert not checked.ok and [violation.rule for violation in checked.violations] == ["color_hex"]
 
 
 def test_syntax_error_stops_before_semantic_checks():
@@ -37,7 +59,7 @@ def test_three_semantic_violations_are_reported_together_in_order():
     check = check_spec(text, *cities())
     assert not check.ok
     assert check.canonical is None
-    assert [v.rule for v in check.violations] == ["C2", "C3", "C10"]
+    assert [v.rule for v in check.violations] == ["C2", "C3"]
     assert all(v.fix for v in check.violations)
 
 
@@ -76,12 +98,79 @@ def test_c2_missing_columns_roles_wrong_kinds_and_unsupported_roles(binding, mes
     assert not check.ok
 
 
+def test_c2_missing_role_names_allowed_kinds_and_offered_columns_once():
+    text = ("vis multi_line\ntitle Visits\ndescription Monthly visits\nbind\n"
+            "  time month\n  value visits\n")
+    check = check_spec(text, *two_units())
+    assert [violation.rule for violation in check.violations] == ["C2"]
+    message = check.violations[0].message
+    assert "Required role 'group' is missing" in message
+    assert "category, ordinal, geography" in message
+    assert "the result offers" in message.lower()
+    assert not any(violation.rule == "C10" and "H1" in violation.message for violation in check.violations)
+
+
+def test_c2_wrong_kind_is_not_repeated_as_c10_h1():
+    columns, result = two_units()
+    for index, row in enumerate(result.rows):
+        row[2] = index % 2
+    text = ("vis multi_line\ntitle Visits\ndescription Monthly visits\nbind\n"
+            "  time month\n  group revenue\n  value visits\n")
+    check = check_spec(text, columns, result)
+    assert [violation.rule for violation in check.violations] == ["C2"]
+    assert not any(violation.rule == "C10" and "H1" in violation.message for violation in check.violations)
+
+
 def test_c3_uses_text_keys_and_checks_false_values():
     check = check_spec(COLUMN + "innerRadius 0.5\nzero false\n", *cities())
     violations = [v for v in check.violations if v.rule == "C3"]
     assert len(violations) == 2
     assert "innerRadius" in violations[0].message
     assert "zero" in violations[1].message
+
+
+def test_multi_line_fold_passes_and_is_canonical():
+    check = check_spec(MULTI_FOLD, *two_same_unit_measures())
+    assert check.ok
+    assert "fold\n  - injuries\n  - deaths\n" in check.canonical
+    assert check.compromises == []
+
+
+def test_fold_refuses_explicit_group_binding_only_once():
+    text = MULTI_FOLD.replace("  time month\n", "  time month\n  group injuries\n")
+    check = check_spec(text, *two_same_unit_measures())
+    assert [(violation.rule, violation.message) for violation in check.violations] == [
+        ("C20", "fold provides the 'group' role; remove the 'group' binding."),
+    ]
+
+
+def test_line_rejects_fold_as_a_key_and_still_needs_value():
+    check = check_spec(MULTI_FOLD.replace("vis multi_line", "vis line"), *two_same_unit_measures())
+    assert {"C2", "C3"} <= {violation.rule for violation in check.violations}
+    assert any("fold" in violation.message for violation in check.violations if violation.rule == "C3")
+
+
+def test_fold_error_names_nonmeasure_column():
+    text = MULTI_FOLD.replace("  - deaths", "  - month")
+    check = check_spec(text, *two_same_unit_measures())
+    assert any(violation.rule == "C20" and "month" in violation.message for violation in check.violations)
+
+
+def test_fold_error_points_different_units_to_dual_axes():
+    text = ("vis multi_line\ntitle Visits and revenue\ndescription Monthly visits and revenue\nbind\n"
+            "  time month\nfold\n  - visits\n  - revenue\n")
+    check = check_spec(text, *two_units())
+    assert any(violation.rule == "C20" and "dual_axes" in violation.message for violation in check.violations)
+
+
+def test_emphasis_can_name_a_folded_series():
+    columns, result = two_same_unit_measures_by_city()
+    columns[1].meaning = "Total revenue"
+    text = ("vis grouped_column\ntitle Revenue and cost\ndescription Revenue and cost by city\nbind\n"
+            "  category city\nfold\n  - revenue\n  - cost\nemphasis\n  - revenue\n")
+    check = check_spec(text, columns, result)
+    assert check.ok
+    assert not any(violation.rule == "C9" for violation in check.violations)
 
 
 def test_c10_hard_failure_is_reported_once():
@@ -141,10 +230,10 @@ def test_renderer_rejections_and_degradations_are_both_reported(monkeypatch):
 
 
 @pytest.mark.parametrize("extra, expected", [
-    ("", False), ("language ar\n", True), ("direction rtl\n", True),
+    ("", False), ("language ar\n", False), ("direction rtl\n", True),
     ("direction ltr\n", True), ("language ar\ndirection ltr\n", True),
 ])
-def test_direction_presence_includes_arabic_default(extra, expected):
+def test_direction_compromise_requires_explicit_direction(extra, expected):
     check = check_spec(COLUMN + extra, *cities())
     assert check.ok
     assert any(c.key == "direction" for c in check.compromises) is expected
@@ -217,6 +306,13 @@ def test_c17_percent_unit_on_measure_is_a_compromise():
     assert any(c.key == "format" and "share" in c.message for c in check.compromises)
     text = COLUMN.replace("city", "label").replace("violations", "share") + "format 0.0%\n"
     assert check_spec(text, *gender_share()).compromises == []
+
+
+def test_percent_change_measure_with_percent_unit_has_no_false_share_warning():
+    columns, result = cities()
+    columns[1].unit = "%"
+    check = check_spec(COLUMN + "format 0.0%\n", columns, result)
+    assert check.ok and check.compromises == []
 
 
 @pytest.mark.parametrize("chart,bindings,builder,sort", [
@@ -348,3 +444,44 @@ def test_c5_nonadditive_second_measure_cannot_be_folded():
     assert any(v.rule == "C5" for v in check_spec(text, columns, result).violations)
     columns[2].aggregate = "sum"
     assert check_spec(text, columns, result).ok
+
+
+def test_all_chart_types_accept_display_mappings():
+    from vis_agent.designer.catalogue import CATALOGUE
+    from vis_agent.designer.check import check_render_spec
+    from vis_agent.designer.models import IndicatorCard, Spec
+    from vis_agent.designer.syntax import to_text
+
+    columns = [column("label", "category"), column("group", "category"), column("period", "time"),
+               column("value", "measure"), column("second", "measure")]
+    result = table(columns, [["M", "A", "2026-01", 12, 17]])
+    bindings = {"category": "label", "group": "group", "time": "period", "value": "value",
+                "value2": "second", "x": "value", "y": "second"}
+    for entry in CATALOGUE.entries:
+        spec = Spec(type=entry.name, bind={role: bindings[role] for role in entry.roles},
+                    cards=[IndicatorCard(value="value")] if entry.name == "indicator" else [],
+                    column_labels={"label": "الجنس", "value": "القيمة"},
+                    value_labels={"label": {"M": "ذكور", "F": "إناث"}})
+        checked = check_render_spec(to_text(spec), columns, result)
+        assert checked.ok, (entry.name, checked.violations)
+
+
+@pytest.mark.parametrize("section", [
+    'columnLabels\n  - ["absent", "عنوان"]\n',
+    'valueLabels\n  - ["absent", "M", "ذكور"]\n',
+    'valueLabels\n  - ["violations", "10", "عشرة"]\n',
+])
+def test_label_mappings_require_existing_columns_and_keep_measurements_numeric(section):
+    from vis_agent.designer.check import check_render_spec
+
+    checked = check_render_spec(COLUMN + section, *cities())
+    assert any(issue.rule == "label_binding" for issue in checked.violations)
+
+
+def test_column_labels_can_name_original_measure_columns_before_fold():
+    from vis_agent.designer.check import check_render_spec
+
+    columns, result = two_same_unit_measures()
+    spec = MULTI_FOLD + 'columnLabels\n  - ["injuries", "الإصابات"]\n  - ["deaths", "الوفيات"]\n'
+    checked = check_render_spec(spec, columns, result)
+    assert checked.ok, checked.violations

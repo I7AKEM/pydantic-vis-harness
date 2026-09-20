@@ -1,53 +1,51 @@
-"""The chart designer: bounded result context, deterministic tools, and checked delivery."""
+"""The chart expert: one-call design from the supplied CSV, with optional syntax repair."""
 
 import asyncio
 import logging
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from hashlib import sha256
 from pathlib import Path
 from typing import get_args
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolOutput
 from pydantic_ai.models import Model
 from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded
 from pydantic_ai.tools import ToolDefinition
 from pydantic_ai.usage import RunUsage, UsageLimits
 
-from vis_agent.analyst.agent import ARABIC
-from vis_agent.analyst.checks import summary_numbers_exist
-from vis_agent.analyst.models import Aggregate, AnalysisReport, Cell, Clarification, ColumnKind
-from vis_agent.models import DataBrief, Intent, QuestionAnswer
+from vis_agent.analyst.models import (
+    Aggregate, AnalysisReport, Cell, ColumnKind, RevisionRound,
+)
+from vis_agent.labels import LABEL_INSTRUCTIONS, apply_display_labels, project_display_labels
+from vis_agent.models import DataBrief, DisplayLabels, Intent, QuestionAnswer
 from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL
 from vis_agent.render import gptvis
 from vis_agent.render.base import RENDERERS, Rendered
 
 from . import models
 from .catalogue import CATALOGUE
-from .check import check_spec as run_check
-from .models import Candidate, Design, DesignReport, PreviousDesign, Rejection, SpecCheck
-from .recommend import recommend_charts as rank_charts
+from .capabilities import chart_capabilities, common_keys
+from .check import check_render_spec as run_check
+from .models import Design, DesignReport, PreviousDesign, ReviewRound, SpecCheck
 from .shape import describe
 from .syntax import KEYS, STYLE_KEYS, parse, to_text
 
 log = logging.getLogger("designer")
 DEFAULT_DESIGNER_MODEL = DEFAULT_PROFILER_MODEL
-# The runner retries a failed design once on this model; any strong designer works, this one is the one measured.
+# The lead can explicitly choose this alternate designer after inspecting a failure.
 DEFAULT_FALLBACK_DESIGNER_MODEL = "openrouter:anthropic/claude-sonnet-4.6"
 DESIGNER_RULEBOOK = Path(__file__).with_name("rulebook.md").read_text(encoding="utf-8")
 REVISE_INSTRUCTIONS = Path(__file__).with_name("rulebook-revise.md").read_text(encoding="utf-8")
+REVIEW_INSTRUCTIONS = Path(__file__).with_name("rulebook-review.md").read_text(encoding="utf-8")
 DESIGN_TIMEOUT_SECONDS = 90
-MAX_RECOMMEND_CALLS = 2
 MAX_CHECK_CALLS = 3
 MAX_REQUESTS = 8
 PREVIEW_ROWS = 12
 CELL_CHARACTERS = 40
-SHORTLIST = 5
-LANGUAGE_CODES = {"Arabic": "ar", "English": "en"}
-EMPTY_RESULT = {"Arabic": "النتيجة فارغة، لا يوجد ما يُرسم. هل تريد تعديل السؤال؟",
-                "English": "The result has no rows, so there is nothing to draw. Do you want to change the question?"}
+
 
 
 class ResultFacts(BaseModel):
@@ -59,6 +57,7 @@ class ResultFacts(BaseModel):
     unit: str | None = None
     aggregate: Aggregate = "none"
     denominator: str | None = None
+    partition_by: list[str] | None = None
     distinct: int
     longest_label: int
     minimum: float | None = None
@@ -76,20 +75,19 @@ class DesignerPrompt(BaseModel):
     suggested_chart_type: str | None = None
     brand_colors: list[str] = []
     caveats: list[str] = []
+    code_meanings: dict[str, dict[str, str]] = Field(default_factory=dict)
+    display_labels: DisplayLabels = Field(default_factory=DisplayLabels)
     summary: str | None = None
     assumptions: list[str] = []
     columns: list[ResultFacts]
     row_count: int
     preview: list[list[Cell]]
     preview_is_partial: bool
+    required_columns: list[str] = []
     clarifications: list[QuestionAnswer] = []
     previous: PreviousDesign | None = None
-
-
-class Shortlist(BaseModel):
-    intent: Intent
-    candidates: list[Candidate]
-    rejected: list[Rejection]
+    revision: RevisionRound | None = None
+    review: ReviewRound | None = None
 
 
 @dataclass
@@ -97,11 +95,10 @@ class DesignerDeps:
     report: AnalysisReport
     prompt: DesignerPrompt
     suggested: str | None
+    required_columns: tuple[str, ...] = ()
     renderer: str = "gptvis"
-    recommend_calls: int = 0
     check_calls: int = 0
     intent: Intent | None = None
-    considered: list[str] = field(default_factory=list)
     last_check: SpecCheck | None = None
     last_violations: list[str] = field(default_factory=list)
     delivery_attempts: int = 0
@@ -110,14 +107,17 @@ class DesignerDeps:
 def build_prompt(
     report: AnalysisReport, brief: DataBrief | None,
     clarifications: list[QuestionAnswer] | None = None, previous: PreviousDesign | None = None,
+    revision: RevisionRound | None = None,
+    review: ReviewRound | None = None,
+    required_columns: list[str] | None = None,
 ) -> DesignerPrompt:
-    shape = describe(report.analysis.columns, report.result)
+    shape = describe(report.analysis.columns, report.result, relationships=False)
     columns = []
     for column in report.analysis.columns:
         facts = shape.column(column.name)
         columns.append(ResultFacts(
             name=column.name, meaning=column.meaning, kind=column.kind, unit=column.unit,
-            aggregate=column.aggregate, denominator=column.denominator,
+            aggregate=column.aggregate, denominator=column.denominator, partition_by=column.partition_by,
             distinct=facts.distinct, longest_label=facts.longest_label,
             minimum=facts.minimum, maximum=facts.maximum,
             has_negative=facts.has_negative, nulls=facts.nulls,
@@ -129,22 +129,25 @@ def build_prompt(
         return cell
 
     rows = report.result.rows
+    meanings, labels = project_display_labels(brief, report.analysis.columns, report.language)
     return DesignerPrompt(
         question=report.question, language=report.language,
         intent=brief.intent if brief else None,
         suggested_chart_type=brief.suggested_chart_type if brief else None,
         brand_colors=brief.brand_colors if brief else [], caveats=brief.caveats if brief else [],
+        code_meanings=meanings, display_labels=labels,
         summary=report.analysis.summary, assumptions=report.analysis.assumptions,
         columns=columns, row_count=report.result.row_count,
         preview=[[cut(cell) for cell in row] for row in rows[:PREVIEW_ROWS]],
-        preview_is_partial=len(rows) > PREVIEW_ROWS,
-        clarifications=list(clarifications or []), previous=previous,
+        preview_is_partial=len(rows) > PREVIEW_ROWS or len(rows) < report.result.row_count,
+        required_columns=list(required_columns or []),
+        clarifications=list(clarifications or []), previous=previous, revision=revision, review=review,
     )
 
 
 def prompt_json(prompt: DesignerPrompt) -> str:
     """The prompt as the model sees it. Empty answers and an absent previous analysis are left out, so ordinary runs are unchanged."""
-    exclude = {name for name in ("clarifications", "previous") if not getattr(prompt, name)}
+    exclude = {name for name in ("clarifications", "previous", "revision", "review") if not getattr(prompt, name)}
     return prompt.model_dump_json(exclude=exclude or None)
 
 
@@ -156,6 +159,21 @@ def grammar() -> str:
         elif key == "bind":
             description = ('section; two-space-indented lines "<role> <column name>"; roles '
                            + ", ".join(models.ROLES))
+        elif key == "fold":
+            description = ('section; lines "- <column name>"; two or more measure columns of one unit, drawn as one '
+                           'series each on a chart with a group role; leave group and value unbound, the code binds them')
+        elif key == "cards":
+            description = ('indicator only; one to six records starting with two-space-indented "- value <column name>"; '
+                           'four-space lines "context <column name>", "support <column name>" (repeatable), '
+                           'or "format <number pattern>"; ordinary bind must be empty')
+        elif key == "columnLabels":
+            description = ('all chart types; optional section with two-space lines '
+                           '\'- ["exact column name", "display label"]\'; JSON string pairs; '
+                           'label headers, axes, and metric names without changing data or units')
+        elif key == "valueLabels":
+            description = ('all chart types; optional section with two-space lines '
+                           '\'- ["exact column name", "original value", "display label"]\'; JSON string triples; '
+                           'map source category labels for display only; never replace numeric measurements')
         elif key == "style":
             description = "section; backgroundColor <hex>"
         elif key == "axisXTitle":
@@ -168,36 +186,33 @@ def grammar() -> str:
             description = {"int": "integer", "bool": "true or false",
                            "format": "pattern like 0,0.00 SAR, 0.0%, 0k"}.get(kind, kind)
         lines.append(f"{key}: {description}")
-    lines.extend(["", "Example:", "vis table", "title Result", "description The answer to the question"])
+    lines.extend(["", "Example:", "vis table", "title Result", "description The answer to the question",
+                  "", "Indicator label translation example:", "vis indicator", "title إجمالي الزوار",
+                  "description إجمالي الزوار خلال الفترة", "language ar", "cards", "  - value visitor_count",
+                  "columnLabels", '  - ["visitor_count", "إجمالي الزوار"]',
+                  "", "Category display label example:", "valueLabels", '  - ["gender", "M", "ذكور"]'])
     return "\n".join(lines)
 
 
 def instructions() -> str:
-    return DESIGNER_RULEBOOK + "\n\nGrammar:\n" + grammar() + "\n\nCatalogue:\n" + CATALOGUE.describe()
+    return (DESIGNER_RULEBOOK + "\n\n" + LABEL_INSTRUCTIONS + "\n\nGrammar:\n" + grammar()
+            + "\n\nConfiguration common to every chart type:\n" + ", ".join(common_keys())
+            + "\n\nCatalogue:\n" + CATALOGUE.describe()
+            + "\n\nCall chart_capabilities only when you need exact renderer support or a supported repair; "
+              "routine designs should be delivered directly.")
 
 
-def offer_recommend_charts(ctx: RunContext[DesignerDeps], tool_def: ToolDefinition) -> ToolDefinition | None:
-    """Withdraw the tool once its calls are spent: a model cannot repeat what it is not offered."""
-    return None if ctx.deps.recommend_calls >= MAX_RECOMMEND_CALLS else tool_def
+def _with_display_labels(text: str, deps: DesignerDeps) -> str:
+    """Save source-approved wording while preserving the ordinary syntax repair path."""
+    try:
+        spec = parse(text)
+    except models.SpecError:
+        return text
+    return to_text(apply_display_labels(spec, deps.prompt.display_labels))
 
 
 def offer_check_spec(ctx: RunContext[DesignerDeps], tool_def: ToolDefinition) -> ToolDefinition | None:
     return None if ctx.deps.check_calls >= MAX_CHECK_CALLS else tool_def
-
-
-async def recommend_charts(ctx: RunContext[DesignerDeps], intent: Intent) -> Shortlist:
-    """Rank charts for your reading of the question's intent, with bindings and the rules behind each score.
-    Call it once; a second call is only for a changed intent."""
-    deps = ctx.deps
-    if deps.recommend_calls >= MAX_RECOMMEND_CALLS:
-        raise ModelRetry(f"You have used the {MAX_RECOMMEND_CALLS} recommendation calls of this run. "
-                         "Choose among the candidates you already have.")
-    deps.recommend_calls += 1
-    deps.intent = intent
-    ranked = rank_charts(deps.report.analysis.columns, deps.report.result, intent=intent, suggested=deps.suggested)
-    candidates = ranked.candidates[:SHORTLIST]
-    deps.considered = [candidate.name for candidate in candidates]
-    return Shortlist(intent=intent, candidates=candidates, rejected=ranked.rejected)
 
 
 async def check_spec(ctx: RunContext[DesignerDeps], spec: str) -> SpecCheck:
@@ -205,13 +220,12 @@ async def check_spec(ctx: RunContext[DesignerDeps], spec: str) -> SpecCheck:
     deps = ctx.deps
     if deps.check_calls >= MAX_CHECK_CALLS:
         if deps.last_check is None:
-            raise ModelRetry("You have used the three check calls of this run and none passed. Call "
-                             "deliver_design with your best spec, or ask_clarification with the conflict; "
-                             "a spec that still fails ends in a question to the caller.")
-        raise ModelRetry("You have used the three check calls of this run. "
-                         "Deliver the spec that passed, or ask the caller a question.")
+            raise ModelRetry("You have used the three check calls of this run and none passed. Call deliver_design "
+                             "with your best spec; a spec that still fails ends the run.")
+        raise ModelRetry("You have used the three check calls of this run. Deliver the spec that passed.")
     deps.check_calls += 1
-    check = run_check(spec, deps.report.analysis.columns, deps.report.result, deps.renderer)
+    check = run_check(_with_display_labels(spec, deps), deps.report.analysis.columns, deps.report.result,
+                      deps.renderer, intent=deps.intent)
     if check.ok:
         deps.last_check = check
     else:
@@ -219,50 +233,30 @@ async def check_spec(ctx: RunContext[DesignerDeps], spec: str) -> SpecCheck:
     return check
 
 
-DEAD_END = {
-    "Arabic": "لم أجد رسماً يجتاز الفحوصات لهذا الطلب؛ آخر محاولة فشلت في: {reasons}. هل تعدّل الطلب (نوع الرسم أو "
-              "الألوان مثلاً)، أم أرسم أقرب رسم يجتاز الفحوصات؟",
-    "English": "I could not find a chart that passes the checks for this request; the last attempt failed on: "
-               "{reasons}. Should I change the request (the chart type or the colours, say), or draw the closest "
-               "chart that passes?",
-}
-
-
-def wording_context(deps: DesignerDeps) -> str:
-    """The question, the caller's change and answers, and the result's column names: a number written there is
-    wording the caller chose, not a claim about the data ("sales in 2026", "income above 60000")."""
-    prompt = deps.prompt
-    pieces = [deps.report.question, *(pair.answer for pair in prompt.clarifications),
-              prompt.previous.change if prompt.previous else "", *deps.report.result.columns]
-    return " ".join(piece for piece in pieces if piece)
-
-
-def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -> Design | Clarification:
-    """Deliver a checked spec and a two-sentence explanation in the caller's language using supported numbers."""
+def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -> Design:
+    """Deliver your chart immediately. Code checks renderer bindings; the lead judges the design."""
     deps = ctx.deps
     report = deps.report
-    check = run_check(spec, report.analysis.columns, report.result, deps.renderer)
+    check = run_check(_with_display_labels(spec, deps), report.analysis.columns, report.result,
+                      deps.renderer, intent=deps.intent)
     failures = []
     if check.ok:
         parsed = parse(check.canonical)
-        language = LANGUAGE_CODES[report.language]
-        if parsed.language != language:
-            parsed.language = language
-            spec = to_text(parsed)
-            check = run_check(spec, report.analysis.columns, report.result, deps.renderer)
-        arabic_title = bool(ARABIC.search(parsed.title or ""))
-        if arabic_title != (report.language == "Arabic"):
-            failures.append(f"Write the title in {report.language}.")
+        used = set(report.result.columns) if parsed.type == "table" else set(parsed.bind.values()) | set(parsed.fold)
+        for card in parsed.cards:
+            used.update([card.value, *card.context, *card.support])
+        missing = [name for name in deps.required_columns if name not in used]
+        if missing:
+            failures.append(
+                "required_columns: the chart omits required result columns " + ", ".join(missing)
+                + ". Bind every required column or choose a chart type that can represent them."
+            )
     failures[:0] = [f"line {v.line or 1}: {v.rule}: {v.message}. {v.fix}" for v in check.violations]
-    number_check = summary_numbers_exist(explanation, report.result, wording_context(deps))
-    if not number_check.passed:
-        failures.append(number_check.message)
     if failures:
         message = "\n".join(failures)
         if deps.last_check is None and deps.check_calls >= MAX_CHECK_CALLS:
-            # The check budget is spent and nothing passed: ask the caller instead of looping to the request limit.
             reasons = "; ".join(deps.last_violations or failures)
-            return Clarification(question=DEAD_END[report.language].format(reasons=reasons), reason=message)
+            raise UnexpectedModelBehavior("No spec passed the three checks; the last failed on: " + reasons)
         if deps.delivery_attempts == 0:
             deps.delivery_attempts += 1
             raise ModelRetry(message)
@@ -270,70 +264,79 @@ def deliver_design(ctx: RunContext[DesignerDeps], spec: str, explanation: str) -
         # A second failed delivery must stop here, without another repair turn.
         raise UnexpectedModelBehavior(message)
     deps.last_check = check
+    compromises = list(check.compromises)
     return Design(spec=check.canonical, chart=parsed.type, intent=deps.intent,
-                  explanation=explanation, considered=list(deps.considered), compromises=check.compromises)
+                  explanation=explanation, considered=[parsed.type], compromises=compromises)
 
 
-def ask_clarification(ctx: RunContext[DesignerDeps], question: str, reason: str) -> Clarification:
-    """Ask one question in the caller's language when the result or requested colors cannot support the chart."""
-    return Clarification(question=question, reason=reason)
-
-
-def create_designer(model: str | Model) -> Agent[DesignerDeps, Design | Clarification]:
+def create_designer(model: str | Model) -> Agent[DesignerDeps, Design]:
     agent = Agent(
         model,
         name="designer",
         deps_type=DesignerDeps,
-        output_type=[ToolOutput(deliver_design, name="deliver_design"),
-                     ToolOutput(ask_clarification, name="ask_clarification")],
+        output_type=ToolOutput(deliver_design, name="deliver_design"),
         retries={"output": 2},
         instructions=instructions(),
         model_settings={"thinking": False, "temperature": 0.0},
     )
-    agent.tool(recommend_charts, retries=1, prepare=offer_recommend_charts)
     agent.tool(check_spec, retries=1, prepare=offer_check_spec)
+    agent.tool_plain(chart_capabilities)
 
     @agent.instructions
     def revise_rules(ctx: RunContext[DesignerDeps]) -> str | None:
-        if ctx.deps.prompt.clarifications or ctx.deps.prompt.previous is not None:
-            return REVISE_INSTRUCTIONS
-        return None
+        prompt = ctx.deps.prompt
+        parts = []
+        if prompt.clarifications or prompt.previous is not None or prompt.revision is not None:
+            parts.append(REVISE_INSTRUCTIONS)
+        if prompt.review is not None:
+            parts.append(REVIEW_INSTRUCTIONS)
+        return "\n\n".join(parts) or None
 
     return agent
 
 
 async def design_chart(
     report: AnalysisReport,
-    designer: Agent[DesignerDeps, Design | Clarification],
+    designer: Agent[DesignerDeps, Design],
     brief: DataBrief | None = None,
     renderer: str = "gptvis",
     usage: RunUsage | None = None,
     clarifications: list[QuestionAnswer] | None = None,
     previous: PreviousDesign | None = None,
+    revision: RevisionRound | None = None,
+    review: ReviewRound | None = None,
+    usage_limits: UsageLimits | None = None,
+    required_columns: list[str] | None = None,
 ) -> DesignReport:
-    """Design a chart from a saved analysis, returning a checked design, a clarification, or a warning."""
+    """Design directly from the supplied table; the lead owns all other consultations."""
     started = time.perf_counter()
     if report.analysis is None or report.result is None:
-        raise ValueError("The report needs an analysis and a result; resolve any clarification with the analyst first.")
+        raise ValueError("The report needs an analysis and a result table before design.")
     if report.result.row_count == 0 or not report.result.rows:
         return DesignReport(
             dataset_id=report.dataset_id, question=report.question, language=report.language,
-            clarification=Clarification(question=EMPTY_RESULT[report.language], reason="The result is empty."),
+            warnings=["The supplied CSV contains no rows to visualize."],
             seconds=time.perf_counter() - started, created_at=datetime.now(timezone.utc),
         )
 
-    prompt = build_prompt(report, brief, clarifications=clarifications, previous=previous)
-    deps = DesignerDeps(report=report, prompt=prompt, suggested=prompt.suggested_chart_type, renderer=renderer)
-    output: Design | Clarification | None = None
+    prompt = build_prompt(report, brief, clarifications=clarifications, previous=previous, revision=revision,
+                          review=review, required_columns=required_columns)
+    deps = DesignerDeps(report=report, prompt=prompt, suggested=prompt.suggested_chart_type,
+                        required_columns=tuple(required_columns or ()), renderer=renderer, intent=prompt.intent)
+    output: Design | None = None
     model_name = None
     warnings: list[str] = []
     run_usage = usage if usage is not None else RunUsage()
     starting_requests = run_usage.requests
+    request_limit = min(starting_requests + MAX_REQUESTS, usage_limits.request_limit) \
+        if usage_limits is not None and usage_limits.request_limit is not None else starting_requests + MAX_REQUESTS
+    limits = replace(usage_limits, request_limit=request_limit) if usage_limits is not None \
+        else UsageLimits(request_limit=request_limit)
     try:
         async with asyncio.timeout(DESIGN_TIMEOUT_SECONDS):
             result = await designer.run(
                 prompt_json(prompt), deps=deps, usage=run_usage,
-                usage_limits=UsageLimits(request_limit=starting_requests + MAX_REQUESTS),
+                usage_limits=limits,
             )
         output = result.output
         model_name = result.response.model_name
@@ -341,13 +344,15 @@ async def design_chart(
         log.warning("The designer could not finish %r on %s: %s", report.question, report.dataset_id, exc, exc_info=exc)
         detail = str(exc) or type(exc).__name__
         if isinstance(exc, UnexpectedModelBehavior) and exc.__cause__ is not None:
-            detail += f": {exc.__cause__}"
+            # An output function that raised on purpose is wrapped as "Exceeded maximum output retries"; report its reason.
+            cause = exc.__cause__
+            detail = str(cause) if isinstance(cause, UnexpectedModelBehavior) else f"{detail}: {cause}"
         warnings.append(f"The designer could not finish: {detail}")
 
     design = output if isinstance(output, Design) else None
     return DesignReport(
         dataset_id=report.dataset_id, question=report.question, language=report.language,
-        design=design, clarification=output if isinstance(output, Clarification) else None,
+        design=design,
         check=deps.last_check if design is not None else None, warnings=warnings, model=model_name,
         requests=run_usage.requests - starting_requests, check_calls=deps.check_calls,
         seconds=time.perf_counter() - started, created_at=datetime.now(timezone.utc),
@@ -366,9 +371,9 @@ def render_design(
     if renderer not in RENDERERS:
         raise ValueError(f"Unknown renderer '{renderer}'; registered: {', '.join(RENDERERS)}")
     if report.analysis is None or report.result is None:
-        raise ValueError("The report needs an analysis and a result; resolve any clarification with the analyst first.")
+        raise ValueError("The report needs an analysis and a result table before rendering.")
     columns, result = report.analysis.columns, report.result
-    check = run_check(design.spec, columns, result, renderer)
+    check = run_check(design.spec, columns, result, renderer, intent=design.intent)
     if not check.ok:
         raise ValueError("\n".join(
             f"line {v.line or 1}: {v.rule}: {v.message}. {v.fix}" for v in check.violations

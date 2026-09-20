@@ -149,18 +149,19 @@
   "name": "discounted_percentage",
   "report": "reports/discounted_percentage.json",
   "brief": {
-   "intent": "share",
+   "intent": "summary",
    "suggested_chart_type": null,
    "brand_colors": []
   },
   "expect": "design",
   "charts": [
+   "indicator",
    "table"
   ],
   "language": "en",
   "bind": {},
   "emphasis": null,
-  "why": "Intent: share. single number"
+  "why": "A share is the headline and counts provide support. A full table remains acceptable in the legacy set."
  },
  {
   "name": "female_share_by_region",
@@ -318,7 +319,8 @@
   "charts": [
    "column",
    "bar",
-   "table"
+   "table",
+   "dual_axes"
   ],
   "language": "en",
   "bind": {},
@@ -380,6 +382,8 @@
   },
   "expect": "design",
   "charts": [
+   "multi_line",
+   "stacked_area",
    "line",
    "area",
    "column",
@@ -538,18 +542,19 @@
   "name": "unpaid_share_overall",
   "report": "reports/unpaid_share_overall.json",
   "brief": {
-   "intent": "share",
+   "intent": "summary",
    "suggested_chart_type": null,
    "brand_colors": []
   },
   "expect": "design",
   "charts": [
+   "indicator",
    "table"
   ],
   "language": "ar",
   "bind": {},
   "emphasis": null,
-  "why": "Intent: share. single number with three columns"
+  "why": "A share is the headline and counts provide support. A full table remains acceptable in the legacy set."
  },
  {
   "name": "violation_type_share",
@@ -621,11 +626,34 @@
    "suggested_chart_type": null,
    "brand_colors": []
   },
-  "expect": "clarification",
+  "expect": "no_chart",
   "charts": [],
   "language": "en",
   "bind": {},
   "emphasis": null,
   "why": "Intent: compare. copy of deaths_by_gender with rows emptied Empty result expects clarification before any model request."
+ },
+ {
+  "name": "jeddah_monthly_injuries_and_deaths",
+  "report": "reports/jeddah_monthly_injuries_and_deaths.json",
+  "brief": {
+   "intent": "trend",
+   "suggested_chart_type": null,
+   "brand_colors": []
+  },
+  "expect": "design",
+  "charts": [
+   "multi_line",
+   "grouped_column",
+   "stacked_area",
+   "line",
+   "area"
+  ],
+  "language": "ar",
+  "bind": {
+   "time": "الشهر"
+  },
+  "emphasis": null,
+  "why": "The incident of 2026-09-09: wide same-unit measures over months."
  }
 ]

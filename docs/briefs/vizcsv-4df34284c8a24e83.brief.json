@@ -1,0 +1,22 @@
+{
+  "source": "Insightor visualization CSV corpus: vizcsv-4df34284c8a24e83.csv. Context taken from metadata/vizcsv-4df34284c8a24e83.json, using the succeeded occurrence recorded on 2026-06-18.",
+  "query": "WITH citizen_exits_per_year AS (SELECT id, YEAR(exit_timestamp) AS exit_year, COUNT(*) AS exit_count FROM estishraf_llm_border_crossings_impala WHERE person_type = 'citizen' AND NOT exit_timestamp IS NULL AND YEAR(exit_timestamp) BETWEEN 2021 AND 2025 GROUP BY id, YEAR(exit_timestamp)), citizens_with_3plus_exits AS (SELECT DISTINCT id FROM citizen_exits_per_year WHERE exit_count >= 3) SELECT hl.city, COUNT(DISTINCT ce.id) AS citizen_count FROM citizens_with_3plus_exits AS ce JOIN estishraf_llm_home_location AS hl ON CAST(ce.id AS BIGINT) = hl.id WHERE NOT hl.city IS NULL AND hl.city <> 'nan' GROUP BY hl.city ORDER BY citizen_count DESC LIMIT 1200",
+  "raw_question": "في أي المدن يقطن المواطنون الذين يغادرون المملكة اكثر من ثلاث مرات في كل سنة من الخمسة سنوات الماضية (2021-2025)؟",
+  "enriched_question": "اعرض البيانات المتاحة مرتبة تنازلياً حسب citizen_count في رسم شريطي أفقي وجدول بالعربية. وفقاً للاستعلام المصدر، تمثل الأعداد المواطنين الذين لديهم ثلاث مغادرات أو أكثر في سنة واحدة على الأقل خلال 2021–2025، حسب مدينة السكن. وضّح أن هذا التعريف يختلف عن شرط السؤال الأصلي: أكثر من ثلاث مغادرات في كل سنة من السنوات الخمس.",
+  "intent": "rank",
+  "suggested_chart_type": "bar",
+  "column_descriptions": {
+    "city": "مدينة السكن من جدول home_location في الاستعلام المصدر؛ كل صف في CSV يمثل مدينة.",
+    "citizen_count": "عدد معرّفات المواطنين المميزة داخل كل مدينة بعد التصفية في الاستعلام المصدر إلى من لديهم ثلاث مغادرات أو أكثر في سنة واحدة على الأقل بين 2021 و2025. قيمة مجمعة مسبقاً؛ ليست عدد الرحلات أو عدد صفوف CSV."
+  },
+  "units": {
+    "citizen_count": "مواطن"
+  },
+  "caveats": [
+    "السؤال الأصلي يطلب أكثر من ثلاث مغادرات في كل سنة من 2021 إلى 2025، بينما الاستعلام المصدر يستخدم exit_count >= 3 ويكتفي بتحقق الشرط في سنة واحدة على الأقل. هذه البيانات لا تثبت تحقق الشرط الأصلي.",
+    "الملف مجمع حسب المدينة ويحتوي فقط على city وcitizen_count؛ لا يتضمن معرّفات الأفراد أو تواريخ المغادرة أو أعداد المغادرات السنوية، ولذلك لا يمكن إعادة تطبيق شرط السؤال الأصلي من هذا CSV.",
+    "الفترة وتعريف الفئة مستمدان من SQL المسجل في بيانات المصدر الوصفية؛ لا يمكن التحقق منهما بشكل مستقل من أعمدة CSV وحدها.",
+    "الاستعلام المصدر يربط المواطنين بسجلات السكن ويستبعد المدن NULL والقيمة النصية nan، لذلك الأعداد تخص السجلات التي اجتازت الربط وهذه الشروط.",
+    "يتضمن ملف المصدر الوصفي أكثر من واقعة إنتاج للجدول نفسه؛ يستند هذا الوصف إلى الواقعة المسجلة بحالة succeeded بتاريخ 2026-06-18."
+  ]
+}

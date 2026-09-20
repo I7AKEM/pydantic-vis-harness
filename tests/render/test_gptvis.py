@@ -9,7 +9,8 @@ from pathlib import Path
 import pytest
 
 from tests.designer.conftest import (cities, column, gender_share, grouped, monthly,
-                                     raw_amounts, scatter_points, table, two_units)
+                                     raw_amounts, scatter_points, single_number, table,
+                                     two_same_unit_measures, two_units)
 from vis_agent.designer.catalogue import CATALOGUE
 from vis_agent.designer.resolve import resolve
 from vis_agent.designer.syntax import parse
@@ -84,6 +85,7 @@ SPECS = {
     "dual_axes": ("vis dual_axes\nbind\n  category month\n  value visits\n  value2 revenue", two_units),
     "word_cloud": ("vis word_cloud\nbind\n  category city\n  value violations", words),
     "table": ("vis table", gender_share),
+    "indicator": ("vis indicator\ncards\n  - value total", single_number),
 }
 
 
@@ -110,6 +112,15 @@ def test_every_catalogue_entry_renders(entry, tmp_path):
         assert "<table>" in rendered.html.read_text()
         assert "const interactive = false" in rendered.html.read_text()
     keep_image(rendered, entry.name)
+
+
+def test_folded_monthly_measures_render_as_two_lines(tmp_path):
+    spec = parse("vis multi_line\ntitle Injuries and deaths\nbind\n  time month\nfold\n"
+                 "  - injuries\n  - deaths\n")
+    rendered = gptvis.render(spec, *two_same_unit_measures(), tmp_path)
+    assert rendered.non_background_share > 0.02
+    config = json.loads(rendered.config.read_text())
+    assert {row["group"] for row in config["gptvis"]["data"]} == {"injuries", "deaths"}
 
 
 def test_arabic_text_and_rtl_overrides(tmp_path):
@@ -230,16 +241,10 @@ def test_table_formats_numbers_and_meanings_in_png_config_and_page(digits, amoun
     spec = parse(f"vis table\ndigits {digits}")
     rendered = gptvis.render(spec, columns, result, tmp_path, trace=True)
     config = json.loads(rendered.config.read_text())
-    headers = [c.meaning for c in columns]
-    assert config["gptvis"]["columns"] == headers
-    rows = config["gptvis"]["data"]
-    assert list(rows[0]) == headers
-    assert rows[0]["Average amount"] == amount
-    assert rows[0]["Share of total"] == share
-    assert rows[0]["Orders"] == ("1,240" if digits == "western" else "١٬٢٤٠")
-    assert rows[1]["Share of total"] is None
-    assert rows[1]["Region <name>"] == "001"
-    assert config["tableFormats"]["Orders"]["unit"] is None
+    assert config["gptvis"]["columns"] == result.columns
+    assert config["gptvis"]["data"] == [dict(zip(result.columns, row)) for row in result.rows]
+    assert config["display"]["columns"] == {c.name: c.meaning for c in columns}
+    assert config["tableFormats"]["n"]["unit"] is None
     assert amount in rendered.texts and share in rendered.texts
     page = rendered.html.read_text()
     assert f"<td>{amount}</td>" in page and f"<td>{share}</td>" in page
@@ -367,7 +372,7 @@ def test_legend_switch_overrides_package_false(switch, tmp_path):
     options = json.loads(rendered.config.read_text())["g2"]
     assert options["encode"]["color"] == "category"
     if switch == "on":
-        assert "legend" not in options
+        assert options["legend"]["color"]["labelFormatter"] == {"$display": {"kind": "value", "field": "category"}}
     else:
         assert options["legend"] is False
 
@@ -375,7 +380,7 @@ def test_legend_switch_overrides_package_false(switch, tmp_path):
 def test_render_merges_compromises_in_order_without_duplicates(tmp_path):
     from vis_agent.designer.models import Compromise
 
-    spec = parse(SPECS["column"][0])
+    spec = parse(SPECS["column"][0] + "\ndirection rtl")
     duplicate = resolve(spec, *arabic_cities()).compromises[0]
     first = Compromise(key="direction", message="A different check-time direction compromise")
     incoming = [first, duplicate, duplicate]

@@ -1,0 +1,55 @@
+{
+  "dataset_id": "ds_5b6fc776efea4622bd1414beacee1f43",
+  "question": "كم عدد المخالفات التي وقعت في ديسمبر 2025؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT count(*) AS \"عدد المخالفات\" FROM \"ds_5b6fc776efea4622bd1414beacee1f43\" WHERE date_trunc('month', gdate_happened) = '2025-12-01'",
+    "columns": [
+      {
+        "name": "عدد المخالفات",
+        "meaning": "عدد المخالفات التي وقعت في ديسمبر 2025",
+        "kind": "measure",
+        "unit": null,
+        "source": null,
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "بلغ عدد المخالفات التي وقعت في ديسمبر 2025 نحو 220 مخالفة.",
+    "assumptions": [
+      "تم حساب عدد السجلات التي يقع تاريخ حدوثها (gdate_happened) في شهر ديسمبر من عام 2025."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT count(*) AS \"عدد المخالفات\" FROM \"ds_5b6fc776efea4622bd1414beacee1f43\" WHERE date_trunc('month', gdate_happened) = '2025-12-01'",
+    "columns": [
+      "عدد المخالفات"
+    ],
+    "types": [
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        220
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.03132541700324509
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 2.0306799590034643,
+  "created_at": "2026-09-13T19:12:08.516376Z"
+}

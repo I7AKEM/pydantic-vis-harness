@@ -27,8 +27,12 @@ class ResultColumn(BaseModel):
                                                          "from several.")
     aggregate: Aggregate = Field(default="none", description="How the source was aggregated, or none.")
     denominator: str | None = Field(default=None, description="For a share: what the share is of, in words.")
+    partition_by: list[str] | None = Field(default=None, description=(
+        "Omit or use null for every non-share column. For shares: null for a scalar, partial selection, or independent row rates. "
+        "[] declares a complete partition across the result; ['year'] declares a complete partition "
+        "within each value of those exact result grouping columns. New percentages use unit %."))
 
-    @field_validator("unit", "source", "denominator", mode="before")
+    @field_validator("unit", "source", "denominator", "partition_by", mode="before")
     @classmethod
     def _placeholder_is_null(cls, value):
         # Models sometimes write the word null, or a dash, instead of a JSON null. A unit like that would be
@@ -44,17 +48,51 @@ class ResultColumn(BaseModel):
         if self.kind == "share" and not self.denominator:
             # A missing denominator is a gap in the description, not a wrong result; rejecting it cost whole runs.
             self.denominator = "not stated"
+        # Models sometimes copy grouping names or placeholder lists onto every column.
+        # Partition metadata has no meaning on a non-share and cannot affect its SQL;
+        # discard that annotation instead of spending query retries on an unrelated field.
+        if self.kind != "share":
+            self.partition_by = None
+        if self.partition_by is not None:
+            if any(not name.strip() for name in self.partition_by) or len(set(self.partition_by)) != len(self.partition_by):
+                raise ValueError("partition_by must contain distinct, nonempty column names")
+            if self.name in self.partition_by:
+                raise ValueError("partition_by cannot contain the share itself")
         return self
 
 
+class AnalysisRevision(BaseModel):
+    """The designer's request for a different result table: an internal handoff, never a question to the caller."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    problem: str
+    requested_change: str
+    preserve: str
+    evidence: list[str] = Field(default_factory=list)
+
+
+class RevisionRound(BaseModel):
+    """What the designer sees after the analyst revised the table: its own request and the analyst's reply."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    request: AnalysisRevision
+    reply: str
+
+
 class PreviousAnalysis(BaseModel):
-    """The analysis being revised: what produced the earlier result, and what must differ."""
+    """The analysis being revised: what produced the earlier result, and what must differ.
+
+    feedback is set when the change came from the chart designer, not the caller.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
     sql: str
     columns: list[ResultColumn]
     change: str
+    feedback: AnalysisRevision | None = None
 
 
 class QueryResult(BaseModel):

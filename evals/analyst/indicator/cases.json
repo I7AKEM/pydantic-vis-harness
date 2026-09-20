@@ -1,0 +1,74 @@
+[
+  {
+    "name": "indicator_total_orders",
+    "csv": "operations.csv",
+    "question": "What is the total number of orders?",
+    "brief": null,
+    "reference_sql": "SELECT SUM(orders) AS total_orders FROM dataset",
+    "expect": "table",
+    "strict_scale": true
+  },
+  {
+    "name": "indicator_weighted_rate",
+    "csv": "operations.csv",
+    "question": "What percentage of eligible claims were accepted? Use total accepted divided by total eligible, not the mean of row percentages.",
+    "brief": null,
+    "reference_sql": "SELECT SUM(accepted)*100.0/NULLIF(SUM(eligible),0) AS accepted_percentage FROM dataset",
+    "expect": "table",
+    "strict_scale": true
+  },
+  {
+    "name": "indicator_rate_support",
+    "csv": "operations.csv",
+    "question": "Show accepted percentage and both supporting counts.",
+    "brief": null,
+    "reference_sql": "SELECT SUM(accepted)*100.0/NULLIF(SUM(eligible),0) AS accepted_percentage, SUM(accepted) AS accepted, SUM(eligible) AS eligible FROM dataset",
+    "expect": "table",
+    "strict_scale": true
+  },
+  {
+    "name": "indicator_zero_denominator",
+    "csv": "zero.csv",
+    "question": "What percentage were accepted? Return NULL when total eligible is zero.",
+    "brief": null,
+    "reference_sql": "SELECT SUM(accepted)*100.0/NULLIF(SUM(eligible),0) AS accepted_percentage FROM dataset",
+    "expect": "table",
+    "strict_scale": true
+  },
+  {
+    "name": "indicator_multiple_totals",
+    "csv": "operations.csv",
+    "question": "Show total revenue and total cost.",
+    "brief": null,
+    "reference_sql": "SELECT SUM(revenue) AS revenue, SUM(cost) AS cost FROM dataset",
+    "expect": "table",
+    "strict_scale": true
+  },
+  {
+    "name": "indicator_filter_total",
+    "csv": "operations.csv",
+    "question": "What is the total order count for Riyadh?",
+    "brief": null,
+    "reference_sql": "SELECT SUM(orders) AS orders FROM dataset WHERE city = 'Riyadh'",
+    "expect": "table",
+    "strict_scale": true
+  },
+  {
+    "name": "indicator_grouped_to_total",
+    "csv": "operations.csv",
+    "question": "Instead of orders by city, give the overall total across all cities.",
+    "brief": null,
+    "reference_sql": "SELECT SUM(orders) AS total_orders FROM dataset",
+    "expect": "table",
+    "strict_scale": true
+  },
+  {
+    "name": "indicator_percentage_change",
+    "csv": "operations.csv",
+    "question": "What is the percentage change in total orders from 2025 to 2026? Use 2025 as the baseline.",
+    "brief": null,
+    "reference_sql": "SELECT (SUM(orders) FILTER (WHERE period=2026) - SUM(orders) FILTER (WHERE period=2025))*100.0/NULLIF(SUM(orders) FILTER (WHERE period=2025),0) AS percentage_change FROM dataset",
+    "expect": "table",
+    "strict_scale": true
+  }
+]

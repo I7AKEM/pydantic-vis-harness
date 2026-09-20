@@ -10,7 +10,7 @@ from decimal import Decimal
 import duckdb
 
 from vis_agent.analyst.models import Cell, QueryError, QueryResult
-from vis_agent.profiler.measurements import preview
+from vis_agent.profiler.measurements import MAX_MODEL_VALUE_BYTES, preview
 from vis_agent.store import DatasetStore
 
 ROW_CAP = 1000
@@ -86,9 +86,9 @@ def cell(value) -> Cell:
 
 
 def run_sql(store: DatasetStore, dataset_id: str, sql: str, *, omitted=frozenset(), row_cap: int = ROW_CAP,
-            timeout: float = TIMEOUT_SECONDS) -> QueryResult | QueryError:
+            timeout: float = TIMEOUT_SECONDS, table_name: str | None = None) -> QueryResult | QueryError:
     """Validate, run with a timeout, fetch at most row_cap + 1 rows, cap cells. Errors come back for the model."""
-    table = store.table_name(dataset_id)
+    table = table_name or store.table_name(dataset_id)
     started = time.perf_counter()
     with store.connect() as connection:
         try:
@@ -111,5 +111,10 @@ def run_sql(store: DatasetStore, dataset_id: str, sql: str, *, omitted=frozenset
     if len(rows) > row_cap:
         return QueryError(sql=sql, error=f"The result has more than {row_cap} rows.",
                           hint="Aggregate, bucket time more coarsely, or take a top N with an Other row.")
-    return QueryResult(sql=sql, columns=names, types=types, rows=[[cell(v) for v in row] for row in rows],
+    if table_name is not None and any(isinstance(value, str) and len(value.encode()) > MAX_MODEL_VALUE_BYTES
+                                      for row in rows for value in row):
+        return QueryError(sql=sql, error="The result contains oversized text; no cells were truncated.",
+                          hint="Select the numeric and short label columns needed for the request.")
+    converted = [[v if table_name is not None and isinstance(v, str) else cell(v) for v in row] for row in rows]
+    return QueryResult(sql=sql, columns=names, types=types, rows=converted,
                        row_count=len(rows), seconds=time.perf_counter() - started)

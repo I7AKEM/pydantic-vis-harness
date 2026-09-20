@@ -205,3 +205,17 @@ def test_reference_threshold_and_swaps(monkeypatch):
     assert optimizer.reference_charts(report, None) == []
     candidates.clear()
     assert optimizer.reference_charts(report, None) == []
+
+
+def test_focused_optimizer_keeps_independent_metric_expectations():
+    from pathlib import Path
+    from types import SimpleNamespace
+    from evals.designer.agent import optimize_instructions as optimize
+    path = Path(__file__).resolve().parents[2] / 'evals/designer/agent/indicator/cases.json'
+    gold = next(c for c in optimize.load(path, 'dev') if c.name == 'dev_share_primary')
+    def prediction(primary, support):
+        return SimpleNamespace(design={'spec': 'vis indicator\ntitle Accepted share\ndescription Acceptance rate\ncards\n  - value '+primary+'\n    support '+support,
+                                       'explanation': 'The accepted share is the primary measurement; count is supporting context.'})
+    good, _ = optimize.score_and_feedback(gold, prediction('share', 'accepted'))
+    bad, feedback = optimize.score_and_feedback(gold, prediction('accepted', 'share'))
+    assert good == 1 and bad < 1 and 'MetricFidelity' in feedback

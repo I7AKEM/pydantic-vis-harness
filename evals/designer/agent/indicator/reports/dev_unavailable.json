@@ -1,0 +1,45 @@
+{
+  "dataset_id": "ds_indicator_fixture",
+  "question": "Show the turbine availability percentage.",
+  "language": "English",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      {
+        "name": "availability",
+        "meaning": "availability",
+        "kind": "share",
+        "unit": "%",
+        "source": null,
+        "aggregate": "share",
+        "denominator": "Eligible population"
+      }
+    ],
+    "summary": "Prepared result for the requested measurement.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT prepared_metrics FROM dataset",
+    "columns": [
+      "availability"
+    ],
+    "types": [
+      "DOUBLE"
+    ],
+    "rows": [
+      [
+        null
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "fixture",
+  "seconds": 0,
+  "created_at": "2026-09-15T00:00:00Z"
+}

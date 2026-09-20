@@ -241,7 +241,7 @@ def test_check_subcommand_skips_rules_without_report(report_path, tmp_path, caps
 
 def test_check_subcommand_prints_compromises(report_path, tmp_path, capsys):
     spec = tmp_path / "donut.vis"
-    spec.write_text(DONUT + "language ar\n")
+    spec.write_text(DONUT + "language ar\ndirection rtl\n")
     assert cli.main(["check", str(spec), "--report", str(report_path)]) == 0
     printed = json.loads(capsys.readouterr().out)
     assert printed["ok"] and printed["canonical"]
@@ -491,7 +491,7 @@ def test_suggest_runs_the_lead_once(monkeypatch, capsys):
     monkeypatch.setattr(cli, "resources", lambda: (Lead(), deps, None, None, None, None))
     assert cli.main(["suggest", "ds_" + "1" * 32]) == 0
     assert "ds_" + "1" * 32 in seen["prompt"] and "three to five" in seen["prompt"]
-    assert seen["deps"].caller_kind == "terminal" and seen["limits"].request_limit == 40
+    assert seen["deps"].caller_kind == "terminal" and seen["limits"].request_limit == cli.REQUEST_LIMIT
     assert "Total by region" in capsys.readouterr().out
 
 

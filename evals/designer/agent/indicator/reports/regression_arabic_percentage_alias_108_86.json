@@ -1,0 +1,38 @@
+{
+  "dataset_id": "ds_338ef8d2926245ab93e513229c304951",
+  "question": "مثله بيانيا",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \"percentage_change\" FROM \"ds_338ef8d2926245ab93e513229c304951\"",
+    "columns": [
+      {
+        "name": "percentage_change",
+        "meaning": "نسبة التغير في المقياس المقاس",
+        "kind": "measure",
+        "unit": "percentage",
+        "source": "percentage_change",
+        "aggregate": "sum",
+        "denominator": null,
+        "partition_by": null
+      }
+    ],
+    "summary": "بلغت نسبة التغير 108.86%. تم استخراج هذه القيمة الوحيدة المتاحة في الجدول.",
+    "assumptions": []
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \"percentage_change\" FROM \"ds_338ef8d2926245ab93e513229c304951\"",
+    "columns": ["percentage_change"],
+    "types": ["DOUBLE"],
+    "rows": [[108.86]],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0
+  },
+  "checks": [],
+  "warnings": [],
+  "model": "saved-user-result",
+  "seconds": 0,
+  "created_at": "2026-09-15T16:00:00Z"
+}

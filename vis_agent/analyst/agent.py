@@ -5,28 +5,32 @@ import asyncio
 import logging
 import re
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 
 import duckdb
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed, ToolOutput
 from pydantic_ai.models import Model
 from pydantic_ai.exceptions import ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded
 from pydantic_ai.tools import ToolDefinition
 from pydantic_ai.usage import RunUsage, UsageLimits
 
-from vis_agent.analyst.checks import check_result, summary_numbers_exist
+from vis_agent.analyst.checks import check_result, named_period_check, normalise_units, restates, summary_numbers_exist
 from vis_agent.analyst.models import Analysis, AnalysisReport, Clarification, PreviousAnalysis, QueryError, QueryResult, ResultColumn
 from vis_agent.analyst.query import run_sql
+from vis_agent.card import card as build_card
 from vis_agent.deps import AppDeps
-from vis_agent.models import DataBrief, QuestionAnswer
-from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, ProfilerInput, profile_dataset
+from vis_agent.language import ARABIC, language_of  # noqa: F401  (ARABIC is re-exported for the designer)
+from vis_agent.models import DataBrief, DisplayLabels, QuestionAnswer
+from vis_agent.labels import LABEL_INSTRUCTIONS, project_display_labels
+from vis_agent.profiler.agent import DEFAULT_PROFILER_MODEL, ProfilerInput, measure_dataset
 from vis_agent.profiler.models import DatasetProfile, ProfileCheck, SemanticProfile
 from vis_agent.profiler.review import failed_checks
 from vis_agent.store import DatasetNotFound, DatasetStore, quote_identifier
+from vis_agent.units import canonical_unit
 
 log = logging.getLogger("analyst")
 DEFAULT_ANALYST_MODEL = DEFAULT_PROFILER_MODEL
@@ -36,11 +40,11 @@ ANALYST_INSTRUCTIONS = Path(__file__).with_name("rulebook.md").read_text(encodin
 LOCALIZED_INSTRUCTIONS = Path(__file__).with_name("rulebook-localized.md").read_text(encoding="utf-8")
 """Rules for Hijri dates and Arabic-Indic digits, added per run only when a column carries those levels."""
 REVISE_INSTRUCTIONS = Path(__file__).with_name("rulebook-revise.md").read_text(encoding="utf-8")
+REPAIR_INSTRUCTIONS = Path(__file__).with_name("rulebook-repair.md").read_text(encoding="utf-8")
 ANALYSIS_TIMEOUT_SECONDS = 90
 MAX_QUERY_CALLS = 3
 MAX_REQUESTS = 8
 PROMPT_DISTINCT_VALUES = 12
-ARABIC = re.compile(r"[؀-ۿ]")
 
 
 class ColumnFacts(BaseModel):
@@ -92,6 +96,7 @@ class AnalystDeps:
     store: DatasetStore
     profile: DatasetProfile
     prompt: AnalystPrompt
+    table_name: str | None = None
     query_calls: int = 0
     passed: PassedQuery | None = None
     delivery_attempts: int = 0
@@ -99,19 +104,30 @@ class AnalystDeps:
 
 
 def detect_language(question: str, brief: DataBrief | None, column_names: list[str]) -> str:
-    """Once, from the question's script; then the brief's raw question; then the column names."""
-    for text in (question, brief.raw_question if brief else None, " ".join(column_names)):
-        if text and text.strip():
-            return "Arabic" if ARABIC.search(text) else "English"
-    return "English"
+    """Honor an explicit output language, then use the question's script and existing fallbacks."""
+    # A language revision can be written in the old language ("Make this card Arabic").
+    # Require an instruction and a terminal language name; a column such as English speakers
+    # is not itself an instruction to translate the picture.
+    for clause in reversed(re.split(r"[.!?؟;\n]", question)):
+        explicit = re.search(
+            r"\b(?:answer|respond|write|render|display|translate|make|switch|change)\b"
+            r".{0,80}?\b(Arabic|English)\b(?:,?\s+please)?\s*$", clause, re.I)
+        if explicit and not re.search(r"\b(?:not|don't|never)\b", clause, re.I):
+            return explicit[1].capitalize()
+        for name, pattern in (("English", r"(?:باللغة\s+الإنجليزية|باللغة\s+الانجليزية|بالإنجليزية|بالانجليزية)"),
+                              ("Arabic", r"(?:باللغة\s+العربية|بالعربية)")):
+            if re.search(pattern + r"\s*$", clause) and not re.search(r"(?:^|\s)لا\s", clause):
+                return name
+    return language_of(question, brief.raw_question if brief else None, " ".join(column_names))
 
 
 def build_prompt(
     store: DatasetStore, profile: DatasetProfile, question: str, language: str,
     clarifications: list[QuestionAnswer] | None = None, previous: PreviousAnalysis | None = None,
+    *, table_name: str | None = None,
 ) -> AnalystPrompt:
     semantics = {c.name: c for c in profile.semantic.columns} if profile.semantic else {}
-    table = quote_identifier(store.table_name(profile.source.dataset_id))
+    table = quote_identifier(table_name or store.table_name(profile.source.dataset_id))
     columns = []
     with store.connect() as connection:
         for stats in profile.deterministic.columns:
@@ -163,11 +179,12 @@ async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[Result
     deps = ctx.deps
     if deps.query_calls >= MAX_QUERY_CALLS:
         raise ModelRetry(f"You have used the {MAX_QUERY_CALLS} query calls of this run. Deliver the last result that "
-                         "passed its checks, or ask the caller a question.")
+                         "passed its checks, or ask the caller a question only when the columns cannot answer it.")
     deps.query_calls += 1
     result = await asyncio.to_thread(
         run_sql, deps.store, deps.profile.source.dataset_id, sql,
         omitted={c.name.casefold() for c in deps.profile.deterministic.columns if c.values_omitted},
+        table_name=deps.table_name,
     )
     if isinstance(result, QueryError):
         deps.last_errors = [result.error]
@@ -179,7 +196,18 @@ async def run_query(ctx: RunContext[AnalystDeps], sql: str, columns: list[Result
         and column.name[1:-1] in result.columns and column.name not in result.columns else column
         for column in columns
     ]
-    result.checks = await asyncio.to_thread(check_result, deps.store, deps.profile, columns, result)
+    # Canonical unit names first, then the share and count convention; an older saved report keeps its metadata.
+    columns = [normalise_units(column.model_copy(update={"unit": canonical_unit(column.unit)})) for column in columns]
+    result.checks = await asyncio.to_thread(check_result, deps.store, deps.profile, columns, result,
+                                           table_name=deps.table_name)
+    # New shares must state their scale; historical reports remain readable by check_result.
+    result.checks.extend(
+        ProfileCheck(column=column.name, check="share_scale_declared", severity="error", passed=False,
+                     message=f"{column.name}: declare the share scale from its SQL: unit % for a percentage "
+                             "on the 0–100 scale, or unit fraction for a ratio on the 0–1 scale. Read the "
+                             "numerator/denominator calculation; do not guess the scale from the value.")
+        for column in columns if column.kind == "share" and column.unit not in ("%", "fraction")
+    )
     errors = failed_checks(result.checks, "error")
     deps.last_errors = [check.message for check in errors]
     if not errors:
@@ -197,42 +225,48 @@ def _context(deps: AnalystDeps) -> str:
     return " ".join(piece for piece in pieces if piece)
 
 
-DEAD_END = {
-    "ar": "لم أتمكن من إنتاج جدول يجتاز الفحوصات لهذا السؤال. هل يمكنك إعادة صياغته أو تسمية الأعمدة المطلوبة؟",
-    "en": "I could not produce a table that passes its checks for this question. Could you rephrase it or name the "
-          "columns you want?",
-}
-
-
 def deliver_analysis(
     ctx: RunContext[AnalystDeps], summary: str, assumptions: list[str] | None = None,
 ) -> Analysis | Clarification:
-    """Deliver the answer: a two-sentence summary in the caller's language using only numbers from the result,
+    """Deliver the answer: a one- or two-sentence summary in the caller's language using only numbers from the result,
     and the assumptions you made. The last query that passed its checks is delivered with it.
     """
     deps = ctx.deps
     if deps.passed is None:
         if deps.query_calls >= MAX_QUERY_CALLS:
-            # The query budget is spent and nothing passed: ask the caller instead of looping to the request limit.
-            language = "ar" if deps.prompt.language.lower().startswith("ar") else "en"
-            return Clarification(question=DEAD_END[language],
-                                 reason=" ".join(deps.last_errors) or "No query passed its checks.")
+            raise UnexpectedModelBehavior(f"No query passed its checks in {MAX_QUERY_CALLS} tries: "
+                                          + (" ".join(deps.last_errors) or "no query ran"))
         raise ModelRetry("No query has passed its checks yet. Call run_query and fix every check with severity "
                          "error, or call ask_clarification when the columns cannot answer the question.")
     check = summary_numbers_exist(summary, deps.passed.result, _context(deps))
     if not check.passed and deps.delivery_attempts == 0:
         deps.delivery_attempts += 1
         raise ModelRetry(check.message)
+    period = named_period_check(deps.prompt.question, deps.passed.sql, assumptions or [])
+    if not period.passed and deps.delivery_attempts == 0:
+        deps.delivery_attempts += 1
+        raise ModelRetry(period.message)
+    if not period.passed:
+        deps.passed.result.checks.append(period)
     return Analysis(sql=deps.passed.sql, columns=deps.passed.columns, summary=summary, assumptions=assumptions or [])
 
 
-def ask_clarification(ctx: RunContext[AnalystDeps], question: str, reason: str) -> Clarification:
-    """Ask the caller one question, in the caller's language, when the columns cannot answer the question or a
-    term in it has no definition. Say in reason what is missing.
+def ask_clarification(ctx: RunContext[AnalystDeps], ask: str, reason: str) -> Clarification:
+    """Return a materially ambiguous calculation decision to the lead, never a missing-data request.
+
+    Args:
+        ask: The question for the caller, in the caller's language. Never the caller's own question, and never a
+            question about units, labels, order, language, or format: decide those yourself and record an assumption.
+        reason: Why this decision changes the requested calculation, in one sentence.
     """
-    if not question.strip():
+    if not ask.strip():
         raise ModelRetry("The question is empty. Ask one question the caller can answer, or answer with SQL.")
-    return Clarification(question=question, reason=reason)
+    if restates(ask, ctx.deps.prompt.question):
+        log.info("Refused a clarification that only restates %r: %r", ctx.deps.prompt.question, ask)
+        raise ModelRetry("That only repeats the caller's words. If the columns can answer the question, call run_query "
+                         "with the SQL; otherwise ask for the one missing fact or definition, in words the caller did "
+                         "not already use.")
+    return Clarification(question=ask, reason=reason)
 
 
 def create_analyst(model: str | Model) -> Agent[AnalystDeps, Analysis | Clarification]:
@@ -243,7 +277,7 @@ def create_analyst(model: str | Model) -> Agent[AnalystDeps, Analysis | Clarific
         output_type=[ToolOutput(deliver_analysis, name="deliver_analysis"),
                      ToolOutput(ask_clarification, name="ask_clarification")],
         retries={"output": 2},
-        instructions=ANALYST_INSTRUCTIONS,
+        instructions=ANALYST_INSTRUCTIONS + "\n\n" + LABEL_INSTRUCTIONS,
         # Thinking off and temperature 0 until the Phase 2 benchmark says otherwise.
         model_settings={"thinking": False, "temperature": 0.0},
     )
@@ -259,6 +293,8 @@ def create_analyst(model: str | Model) -> Agent[AnalystDeps, Analysis | Clarific
 
     @agent.instructions
     def revise_rules(ctx: RunContext[AnalystDeps]) -> str | None:
+        if ctx.deps.prompt.previous is not None and ctx.deps.prompt.previous.feedback is not None:
+            return REPAIR_INSTRUCTIONS
         if ctx.deps.prompt.clarifications or ctx.deps.prompt.previous is not None:
             return REVISE_INSTRUCTIONS
         return None
@@ -277,28 +313,42 @@ async def analyze_dataset(
     clarifications: list[QuestionAnswer] | None = None,
     previous: PreviousAnalysis | None = None,
     language: str | None = None,
+    usage_limits: UsageLimits | None = None,
 ) -> AnalysisReport:
-    """Profile if needed, then answer one question. Raises DatasetNotFound, ValueError, or duckdb.Error.
+    """Answer an explicitly delegated data question using local facts, with no profiler model call.
 
     The caller's language is detected from the question unless given, as a request does for a revision."""
     started = time.perf_counter()
-    profile = await profile_dataset(store, profiler, dataset_id, brief=brief, usage=usage)
+    from vis_agent.analyst.source import prepare_csv_source
+
+    prepared = await asyncio.to_thread(prepare_csv_source, store, dataset_id, brief)
+    profile = await measure_dataset(store, dataset_id, brief=brief, table_name=prepared.table)
     language = language or detect_language(question, profile.source.brief, [c.name for c in profile.deterministic.columns])
     prompt = await asyncio.to_thread(build_prompt, store, profile, question, language,
-                                     clarifications=clarifications, previous=previous)
-    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+                                     clarifications=clarifications, previous=previous, table_name=prepared.table)
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt, table_name=prepared.table)
     output: Analysis | Clarification | None = None
     model_name = None
     warnings: list[str] = []
+    request_limit = (usage.requests if usage is not None else 0) + MAX_REQUESTS
+    if usage_limits is not None and usage_limits.request_limit is not None:
+        request_limit = min(request_limit, usage_limits.request_limit)
+    limits = replace(usage_limits, request_limit=request_limit) if usage_limits is not None \
+        else UsageLimits(request_limit=request_limit)
     try:
         async with asyncio.timeout(ANALYSIS_TIMEOUT_SECONDS):
             result = await analyst.run(prompt_json(prompt), deps=deps, usage=usage,
-                                       usage_limits=UsageLimits(request_limit=(usage.requests if usage is not None else 0) + MAX_REQUESTS))
+                                       usage_limits=limits)
         output = result.output
         model_name = result.response.model_name
     except (ModelAPIError, UnexpectedModelBehavior, UsageLimitExceeded, TimeoutError) as exc:
         log.warning("The analyst could not answer %r on %s: %s", question, dataset_id, exc, exc_info=exc)
-        warnings.append(f"The analyst could not answer: {str(exc) or type(exc).__name__}")
+        detail = str(exc) or type(exc).__name__
+        if isinstance(exc, UnexpectedModelBehavior) and exc.__cause__ is not None:
+            # An output function that raised on purpose is wrapped as "Exceeded maximum output retries"; report its reason.
+            cause = exc.__cause__
+            detail = str(cause) if isinstance(cause, UnexpectedModelBehavior) else f"{detail}: {cause}"
+        warnings.append(f"The analyst could not answer: {detail}")
 
     analysis = output if isinstance(output, Analysis) else None
     checks: list[ProfileCheck] = []
@@ -332,20 +382,28 @@ class LeadAnswer(BaseModel):
     row_count: int = 0
     sql: str | None = None
     warnings: list[str] = []
+    card: str | None = None
+    display_labels: DisplayLabels = Field(default_factory=DisplayLabels)
 
     @classmethod
-    def from_report(cls, report: AnalysisReport) -> "LeadAnswer":
+    def from_report(cls, report: AnalysisReport, brief: DataBrief | None = None) -> "LeadAnswer":
         analysis, table = report.analysis, report.result
+        _, display = project_display_labels(brief, analysis.columns if analysis else [], report.language)
+        rows = table.rows[:LEAD_ROWS] if table else []
+        row_count = table.row_count if table else 0
+        shown = build_card(language=report.language, summary=analysis.summary, columns=analysis.columns, rows=rows,
+                           row_count=row_count, assumptions=analysis.assumptions, warnings=report.warnings,
+                           display_labels=display) \
+            if analysis is not None else None
         return cls(
             dataset_id=report.dataset_id, question=report.question,
             summary=analysis.summary if analysis else None,
             assumptions=analysis.assumptions if analysis else [],
             clarification=report.clarification,
             columns=analysis.columns if analysis else [],
-            rows=table.rows[:LEAD_ROWS] if table else [],
-            row_count=table.row_count if table else 0,
+            rows=rows, row_count=row_count,
             sql=analysis.sql if analysis else None,
-            warnings=report.warnings,
+            warnings=report.warnings, card=shown, display_labels=display,
         )
 
 
@@ -359,7 +417,7 @@ async def answer_question(ctx: RunContext["AppDeps"], dataset_id: str, question:
     """
     try:
         report = await analyze_dataset(ctx.deps.store, ctx.deps.profiler, ctx.deps.analyst, dataset_id, question,
-                                       usage=ctx.usage)
+                                       usage=ctx.usage, usage_limits=ctx.usage_limits)
     except DatasetNotFound as exc:
         raise ToolFailed(str(exc)) from exc
     except ValueError as exc:
@@ -367,4 +425,5 @@ async def answer_question(ctx: RunContext["AppDeps"], dataset_id: str, question:
     except duckdb.Error as exc:
         log.warning("DuckDB failed while answering %r on %s: %s", question, dataset_id, exc)
         raise ToolFailed("DuckDB could not run the analysis on this dataset.") from exc
-    return LeadAnswer.from_report(report)
+    source = await asyncio.to_thread(ctx.deps.store.get_upload, dataset_id)
+    return LeadAnswer.from_report(report, source.brief)

@@ -79,16 +79,85 @@ def test_other_rows_and_unknown_labels(store, people):
     assert names(failed_checks(check_result(store, profile, columns, result))) == ["labels_faithful"]
 
 
-def test_shares_must_add_up(store, people):
+@pytest.mark.parametrize("unit", ["%", "percentage", "نسبة مئوية"])
+def test_shares_must_add_up(store, people, unit):
     dataset, profile = people
-    columns = [column("region", "geography", "region"), column("share", "share", "amount", "share", denominator="all amounts")]
+    columns = [column("region", "geography", "region"), column("share", "share", "amount", "share",
+               denominator="all amounts", unit=unit, partition_by=[])]
     good = QueryResult(sql="x", columns=["region", "share"], types=["VARCHAR", "DOUBLE"], rows=[["East", 38.1], ["West", 61.9]], row_count=2, seconds=0)
     assert failed_checks(check_result(store, profile, columns, good)) == []
     fraction = QueryResult(sql="x", columns=["region", "share"], types=["VARCHAR", "DOUBLE"], rows=[["East", 0.381], ["West", 0.619]], row_count=2, seconds=0)
-    assert failed_checks(check_result(store, profile, columns, fraction)) == []
+    fractions = [columns[0], columns[1].model_copy(update={"unit": "fraction"})]
+    assert failed_checks(check_result(store, profile, fractions, fraction)) == []
+    assert names(failed_checks(check_result(store, profile, columns, fraction))) == ["shares_add_up"]
     short = QueryResult(sql="x", columns=["region", "share"], types=["VARCHAR", "DOUBLE"], rows=[["East", 38.1], ["West", 50.0]], row_count=2, seconds=0)
     failed = failed_checks(check_result(store, profile, columns, short))
     assert names(failed) == ["shares_add_up"] and failed[0].severity == "warning" and "88.1" in failed[0].message
+
+
+@pytest.mark.parametrize("rows", [[[0.000539399]], [[9.91]], [[20], [30]], [[None]]])
+def test_scalar_partial_and_independent_shares_do_not_claim_a_partition(store, people, rows):
+    _, profile = people
+    result = QueryResult(sql="x", columns=["share"], types=["DOUBLE"], rows=rows, row_count=len(rows), seconds=0)
+    columns = [column("share", "share", unit="%", denominator="the requested scope")]
+    assert failed_checks(check_result(store, profile, columns, result)) == []
+
+
+def test_share_groups_follow_declared_columns_not_column_order(store, people):
+    _, profile = people
+    result = QueryResult(sql="x", columns=["part", "year", "region", "share"],
+                         types=["VARCHAR", "VARCHAR", "VARCHAR", "DOUBLE"],
+                         rows=[["A", "2025", "East", 40], ["B", "2025", "East", 60],
+                               ["A", "2026", "West", 25], ["B", "2026", "West", 75]], row_count=4, seconds=0)
+    columns = [column("part", "category"), column("year", "time"), column("region", "category"),
+               column("share", "share", unit="%", partition_by=["year", "region"])]
+    assert failed_checks(check_result(store, profile, columns, result)) == []
+    result.rows[-1][-1] = 70
+    failures = failed_checks(check_result(store, profile, columns, result))
+    assert names(failures) == ["shares_add_up"]
+    assert "2026" in failures[0].message and "95" in failures[0].message
+
+
+@pytest.mark.parametrize("groups,unit,row_count,expected", [
+    (["missing"], "%", 1, "share_partition_columns"),
+    (["n"], "%", 1, "share_partition_columns"),
+    ([], None, 1, "share_partition_scale"),
+    ([], "%", 2, "share_partition_incomplete"),
+])
+def test_partition_metadata_and_materialization_are_checked(store, people, groups, unit, row_count, expected):
+    _, profile = people
+    result = QueryResult(sql="x", columns=["n", "share"], types=["BIGINT", "DOUBLE"],
+                         rows=[[2, 100]], row_count=row_count, seconds=0)
+    columns = [column("n", "measure"), column("share", "share", unit=unit, partition_by=groups)]
+    assert names(failed_checks(check_result(store, profile, columns, result))) == [expected]
+
+
+def test_percentage_change_is_not_a_share_partition(store, people):
+    _, profile = people
+    result = QueryResult(sql="x", columns=["change"], types=["DOUBLE"], rows=[[-150]], row_count=1, seconds=0)
+    assert failed_checks(check_result(store, profile, [column("change", "measure", unit="%")], result)) == []
+
+
+def test_multi_column_source_feedback_explains_how_to_repair_metadata(store, people):
+    dataset, profile = people
+    result = run(store, dataset, f'SELECT sum(amount) / count(gender) AS mean FROM "{dataset}"')
+    bad = [column("mean", "measure", "amount, gender")]
+    checks = failed_checks(check_result(store, profile, bad, result))
+    assert names(checks) == ["source_column_exists"]
+    assert "source null" in checks[0].message and "commas" in checks[0].message
+    assert failed_checks(check_result(store, profile, [column("mean", "measure")], result)) == []
+
+
+@pytest.mark.parametrize("unit,values,partition", [("%", [-20, 120], []), ("%", [120], None),
+                                                    ("percentage", [-20, 120], []), ("percent", [108.86], None),
+                                                    ("fraction", [-0.2, 1.2], [])])
+def test_part_of_whole_ranges_are_checked_even_when_the_partition_sums_correctly(store, people, unit, values, partition):
+    _, profile = people
+    result = QueryResult(sql="x", columns=["share"], types=["DOUBLE"], rows=[[v] for v in values],
+                         row_count=len(values), seconds=0)
+    checks = failed_checks(check_result(store, profile, [column("share", "share", unit=unit, partition_by=partition)], result))
+    assert "share_in_bounds" in names(checks)
+    assert "percentage change" in next(c.message for c in checks if c.check == "share_in_bounds")
 
 
 def test_aggregates_stay_in_bounds_and_totals_are_explained(store, people):
@@ -123,6 +192,62 @@ def test_summary_numbers_must_exist_in_the_result():
     assert not summary_numbers_exist("Under 15, the West leads with 65 SAR.", result).passed
     assert summary_numbers_exist("Under 15, the West leads with 65 SAR.", result, "What share is under 15?").passed
     assert summary_numbers_exist("In December 2025 the West led with 65 SAR.", result, "violations December 2025").passed
+
+
+@pytest.mark.parametrize("summary", [
+    "The total orders decreased by 80% from 2025 to 2026.",
+    "Orders dropped by 80%.", "Orders fell by 80%.", "There was a decrease of 80%.",
+    "There was an 80% drop.", "Orders declined by approximately 80%.",
+    "انخفض إجمالي الطلبات بنسبة ٨٠٪ من ٢٠٢٥ إلى ٢٠٢٦.",
+    "تراجعت الطلبات بمقدار ٨٠٪.", "انخفاض بنسبة ٨٠٪.",
+])
+def test_decrease_magnitude_matches_a_negative_result_without_changing_its_sign(summary):
+    result = QueryResult(sql="x", columns=["change"], types=["DOUBLE"], rows=[[-80.0]], row_count=1, seconds=0)
+    assert summary_numbers_exist(summary, result, "Change from 2025 to 2026").passed
+
+
+@pytest.mark.parametrize("summary,value", [
+    ("Orders increased by 80%.", -80),
+    ("Orders rose by 80%.", -80),
+    ("Orders fell by 80%.", 80),
+    ("There was an 80% decrease.", 80),
+    ("The percentage change was 80%.", -80),
+    ("Orders fell to 80%.", -80),
+    ("Orders fell from 80%.", -80),
+    ("Orders did not decrease by 80%.", -80),
+    ("Orders didn't decrease by 80%.", -80),
+    ("There was no 80% drop.", -80),
+    ("Orders decreased by -80%.", -80),
+    ("Orders decreased by +80%.", 80),
+    ("Orders increased by -80%.", -80),
+    ("Orders decreased by 80%.", -.8),
+    ("Orders decreased by 80%.", .8),
+    ("ارتفعت الطلبات بنسبة ٨٠٪.", -80),
+    ("انخفضت الطلبات بنسبة ٨٠٪.", 80),
+    ("لم تنخفض الطلبات بنسبة ٨٠٪.", -80),
+    ("لم يحدث انخفاض بنسبة ٨٠٪.", -80),
+    ("انخفاض بمقدار -٨٠٪.", -80),
+    ("انخفضت الطلبات إلى ٨٠٪.", -80),
+])
+def test_directional_wording_cannot_use_opposite_sign_or_an_unsigned_magnitude(summary, value):
+    result = QueryResult(sql="x", columns=["change"], types=["DOUBLE"], rows=[[value]], row_count=1, seconds=0)
+    assert not summary_numbers_exist(summary, result).passed
+
+
+@pytest.mark.parametrize("summary,value", [("Orders increased by 80%.", 80),
+                                           ("Orders rose by 80%.", 80),
+                                           ("ارتفعت الطلبات بنسبة ٨٠٪.", 80),
+                                           ("Orders fell to 80%.", 80),
+                                           ("The change was -80%.", -80),
+                                           ("Orders decreased by 15.82%.", -15.8158)])
+def test_literal_levels_and_correctly_signed_changes_still_validate(summary, value):
+    result = QueryResult(sql="x", columns=["change"], types=["DOUBLE"], rows=[[value]], row_count=1, seconds=0)
+    assert summary_numbers_exist(summary, result).passed
+
+
+def test_directional_magnitude_must_come_from_numeric_results_not_context_or_text_cells():
+    result = QueryResult(sql="x", columns=["label"], types=["VARCHAR"], rows=[["-80% change"]], row_count=1, seconds=0)
+    assert not summary_numbers_exist("Orders decreased by 80%.", result, "The previous change was -80%.").passed
 
 
 @pytest.mark.parametrize("width", [4, 7], ids=["year", "month"])
@@ -180,3 +305,14 @@ def test_an_ordinal_column_must_follow_its_scale(store):
                                    f"GROUP BY 1, 2 ORDER BY 1, CASE age_group WHEN 'أقل من 15' THEN 1 WHEN '15-30' THEN 2 "
                                    f"WHEN '30-45' THEN 3 WHEN '45-60' THEN 4 WHEN 'أكثر من 60' THEN 5 END")
     assert failed_checks(check_result(store, profile, columns, by_scale)) == []
+
+    dominant = run(
+        store, dataset,
+        f'SELECT person_type, arg_max(age_group, population_count) AS dominant_age '
+        f'FROM "{dataset}" GROUP BY 1 ORDER BY 1',
+    )
+    dominant_columns = [
+        column("person_type", "category", "person_type"),
+        column("dominant_age", "ordinal", "age_group"),
+    ]
+    assert failed_checks(check_result(store, profile, dominant_columns, dominant), "error") == []

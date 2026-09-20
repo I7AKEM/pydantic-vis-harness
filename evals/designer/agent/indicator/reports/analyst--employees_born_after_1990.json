@@ -1,0 +1,72 @@
+{
+  "dataset_id": "ds_2456c73bc1f04802b1eebba07151b194",
+  "question": "كم عدد الموظفين المولودين بعد عام 1990؟",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT sum(employee_count) AS \"إجمالي الموظفين\" FROM \"ds_2456c73bc1f04802b1eebba07151b194\" WHERE birth_year > 1990",
+    "columns": [
+      {
+        "name": "إجمالي الموظفين",
+        "meaning": "إجمالي عدد الموظفين المولودين بعد عام 1990",
+        "kind": "measure",
+        "unit": "count",
+        "source": "employee_count",
+        "aggregate": "sum",
+        "denominator": null
+      }
+    ],
+    "summary": "يبلغ عدد الموظفين المولودين بعد عام 1990 هو 125 موظفاً.",
+    "assumptions": [
+      "تم اعتبار الموظفين المولودين بعد عام 1990 كأولئك الذين سنة ميلادهم أكبر من 1990."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT sum(employee_count) AS \"إجمالي الموظفين\" FROM \"ds_2456c73bc1f04802b1eebba07151b194\" WHERE birth_year > 1990",
+    "columns": [
+      "إجمالي الموظفين"
+    ],
+    "types": [
+      "HUGEINT"
+    ],
+    "rows": [
+      [
+        125
+      ]
+    ],
+    "row_count": 1,
+    "checks": [
+      {
+        "column": "إجمالي الموظفين",
+        "check": "total_explained",
+        "severity": "warning",
+        "passed": false,
+        "message": "إجمالي الموظفين: the result covers 125 of the column's total 481, because the query keeps only the rows its WHERE clause names; expected when the question asks for a subset."
+      }
+    ],
+    "seconds": 0.020337957997980993
+  },
+  "checks": [
+    {
+      "column": "إجمالي الموظفين",
+      "check": "total_explained",
+      "severity": "warning",
+      "passed": false,
+      "message": "إجمالي الموظفين: the result covers 125 of the column's total 481, because the query keeps only the rows its WHERE clause names; expected when the question asks for a subset."
+    },
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [
+    "إجمالي الموظفين: the result covers 125 of the column's total 481, because the query keeps only the rows its WHERE clause names; expected when the question asks for a subset."
+  ],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 10.119550374998653,
+  "created_at": "2026-09-13T18:48:48.914103Z"
+}

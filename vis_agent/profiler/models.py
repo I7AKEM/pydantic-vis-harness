@@ -3,9 +3,10 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, FiniteFloat
+from pydantic import BaseModel, ConfigDict, Field, FiniteFloat, field_validator
 
 from vis_agent.models import UploadedDataset
+from vis_agent.units import COUNT_UNITS
 
 PROFILE_VERSION = "2.0"
 
@@ -64,6 +65,12 @@ class DeterministicProfile(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+UNIT_PLACEHOLDERS = frozenset({
+    "", "null", "none", "nil", "n/a", "na", "nan", "-", "unknown", "unitless", "no unit", "not applicable",
+    "لا يوجد", "بدون", "غير محدد",
+}) | COUNT_UNITS
+
+
 class ColumnSemantics(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -82,6 +89,14 @@ class ColumnSemantics(BaseModel):
     brief_conflict: str | None = Field(
         default=None, description="Set when a hint in the brief contradicts the measurements. Say what the brief claimed and what the data shows."
     )
+
+    @field_validator("unit", mode="before")
+    @classmethod
+    def drop_placeholder_units(cls, value):
+        """A model that writes the word null, or count, means no unit: counts have none, only measures carry one."""
+        if isinstance(value, str) and value.strip().casefold() in UNIT_PLACEHOLDERS:
+            return None
+        return value
 
 
 class SemanticProfile(BaseModel):

@@ -1,10 +1,11 @@
+import json
 import re
 from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from vis_agent.analyst.models import AnalysisReport
-from vis_agent.requests.models import Artifact, Caller, Exchange, LeadArtifact, Lineage, Request, STEPS
+from vis_agent.analyst.models import AnalysisReport, AnalysisRevision
+from vis_agent.requests.models import Artifact, Caller, Exchange, LeadArtifact, Lineage, Request
 from vis_agent.requests.store import ArtifactNotFound, RequestNotFound, RequestStore
 from vis_agent.store import DatasetNotFound
 
@@ -76,9 +77,9 @@ def test_save_request_keeps_steps_and_bumps_updated_at(requests, dataset_id):
     assert loaded.status == "waiting" and loaded.updated_at >= before
 
 
-def test_pending_overdue_and_next_step(requests, dataset_id):
+def test_pending_and_overdue(requests, dataset_id):
     request = requests.new_request("new", dataset_id, "q", CHAT)
-    assert request.next_step() == "understand" and request.pending() is None
+    assert request.pending() is None
     now = datetime.now(timezone.utc)
     request.clarifications.append(Exchange(step="analyze", question="Which amount?", reason="Two columns.",
                                            asked_at=now, deadline=now + timedelta(hours=1)))
@@ -87,9 +88,6 @@ def test_pending_overdue_and_next_step(requests, dataset_id):
     assert request.pending().overdue(now + timedelta(hours=2))
     request.clarifications[0].answer = "The first"
     assert request.pending() is None
-    for step in STEPS:
-        request.steps[step] = {}
-    assert request.next_step() is None
 
 
 def test_list_requests_newest_first_with_filters(requests, store, dataset_id):
@@ -157,3 +155,19 @@ def test_caller_rejects_a_return_address_that_is_not_http():
     with pytest.raises(ValueError):
         Caller(kind="agent", identity="reporter", return_address="ftp://x")
     assert Caller(kind="agent", identity="reporter", return_address="https://x/cb").return_address == "https://x/cb"
+
+
+def test_request_revision_round_trips(requests, dataset_id):
+    request = requests.new_request("new", dataset_id, "Total by region", CHAT)
+    request.revision = AnalysisRevision(problem="No series", requested_change="Add a series", preserve="The total")
+    requests.save_request(request)
+    assert requests.get_request(request.request_id).revision == request.revision
+
+
+def test_a_stored_request_without_revision_loads_as_none(requests, dataset_id):
+    request = requests.new_request("new", dataset_id, "Total by region", CHAT)
+    record = request.model_dump(mode="json")
+    record.pop("revision", None)
+    with requests.connect() as connection:
+        connection.execute("UPDATE requests SET record = ? WHERE id = ?", [json.dumps(record), request.request_id])
+    assert requests.get_request(request.request_id).revision is None

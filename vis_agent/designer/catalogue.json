@@ -35,7 +35,9 @@
       "rating": "recommended",
       "keys": [
         "axisXTitle",
-        "axisYTitle"
+        "axisYTitle",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "draw": {
@@ -78,7 +80,9 @@
       "rating": "recommended",
       "keys": [
         "axisXTitle",
-        "axisYTitle"
+        "axisYTitle",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "draw": {
@@ -101,61 +105,8 @@
           "kinds": [
             "category",
             "ordinal",
-            "geography"
-          ],
-          "required": true
-        },
-        "group": {
-          "kinds": [
-            "category",
-            "ordinal",
-            "geography"
-          ],
-          "required": true
-        },
-        "value": {
-          "kinds": [
-            "measure",
-            "share"
-          ],
-          "required": true
-        }
-      },
-      "fields": {
-        "category": "category",
-        "group": "group",
-        "value": "value"
-      },
-      "rating": "recommended",
-      "keys": [
-        "axisXTitle",
-        "axisYTitle"
-      ],
-      "category_max": 50,
-      "group_max": 10,
-      "draw": {
-        "type": "column",
-        "options": {
-          "group": true
-        }
-      },
-      "summary": "Compare groups side by side within categories using category and group labels and a measure or share."
-    },
-    {
-      "name": "stacked_column",
-      "aliases": [
-        "stacked bars"
-      ],
-      "purposes": [
-        "composition",
-        "compare"
-      ],
-      "roles": {
-        "category": {
-          "kinds": [
-            "category",
-            "ordinal",
-            "geography"
+            "geography",
+            "time"
           ],
           "required": true
         },
@@ -184,7 +135,68 @@
       "keys": [
         "axisXTitle",
         "axisYTitle",
-        "percent"
+        "fold",
+        "columnLabels",
+        "valueLabels"
+      ],
+      "category_max": 50,
+      "group_max": 10,
+      "draw": {
+        "type": "column",
+        "options": {
+          "group": true
+        }
+      },
+      "summary": "Compare groups side by side within labels or time periods using category and group labels and a measure or share."
+    },
+    {
+      "name": "stacked_column",
+      "aliases": [
+        "stacked bars"
+      ],
+      "purposes": [
+        "composition",
+        "compare"
+      ],
+      "roles": {
+        "category": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography",
+            "time"
+          ],
+          "required": true
+        },
+        "group": {
+          "kinds": [
+            "category",
+            "ordinal",
+            "geography"
+          ],
+          "required": true
+        },
+        "value": {
+          "kinds": [
+            "measure",
+            "share"
+          ],
+          "required": true
+        }
+      },
+      "fields": {
+        "category": "category",
+        "group": "group",
+        "value": "value"
+      },
+      "rating": "recommended",
+      "keys": [
+        "axisXTitle",
+        "axisYTitle",
+        "percent",
+        "fold",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "group_max": 10,
@@ -195,7 +207,7 @@
           "stack": true
         }
       },
-      "summary": "Compare composition across categories using category and group labels and an additive value."
+      "summary": "Compare composition across labels or time periods using category and group labels and an additive value."
     },
     {
       "name": "grouped_bar",
@@ -236,7 +248,10 @@
       "rating": "recommended",
       "keys": [
         "axisXTitle",
-        "axisYTitle"
+        "axisYTitle",
+        "fold",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "group_max": 10,
@@ -289,7 +304,10 @@
       "keys": [
         "axisXTitle",
         "axisYTitle",
-        "percent"
+        "percent",
+        "fold",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "group_max": 10,
@@ -338,7 +356,9 @@
         "zero",
         "axisYMin",
         "axisYMax",
-        "axisYScale"
+        "axisYScale",
+        "columnLabels",
+        "valueLabels"
       ],
       "min_points": 3,
       "draw": {
@@ -393,7 +413,10 @@
         "zero",
         "axisYMin",
         "axisYMax",
-        "axisYScale"
+        "axisYScale",
+        "fold",
+        "columnLabels",
+        "valueLabels"
       ],
       "min_points": 3,
       "group_max": 10,
@@ -435,7 +458,9 @@
       "keys": [
         "axisXTitle",
         "axisYTitle",
-        "zero"
+        "zero",
+        "columnLabels",
+        "valueLabels"
       ],
       "min_points": 3,
       "additive_value": true,
@@ -488,7 +513,10 @@
         "axisXTitle",
         "axisYTitle",
         "percent",
-        "zero"
+        "zero",
+        "fold",
+        "columnLabels",
+        "valueLabels"
       ],
       "min_points": 3,
       "group_max": 10,
@@ -532,7 +560,10 @@
         "value": "value"
       },
       "rating": "caution",
-      "keys": [],
+      "keys": [
+        "columnLabels",
+        "valueLabels"
+      ],
       "category_min": 2,
       "category_max": 6,
       "additive_value": true,
@@ -575,7 +606,9 @@
       },
       "rating": "caution",
       "keys": [
-        "innerRadius"
+        "innerRadius",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_min": 2,
       "category_max": 6,
@@ -635,7 +668,9 @@
         "axisYMax",
         "axisYScale",
         "axisXMin",
-        "axisXMax"
+        "axisXMax",
+        "columnLabels",
+        "valueLabels"
       ],
       "draw": {
         "type": "scatter",
@@ -667,7 +702,9 @@
       "keys": [
         "axisXTitle",
         "axisYTitle",
-        "binNumber"
+        "binNumber",
+        "columnLabels",
+        "valueLabels"
       ],
       "min_rows": 30,
       "raw_values": true,
@@ -714,7 +751,9 @@
         "axisYTitle",
         "zero",
         "axisYMin",
-        "axisYMax"
+        "axisYMax",
+        "columnLabels",
+        "valueLabels"
       ],
       "min_rows": 30,
       "raw_values": true,
@@ -755,7 +794,10 @@
         "value": "value"
       },
       "rating": "recommended",
-      "keys": [],
+      "keys": [
+        "columnLabels",
+        "valueLabels"
+      ],
       "category_max": 50,
       "additive_value": true,
       "draw": {
@@ -803,7 +845,10 @@
         "group": "group"
       },
       "rating": "caution",
-      "keys": [],
+      "keys": [
+        "columnLabels",
+        "valueLabels"
+      ],
       "category_min": 3,
       "category_max": 12,
       "group_max": 5,
@@ -860,7 +905,9 @@
         "axisYTitle",
         "zero",
         "axisYMin",
-        "axisYMax"
+        "axisYMax",
+        "columnLabels",
+        "valueLabels"
       ],
       "category_max": 50,
       "draw": {
@@ -900,7 +947,10 @@
         "value": "value"
       },
       "rating": "caution",
-      "keys": [],
+      "keys": [
+        "columnLabels",
+        "valueLabels"
+      ],
       "category_min": 20,
       "draw": {
         "type": "word-cloud",
@@ -921,17 +971,46 @@
         "distribution",
         "composition",
         "relation",
-        "share"
+        "share",
+        "summary"
       ],
       "roles": {},
       "fields": {},
       "rating": "fallback",
-      "keys": [],
+      "keys": [
+        "columnLabels",
+        "valueLabels"
+      ],
       "draw": {
         "type": "spreadsheet",
         "options": {}
       },
       "summary": "Show every result column for any purpose without requiring role bindings."
+    },
+    {
+      "name": "indicator",
+      "aliases": [
+        "KPI",
+        "metric card",
+        "statistic"
+      ],
+      "purposes": [
+        "summary",
+        "share"
+      ],
+      "roles": {},
+      "fields": {},
+      "rating": "recommended",
+      "keys": [
+        "cards",
+        "columnLabels",
+        "valueLabels"
+      ],
+      "draw": {
+        "type": "indicator",
+        "options": {}
+      },
+      "summary": "Show headline measurements from exactly one complete result row. Bind primary metrics explicitly in cards, retaining context and support; one row alone does not establish summary intent."
     }
   ]
 }

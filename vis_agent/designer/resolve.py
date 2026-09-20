@@ -1,7 +1,6 @@
 """Bind and transform a checked spec's result into GPT-Vis renderer options."""
 
 import re
-from collections import Counter
 from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -10,8 +9,12 @@ from decimal import Decimal, ROUND_HALF_UP
 import duckdb
 
 from vis_agent.analyst.models import QueryResult, ResultColumn
+from vis_agent.labels import value_key
+from vis_agent.units import canonical_unit, display_unit
 
 from .catalogue import CATALOGUE
+from .fold import fold
+from .indicator_text import resolve_cards
 from .models import Compromise, NumberFormat, Spec
 from .rules import ACCENT, ADDITIVE, BARS, COLUMNS
 from .syntax import parse_format
@@ -22,9 +25,8 @@ LANGUAGE_DEFAULTS = {
 }
 TRENDS = {"line", "multi_line", "area", "stacked_area"}
 MEASURES = {"value", "value2", "x", "y"}
-WITHOUT_AXES = {"pie", "donut", "treemap", "radar", "word_cloud", "table"}
+WITHOUT_AXES = {"pie", "donut", "treemap", "radar", "word_cloud", "table", "indicator"}
 SINGLE_SERIES = {"column", "bar", "line", "area", "scatter", "histogram", "boxplot"}
-COUNT_UNITS = {"count", "counts", "number", "n", "عدد", "رقم"}
 ISO_DATE_TIME = re.compile(r"\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?", re.ASCII)
 GREGORIAN_ISO = re.compile(
     r"(?:1[6-9]|2\d)\d{2}(?:-\d{2}(?:-\d{2})?)?(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?", re.ASCII,
@@ -44,29 +46,25 @@ class Resolved:
     height: int
     number2: NumberFormat | None = None
     table_formats: dict[str, dict] = field(default_factory=dict)
+    display: dict = field(default_factory=dict)
 
 
 class ResolveError(Exception):
     """Result cells cannot be faithfully resolved into chart records."""
 
 
-def _label_text(cell) -> str:
-    text = str(cell)
-    return text.removesuffix(".0") if isinstance(cell, float) else text
-
-
-def _shorten_time(records: list[dict], role: str) -> None:
+def _shorten_time(records: list[dict], role: str) -> dict[str, str]:
     """Use one precision for the entire axis, preserving each timestamp's local time."""
     values = [record[role] for record in records]
-    if not values or not all(ISO_DATE_TIME.fullmatch(value) for value in values):
-        return
+    if not values or not all(isinstance(value, str) and ISO_DATE_TIME.fullmatch(value) for value in values):
+        return {}
     # Hijri-looking years and non-ASCII/month-name text keep the whole axis verbatim.
     if any(int(value[:4]) < 1600 for value in values):
-        return
+        return {}
     try:
         dates = [datetime.fromisoformat(value) for value in values]
     except ValueError:
-        return
+        return {}
     patterns = ["%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M:%S.%f"]
     if all((date.hour, date.minute, date.second, date.microsecond) == (0, 0, 0, 0) for date in dates):
         patterns.insert(0, "%Y-%m-%d")
@@ -78,25 +76,14 @@ def _shorten_time(records: list[dict], role: str) -> None:
     for pattern in patterns:
         labels = [date.strftime(pattern) for date in dates]
         if len(set(labels)) == distinct:
-            for record, label in zip(records, labels):
-                record[role] = label
-            return
+            return dict(zip(values, labels))
     # Zones or source precision beyond microseconds may require the original text.
+    return {}
 
 
 def _column_unit(column: ResultColumn | None) -> str | None:
     unit = column.unit if column is not None else None
-    return None if unit is not None and unit.strip().lower() in COUNT_UNITS else unit
-
-
-def _table_headers(columns: list[ResultColumn]) -> list[str]:
-    headers = [column.meaning if column.meaning.strip() else column.name for column in columns]
-    # Falling back can expose another collision with a raw column name.
-    while len(set(headers)) != len(headers):
-        counts = Counter(headers)
-        headers = [column.name if counts[header] > 1 else header
-                   for column, header in zip(columns, headers)]
-    return headers
+    return display_unit(unit)
 
 
 def _bind(spec: Spec, result: QueryResult, unknown: str) -> tuple[list[dict], int]:
@@ -121,8 +108,6 @@ def _bind(spec: Spec, result: QueryResult, unknown: str) -> tuple[list[dict], in
                     )
             elif cell is None:
                 cell = unknown
-            if role in {"category", "group", "time"}:
-                cell = _label_text(cell)
             record[role] = cell
         if missing_value:
             dropped += 1
@@ -141,8 +126,8 @@ def _totals(records: list[dict], axis: str) -> dict:
 
 def _chronological(records: list[dict], axis: str) -> list[dict]:
     """Gregorian time text goes in time order whatever order the analyst returned; other time text keeps it."""
-    if records and all(GREGORIAN_ISO.fullmatch(record[axis]) for record in records):
-        return sorted(records, key=lambda record: record[axis])
+    if records and all(GREGORIAN_ISO.fullmatch(value_key(record[axis])) for record in records):
+        return sorted(records, key=lambda record: value_key(record[axis]))
     return records
 
 
@@ -151,7 +136,7 @@ def _sort(records: list[dict], order: str, axis: str | None, grouped: bool) -> l
         return records
     field, direction = order.split()
     if field == "category":
-        return sorted(records, key=lambda r: str(r[axis]), reverse=direction == "desc")
+        return sorted(records, key=lambda r: value_key(r[axis]), reverse=direction == "desc")
     if grouped and axis is not None:
         totals = _totals(records, axis)
         categories = sorted(totals, key=totals.get, reverse=direction == "desc")
@@ -233,36 +218,85 @@ def _histogram(records: list[dict], bins: int, digits: str) -> list[dict]:
         decimals += 1
 
 
+def _names(title: str | None, column: ResultColumn | None) -> bool:
+    """True when the title carries the column's name or meaning."""
+    if not title or column is None:
+        return False
+    text = title.casefold()
+    meaning = column.meaning.strip().casefold()
+    return column.name.casefold() in text or (bool(meaning) and meaning in text)
+
+
 def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Resolved:
     """Resolve a checked spec, retaining row counts and render-time compromises."""
     entry = CATALOGUE.get(spec.type)
+    if spec.type == "indicator" and spec.fold:
+        raise ResolveError("An indicator does not accept fold; bind its complete single row with cards.")
+    folded_labels = {}
+    if spec.fold:
+        folded_labels = {column.name: spec.column_labels.get(column.name, column.meaning.strip() or column.name)
+                         for column in columns if column.name in spec.fold}
+        folded = fold(columns, result, spec.fold, spec.language)
+        columns, result = folded.columns, folded.result
+        spec = spec.model_copy(update={"bind": {**spec.bind, "group": folded.series, "value": folded.value}})
     defaults = LANGUAGE_DEFAULTS[spec.language]
     number = parse_format(spec.format) if spec.format is not None else NumberFormat()
     number.digits = spec.digits
     height = spec.height if spec.height is not None else 450
     by_name = {column.name: column for column in columns}
+    if spec.type == "indicator":
+        try:
+            cards = resolve_cards(spec, columns, result)
+        except ValueError as error:
+            raise ResolveError(str(error)) from error
+        width = spec.width if spec.width is not None else (460 if len(cards) == 1 else 800)
+        config = {"type": "indicator", "cards": cards, "width": width,
+                  "height": spec.height, "theme": spec.theme,
+                  "language": spec.language, "direction": spec.direction or defaults["direction"],
+                  "title": spec.title, "subtitle": spec.subtitle, "description": spec.description,
+                  "background": spec.background_color, "accent": spec.palette[0] if spec.palette else None}
+        return Resolved(config, {}, number, [], 1, 0, 0, width, height)
     if spec.type == "table":
-        width = spec.width if spec.width is not None else 800
         table_columns = [by_name[name] for name in result.columns]
-        headers = _table_headers(table_columns)
-        table_formats = {header: NumberFormat(unit=_column_unit(column), digits=spec.digits).model_dump()
-                         for header, column in zip(headers, table_columns)}
+        headers = [spec.column_labels.get(column.name, column.meaning.strip() or column.name)
+                   for column in table_columns]
+        # Sixteen pixels a character, sixty characters at most: a long Arabic header widens the table instead of
+        # being cut by the package; two short headers stay at the old 800.
+        width = spec.width if spec.width is not None else max(
+            800, 40 + sum(max(140, 16 * min(len(header), 60)) for header in headers))
+        table_formats = {column.name: NumberFormat(unit=_column_unit(column), digits=spec.digits).model_dump()
+                         for column in table_columns if column.kind in {"measure", "share"}}
         config = {
             "type": entry.draw.type,
-            "data": [dict(zip(headers, row)) for row in result.rows],
-            "columns": headers, "width": width, "height": height,
+            "data": [dict(zip(result.columns, row)) for row in result.rows],
+            "columns": result.columns, "width": width, "height": height,
         }
         compromises = [Compromise(key=key, message="tables are drawn as the package draws them")
                        for key in ("labels", "legend") if getattr(spec, key) == "on"]
+        long_headers = [header for header in headers if len(header) > 24]
+        if long_headers:
+            compromises.append(Compromise(key="headers", message=f"{len(long_headers)} long table headers may be "
+                                                                  "shortened by the package: " + "; ".join(long_headers[:3])))
         return Resolved(config, {}, number, compromises, len(result.rows), 0, 0, width, height,
-                        table_formats=table_formats)
+                        table_formats=table_formats,
+                        display={"fields": spec.value_labels, "columns": dict(zip(result.columns, headers)),
+                                 "timeFields": [column.name for column in table_columns if column.kind == "time"]})
 
     binding = {role: by_name[name] for role, name in spec.bind.items()}
     axis = "time" if "time" in binding else "category" if "category" in binding else None
     records, dropped = _bind(spec, result, spec.unknown if spec.unknown is not None else defaults["unknown"])
+    display = {"fields": {}, "columns": {entry.fields[role]: spec.column_labels.get(column.name, column.name)
+                                         for role, column in binding.items()}}
     for role, column in binding.items():
+        labels = {}
         if role == "time" or (role in {"category", "group"} and column.kind == "time"):
-            _shorten_time(records, role)
+            labels.update(_shorten_time(records, role))
+        if role not in MEASURES:
+            labels.update(spec.value_labels.get(column.name, {}))
+        if role == "group" and folded_labels:
+            labels.update(folded_labels)
+        if role not in MEASURES:
+            display["fields"][entry.fields[role]] = labels
     compromises = []
     if dropped:
         compromises.append(Compromise(key="bind", message=f"Dropped {dropped} rows with null measures."))
@@ -304,15 +338,21 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     if spec.type not in WITHOUT_AXES:
         x_column = binding.get("category") or binding.get("time") or binding.get("x")
         y_column = binding.get("value") or binding.get("y")
-        x_title, y_title = spec.axis_x_title, spec.axis_y_title
+        category_title, value_title = spec.axis_x_title, spec.axis_y_title
         if spec.type in BARS:
-            x_title, y_title = y_title, x_title
+            # The spec's axisXTitle names the horizontal axis; on horizontal bars that axis holds the values.
+            category_title, value_title = value_title, category_title
+        if (_names(category_title, y_column) and not _names(category_title, x_column)
+                and _names(value_title, x_column) and not _names(value_title, y_column)):
+            # Written for the other axis: a title follows the column it names.
+            category_title, value_title = value_title, category_title
+        x_title, y_title = category_title, value_title
         for key, title, column in (("axisXTitle", x_title, x_column),
                                    ("axisYTitle", y_title, y_column)):
             if title is not None or column is not None:
-                config[key] = title if title is not None else column.name
+                config[key] = title if title is not None else spec.column_labels.get(column.name, column.name)
         if spec.type == "histogram":
-            config["axisXTitle"] = spec.axis_x_title if spec.axis_x_title is not None else binding["value"].name
+            config["axisXTitle"] = spec.axis_x_title if spec.axis_x_title is not None else display["columns"]["value"]
             config["axisYTitle"] = spec.axis_y_title if spec.axis_y_title is not None else defaults["count"]
         if spec.percent and y_title is None:
             config["axisYTitle"] = "%"
@@ -321,16 +361,18 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
     if spec.background_color is not None:
         style["backgroundColor"] = spec.background_color
     if spec.palette:
-        style["palette"] = list(spec.palette[:1] if spec.type in SINGLE_SERIES and "group" not in binding
-                                else spec.palette)
+        style["palette"] = list(spec.palette)
     elif spec.emphasis:
         color_role = "group" if "group" in binding else axis
         labels = list(dict.fromkeys(r[color_role] for r in records)) if color_role else []
         muted = "#4E5969" if spec.theme == "dark" else "#C9CDD4"
-        style["palette"] = [ACCENT if str(label) in spec.emphasis else muted for label in labels]
+        style["palette"] = [ACCENT if value_key(label) in spec.emphasis else muted for label in labels]
+    elif spec.type in SINGLE_SERIES and "group" not in binding:
+        # One series, one colour: the package would colour each bar by category, which reads as meaning.
+        style["palette"] = [ACCENT]
     if spec.type in BARS | COLUMNS:
         if spec.zero is not None:
-            style["startAtZero"] = True
+            style["startAtZero"] = spec.zero
     elif spec.zero is not None or spec.type in TRENDS | {"boxplot", "dual_axes"}:
         style["startAtZero"] = spec.zero if spec.zero is not None else True
     if style:
@@ -357,7 +399,8 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
         if spec.type in COLUMNS and axis is not None and binding[axis].kind != "time":
             scale["x"] = {"domain": categories[::-1]}
         title["align"] = "right"
-        compromises.append(Compromise(key="direction", message="the legend stays where the package puts it"))
+        if spec.direction == "rtl":
+            compromises.append(Compromise(key="direction", message="the legend stays where the package puts it"))
     if spec.subtitle is not None:
         title["subtitle"] = spec.subtitle
     if title:
@@ -382,13 +425,20 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
         else:
             overrides["legend"] = True
 
+    number.unit = canonical_unit(number.unit)
     if spec.format is not None and number.unit == "%" and not spec.percent and any(
-        column.kind != "share" for role, column in binding.items() if role in MEASURES
+        column.kind != "share" and canonical_unit(column.unit) != "%" for role, column in binding.items() if role in MEASURES
     ):
         compromises.append(Compromise(key="format", message="a percent sign on a value that is not a share"))
     value = binding.get("value") or binding.get("y")
     if number.unit is None:
         number.unit = "%" if spec.percent else _column_unit(value)
+    if number.decimals is None and spec.type != "histogram":
+        smallest = min((abs(record[role]) for record in records for role in MEASURES
+                        if role in record and record[role]), default=None)
+        if smallest is not None and smallest < 0.01:
+            # Two significant digits of the smallest value, so 0.0001 prints as 0.00010, never as 0.
+            number.decimals = min(6, 1 - Decimal(str(smallest)).adjusted())
 
     number2 = None
     if spec.type == "histogram":
@@ -401,6 +451,11 @@ def resolve(spec: Spec, columns: list[ResultColumn], result: QueryResult) -> Res
             {"type": chart, "data": [r[role] for r in records], "axisYTitle": binding[role].name}
             for role, chart in (("value", "column"), ("value2", "line"))
         ]
+        # GPT-Vis uses axisYTitle as the actual series key. Keep that key raw and
+        # let the G2 display layer translate its axis title and legend label.
+        display["columns"].update({binding[role].name: spec.column_labels.get(binding[role].name, binding[role].name)
+                                   for role in ("value", "value2")})
     else:
         config["data"] = [{entry.fields[role]: cell for role, cell in record.items()} for record in records]
-    return Resolved(config, overrides, number, compromises, len(records), folded, dropped, width, height, number2)
+    return Resolved(config, overrides, number, compromises, len(records), folded, dropped, width, height, number2,
+                    display=display)

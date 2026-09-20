@@ -10,7 +10,7 @@ from pydantic_ai.models.test import TestModel
 from pydantic_ai.usage import RunUsage
 
 from vis_agent.analyst.agent import AnalystDeps, ColumnFacts, MAX_QUERY_CALLS, analyze_dataset, build_prompt, prompt_json, create_analyst, detect_language
-from vis_agent.analyst.models import Analysis, Clarification
+from vis_agent.analyst.models import Analysis, AnalysisRevision, Clarification, PreviousAnalysis, ResultColumn
 from vis_agent.models import DataBrief
 from vis_agent.profiler.agent import create_profiler, profile_dataset
 
@@ -21,7 +21,7 @@ COLUMNS = [
 
 
 def sql_for(dataset):
-    return f'SELECT region, sum(amount) AS total FROM "{dataset}" GROUP BY 1 ORDER BY 2 DESC'
+    return f'SELECT region, sum(amount) AS total FROM "{dataset}_values" GROUP BY 1 ORDER BY 2 DESC'
 
 
 def tool_call(name, **args):
@@ -45,6 +45,13 @@ def test_language_and_prompt(store, people, agents):
     dataset, profile = people
     assert detect_language("ما مجموع المبالغ؟", None, []) == "Arabic"
     assert detect_language("Total amount?", None, []) == "English"
+    assert detect_language("Make this card Arabic", None, []) == "Arabic"
+    assert detect_language("Make this card Arabic. Keep the same units.", None, []) == "Arabic"
+    assert detect_language("Translate the labels into Arabic, please", None, []) == "Arabic"
+    assert detect_language("Translate the labels into Arabic please", None, []) == "Arabic"
+    assert detect_language("اعرض البطاقة باللغة الإنجليزية", None, []) == "English"
+    assert detect_language("How many Arabic speakers?", None, []) == "English"
+    assert detect_language("Do not make this card Arabic", None, []) == "English"
     assert detect_language("", DataBrief(raw_question="كم؟"), ["a"]) == "Arabic"
     assert detect_language("", None, ["المدينة"]) == "Arabic"
     prompt = build_prompt(store, profile, "Total by region", "English")
@@ -129,9 +136,9 @@ def test_repair_after_a_query_error_and_the_call_cap(store, people, agents):
         if calls:
             seen.append(last_return(messages).model_response_object())
         if len(calls) < MAX_QUERY_CALLS:
-            return tool_call("run_query", sql=f'SELECT nope FROM "{dataset}"', columns=[{"name": "nope", "meaning": "x", "kind": "measure"}])
+            return tool_call("run_query", sql=f'SELECT nope FROM "{dataset}_values"', columns=[{"name": "nope", "meaning": "x", "kind": "measure"}])
         assert "run_query" not in [t.name for t in info.function_tools]
-        return tool_call("ask_clarification", question="Which column holds the amount?", reason="The query kept failing.")
+        return tool_call("ask_clarification", ask="Which column holds the amount?", reason="The query kept failing.")
 
     with analyst.override(model=FunctionModel(drive)):
         report = run(store, profiler, analyst, dataset, "Total by region")
@@ -140,10 +147,126 @@ def test_repair_after_a_query_error_and_the_call_cap(store, people, agents):
     assert report.analysis is None and report.result is None
 
 
+@pytest.mark.parametrize("initial_unit", [None, "unknown"])
+def test_new_share_requires_explicit_scale_and_repairs_in_query_budget(store, people, agents, initial_unit):
+    dataset, profile = people
+    _profiler, analyst = agents
+    prompt = build_prompt(store, profile, "What percentage of people are in the East?", "English")
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+    sql = f"SELECT 100.0 * count(*) FILTER (WHERE region = 'East') / count(*) AS share FROM \"{dataset}\""
+    column = {"name": "share", "meaning": "East share of people", "kind": "share", "aggregate": "share"}
+
+    def drive(messages, info):
+        queries = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart) and p.tool_name == "run_query"]
+        assert not any(isinstance(p, RetryPromptPart) for m in messages for p in m.parts)
+        if not queries:
+            return tool_call("run_query", sql=sql, columns=[{**column, "unit": initial_unit}])
+        returned = last_return(messages).model_response_object()
+        assert returned["rows"] == [[40.0]]
+        errors = [check for check in returned["checks"] if check["severity"] == "error" and not check["passed"]]
+        if len(queries) == 1:
+            assert [check["check"] for check in errors] == ["share_scale_declared"]
+            assert "do not guess" in errors[0]["message"]
+            assert deps.passed is None
+            return tool_call("run_query", sql=sql, columns=[{**column, "unit": "%", "denominator": "All people"}])
+        assert not errors
+        return tool_call("deliver_analysis", summary="The East accounts for 40% of all people.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        result = asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
+    assert isinstance(result.output, Analysis)
+    assert result.output.sql == sql and result.output.columns[0].unit == "%"
+    assert deps.query_calls == 2 and deps.passed.result.rows == [[40.0]]
+
+
+@pytest.mark.parametrize("unit", ["percentage", " percent ", "نسبة مئوية"])
+def test_new_query_canonicalizes_percent_metadata_without_rescaling(store, people, agents, unit):
+    dataset, profile = people
+    _profiler, analyst = agents
+    prompt = build_prompt(store, profile, "What percentage of people are in the East?", "English")
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+    sql = f"SELECT 100.0 * count(*) FILTER (WHERE region = 'East') / count(*) AS share FROM \"{dataset}\""
+    columns = [{"name": "share", "meaning": "East share of people", "kind": "share", "unit": unit,
+                "aggregate": "share", "denominator": "All people"}]
+
+    def drive(messages, info):
+        queries = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart) and p.tool_name == "run_query"]
+        if not queries:
+            return tool_call("run_query", sql=sql, columns=columns)
+        returned = last_return(messages).model_response_object()
+        assert returned["rows"] == [[40.0]]
+        assert all(check["passed"] for check in returned["checks"])
+        return tool_call("deliver_analysis", summary="The East accounts for 40% of all people.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        result = asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
+    assert isinstance(result.output, Analysis)
+    assert result.output.sql == sql and result.output.columns[0].unit == "%"
+    assert deps.query_calls == 1 and deps.passed.result.rows == [[40.0]]
+
+
+def test_new_share_with_explicit_fraction_passes_without_rescaling(store, people, agents):
+    dataset, profile = people
+    _profiler, analyst = agents
+    prompt = build_prompt(store, profile, "What fraction of people are in the East?", "English")
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+    sql = f"SELECT 1.0 * count(*) FILTER (WHERE region = 'East') / count(*) AS share FROM \"{dataset}\""
+    columns = [{"name": "share", "meaning": "East share of people", "kind": "share", "unit": "fraction",
+                "aggregate": "share", "denominator": "All people"}]
+
+    def drive(messages, info):
+        queries = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart) and p.tool_name == "run_query"]
+        if not queries:
+            return tool_call("run_query", sql=sql, columns=columns)
+        returned = last_return(messages).model_response_object()
+        assert returned["rows"] == [[0.4]]
+        assert all(check["passed"] for check in returned["checks"])
+        return tool_call("deliver_analysis", summary="The East share of all people is 0.4.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        result = asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
+    assert isinstance(result.output, Analysis)
+    assert result.output.sql == sql and result.output.columns[0].unit == "fraction"
+    assert deps.query_calls == 1 and deps.passed.result.rows == [[0.4]]
+
+
+def test_undeclared_share_scale_exhausts_existing_query_budget(store, people, agents):
+    dataset, _profile = people
+    profiler, analyst = agents
+    question = "What percentage of people are in the East?"
+    usage = RunUsage()
+    checked_queries = []
+    sql = f"SELECT 100.0 * count(*) FILTER (WHERE region = 'East') / count(*) AS share FROM \"{dataset}_values\""
+    columns = [{"name": "share", "meaning": "East share of people", "kind": "share", "aggregate": "share"}]
+
+    def drive(messages, info):
+        queries = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart) and p.tool_name == "run_query"]
+        assert not any(isinstance(p, RetryPromptPart) for m in messages for p in m.parts)
+        if queries:
+            returned = last_return(messages).model_response_object()
+            errors = [check for check in returned["checks"] if check["severity"] == "error" and not check["passed"]]
+            assert [check["check"] for check in errors] == ["share_scale_declared"]
+            checked_queries.append(returned)
+        if len(queries) < MAX_QUERY_CALLS:
+            return tool_call("run_query", sql=sql, columns=columns)
+        assert len(queries) == MAX_QUERY_CALLS
+        assert "run_query" not in [tool.name for tool in info.function_tools]
+        return tool_call("deliver_analysis", summary="This unchecked share cannot be delivered.")
+
+    with analyst.override(model=FunctionModel(drive)):
+        report = run(store, profiler, analyst, dataset, question, usage=usage)
+    assert report.analysis is None and report.result is None and report.clarification is None
+    assert len(report.warnings) == 1 and report.warnings[0].startswith("The analyst could not answer")
+    assert f"No query passed its checks in {MAX_QUERY_CALLS} tries" in report.warnings[0]
+    assert "declare the share scale from its SQL" in report.warnings[0]
+    assert len(checked_queries) == MAX_QUERY_CALLS
+    assert usage.requests == MAX_QUERY_CALLS + 1
+
+
 def test_two_queries_in_one_response_past_the_budget_get_one_retry(store, people, agents):
     dataset, _profile = people
     profiler, analyst = agents
-    good = f'SELECT region, sum(amount) AS total FROM "{dataset}" GROUP BY 1'
+    good = f'SELECT region, sum(amount) AS total FROM "{dataset}_values" GROUP BY 1'
     columns = [{"name": "region", "meaning": "Region", "kind": "geography", "source": "region"},
                {"name": "total", "meaning": "Sum of amount", "kind": "measure", "source": "amount", "aggregate": "sum"}]
     calls = []
@@ -168,7 +291,7 @@ def test_two_queries_in_one_response_past_the_budget_get_one_retry(store, people
 def test_failed_checks_come_back_in_the_tool_result_and_are_recorded(store, people, agents):
     dataset, _profile = people
     profiler, analyst = agents
-    filtered = f"SELECT region, sum(amount) AS total FROM \"{dataset}\" WHERE region = 'East' GROUP BY 1"
+    filtered = f"SELECT region, sum(amount) AS total FROM \"{dataset}_values\" WHERE region = 'East' GROUP BY 1"
 
     def drive(messages, info):
         calls = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
@@ -207,11 +330,11 @@ def test_omitted_columns_are_refused_through_the_agent(store, agents):
     def drive(messages, info):
         calls = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
         if not calls:
-            return tool_call("run_query", sql=f'SELECT WKT FROM "{source.dataset_id}"',
+            return tool_call("run_query", sql=f'SELECT WKT FROM "{source.dataset_id}_values"',
                              columns=[{"name": "WKT", "meaning": "Geometry", "kind": "geography", "source": "WKT"}])
         returned = last_return(messages).model_response_object()
         assert "cannot be queried" in returned["error"]
-        return tool_call("ask_clarification", question="Which region should I count?", reason="Geometry cannot be queried.")
+        return tool_call("ask_clarification", ask="Which region should I count?", reason="Geometry cannot be queried.")
 
     with profiler.override(model=TestModel(call_tools=[], custom_output_args=profile_output)):
         with analyst.override(model=FunctionModel(drive)):
@@ -220,24 +343,23 @@ def test_omitted_columns_are_refused_through_the_agent(store, agents):
     assert report.analysis is None
 
 
-def test_unprofiled_dataset_is_profiled_first(store, agents):
+def test_explicit_analysis_uses_local_facts_without_a_profiler_model(store, agents):
     profiler, analyst = agents
     source = store.save_upload("sales.csv", b"region,amount\nEast,1\nWest,2\n")
-    profile_output = {"description": "Sales.", "row_meaning": "A sale.", "questions": [],
-                      "columns": [{"name": n, "meaning": None, "role": r, "unit": None, "confidence": "high", "evidence": "x"}
-                                  for n, r in (("region", "geography"), ("amount", "measure"))]}
+    def unexpected_profile(messages, info):
+        pytest.fail("Explicit analysis must not trigger a semantic profiler model call")
 
     def drive(messages, info):
         calls = [p for m in messages for p in m.parts if isinstance(p, ToolCallPart)]
         if not calls:
-            return tool_call("run_query", sql=f'SELECT sum(amount) AS total FROM "{source.dataset_id}"',
+            return tool_call("run_query", sql=f'SELECT sum(amount) AS total FROM "{source.dataset_id}_values"',
                              columns=[{"name": "total", "meaning": "Total", "kind": "measure", "source": "amount", "aggregate": "sum"}])
         return tool_call("deliver_analysis", summary="The total is 3.")
 
-    with profiler.override(model=TestModel(call_tools=[], custom_output_args=profile_output)):
+    with profiler.override(model=FunctionModel(unexpected_profile)):
         with analyst.override(model=FunctionModel(drive)):
             report = run(store, profiler, analyst, source.dataset_id, "Total?")
-    assert store.get_profile(source.dataset_id).status == "complete"
+    assert store.get_profile(source.dataset_id) is None
     assert report.result.rows == [[3]]
 
 
@@ -293,7 +415,7 @@ def test_localized_rules_stay_out_of_ordinary_runs(store, people, agents):
 
     def drive(messages, info):
         seen["instructions"] = messages[0].instructions or ""
-        return tool_call("ask_clarification", question="Which amount?", reason="Checking the instructions.")
+        return tool_call("ask_clarification", ask="Which amount column: paid or unpaid?", reason="Checking the instructions.")
 
     with analyst.override(model=FunctionModel(drive)):
         asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
@@ -324,12 +446,10 @@ def test_described_names_may_carry_the_alias_quotes(store, people, agents):
     assert [column.name for column in result.output.columns] == ["region", "total"]
 
 
-def test_a_spent_query_budget_with_no_pass_ends_in_a_clarification(store, people, agents):
-    dataset, profile = people
-    _profiler, analyst = agents
-    prompt = build_prompt(store, profile, "إجمالي المبلغ حسب المنطقة", "Arabic")
-    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
-    sql = f'SELECT region, sum(amount) AS total FROM "{dataset}" GROUP BY 1'
+def test_a_spent_query_budget_with_no_pass_ends_the_run_with_the_check_messages(store, people, agents):
+    dataset, _profile = people
+    profiler, analyst = agents
+    sql = f'SELECT region, sum(amount) AS total FROM "{dataset}_values" GROUP BY 1'
     wrong = [{"name": "somewhere", "meaning": "Wrong name", "kind": "geography", "source": "region"},
              {"name": "total", "meaning": "Sum of amount", "kind": "measure", "source": "amount", "aggregate": "sum"}]
 
@@ -340,11 +460,11 @@ def test_a_spent_query_budget_with_no_pass_ends_in_a_clarification(store, people
         return tool_call("deliver_analysis", summary="لن يصل هذا الملخص.")
 
     with analyst.override(model=FunctionModel(drive)):
-        result = asyncio.run(analyst.run(prompt.model_dump_json(), deps=deps))
-    assert isinstance(result.output, Clarification)
-    assert result.output.question.startswith("لم أتمكن")
-    assert "Describe exactly the result columns" in result.output.reason
-    assert deps.query_calls == MAX_QUERY_CALLS
+        report = run(store, profiler, analyst, dataset, "إجمالي المبلغ حسب المنطقة")
+    assert report.clarification is None
+    assert report.analysis is None
+    assert "Describe exactly the result columns" in report.warnings[0]
+    assert report.warnings[0].startswith("The analyst could not answer")
 
 
 def test_answers_and_previous_work_reach_the_prompt(store, people):
@@ -374,7 +494,7 @@ def test_revise_rules_reach_the_model_only_with_answers_or_previous_work(store, 
 
     def drive(messages, info):
         seen["instructions"] = messages[0].instructions or ""
-        return tool_call("ask_clarification", question="Which amount?", reason="Checking the instructions.")
+        return tool_call("ask_clarification", ask="Which amount column: paid or unpaid?", reason="Checking the instructions.")
 
     for clarifications, expected in ([], False), ([QuestionAnswer(question="Which?", answer="This")], True):
         prompt = build_prompt(store, profile, "Total amount by region", "English", clarifications=clarifications)
@@ -395,3 +515,35 @@ def test_the_change_and_the_answers_count_as_wording(store, people):
                           previous=PreviousAnalysis(sql="SELECT 1", columns=[], change="Only 2026"))
     context = _context(AnalystDeps(store=store, profile=profile, prompt=prompt))
     assert "60000" in context and "2026" in context and "Total amount by region" in context
+
+
+def test_designer_feedback_reaches_the_analyst_and_loads_the_repair_rules(store, people, agents):
+    _dataset, profile = people
+    _profiler, analyst = agents
+    feedback = AnalysisRevision(
+        problem="The table has no series column",
+        requested_change="One row per month and measure",
+        preserve="Both measures and the monthly grain",
+    )
+    prompt = build_prompt(
+        store, profile, "Total amount by region", "English",
+        previous=PreviousAnalysis(
+            sql="SELECT 1",
+            columns=[ResultColumn(name="one", meaning="One", kind="measure")],
+            change="One row per month and measure",
+            feedback=feedback,
+        ),
+    )
+    serialized = prompt_json(prompt)
+    assert '"feedback"' in serialized and feedback.problem in serialized
+    seen = {}
+
+    def drive(messages, info):
+        seen["instructions"] = messages[0].instructions or ""
+        return tool_call("ask_clarification", ask="Which amount column: paid or unpaid?", reason="Checking the instructions.")
+
+    deps = AnalystDeps(store=store, profile=profile, prompt=prompt)
+    with analyst.override(model=FunctionModel(drive)):
+        asyncio.run(analyst.run(serialized, deps=deps))
+    assert "A revision the chart designer asked for" in seen["instructions"]
+    assert "Answers and revisions" not in seen["instructions"]

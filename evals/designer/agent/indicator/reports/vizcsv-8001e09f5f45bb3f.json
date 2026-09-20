@@ -1,0 +1,115 @@
+{
+  "dataset_id": "ds_10ee71eeb3a5434a908009cb2e3a6b2b",
+  "question": "تقرير عن السكان",
+  "language": "Arabic",
+  "brief_fingerprint": null,
+  "analysis": {
+    "sql": "SELECT \n    total_population AS \"إجمالي السكان\",\n    under_15 AS \"أقل من 15 سنة\",\n    age_15_30 AS \"15-30 سنة\",\n    age_31_45 AS \"31-45 سنة\",\n    age_46_60 AS \"46-60 سنة\",\n    over_60 AS \"أكثر من 60 سنة\"\nFROM \"ds_10ee71eeb3a5434a908009cb2e3a6b2b\"",
+    "columns": [
+      {
+        "name": "إجمالي السكان",
+        "meaning": "إجمالي عدد السكان",
+        "kind": "measure",
+        "unit": null,
+        "source": "total_population",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "أقل من 15 سنة",
+        "meaning": "عدد السكان أقل من 15 سنة",
+        "kind": "measure",
+        "unit": null,
+        "source": "under_15",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "15-30 سنة",
+        "meaning": "عدد السكان بين 15 و 30 سنة",
+        "kind": "measure",
+        "unit": null,
+        "source": "age_15_30",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "31-45 سنة",
+        "meaning": "عدد السكان بين 31 و 45 سنة",
+        "kind": "measure",
+        "unit": null,
+        "source": "age_31_45",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "46-60 سنة",
+        "meaning": "عدد السكان بين 46 و 60 سنة",
+        "kind": "measure",
+        "unit": null,
+        "source": "age_46_60",
+        "aggregate": "none",
+        "denominator": null
+      },
+      {
+        "name": "أكثر من 60 سنة",
+        "meaning": "عدد السكان أكثر من 60 سنة",
+        "kind": "measure",
+        "unit": null,
+        "source": "over_60",
+        "aggregate": "none",
+        "denominator": null
+      }
+    ],
+    "summary": "يبلغ إجمالي عدد السكان 5,565 شخصاً. تتوزع الفئات العمرية بين 1,798 شخصاً أقل من 15 سنة، و1,203 شخصاً للفئة 15-30 سنة، و951 شخصاً للفئة 31-45 سنة، و838 شخصاً للفئة 46-60 سنة، و775 شخصاً لمن هم فوق 60 سنة.",
+    "assumptions": [
+      "تم استخراج البيانات لجميع الفئات العمرية المتاحة في الجدول."
+    ]
+  },
+  "clarification": null,
+  "result": {
+    "sql": "SELECT \n    total_population AS \"إجمالي السكان\",\n    under_15 AS \"أقل من 15 سنة\",\n    age_15_30 AS \"15-30 سنة\",\n    age_31_45 AS \"31-45 سنة\",\n    age_46_60 AS \"46-60 سنة\",\n    over_60 AS \"أكثر من 60 سنة\"\nFROM \"ds_10ee71eeb3a5434a908009cb2e3a6b2b\"",
+    "columns": [
+      "إجمالي السكان",
+      "أقل من 15 سنة",
+      "15-30 سنة",
+      "31-45 سنة",
+      "46-60 سنة",
+      "أكثر من 60 سنة"
+    ],
+    "types": [
+      "BIGINT",
+      "BIGINT",
+      "BIGINT",
+      "BIGINT",
+      "BIGINT",
+      "BIGINT"
+    ],
+    "rows": [
+      [
+        5565,
+        1798,
+        1203,
+        951,
+        838,
+        775
+      ]
+    ],
+    "row_count": 1,
+    "checks": [],
+    "seconds": 0.05959216700284742
+  },
+  "checks": [
+    {
+      "column": null,
+      "check": "summary_numbers_exist",
+      "severity": "error",
+      "passed": true,
+      "message": "ok"
+    }
+  ],
+  "warnings": [],
+  "model": "google/gemma-4-31b-it",
+  "seconds": 14.369646750004904,
+  "created_at": "2026-09-13T21:45:26.609557Z"
+}

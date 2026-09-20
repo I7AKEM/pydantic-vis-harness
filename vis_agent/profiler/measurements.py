@@ -98,8 +98,10 @@ def finite_number(value: object) -> float | None:
     return number if math.isfinite(number) else None
 
 
-def compute_statistics(store: DatasetStore, source: UploadedDataset) -> DeterministicProfile:
-    table = quote_identifier(store.table_name(source.dataset_id))
+def compute_statistics(
+    store: DatasetStore, source: UploadedDataset, *, table_name: str | None = None,
+) -> DeterministicProfile:
+    table = quote_identifier(table_name or store.table_name(source.dataset_id))
     columns = []
     warnings = []
     with store.connect() as connection:
