@@ -1,0 +1,123 @@
+--- a/vis_agent/requests/service.py
++++ b/vis_agent/requests/service.py
+@@ -126,6 +126,26 @@
+             "previous_spec": parent.design.spec if parent and parent.design else None,
+             "answers": [p.model_dump() for p in pairs(request)],
+             "artifact_id": request.artifact_id, "warnings": report.warnings}
++
++
++async def finish_lead_run(deps: AppDeps, conversation_id: str | None, run_id: str | None, *,
++                          error: str | None) -> list[str]:
++    """Close the requests this run opened or resumed and left running: failed when the run raised, stopped when it
++    ended without publishing. Requests owned by other runs are untouched; resume reactivates a stopped request."""
++    if deps.requests is None or not conversation_id or not run_id:
++        return []
++    store = requests_of(deps)
++    finished = []
++    for summary in await asyncio.to_thread(store.list_requests, conversation_id=conversation_id, unfinished_only=True):
++        async with request_lock(summary.request_id):
++            request = await asyncio.to_thread(store.get_request, summary.request_id)
++            if request.status != "running" or request.steps.get("lead_run_id") != run_id:
++                continue
++            request.status = "failed" if error else "stopped"
++            request.error = error or "The lead ended its turn without publishing this request; resume continues it."
++            await asyncio.to_thread(store.save_request, request)
++            finished.append(request.request_id)
++    return finished
+ 
+ 
+ def invalidate_chart(request: Request) -> None:
+--- a/vis_agent/lead.py
++++ b/vis_agent/lead.py
+@@ -4,7 +4,9 @@
+ import re
+ from functools import wraps
+ 
++from anyio import CancelScope
+ from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed
++from pydantic_ai.capabilities import Hooks
+ from pydantic_ai.durable_exec.temporal import TemporalDurability
+ from pydantic_ai.models import Model
+ from pydantic_ai.messages import ToolReturnPart
+@@ -27,7 +29,7 @@
+ from vis_agent.render.base import RenderFailed, RendererUnavailable
+ from vis_agent.reviewer.agent import review_chart
+ from vis_agent.requests.service import (
+-    create_request, latest_unfinished, requests_of, prepare_request, record_answer,
++    create_request, finish_lead_run, latest_unfinished, requests_of, prepare_request, record_answer,
+     outcome_for, publish, invalidate_chart, pairs, pause_request, request_lock,
+ )
+ from vis_agent.requests.store import ArtifactNotFound, RequestNotFound
+@@ -166,6 +168,7 @@
+             if existing.dataset_id == dataset_id and (
+                 "source_error" in existing.steps or existing.question.strip() == question.strip()
+             ):
++                await own_request(ctx, existing)
+                 return await prepare_request(ctx.deps, existing)
+             if existing.status == "running":
+                 raise ToolFailed(
+@@ -174,6 +177,7 @@
+                 )
+         request = await asyncio.to_thread(create_request, ctx.deps, type="new", dataset_id=dataset_id,
+                                           question=question, caller=chat_caller(ctx))
++        await own_request(ctx, request)
+         return await prepare_request(ctx.deps, request)
+     except DatasetNotFound as exc:
+         raise ToolFailed(str(exc)) from exc
+@@ -201,6 +205,7 @@
+         request = await asyncio.to_thread(create_request, ctx.deps, type="revise", dataset_id=parent.dataset_id,
+                                           question=change, caller=chat_caller(ctx), parent_artifact_id=artifact_id,
+                                           redo_analysis=redo_analysis)
++        await own_request(ctx, request)
+         return await prepare_request(ctx.deps, request)
+     except (ArtifactNotFound, DatasetNotFound, ValueError) as exc:
+         raise ToolFailed(str(exc)) from exc
+@@ -276,6 +281,7 @@
+             if "source_error" in request.steps:
+                 return await prepare_request(ctx.deps, request)
+             request.status, request.error = "running", None
++            request.steps["lead_run_id"] = ctx.run_id
+             await asyncio.to_thread(requests_of(ctx.deps).save_request, request)
+             return await prepare_request(ctx.deps, request)
+     except (RequestNotFound, ValueError) as exc:
+@@ -300,6 +306,31 @@
+         raise ModelRetry(str(exc)) from exc
+ 
+ 
++async def own_request(ctx: RunContext[AppDeps], request) -> None:
++    """Record which lead run is working on the request, so only that run's end can close it."""
++    request.steps["lead_run_id"] = ctx.run_id
++    await asyncio.to_thread(requests_of(ctx.deps).save_request, request)
++
++
++def request_cleanup() -> Hooks:
++    """Close what this run leaves running: failed after an error or cancellation, stopped after a turn that ended
++    without publishing. Explicit completion handling, not a workflow step; the lead still chooses every action."""
++    hooks = Hooks()
++
++    @hooks.on.run
++    async def finish_owned_requests(ctx: RunContext[AppDeps], *, handler):
++        try:
++            result = await handler()
++        except BaseException as exc:
++            with CancelScope(shield=True):
++                await finish_lead_run(ctx.deps, ctx.conversation_id, ctx.run_id, error=str(exc) or type(exc).__name__)
++            raise
++        await finish_lead_run(ctx.deps, ctx.conversation_id, ctx.run_id, error=None)
++        return result
++
++    return hooks
++
++
+ def serialize_request(tool):
+     """Keep concurrent lead runs from overwriting one another's saved work."""
+     @wraps(tool)
+@@ -638,7 +669,7 @@
+ 
+ def create_lead(model: str | Model, advisor_model: str | None = None, *, model_settings=None,
+                 instructions: str | None = None) -> Agent[AppDeps, str]:
+-    capabilities = [TemporalDurability()]
++    capabilities = [TemporalDurability(), request_cleanup()]
+     if advisor_model:
+         capabilities.append(Advisor(advisor_model, mode="native"))
+     agent: Agent[AppDeps, str] = Agent(model, name="vis-lead", deps_type=AppDeps,
