@@ -11,9 +11,10 @@ The current design is `docs/lead-directed-team.md`. Earlier phase designs under
 - Only the visualization lead controls the flow. It chooses profiling, analysis, design, rendering,
   review, repair, fallback, and publication through tools. Each tool returns control to the lead.
   Do not add a fixed step order, automatic specialist handoffs, or automatic review/repair loops.
-- Optimize for correct charts and latency. Routine prepared CSVs need no profiler, analyst, or reviewer
-  model call. The designer can deliver a spec in one response. Reasonable presentation decisions are
-  the lead's responsibility, not questions to the user.
+- Optimize for correct charts and latency. Routine prepared CSVs need no profiler or analyst model call.
+  The designer can deliver a spec in one response. After rendering, one scoped visual-inspector call checks
+  only visible defects; it does not reopen analysis. Reasonable presentation decisions are the lead's
+  responsibility, not questions to the user.
 - Code handles data access, executable schema/binding checks, read-only SQL safety, rendering,
   persistence, and framework resource limits. Chart aesthetics and specialist selection belong to agents.
   Historical chart policy checks may remain in offline evals; they do not gate runtime design.
@@ -24,7 +25,10 @@ The current design is `docs/lead-directed-team.md`. Earlier phase designs under
 - Python 3.12, uv, Pydantic AI, OpenRouter or LiteLLM, and the built-in Web Chat UI.
 - `vis_agent/lead.py`: the lead and its delegation tools.
 - `vis_agent/providers.py`: one lead/team per provider. OpenRouter first when configured; default lead
-  is `openrouter:z-ai/glm-5.3-flash` with low thinking effort and latency routing. Environment overrides persist.
+  is the text-only `openrouter:z-ai/glm-5.3` with low thinking effort. Profiling and analysis use the same
+  GLM model; chart design uses `openrouter:deepseek/deepseek-v4-pro`; the scoped visual inspector uses
+  `openrouter:google/gemma-4-31b-it` with thinking disabled.
+  Rendered image bytes never enter the lead context. Environment overrides persist.
 - `vis_agent/analyst/source.py`: read the original CSV for direct charting without model calls.
 - `vis_agent/requests/service.py`: request persistence, publication, and API/CLI entry point to the same lead.
 - `vis_agent/requests/runner.py`: compatibility imports only; no flow control.
@@ -32,7 +36,7 @@ The current design is `docs/lead-directed-team.md`. Earlier phase designs under
 - `vis_agent/designer/`, `analyst/`, `profiler/`, `reviewer/`: existing domain specialists.
 - `vis_agent/render/`: the pinned GPT-Vis renderer. Node 22 LTS on PATH and
   `npm ci --prefix vis_agent/render/gptvis`; never edit node_modules. On Debian install
-  `libexpat1`, `fontconfig`, and `fonts-noto-core`. Check with `vis doctor`.
+  `libexpat1`, `fontconfig`, and `fonts-noto-core`. Check with `uv run vis doctor`.
 - Keep code small and explicit. No workflow engine, external A2A package, additional planner, Docker,
   second renderer, or generic orchestration layer.
 - Preserve optional Advisor and TemporalDurability capabilities on the lead. Ordinary web calls do
