@@ -1,8 +1,12 @@
 """The visualization lead: domain decisions and explicit delegation to specialist tools."""
 
 import asyncio
+import json
 import re
 from functools import wraps
+from typing import Annotated
+
+from pydantic import BeforeValidator
 
 from pydantic_ai import Agent, ModelRetry, RunContext, ToolFailed
 from pydantic_ai.durable_exec.temporal import TemporalDurability
@@ -368,10 +372,16 @@ async def consult_analyst(ctx: RunContext[AppDeps], request_id: str, task: str) 
     return await prepare_request(ctx.deps, request)
 
 
+def coerce_json_list(value):
+    """Some OpenRouter tool-calling routes double-encode array args as a JSON string. Undo that."""
+    if isinstance(value, str):
+        return json.loads(value)
+    return value
+
 @serialize_request
 async def design_visualization(ctx: RunContext[AppDeps], request_id: str, direction: str = "",
-                               columns: list[ResultColumn] | None = None, use_fallback: bool = False,
-                               required_columns: list[str] | None = None) -> dict:
+                                columns: Annotated[list[ResultColumn], BeforeValidator(coerce_json_list)]  | None = None, use_fallback: bool = False,
+                                required_columns: Annotated[list[str], BeforeValidator(coerce_json_list)] | None = None) -> dict:
     """Delegate chart design only. Returns its spec or diagnostics; you decide whether to render.
 
     Args:
